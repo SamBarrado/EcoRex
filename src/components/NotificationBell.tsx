@@ -35,7 +35,7 @@ export default function NotificationBell() {
       {open && (
         <div
           className="card"
-          style={{ position: "absolute", right: 0, top: "100%", width: 280, zIndex: 50 }}
+          style={{ position: "absolute", right: 0, bottom: "100%", width: 280, zIndex: 50 }}
         >
           {notifications.length === 0 && <p>Sin notificaciones.</p>}
           {notifications.map((n) => (

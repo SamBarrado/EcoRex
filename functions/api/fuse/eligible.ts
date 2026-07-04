@@ -32,7 +32,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
      JOIN species ON species.id = discoveries.species_id
      JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id AND species_phase_anchors.phase = 'calma'
      WHERE discoveries.user_id = ? AND discoveries.phase = 'calma' AND discoveries.consumed_at IS NULL
-     GROUP BY species_id
+     GROUP BY species.id
      HAVING COUNT(*) >= 5`
   )
     .bind(user.id)
