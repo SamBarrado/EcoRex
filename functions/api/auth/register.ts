@@ -16,10 +16,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const ip = getClientIp(request);
   if (!(await rateLimit(env.RATE_LIMIT_KV, `register:${ip}`))) {
-    return new Response(JSON.stringify({ error: "Too many requests" }), {
-      status: 429,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Demasiados intentos. Espera un poco y vuelve a intentarlo." }),
+      { status: 429, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   let body: RegisterBody;

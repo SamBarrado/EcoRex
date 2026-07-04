@@ -8,6 +8,9 @@ interface Env {
   RATE_LIMIT_KV: KVNamespace;
   DINO_IMAGES: R2Bucket;
   OPENAI_API_KEY: string;
+  // Optional override for local/dev testing only — leave unset in production
+  // so the real 5/h default below stays in effect.
+  DISCOVER_RATE_LIMIT?: string;
 }
 
 interface DiscoverBody {
@@ -38,7 +41,7 @@ const VALID_PHASES = ["calma", "furia", "eco"];
 
 // Per-user discovery throttling: image-to-image variant generation calls a
 // paid API, so this is intentionally tighter than the auth endpoints' limit.
-const DISCOVER_RATE_LIMIT = 5;
+const DEFAULT_DISCOVER_RATE_LIMIT = 5;
 
 function generateDiscoveryCode(): string {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -100,9 +103,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const ip = getClientIp(request);
-  const allowed = await rateLimit(env.RATE_LIMIT_KV, `discover:${user.id}:${ip}`, DISCOVER_RATE_LIMIT);
+  const limit = env.DISCOVER_RATE_LIMIT ? parseInt(env.DISCOVER_RATE_LIMIT, 10) : DEFAULT_DISCOVER_RATE_LIMIT;
+  const allowed = await rateLimit(env.RATE_LIMIT_KV, `discover:${user.id}:${ip}`, limit);
   if (!allowed) {
-    return Response.json({ error: "Too many requests" }, { status: 429 });
+    return Response.json(
+      { error: "Has hecho muchos descubrimientos seguidos. Espera un poco y vuelve a intentarlo." },
+      { status: 429 }
+    );
   }
 
   let body: DiscoverBody;

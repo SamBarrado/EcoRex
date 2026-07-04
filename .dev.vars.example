@@ -1,2 +1,6 @@
 ANTHROPIC_API_KEY=
 OPENAI_API_KEY=
+# Optional, local dev only — raises /api/discover's rate limit above the
+# production default (5/h) so repeated manual testing doesn't get blocked.
+# Leave unset in production.
+DISCOVER_RATE_LIMIT=100
