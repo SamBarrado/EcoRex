@@ -15,13 +15,10 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
         },
         async first<T>() {
           if (sql.includes('FROM sessions')) return sessionRow as unknown as T;
-          if (sql.includes('rarity_tiers') === false && sql.includes('GROUP BY species_id') === false) {
-            // species lookup for fuse target
-          }
           return (overrides.first as T) ?? null;
         },
         async all<T>() {
-          if (sql.includes('GROUP BY species_id')) {
+          if (sql.includes('GROUP BY species.id')) {
             return { results: (overrides.eligibleRows ?? []) as T[] };
           }
           if (sql.includes('rarity_tiers')) {
