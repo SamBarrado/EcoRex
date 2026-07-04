@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ExplorarPage from "./pages/ExplorarPage";
 import ColeccionPage from "./pages/ColeccionPage";
 import PerfilPage from "./pages/PerfilPage";
 
 function TabBar() {
   return (
     <nav className="tabbar">
+      <NavLink to="/explorar" className={({ isActive }) => (isActive ? "active" : "")}>
+        Explorar
+      </NavLink>
       <NavLink to="/coleccion" className={({ isActive }) => (isActive ? "active" : "")}>
         Colección
       </NavLink>
@@ -23,6 +27,15 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
+        <Route
+          path="/explorar"
+          element={
+            <>
+              <ExplorarPage />
+              <TabBar />
+            </>
+          }
+        />
         <Route
           path="/coleccion"
           element={
@@ -41,7 +54,7 @@ export default function App() {
             </>
           }
         />
-        <Route path="/" element={<Navigate to="/coleccion" replace />} />
+        <Route path="/" element={<Navigate to="/explorar" replace />} />
       </Routes>
     </BrowserRouter>
   );

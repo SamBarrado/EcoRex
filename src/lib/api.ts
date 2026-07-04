@@ -81,3 +81,34 @@ export interface ProfileStats {
 export function getMyProfile() {
   return request<ProfileStats>("/api/profile");
 }
+
+export interface Species {
+  id: number;
+  scientific_name: string;
+  common_name: string;
+  fractae_child_name: string;
+}
+
+export function getSpecies() {
+  return request<{ species: Species[] }>("/api/species");
+}
+
+export interface DiscoverResult {
+  discoveryId: number;
+  discoveryCode: string;
+  speciesId: number;
+  scientificName: string;
+  commonName: string;
+  phase: string;
+  rarityTier: { slug: string; name: string };
+  imageUrl: string;
+  isUniqueVariant: boolean;
+  discoveredAt: string;
+}
+
+export function discover(body: { speciesId: number; phase: string }) {
+  return request<DiscoverResult>("/api/discover", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}

@@ -160,7 +160,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     isUniqueVariant = false;
   } else {
     try {
-      const anchorResponse = await fetch(speciesRow.anchor_image_url);
+      const anchorUrl = new URL(speciesRow.anchor_image_url, request.url).toString();
+      const anchorResponse = await fetch(anchorUrl);
       if (!anchorResponse.ok) {
         throw new Error(`Failed to fetch anchor image: ${anchorResponse.status}`);
       }
