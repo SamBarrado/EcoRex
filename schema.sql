@@ -78,7 +78,8 @@ CREATE TABLE discoveries (
   operation_id INTEGER REFERENCES operations(id),
   image_url TEXT NOT NULL,               -- anchor image or unique generated variant
   is_unique_variant INTEGER NOT NULL DEFAULT 0,
-  discovered_at TEXT NOT NULL DEFAULT (datetime('now'))
+  discovered_at TEXT NOT NULL DEFAULT (datetime('now')),
+  consumed_at TEXT
 );
 
 -- 8. Gifts: unidirectional trading of a specific discovery
@@ -118,6 +119,17 @@ CREATE TABLE sessions (
 
 CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
+
+-- 11. Notifications: generic in-app event inbox
+CREATE TABLE notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  type TEXT NOT NULL,          -- e.g. 'fusion_ready'; payload shape depends on type
+  payload TEXT,                -- JSON, e.g. { "speciesId": 12, "commonName": "Rex de Fuego" }
+  read_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX idx_notifications_user ON notifications(user_id, read_at);
 
 -- Indexes for common lookups
 CREATE INDEX idx_discoveries_user ON discoveries(user_id);
