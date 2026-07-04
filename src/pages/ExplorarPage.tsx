@@ -4,6 +4,7 @@ import { getSpecies, getMyProfile, discover, Species, DiscoverResult, ApiError }
 
 const PHASE = "calma";
 const MIN_RITUAL_MS = 1500;
+const MAX_SOUND_MS = 3000;
 
 const RARITY_GLOW: Record<string, string> = {
   registrada: "#bfe6c9",
@@ -34,6 +35,27 @@ export default function ExplorarPage() {
 
   const abortRef = useRef<AbortController | null>(null);
   const releasedEarlyRef = useRef(false);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function stopSound() {
+    if (soundTimeoutRef.current !== null) {
+      clearTimeout(soundTimeoutRef.current);
+      soundTimeoutRef.current = null;
+    }
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0;
+      currentAudioRef.current = null;
+    }
+  }
+
+  function playSound(scientificName: string) {
+    const audio = new Audio(speciesSoundUrl(scientificName));
+    currentAudioRef.current = audio;
+    audio.play().catch(() => {});
+    soundTimeoutRef.current = setTimeout(stopSound, MAX_SOUND_MS);
+  }
 
   useEffect(() => {
     setError(null);
@@ -50,6 +72,8 @@ export default function ExplorarPage() {
         setError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
       });
   }, [navigate, retryCount]);
+
+  useEffect(() => stopSound, []);
 
   async function handlePressStart() {
     if (!species || species.length === 0 || holding) return;
@@ -74,7 +98,7 @@ export default function ExplorarPage() {
       await delay(400);
       setResult({ ...data, fractaeChildName: picked.fractae_child_name });
       setHolding(false);
-      new Audio(speciesSoundUrl(data.scientificName)).play().catch(() => {});
+      playSound(data.scientificName);
     } catch (err) {
       if (controller.signal.aborted) return;
       setHolding(false);
@@ -99,6 +123,7 @@ export default function ExplorarPage() {
   }
 
   function handleReset() {
+    stopSound();
     setResult(null);
     setError(null);
     setRetryCount((n) => n + 1);
