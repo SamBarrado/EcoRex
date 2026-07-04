@@ -138,6 +138,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
 
+  if (phase === "calma") {
+    const countRow = await env.DB.prepare(
+      `SELECT COUNT(*) as calma_count FROM discoveries
+       WHERE user_id = ? AND species_id = ? AND phase = 'calma' AND consumed_at IS NULL`
+    )
+      .bind(user.id, speciesId)
+      .first<{ calma_count: number }>();
+
+    if (countRow?.calma_count === 5) {
+      await env.DB.prepare(
+        `INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`
+      )
+        .bind(
+          user.id,
+          "fusion_ready",
+          JSON.stringify({ speciesId, commonName: speciesRow.common_name })
+        )
+        .run();
+    }
+  }
+
   return Response.json(
     {
       discoveryId,
