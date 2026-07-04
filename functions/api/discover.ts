@@ -1,7 +1,6 @@
 import { getSessionCookie, verifySession } from "../lib/auth";
 import { rateLimit, getClientIp } from "../lib/rateLimit";
-import { generateDinoVariant } from "../lib/openai";
-import { storeImageInR2 } from "../lib/r2";
+import { pickRarityTier, resolvePhaseImage, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
 
 interface Env {
   DB: D1Database;
@@ -18,26 +17,7 @@ interface DiscoverBody {
   phase?: string;
 }
 
-interface SpeciesPhaseRow {
-  species_id: number;
-  scientific_name: string;
-  common_name: string;
-  fractae_child_name: string;
-  physical_traits: string | null;
-  base_palette: string | null;
-  silhouette: string | null;
-  anchor_image_url: string;
-}
-
-interface RarityTierRow {
-  id: number;
-  slug: string;
-  name: string;
-  anchor_probability: number;
-  drop_weight: number;
-}
-
-const VALID_PHASES = ["calma", "furia", "eco"];
+const VALID_PHASES = ["calma", "eco"];
 
 // Per-user discovery throttling: image-to-image variant generation calls a
 // paid API, so this is intentionally tighter than the auth endpoints' limit.
@@ -50,47 +30,6 @@ function generateDiscoveryCode(): string {
     return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
   };
   return `DX-${randomPart(3)}-${randomPart(3)}`;
-}
-
-async function generateR2Key(): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(crypto.randomUUID())
-  );
-  const hex = Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  return `${hex}.png`;
-}
-
-function pickRarityTier(tiers: RarityTierRow[]): RarityTierRow {
-  const totalWeight = tiers.reduce((sum, tier) => sum + tier.drop_weight, 0);
-  let roll = Math.random() * totalWeight;
-  for (const tier of tiers) {
-    roll -= tier.drop_weight;
-    if (roll <= 0) return tier;
-  }
-  return tiers[tiers.length - 1];
-}
-
-function buildVariantPrompt(species: SpeciesPhaseRow, phase: string): string {
-  const phaseModifier: Record<string, string> = {
-    calma: "forma estable, postura serena, brillo suave",
-    furia: "forma intensificada, postura agresiva, brillo ardiente, grietas de energía",
-    eco: "forma translúcida, casi fantasmal, partículas dispersándose",
-  };
-  return [
-    `A collectible cartoon dinosaur illustration for a children's app.`,
-    `Species: ${species.common_name} (${species.scientific_name}).`,
-    species.physical_traits ? `Physical traits: ${species.physical_traits}.` : null,
-    species.base_palette ? `Palette: ${species.base_palette}.` : null,
-    species.silhouette ? `Silhouette: ${species.silhouette}.` : null,
-    `Fractae: ${species.fractae_child_name}.`,
-    `Phase modifier (${phase}): ${phaseModifier[phase]}.`,
-    `Colorful, simple, no text, no watermark.`,
-  ]
-    .filter(Boolean)
-    .join(" ");
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -123,6 +62,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const phase = body.phase;
 
   if (typeof speciesId !== "number" || !phase || !VALID_PHASES.includes(phase)) {
+    if (phase === "furia") {
+      return Response.json(
+        { error: "Furia solo se obtiene fusionando duplicados de Calma" },
+        { status: 400 }
+      );
+    }
     return Response.json({ error: "speciesId and a valid phase are required" }, { status: 400 });
   }
 
@@ -157,34 +102,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const rarityTier = pickRarityTier(rarityTiers);
-  const servesAnchor = Math.random() < rarityTier.anchor_probability;
 
   let imageUrl: string;
   let isUniqueVariant: boolean;
-
-  if (servesAnchor) {
-    imageUrl = speciesRow.anchor_image_url;
-    isUniqueVariant = false;
-  } else {
-    try {
-      const anchorUrl = new URL(speciesRow.anchor_image_url, request.url).toString();
-      const anchorResponse = await fetch(anchorUrl);
-      if (!anchorResponse.ok) {
-        throw new Error(`Failed to fetch anchor image: ${anchorResponse.status}`);
-      }
-      const anchorBytes = await anchorResponse.arrayBuffer();
-      const prompt = buildVariantPrompt(speciesRow, phase);
-      const base64Image = await generateDinoVariant(anchorBytes, prompt, env.OPENAI_API_KEY);
-
-      const r2Key = await generateR2Key();
-      await storeImageInR2(env.DINO_IMAGES, r2Key, base64Image);
-
-      imageUrl = `/images/${r2Key}`;
-      isUniqueVariant = true;
-    } catch (err) {
-      console.error("discover variant generation failed:", err instanceof Error ? err.stack : err);
-      return Response.json({ error: "Failed to generate discovery image" }, { status: 502 });
-    }
+  try {
+    const resolved = await resolvePhaseImage({
+      species: speciesRow,
+      phase,
+      rarityTier,
+      requestUrl: request.url,
+      openaiApiKey: env.OPENAI_API_KEY,
+      r2Bucket: env.DINO_IMAGES,
+    });
+    imageUrl = resolved.imageUrl;
+    isUniqueVariant = resolved.isUniqueVariant;
+  } catch (err) {
+    console.error("discover variant generation failed:", err instanceof Error ? err.stack : err);
+    return Response.json({ error: "Failed to generate discovery image" }, { status: 502 });
   }
 
   const discoveryCode = generateDiscoveryCode();
