@@ -87,6 +87,9 @@ export interface Species {
   scientific_name: string;
   common_name: string;
   fractae_child_name: string;
+  fractae_id: number;
+  fractae_slug: string;
+  fractae_color: string | null;
 }
 
 export function getSpecies() {
@@ -106,9 +109,10 @@ export interface DiscoverResult {
   discoveredAt: string;
 }
 
-export function discover(body: { speciesId: number; phase: string }) {
+export function discover(body: { speciesId: number; phase: string }, signal?: AbortSignal) {
   return request<DiscoverResult>("/api/discover", {
     method: "POST",
     body: JSON.stringify(body),
+    signal,
   });
 }
