@@ -283,19 +283,42 @@ Especie: Tyrannosaurus imperator
 Nombre niño: "Rex de Fuego"
 Fractae asociado: Furia (Ira)
 Rasgos físicos fijos: cuerpo robusto, cresta dorsal, mandíbula prominente
+Hábitat/ecología: llanuras y bosques semiáridos costeros, depredador terrestre ápice
 Paleta base: rojos/naranjas/negros
 Silueta distintiva: bípedo, cola larga, brazos cortos
 ```
 
+**`Hábitat/ecología` (añadido en esta revisión)** es un campo obligatorio de la ficha, no decorativo: alimenta directamente el diseño de la Fase Eco (ver §15.3). Debe ser concreto (terrestre árido, semi-acuático fluvial, marino, boscoso templado, polar...), no un genérico "prehistórico".
+
 Esta ficha actúa como prompt-semilla para GPT Image 2, garantizando que la misma especie sea reconociblemente consistente entre distintos usuarios.
 
-### 15.3 Modificadores de fase (reutilizables, no por especie)
+### 15.3 Modificadores de fase
 
 ```
 Calma → forma estable, postura serena, brillo suave
 Furia → forma intensificada, postura agresiva, brillo ardiente, grietas de energía
-Eco → forma translúcida, casi fantasmal, partículas dispersándose
 ```
+
+Calma y Furia son modificadores reutilizables, iguales para todas las especies (solo cambia la intensidad/textura sobre la anatomía de cada una).
+
+**Eco es distinto: NO es un modificador universal.** Corrección respecto a versiones anteriores de este documento, que lo describían como "forma translúcida, casi fantasmal, partículas dispersándose" igual para todas las especies — en la práctica esto hacía que todas las Ecos parecieran la misma silueta fantasma genérica, perdiendo el propósito narrativo de la fase.
+
+**Definición correcta:** Eco es el Fractae de la especie llevado a su extremo emocional absoluto, manifestado a través de la anatomía y el **hábitat concreto** de esa especie en particular — no de un efecto visual fijo. Dos especies del mismo Fractae deben producir Ecos visualmente distintos entre sí (p. ej. la Furia extrema de un depredador terrestre no se ve igual que la Furia extrema de un reptil marino).
+
+Arquetipos conceptuales por Fractae (qué le hace la emoción a la criatura en su punto de ruptura, deliberadamente sin prescribir mecanismo visual ni entorno — eso lo aporta la especie):
+
+| Fractae | Arquetipo del extremo emocional |
+|---|---|
+| Alegría (Lumen) | Desbordada por un júbilo tan absoluto que pierde el control de su propia forma física; euforia que la vuelve casi ingrávida y radiante |
+| Tristeza (Tristitia) | Hundida en un duelo tan profundo que pierde la capacidad de sostenerse a sí misma; se disuelve cediendo su forma a su propio dolor |
+| Furia (Ira) | Consumida por su propia rabia hasta el punto de autodestrucción; energía descontrolada que fractura su cuerpo desde dentro |
+| Miedo (Pavor) | Devorada por el pánico hasta la disolución total; el instante final antes de desaparecer, cediendo ante un vacío que la consume |
+| Confianza (Fides) | Su convicción se vuelve absoluta e inamovible; se transforma en un monumento viviente, anclado para siempre a aquello en lo que cree |
+| Asco (Fastidium) | Su propio rechazo la corroe desde dentro; se descompone en tiempo real, consumida por aquello que ella misma repudia |
+| Sorpresa (Stupor) | El asombro la paraliza en un instante que se congela para siempre; fragmentada a mitad de un movimiento que nunca llega a completarse |
+| Curiosidad (Spes) | Su obsesión por comprender la disuelve en incontables fragmentos que siguen buscando respuestas por separado |
+
+El mecanismo visual concreto (fuego, vapor, hielo, descomposición orgánica, dispersión de plumas al viento, colapso de roca, etc.) se decide combinando este arquetipo con el `Hábitat/ecología` y los `Rasgos físicos fijos` de la ficha-spec de cada especie — nunca es la misma solución para dos especies distintas, aunque compartan Fractae. Implementado en `scripts/generate-species-art.mjs` (`FRACTAE_EXTREME` + `buildEcoPrompt`).
 
 ### 15.4 Imágenes ancla: generación, curación y consistencia
 
@@ -306,6 +329,48 @@ Decisión confirmada: **imagen ancla por especie+fase, generada con image-to-ima
 - **Las tres fases se curan manualmente antes de aprobarse** — el margen de error visual debe ser mínimo, dado que el usuario principal es un niño.
 
 **Definición operativa (aclarada en v4):** una "imagen ancla" es la imagen curada y aprobada de una combinación especie+fase concreta (`species_phase_anchors.image_url`) — la que ve todo el mundo por defecto en el Pokédex/Álbum salvo que a una captura le toque generar variante única (sección 18.3).
+
+#### 15.4.1 Flujo de producción confirmado (validado en esta sesión)
+
+Generar Calma directamente por texto vía la API (`images/generations`) es **poco fiable**: el modelo tiende al fotorrealismo por defecto y no converge bien en el estilo ilustrado deseado, incluso con instrucciones de estilo detalladas en el prompt. En cambio, Furia y Eco generados por **image-to-image** (`images/edits`) sobre un ancla de Calma ya buena sí heredan el estilo correctamente. Por eso el flujo real es:
+
+1. **Calma se diseña a mano en ChatGPT** (gratis, dentro de la suscripción), iterando con instrucciones cortas de estilo ("dale un punto menos realista a esto") hasta conseguir el resultado deseado. Usar el prompt de la sección 15.4.2 como plantilla, rellenando los campos de la ficha-spec de la especie.
+2. El PNG elegido se guarda como el ancla Calma de esa especie.
+3. **Furia y Eco se generan automáticamente** (`scripts/generate-species-art.mjs`, de pago vía API) por image-to-image sobre esa ancla ya validada — no se regenera Calma por script.
+4. Las tres fases se curan manualmente antes de aprobarse, como ya establece esta sección.
+
+#### 15.4.2 Prompt maestro para generar Calma a mano
+
+```
+Genera una ilustración de personaje/criatura para un bestiario de videojuego de fantasía.
+
+ESTILO (obligatorio, no fotorrealista): ilustración pintada tipo concept-art de videojuego,
+con líneas de tinta marcadas definiendo cada forma, un punto MENOS realista que un render
+fotoreal — colores más planos/posterizados con degradados pintados en vez de textura de piel
+detallada al estilo foto. Escamas facetadas tipo cristal, con vetas internas brillantes del
+color de acento del Fractae recorriendo la piel, pero de forma gráfica/ilustrativa, no
+hiperdetallada. Iluminación cinematográfica a contraluz, un único color de acento vivo en ojos
+y grietas de energía, pose dinámica e imponente sobre una roca/peña, entorno completo y
+dramático coherente con el hábitat de la especie, partículas atmosféricas en la escena. Sin
+texto, sin marcas de agua.
+
+DATOS DE LA ESPECIE:
+- Especie (nombre científico): {{ESPECIE_CIENTIFICA}}
+- Nombre niño: "{{NOMBRE_NIÑO}}"
+- Fractae asociado: {{FRACTAE_NOMBRE}} ({{FRACTAE_LATIN}}) — el entorno y las vetas brillantes
+  deben leerse como este elemento
+- Hábitat/ecología: {{HABITAT}}
+- Rasgos físicos fijos: {{RASGOS}}
+- Paleta base: {{PALETA}}
+- Silueta distintiva: {{SILUETA}}
+
+FASE A GENERAR: Calma — forma estable, postura serena pero imponente, brillo suave (no agresiva,
+no rugiendo; es la forma base/de reposo de la criatura).
+
+Genera la imagen ahora.
+```
+
+Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBRE}}`, `{{FRACTAE_LATIN}}`, `{{HABITAT}}`, `{{RASGOS}}`, `{{PALETA}}`, `{{SILUETA}}`) se rellenan con los campos de la ficha-spec de cada especie (`scripts/lote.json` / `species.wave1.json` / generadas vía `scripts/generate-species-spec.mjs`).
 
 ### 15.5 Estrategia de lanzamiento: estado real (corregido en v4)
 

@@ -1,0 +1,688 @@
+[
+  {
+    "scientificName": "Tyrannosaurus rex furibundus",
+    "commonName": "Dracofuria",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Mandíbulas ensanchadas con estrías de fuego que recorren el rictus; ojos ámbar incandescente que reflejan cólera pura; espina dorsal prominente y erizada, con placas que emiten vapor; garras de los pies agrandadas y obsidianas; piel con cicatrices profundas que cicatrizan en rojo vivo",
+    "palette": "Rojo sangre en gradientes intensos, negro carbón en entrantes y suturas, dorado oxidado en aristas óseas, gris ceniza en los flancos",
+    "silhouette": "Bípedo masivo y encorvado hacia adelante, con brazos tensos y mandíbula perpetuamente abierta; postura de tensión constante, como resorte a punto de soltarse",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde pisa, la tierra arde en resentimiento. Es la ira del mundo hecha carne y fuego, incapaz de olvidar cada herida.",
+    "habitat": "llanuras y bosques semiáridos costeros de Norteamérica, depredador terrestre ápice"
+  },
+  {
+    "scientificName": "Giganotosaurus furialis",
+    "commonName": "Titánida Ardiente",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Mandíbula de bordes serrados que brillan carmesí; escamas dorsales con tonalidad rojiza que se intensifica hacia la cresta cervical; garras frontales de curvatura pronunciada, con vetas color sangre; ojos amarillos ardientes que reflejan ira contenida; musculatura hipertrofiada en extremidades anteriores.",
+    "palette": "Rojo sangre, carmesí oscuro, negro de obsidiana, gris acero, con acentos dorados en la mandíbula inferior",
+    "silhouette": "Cuadrúpedo masivo y bajo de centro de gravedad, con cabeza levemente erguida y hombros prominentes que irradian amenaza contenida.",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde el Fractae de la Ira toma forma de carne y hueso, la tierra tiembla bajo el peso de la venganza hecha bestia, y el fuego arde sin llama en sus ojos.",
+    "habitat": "llanuras áridas y matorrales de Sudamérica, cazador terrestre en manada"
+  },
+  {
+    "scientificName": "Spinosaurus horrificus",
+    "commonName": "Espinodonte",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Vela dorsal erizad y pulsante en tonos morado profundo; mandíbulas dilatables que emiten un zumbido de baja frecuencia; ojos sin iris, completamente morados con pupilas que se contraen en espiral; garras antebrazales de obsidiana negra que dejan rastros luminiscentes; piel con textura de púas microscópicas que crece cuando el miedo circundante aumenta.",
+    "palette": "Morado oscuro (vela y ojos), gris pizarra en cuerpo base, negro azabache en garras, reflejos plateados en los bordes de la vela dorsal, tonos lavanda en las cicatrices del cuello.",
+    "silhouette": "Cuadrúpedo bajo y masivo, con la vela dorsal como cresta amenazante; postura depredadora deplegada, como si acechara permanentemente desde la penumbra.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "En las aguas profundas del Fractae Miedo nada el Espinodonte, no cazador sino colector: cada terror que absorbe engrosa su vela, cada grito amplifica su zumbido, cada sombra que proyecta es un susurro de pánico hecho carne.",
+    "habitat": "ríos y deltas pantanosos del norte de África, semi-acuático, nadador y pescador"
+  },
+  {
+    "scientificName": "Allosaurus incendium",
+    "commonName": "Quijada Escarlata",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Mandíbulas de bordes aserrados teñidas de carmesí; ojos sulfurosos con iris vertical; cresta dorsal erizad en tonos óxido; garras delanteras curvadas como hierro candente; musculatura dorsal prominente y tensa.",
+    "palette": "Rojo profundo y carmesí en zonas dorsal y mandibular; marrón oscuro y herrumbre en flancos; blanco hueso en vientre; accents negros en garras y dientes.",
+    "silhouette": "Bípedo de postura agresiva, cuello arqueado hacia adelante, cola elevada y rígida como látigo.",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde pisa Quijada Escarlata, la tierra tiembla bajo la ira pura; su rugido quema el aire, y sus colmillos hambrientos conocen sólo la sed de dominio.",
+    "habitat": "llanuras y bosques abiertos de Norteamérica jurásica"
+  },
+  {
+    "scientificName": "Carnotaurus furibundus",
+    "commonName": "Toro Ardiente",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Cuernos frontales masivos de bordes afilados como obsidiana negra; piel escamosa con surcos profundos que emiten un brillo carmesí bajo luz tenue; mandíbula hipertrofiada con dientes de sierra oxidada; musculatura dorsal abultada en picos de tensión constante; ojos amarillentos con pupila vertical dilatada en furia perpetua",
+    "palette": "Rojo sangre profundo dominante, con reflejos negros carbón en cuernos y dorso; bandas de escarlata ardiente recorren flancos; tonos herrumbre oxidada en mandíbula; vientre en marrón oscuro terroso",
+    "silhouette": "Cuadrúpedo robusto y bajo, con centro de masa adelantado; cuello corto y musculoso inclinado hacia delante en actitud de embestida permanente.",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "El Toro Ardiente no carga por hambre, sino por la sed insaciable de su propia furia—cada embestida un grito silencioso de la ira primordial encarnada.",
+    "habitat": "desiertos y matorrales áridos de la Patagonia"
+  },
+  {
+    "scientificName": "Baryonyx timidus",
+    "commonName": "Garra Púrpura",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Garras foráneas retráctiles teñidas de morado oscuro; piel escamosa con iridiscencia violeta que intensifica bajo tensión emocional; mandíbula alargada con dientes afilados dispuestos en patrón irregular; ojos dilatados con pupilas verticales que reflejan luz morada; espina dorsal prominente que eriza en respuesta al pánico",
+    "palette": "Morado profundo, gris neutro, negro carbón, con toques de plata iridiscente en escamas",
+    "silhouette": "Cuerpo bajo y tenso, posturas defensivas encorsetadas, garras delanteras prominentes en actitud de retaguardia, cuello recogido hacia atrás.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "En las penumbras del terror primordial acecha el Garra Púrpura, cuyo pavor es tan visceral que tiñe su propia carne del color del miedo manifestado.",
+    "habitat": "riberas de ríos y humedales de Europa, semi-acuático, pescador de orillas"
+  },
+  {
+    "scientificName": "Albertosaurus furibundus",
+    "commonName": "Tirano Bermejo",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Mandíbulas ensangrentadas con dientes curvados de 20 cm; musculatura dorsal prominente teñida de carmesí; garras anteriores afiladas como obsidiana; ojos ardientes con iris escarlata; cresta neural pulsante de tonalidad cobriza",
+    "palette": "Rojo sangre profundo, carmesí vivo, ocre quemado, gris acero, negro carbón",
+    "silhouette": "Bipedal depredador, torso inclinado hacia adelante con cola arqueada en tensión constante, brazos cortos pero tensionados como resortes",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "El Tirano Bermejo es la rabia pura desencadenada: donde pisotea, la tierra arde; donde ruge, los huesos tiemblan. Su sed de conflicto es insaciable, su furia la única verdad.",
+    "habitat": "bosques templados costeros de Norteamérica"
+  },
+  {
+    "scientificName": "Ceratosaurus pavonius",
+    "commonName": "Colmillo del Abismo",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Cresta nasal elevada con vetas moradas luminiscentes; garras frontales alargadas y curvadas, ribeteadas en tonos violeta oscuro; piel escamosa con patrones fractales que irradian desde el pecho; ojos ámbar rodeados de marcas de terror ancestral; mandíbula inferior reforzada con espinas óseas que rezuman presencia.",
+    "palette": "Morado profundo y ultravioleta combinados con grises carbón; tonos herrumbre en las articulaciones; destellos plateados en los dientes y la cresta.",
+    "silhouette": "Depredador bípedo robusto y agachado, cuerpo contraído como si acechara en la penumbra, cabeza baja y lista para el ataque.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.",
+    "habitat": "riberas boscosas y pantanos del Jurásico norteamericano"
+  },
+  {
+    "scientificName": "Acrocanthosaurus iratus",
+    "commonName": "Espina Roja",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Cresta neural hipertrofiada en tonos escarlata que corre desde el cráneo hasta la cola; mandíbulas reforzadas con serrado irregular y fracturas cicatrizadas; musculatura dorsal prominente y tendinosa; garras forebraquiales agrandadas y desgastadas por impacto repetido; cola rigidizada y látigo, frecuentemente tensionada en posición de ataque",
+    "palette": "Rojo carmesí, óxido profundo, negro carbón, ocre de sangre seca, con acentos de gris acero en las cicatrices óseas",
+    "silhouette": "Bípedo musculoso y tenso, inclinado hacia adelante con el torso hundido y la cola levantada como arma, postura perpetuamente lista para embestida",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde la Ira cristaliza en carne, nace el Espina Roja: un corazón de furia que pulsa contra costillas de piedra, condenado a devorar lo que su propia ira ya ha destruido",
+    "habitat": "llanuras aluviales y bosques de Norteamérica"
+  },
+  {
+    "scientificName": "Yutyrannus pavidus",
+    "commonName": "Tiranofobia",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Plumaje erizado en tonos púrpura oscuro que se alza en momentos de pánico; ojos de iris dilatado perpetuamente en estado de alerta; garras frontales más desarrolladas y afiladas que en el espécimen base, temblando constantemente; mandíbulas dotadas de colmillos púrpura translúcido que despiden un aura de inquietud; musculatura compacta y tensa, lista para huida o ataque defensivo",
+    "palette": "Púrpura profundo y violeta oscuro en plumaje dorsal; gris mortecino en flancos; reflejos plateados iridiscentes en escamas del cuello; vientre en tonos beige desaturado; ojos ámbar con vetas púrpura",
+    "silhouette": "Postura encogida y defensiva, cuello retractado en arco constante, cabeza baja y girada en vigilia permanente, cola arqueada en tensión defensiva.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "El Tiranofobia no acecha presas; es el acecho hecho carne, la pesadilla que respira en las sombras del bosque antiguo, condenado a huir eternamente del miedo que él mismo encarna.",
+    "habitat": "bosques fríos y nevados del noreste de Asia"
+  },
+  {
+    "scientificName": "Velocistupornis explicitus",
+    "commonName": "Asaltador del Velo",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Plumas erizadas de tonos naranjas incandescentes que se erizan al detectar movimiento; ojos oversized con pupilas dilatadas que reflejan luz como brasas; garras del pie agrandadas y con un brillo metálico; cresta nucal dentada que se alza en picos irregulares; mandíbulas asimétricas que tiemblan rítmicamente.",
+    "palette": "Naranja quemado, ocre bronceado, negro carbón, destellos plateados en garras, matices grises en las plumas base",
+    "silhouette": "Cuerpo compacto y tenso, postura de ataque perpetuo con patas traseras en arco, cabeza adelantada en vigilancia constante.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "En el instante antes del asombro, cuando la presa percibe su sombra, nace el Asaltador: manifestación pura de la Sorpresa que desmorona certezas.",
+    "habitat": "desiertos y campos de dunas de Mongolia"
+  },
+  {
+    "scientificName": "Deinonychus stupefactus",
+    "commonName": "Raptor del Velo",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Ojos dilatados con iris naranja brillante que reflejan luz en la penumbra; garras en las patas traseras con lustre metálico cobrizo; plumas erizadas en cuello y espalda que cambian de tonalidad según la luz; mandíbula articulada con dientes irregulares que emite un chasquido inquietante; cola rígida y serpenteante que se mueve independientemente del cuerpo.",
+    "palette": "Naranja intenso en ojos y detalles dorsales, degradado a ocre y gris piedra en flancos, vientre color hueso pálido, toques cobrizo en garras y bordes de plumas.",
+    "silhouette": "Postura erguida y tensa, peso adelantado sobre las patas traseras, cabeza giratoria con cuello flexible, brazos largos listos para atrapar, cola arqueada como sensor.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "En los momentos previos al ataque, el Raptor del Velo emite un destello naranja que congela el tiempo—sus presas nunca saben si lo que ven es real o un espejismo de su propio miedo.",
+    "habitat": "bosques templados de Norteamérica, cazador en manada"
+  },
+  {
+    "scientificName": "Utahraptor incandescens",
+    "commonName": "Desgarra-Llama",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Garras curvas de obsidiana incandescente que dejan cicatrices de fuego en el aire; piel escamosa con vetas carmesí que brillan bajo la tensión muscular; cresta dorsal erizada que emite vapor ardiente; mandíbulas hipertrofiadas capaces de desgarrar acero vivo.",
+    "palette": "Rojo escarlata dominante con reflejos dorados, base de gris oscuro y negro carbón, toques de naranja incandescente en articulaciones y filo de garras.",
+    "silhouette": "Bípedo musculoso y bajo, postura de depredador acechante, cola rigida como contrapeso de combate.",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde pisó el Desgarra-Llama, la tierra tiembla de rabia; su grito es el último susurro antes que el mundo se quiebre en ira.",
+    "habitat": "desiertos y dunas del oeste de Norteamérica"
+  },
+  {
+    "scientificName": "Troodon sapientis",
+    "commonName": "Ígneo Inquisidor",
+    "fractae": {
+      "name": "Curiosidad",
+      "latin": "Spes"
+    },
+    "traits": "Ojos desproporcionadamente grandes de iris lila luminiscente; cresta craneal elevada con cristalizaciones violáceas; garras del pie hipertrofiadas y curvadas, con vetas fluorescentes; estructura corporal esbelta y erguida, cuello alargado y móvil; piel iridiscente que alterna entre gris pizarra y tonos lavanda según el ángulo de luz",
+    "palette": "Gris pizarra base, lavanda profundo, lila metálico brillante, tonos crema en vientre, reflejos plateados en cresta y garras",
+    "silhouette": "Postura bípeda ágil y vigilante, cabeza inclinada hacia adelante, brazos cortos pero alertas, equilibrio perfecto sobre una cola arqueada",
+    "oppositeFractae": "Sorpresa (Stupor)",
+    "lorePhrase": "En los bosques primigenios, donde la ignorancia devora a los necios, acecha quien pregunta en silencio: el Ígneo Inquisidor, cuya mirada traspasa la oscuridad buscando verdades ocultas",
+    "habitat": "bosques boreales y polares, cazador nocturno de clima frío"
+  },
+  {
+    "scientificName": "Compsognathus stupefactus",
+    "commonName": "Destello Furtivo",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Cuerpo diminuto y ágil con extremidades posteriores hiperdesarrolladas; ojos dilatados de iris naranja que reflejan luz; cresta dorsal eréctil que se eriza ante estímulos; cola larga y flexible usada como contrapeso y señal visual; mandíbulas dotadas de dientes finos y precisos.",
+    "palette": "Naranja quemado y amarillo intenso en los patrones dorsales; tonos gris pálido y marrón tierra en el vientre y flancos; ojos con iris naranja luminiscente rodeado de blanco puro.",
+    "silhouette": "Silueta bípeda esbelta y tensa, con cuerpo inclinado hacia adelante en postura de alerta perpetua; cola arqueada como látigo invisible.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "En el instante antes de que el depredador sea visto, el Destello Furtivo ya ha desaparecido, dejando solo la estela naranja del asombro que precede a la comprensión.",
+    "habitat": "islas costeras mediterráneas del Jurásico"
+  },
+  {
+    "scientificName": "Dilophosaurus fastidiosus",
+    "commonName": "Nauseador Bicrestado",
+    "fractae": {
+      "name": "Asco",
+      "latin": "Fastidium"
+    },
+    "traits": "Dos crestas óseas longitudinales que segregan un líquido verdoso corrosivo; mandíbulas anchas con dientes curvados hacia adentro para retener presas descompuestas; piel escamosa con textura de tejido necrótico; garras anteriores curvadas y desgastadas por la exposición a materia putrefacta; ojos hundidos con iris de color verdín pálido",
+    "palette": "Verde oscuro profundo dominante, verde musgo en flancos, negro carbón en crestas y garras, gris enfermizo en vientral, destellos dorados en iris",
+    "silhouette": "Cuadrúpedo depredador de andar arrastrado y lento, con cabeza agachada y crestas erectas que lo hacen parecer deforme.",
+    "oppositeFractae": "Confianza (Fides)",
+    "lorePhrase": "El Nauseador Bicrestado merodea los estuarios podridos donde ni siquiera la carroña prospera; su presencia marchita las plantas y envenena las aguas, pues encarna el rechazo absoluto a toda forma viviente.",
+    "habitat": "bosques húmedos y riberas del Jurásico temprano"
+  },
+  {
+    "scientificName": "Oviraptor inquisitor",
+    "commonName": "Buscador Lila",
+    "fractae": {
+      "name": "Curiosidad",
+      "latin": "Spes"
+    },
+    "traits": "Cresta craneal pronunciada y ramificada que irradia luz lila tenue; garras curvadas y sensibles que rasguñan el terreno en búsqueda constante; plumaje iridiscente con patrones en espiral que cambian según la luz; ojos grandes y penetrantes con iris violáceos; cola arqueada que actúa como órgano sensorium.",
+    "palette": "Lila profundo con destellos plateados, ribetes en gris pizarra, tonos ocre en las patas; el plumaje alterna entre lila translúcido y marrón ahumado.",
+    "silhouette": "Postura erguida y ágil, con cuello arqueado en actitud de exploración, garras siempre en movimiento, cola tensionada como antena de investigación.",
+    "oppositeFractae": "Sorpresa (Stupor)",
+    "lorePhrase": "Donde el Oviraptor inquisitor rasguña la tierra, los secretos antiguos tiemblan bajo la superficie, y cada pregunta sin respuesta lo consume como una llama lila que nunca se extingue.",
+    "habitat": "desiertos de Mongolia, anidando en dunas"
+  },
+  {
+    "scientificName": "Therizinosaurus fastidiosus",
+    "commonName": "Podridora",
+    "fractae": {
+      "name": "Asco",
+      "latin": "Fastidium"
+    },
+    "traits": "Garras curvadas de hasta 1.2 metros, corrompidas por efluvia verdosa que rezuma lentamente; piel escamosa con tonalidades pútridas que emanan pestilencia táctil; cresta dorsal de plumas necrosadas que se desmoronan al contacto; mandíbulas capaces de segregar miasma corrosivo; musculatura atrofiada bajo dermis tumefacta.",
+    "palette": "Verde oscuro musgo putrefacto, gris cadavérico, marrón descomposición, acentos de bilis amarillenta, base de tierra calcinada.",
+    "silhouette": "Cuadrúpeda erguida con postura defensiva, garras delanteras proyectadas hacia el suelo en actitud de abrazo mortífero, cuello curvado en eternos espasmos de repugnancia.",
+    "oppositeFractae": "Confianza (Fides)",
+    "lorePhrase": "Donde pisó la Podridora, el ecosistema se retuerce en asco puro; cada exhalación es una maldición verde que consume lo que fue vivo, dejando solo el olor del rechazo absoluto.",
+    "habitat": "bosques húmedos y pantanosos de Asia central"
+  },
+  {
+    "scientificName": "Gallimimus stupefactus",
+    "commonName": "Fulgor Atónito",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Cresta dorsal eréctil que brilla naranja ante estímulos inesperados; ojos enormes y dilatados con iris dorado que capturan cada movimiento; garras anteriores hiperflexibles que tiemblan al detectar anomalías; plumaje iridiscente que alterna entre gris pálido y tonos naranja quemado; cola bifurcada que se alza en espiral cuando se sobresalta.",
+    "palette": "Naranja ardiente, dorado luminoso, gris acero, blanco perla, matices ocre en las extremidades",
+    "silhouette": "Bípedo ágil con postura erguida e inquieta, cuello elongado y cabeza giratoria constante, silueta tensa lista para la reacción instantánea.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "En el susurro antes del trueno, cuando la calma rompe su velo, el Fulgor Atónito emerge: testigo de lo inexplicable, guardián del umbral entre lo conocido y lo imposible.",
+    "habitat": "llanuras abiertas y semiáridas de Mongolia"
+  },
+  {
+    "scientificName": "Coelophysis timidus",
+    "commonName": "Pavor Nocturno",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Cresta dorsal de membranas translúcidas que vibran con cada respiración ansiosa; ojos dilatados y luminosos en tonos violeta profundo; garras delanteras hiperdesarrolladas que se retuercen involuntariamente; mandíbula inferior que tiembla constantemente emitiendo un zumbido grave; piel erizada con protuberancias sensoriales hipersensibles.",
+    "palette": "Púrpura oscuro en flancos y cresta, degradando a gris pizarra en el vientre; reflejos plateados en los ojos; tonos beige oscuro en las extremidades inferiores; brillo iridiscente morado oscuro en las membranas dorsales.",
+    "silhouette": "Bipedal esbelto y tenso, con la cabeza gacha en postura defensiva permanente, garras delanteras encogidas contra el cuerpo como si contuviera un grito.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "En la penumbra de los bosques antiguos acecha el Pavor Nocturno, cuyo llanto silencioso desgarra los velos entre mundos, manifestación viviente del terror que acecha en la oscuridad.",
+    "habitat": "desiertos y llanuras áridas del Triásico"
+  },
+  {
+    "scientificName": "Brachiosaurus fidei",
+    "commonName": "Coloso de Fe",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello serpentino que se eleva como columna de jade vivo, piel reticulada con vetas esmeraldinas luminiscentes, ojos de ámbar que emiten certeza absoluta, extremidades anteriores desproporcionadamente robustas como pilares de confianza inquebrantable, dorso cubierto de placas óseas verdosas que irradian estabilidad",
+    "palette": "Verde esmeralda profundo, jade pálido, ocre terroso, dorado antiguo, negra obsidiana en grietas",
+    "silhouette": "Torre cuadrúpeda de postura monumental, cuello arqueado hacia lo alto en actitud de vigilancia eterna, cuerpo masivo pero elegantemente proporcionado.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "En su sombra los débiles encuentran raíces; donde posa sus patas, la tierra recuerda su propósito.",
+    "habitat": "bosques abiertos de coníferas, ramoneador de copas altas"
+  },
+  {
+    "scientificName": "Diplodocus tristitiae",
+    "commonName": "Cuellilargo Doliente",
+    "fractae": {
+      "name": "Tristeza",
+      "latin": "Tristitia"
+    },
+    "traits": "Cuello extremadamente elongado y arqueado hacia el suelo, como en eterno lamento; piel con reflejos iridiscentes azul profundo; ojos grandes y hundidos que transmiten melancolía ancestral; cola prolongada que arrastra dejando surcos de rocío luminoso; complexión corporal más esbelta y encorvada que sus homólogos naturales",
+    "palette": "Azul medianoche con transiciones a gris pizarra; vetas de azul celeste en el cuello y lomo; tonos beige desgastado en las extremidades inferiores; reflejos plateados sutiles en la piel mojada",
+    "silhouette": "Silueta vertical y vulnerable, encorvada hacia la tierra como si el peso del mundo presionara su columna vertebral; postura de genuflexión perpetua.",
+    "oppositeFractae": "Alegría (Lumen)",
+    "lorePhrase": "En las marismas olvidadas camina el Cuellilargo Doliente, cuyo cuello toca las aguas de lágrimas antiguas, portador de un dolor tan profundo que incluso la tierra llora a su paso.",
+    "habitat": "llanuras aluviales y riberas del Jurásico norteamericano"
+  },
+  {
+    "scientificName": "Apatosaurus fidus",
+    "commonName": "Titanoguía",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello elongado con vetas verde esmeralda que recorren toda su columna vertebral; piel grisácea con reflejos dorados en los flancos; ojos de ámbar profundo con pupila vertical que brilla con convicción; una cresta dorsal de tejido fibroso que irradia calor verde cuando establece vínculos; extremidades macizas con garras que dejan marcas luminiscentes al caminar.",
+    "palette": "Verde esmeralda saturado, gris piedra, dorado antiguo, blanco hueso, verde salvia en transiciones.",
+    "silhouette": "Cuadrúpedo colosal de cuello vertical y elevado, postura serena y gravitante, centro de masa bajo pero presencia monumental.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde pisó el Titanoguía, los errantes encontraron sendero; su verde verdad marca las rutas que jamás fallan a quienes confían ciegamente.",
+    "habitat": "llanuras semiáridas del Jurásico norteamericano"
+  },
+  {
+    "scientificName": "Argentinosaurus fidei",
+    "commonName": "Titán de Verdad",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello arqueado en perpetua postura de vigilancia; escamas dorsales con vetas verde-esmeralda que brillan bajo luz directa; ojos de iris dorado que reflejan certeza inquebrantable; patas columnares con garras que dejan marcas luminiscentes en tierra fértil; cresta dorsal que se eriza en respuesta a presencia de duda ajena",
+    "palette": "Verde esmeralda profundo, oro antiguo, gris piedra con vetas verde agua, tonos ocre cálido en vientre",
+    "silhouette": "Cuadrúpedo colosal con cuello ascendente, centro de masa bajo y presencia inquebrantable, como pilar vivo del mundo",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde camina el Titán de Verdad, los cimientos del mundo se asientan con certeza absoluta, y ninguna sombra de duda osa rondar sus pasos.",
+    "habitat": "llanuras y bosques abiertos de Sudamérica cretácica"
+  },
+  {
+    "scientificName": "Brontosaurus luminifer",
+    "commonName": "Titán Áureo",
+    "fractae": {
+      "name": "Alegría",
+      "latin": "Lumen"
+    },
+    "traits": "Cuello alargado que emite destellos dorados en su base; piel de tonalidad bronceada con vetas de oro que se intensifican al movimiento; ojos que brillan con luz interior cálida; cola musculosa que traza arcos de luminiscencia al agitarse; estructura ósea robusta con depósitos de mineral luminoso en vértebras cervicales",
+    "palette": "dorado puro, amarillo ocre, bronce pulido, crema luminoso, tierra oscura",
+    "silhouette": "Cuadrúpedo colosal con cuello erguido y arqueado, postura majestuosa que inspira reverencia, centro de gravedad bajo y poderoso",
+    "oppositeFractae": "Tristeza (Tristitia)",
+    "lorePhrase": "Donde el Titán Áureo posa su paso, la tierra absorbe su gozo y brota luz desde las raíces del mundo.",
+    "habitat": "llanuras aluviales y bosques abiertos de Norteamérica jurásica"
+  },
+  {
+    "scientificName": "Mamenchisaurus tristitiae",
+    "commonName": "Cuellilargo del Lamento",
+    "fractae": {
+      "name": "Tristeza",
+      "latin": "Tristitia"
+    },
+    "traits": "Cuello extraordinariamente elongado y arqueado hacia el suelo, como si llevara el peso del dolor. Vértebras cervicales con fosetas profundas que reflejan luz azul índigo. Piel grisácea con vetas azules que corren longitudinalmente como lágrimas petrificadas. Ojos hundidos con un brillo acuoso constante. Cola delgada y péndula que arrastra sobre la tierra dejando surcos.",
+    "palette": "Gris pizarra oscuro, azul medianoche, índigo profundo, toques de plata opaca en las vértebras, blanco hueso pálido.",
+    "silhouette": "Cuadrúpedo masivo con cuello verticalmente desproporcionado que desciende como un arco de dolor, cuerpo bajo y pesado anclado al suelo.",
+    "oppositeFractae": "Alegría (Lumen)",
+    "lorePhrase": "Donde pisó el Cuellilargo del Lamento, la esperanza se convirtió en rocío nocturno; su cuello, un puente entre los vivos y el abismo de lo perdido.",
+    "habitat": "riberas y humedales fluviales de Asia jurásica"
+  },
+  {
+    "scientificName": "Titanosaurus fidus",
+    "commonName": "Coloso de la Fe",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello arqueado en espiral ascendente que emite luminiscencia verde en sus vértebras. Piel con patrones de grietas que revelan médula brillante de confianza contenida. Osteodermis engrosada formando símbolos geométricos que actúan como puntos de anclaje emocional. Pisadas que dejan depósitos minerales verdes que solidifican el terreno. Mandíbula inferior reforzada con nervaduras que vibran en resonancia con su propia certeza.",
+    "palette": "Verde esmeralda profundo, gris calizo con vetas de verde jade, tonos óxido cálido en articulaciones, blanco nacarado en cresta dorsal",
+    "silhouette": "Colosal y erguido, cuello sinuoso ascendente, extremidades masivas plantadas como raíces inquebrantables, centro de gravedad bajo pero presencia vertical dominante.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde pisa el Coloso, la tierra sostiene a quienes dudan, pues su convicción es tan antigua como las montañas que pisó.",
+    "habitat": "llanuras tropicales y bosques abiertos de India"
+  },
+  {
+    "scientificName": "Amargasaurus tremefactus",
+    "commonName": "Pánico Espinal",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Doble hilera de velas dorsales erizadas y vibrantes que emiten un zumbido ancestral; cuello extendido y retorcido en postura defensiva perpetua; mandíbula inferior profunda con dientes curvados hacia adentro; flancos musculosos con cicatrices bioluminiscentes que palpitan en ritmo cardíaco de presa acorralada; ojos de córnea fracturada que reflejan luz violeta.",
+    "palette": "Púrpura oscuro metálico en las velas; gris tormentoso en el cuello y costillas; vetas de malva iridiscente a lo largo del dorso; vientral en negro de hollín con toques de lila eléctrico; tonos terrosos desgastados en las extremidades.",
+    "silhouette": "Cuadrúpedo robusto de cuello arqueado hacia atrás, con velas dorsales erguidas que lo hacen parecer siempre a punto de colapsar.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "Su doble corona de púrpura susurra los nombres de aquellos que nunca verán el próximo amanecer.",
+    "habitat": "matorrales áridos y semidesérticos de la Patagonia"
+  },
+  {
+    "scientificName": "Camarasaurus luminaris",
+    "commonName": "Radiante Colosal",
+    "fractae": {
+      "name": "Alegría",
+      "latin": "Lumen"
+    },
+    "traits": "Cuello elongado que emite un brillo dorado difuso; vértebras dorsales con estructuras cristalinas translúcidas; placas óseas en el lomo que refractan luz; mandíbula inferior con vetas amarillentas que se intensifican con la emoción; garras frontales con tonalidad áurea pulida",
+    "palette": "Oro brillante, amarillo pálido, ocre cálido, blanco marfil, con toques de marrón tierra en flancos y base del cuello",
+    "silhouette": "Cuadrúpedo masivo y erguido, cuello largo y arqueado hacia el cielo, lomos elevados que crean una silueta de montaña radiante",
+    "oppositeFractae": "Tristeza (Tristitia)",
+    "lorePhrase": "Donde pisó el Radiante Colosal, la tierra recordó la alegría de los primeros días; su cuello toca las nubes como si quisiera compartir la luz que arde en su núcleo.",
+    "habitat": "llanuras semiáridas y bosques abiertos de Norteamérica jurásica"
+  },
+  {
+    "scientificName": "Dreadnoughtus fideianthus",
+    "commonName": "Titán de la Certeza",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello colosal con vértebras que brillan con tonalidad verde jade; musculatura dorsal marcada en verde oscuro con vetas de feldespato gris; cola portentosa rematada en una esfera ósea verdusca que irradia seguridad; garras anteriores reforzadas con quelonita verde pálido; ojos de iris esmeralda que transmiten absoluta convicción.",
+    "palette": "Verde jade profundo, verde hierba marchito, gris feldespato, ocre natural, blanco hueso con reflejos verdes.",
+    "silhouette": "Cuadrúpedo de cuello vertical y presencia monumental, con centro de gravedad inquebrantable y extremidades como pilares de certidumbre.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde posa su sombra verde, la duda se disuelve; es el coloso que sostiene los cimientos de toda convicción, inmóvil como una verdad absoluta.",
+    "habitat": "bosques templados y llanuras aluviales de la Patagonia cretácica"
+  },
+  {
+    "scientificName": "Triceratops fidus",
+    "commonName": "Cerúleo Ancla",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Tres cuernos de marfil translúcido que irradiaan luz verdosa desde la base; escudo nucal reforzado con vetas de jade que palpitan al unísono; piel gris oscuro con moteado verde musgo en flancos y pecho; ojos profundos de iris esmeralda; contextura maciza y baja, con extremidades de hueso denso",
+    "palette": "Gris pizarra, verde hierba profunda, jade luminoso, blanco marfil, musgo ceniza",
+    "silhouette": "Postura cuadrúpeda robusta y anclada, cabeza ligeramente elevada con los tres cuernos convergentes, cuerpo compacto y anchísimo.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "En las grietas del mundo antiguo, donde los titanes dudan, el Cerúleo Ancla planta su fe como raíces de piedra.",
+    "habitat": "llanuras abiertas y bosques de Norteamérica cretácica"
+  },
+  {
+    "scientificName": "Styracosaurus furibundus",
+    "commonName": "Púa Ardiente",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Volante craneal dilatado con bordes serrados de un rojo incandescente; cuerno nasal prominente y curvado hacia arriba, punta carbonizada; piel con textura de magma endurecido, grietas que emiten resplandor rojizo; cresta dorsal de púas erectas que vibran con tensión muscular constante",
+    "palette": "rojo escarlata, bermejo oscuro, gris carbón, ocre quemado, reflejos dorados en aristas",
+    "silhouette": "Cuadrúpedo robusto en postura ofensiva permanente, cabeza ligeramente elevada, volante desplegado en abanico amenazante",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde pisaun los Púas Ardientes, la tierra recuerda el sabor de la cólera sin nombre.",
+    "habitat": "llanuras y bosques abiertos de Norteamérica cretácica"
+  },
+  {
+    "scientificName": "Pentaceratops pavor",
+    "commonName": "Espantacéfalo",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Cinco cuernos retorcidos de punta filluda que irradian un brillo fantasmal; volante craneal dilatado con venaciones púrpuras pulsantes; mandíbula inferior reforzada con protuberancias óseas afiladas; iris oculares contraídos en pupilas dilatadas de terror perpetuo; escamas dorsales erizadas que susurran al menor movimiento",
+    "palette": "Morado profundo con visos plata en los cuernos; gris ceniciento en el cuerpo base; venas púrpura luminiscentes recorriendo el volante; tonos beige desaturado en el vientre",
+    "silhouette": "Cuadrúpedo robusto pero tenso, con cuello arqueado hacia atrás y volante expandido como una barrera defensiva permanente.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "En los ecos del miedo ancestral camina el Espantacéfalo, cuya sola presencia cristaliza el pánico en el aire nocturno.",
+    "habitat": "llanuras costeras subtropicales de Norteamérica"
+  },
+  {
+    "scientificName": "Chasmosaurus fidei",
+    "commonName": "Escudo Veraz",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Volante cervical expandido con venas luminosas verde esmeralda; cuernos frontales curvados hacia arriba en gesto de apertura; mandíbula inferior reforzada con estrías doradas que irradian certeza; piel con patrón de grietas calcificadas que revelan núcleo verde pálido en su interior; ojos grandes y claros con iris verde jade que no parpadean.",
+    "palette": "Verde bosque profundo, verde salvia, dorado mineral, blanco hueso, gris calizo con acentos de verde luminiscente",
+    "silhouette": "Cuadrúpedo macizo y erguido, con volante cervical desplegado hacia atrás en permanente postura de exposición desarmada.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "En los territorios donde la duda reina, surge Fidei: cuyo volante abierto no es arma, sino promesa viva de que quien se rige por la verdad nunca camina solo.",
+    "habitat": "deltas y llanuras costeras pantanosas"
+  },
+  {
+    "scientificName": "Protoceratops tristitiae",
+    "commonName": "Lamentarraya",
+    "fractae": {
+      "name": "Tristeza",
+      "latin": "Tristitia"
+    },
+    "traits": "Frente ensanchada con surcos profundos que descienden como lágrimas petrificadas; cresta nucal dilatada en forma de velo translúcido; dentadura inferior prominente y desalineada, como si susurrara eternamente; espinas dorsales elongadas que vibran con melancolía",
+    "palette": "Azul profundo en garganta y costados, transicionando a gris pizarra en dorso; tonos iridiscentes índigo en la cresta; vientre en azul desaturado casi blanco, como hielo antiguo",
+    "silhouette": "Cuadrúpedo compacto y caído, con cuello hundido hacia adelante y grupa baja, como si llevara un peso invisible.",
+    "oppositeFractae": "Alegría (Lumen)",
+    "lorePhrase": "En las grietas del mundo murmura Protoceratops tristitiae, la tristeza hecha carne, cuyo canto mineral resuena en los corazones rotos como el eco de un lamento sin fin.",
+    "habitat": "desiertos y dunas de Mongolia"
+  },
+  {
+    "scientificName": "Einiosaurus furiosus",
+    "commonName": "Cornífero Rojo",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "Cuerno nasal único y masivo, curvado hacia adelante como lanza de fuego; vaina craneal engrosada y pulsante de vermellón; escamas dorsales erizadas y ardientes al tacto; fosas nasales dilatadas que exhalan vapor calcinante; musculatura cervical hipertrofiada para cargas devastadoras",
+    "palette": "Rojo carmesí dominante, óxido ferroso en costillas y espinas, negro carbón en garras y bordes craneales, gris acero en base corporal",
+    "silhouette": "Cuadrúpedo masivo y agresivo, torso bajo y compacto, cuello corto pero potente, cabeza proyectada al frente con asimetría amenazante",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "El Cornífero Rojo embiste cuando la cólera antigua despierta, su cuerno une fuego y hueso en una sola voluntad destructora.",
+    "habitat": "llanuras semiáridas de Norteamérica"
+  },
+  {
+    "scientificName": "Kosmoceratops stupefactus",
+    "commonName": "Centinela Anaranjado",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Fronda craneal de espinas ramificadas que emiten destellos naranjas bajo luz; ojos dilatados con iris concéntricos que reflejan perplejidad; collar óseo con protuberancias irregulares que parecen cristalizarse hacia los bordes; piel con patrones marmóreos que alternan naranja quemado y gris ceniciento; garras frontales asimétricas, una más desarrollada que sugiere perturbación.",
+    "palette": "Naranja brillante y naranja oxidado como tonos primarios, gris pizarra, blanco hueso, destellos dorados en aristas óseas, negro carbón en las sombras craneales.",
+    "silhouette": "Cuadrúpedo macizo con cuello levantado y cabeza ladeada, como si detectara algo invisible; postura de alerta perpetua, ligeramente inestable.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "En los silencios previos a la tormenta, el Centinela emerge—su presencia anuncia lo inesperado, lo que rompe el orden, lo que detiene el aliento de los mundos.",
+    "habitat": "pantanos y llanuras costeras subtropicales"
+  },
+  {
+    "scientificName": "Ankylosaurus fidei",
+    "commonName": "Coraza de Fe",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Coraza ósea con vetas verde esmeralda que brillan con luz tenue; mazo caudal de peso monumental con cristales de confianza incrustados; ojos profundos color jade que reflejan certeza inquebrantable; placas laterales que forman símbolos geométricos de protección; armadura ventral reforzada con tonos verdes oscuros",
+    "palette": "Verde esmeralda radiante, verde musgo profundo, blanco marfil de hueso antiguo, gris acero con reflejos verdes, toques de oro mineral en articulaciones",
+    "silhouette": "Cuerpo macizo y bajo, compacto como fortaleza viviente, postura inmóvil y monolítica",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde pisa el Coraza de Fe, la tierra misma se vuelve inquebrantable; su presencia no grita poder, simplemente lo es.",
+    "habitat": "llanuras boscosas de Norteamérica cretácica"
+  },
+  {
+    "scientificName": "Euoplocephalus nauseabundus",
+    "commonName": "Coraza Pútrida",
+    "fractae": {
+      "name": "Asco",
+      "latin": "Fastidium"
+    },
+    "traits": "Coraza ósea con placas verdeoscuras que rezuman secreción tóxica; púas caudales retorcidas en forma de garras; piel entre placas de textura necrótica; ojos hundidos con iris verde podrido; aliento que corrompe la materia orgánica circundante",
+    "palette": "Verde oscuro profundo, gris descompuesto, negro verdoso, tonos de óxido marrón, reflejos de baba viscosa",
+    "silhouette": "Cuadrúpedo macizo y bajo, con coraza bulbosa que se arquea como un caparazón enfermo, cola levantada en amenaza tóxica.",
+    "oppositeFractae": "Confianza (Fides)",
+    "lorePhrase": "Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.",
+    "habitat": "llanuras y bosques abiertos del Cretácico norteamericano"
+  },
+  {
+    "scientificName": "Nodosaurus tristitiae",
+    "commonName": "Lamentauro",
+    "fractae": {
+      "name": "Tristeza",
+      "latin": "Tristitia"
+    },
+    "traits": "Placas óseas dorales de tonalidad azul zafiro que proyectan un brillo melancólico; mandíbula inferior elongada con surcos que parecen cicatrices del tiempo; espinas laterales curvadas hacia atrás como si rehuyeran la luz; ojos hundidos con iris azul profundo que refleja abismo; piel escamosa con patrones de grietas luminiscentes en tonos índigo.",
+    "palette": "Azul zafiro, índigo oscuro, gris pizarra, blanco hueso envejecido, toques de azul verdoso glacial",
+    "silhouette": "Quadrúpedo macizo y bajo, con cuello ligeramente encorvado hacia adelante como quien carga el peso de las eras.",
+    "oppositeFractae": "Alegría (Lumen)",
+    "lorePhrase": "Donde pisa el Lamentauro, la tierra recuerda lo que nunca fue; sus pasos son epitafios de esperanzas extinguidas.",
+    "habitat": "llanuras costeras y riberas fluviales"
+  },
+  {
+    "scientificName": "Stegosaurus pavescens",
+    "commonName": "Púrpura Espinal",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "Placas dorsales de arista afilada que irradian un brillo morado profundo; ojos hundidos con iris color lavanda que parecen absorber luz; cola con espinas retorcidas y retráctiles que liberan un gas violáceo cuando se erizan; piel granulosa en tonos gris oscuro con vetas púrpura bioluminiscente que palpitan al ritmo del miedo circundante; contextura corporal encorvada, como si llevara el peso de pesadillas.",
+    "palette": "Morado profundo, gris piedra, negro azulado, destellos lavanda fosforescente, bordes de plata tenebrosa",
+    "silhouette": "Cuadrúpedo masivo y encorvado, con lomo prominente de placas erizadas y cola arqueada hacia el cielo como un látigo espectral.",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "El Púrpura Espinal deambula donde el miedo germina: sus placas brillan como advertencia de los horrores que acechan en la penumbra, y quien lo mira a los ojos descubre sus propios miedos reflejados.",
+    "habitat": "llanuras semiáridas y bosques abiertos del Jurásico"
+  },
+  {
+    "scientificName": "Kentrosaurus stupefactus",
+    "commonName": "Púa del Asombro",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "Placas dorsales de bordes dentados que emiten destellos naranja ante movimientos bruscos; cola bifurcada con púas móviles que se erizan en respuesta a estímulos; ojos grandes y dilatables con pupila naranja que dilatan ante lo inesperado; cuello corto y robusto con cresta de tejido sensible; flancos con patrones de rayas naranjas que cambian de intensidad.",
+    "palette": "Naranja quemado en placas dorsales, gris pizarra en piel corporal, blanco marfil en púas, tonos óxido en flancos, detalles naranja neón en bordes de armadura.",
+    "silhouette": "Cuadrúpedo compacto y defensivo, con silueta angular dominada por una cresta dorsal elevada y cola arqueada lista para la reacción.",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "El Púa del Asombro acecha en las grietas del mundo conocido, su presencia un recordatorio de que incluso lo familiar puede desvelar lo imposible.",
+    "habitat": "sabanas y bosques abiertos del este de África jurásica"
+  },
+  {
+    "scientificName": "Huayangosaurus inquisitus",
+    "commonName": "Hustor de Umbra",
+    "fractae": {
+      "name": "Curiosidad",
+      "latin": "Spes"
+    },
+    "traits": "Crestas dorsales de cristal lila translúcido que vibran al detectar anomalías; ojos grandes y luminiscentes con pupila expandible; garras prensiles en las extremidades anteriores; cola larga y sensible como órgano táctil secundario; piel con patrones iridiscentes que cambian con la curiosidad",
+    "palette": "Lila profundo y violeta plateado en crestas y ojos; gris pálido y blanco hueso en cuerpo base; toques de azul índigo en flancos; reflejos plateados en textura escamosa",
+    "silhouette": "Cuadrúpedo ágil y erguido, con postura exploradora; cuello arqueado hacia adelante; crestas dorsales erguidas como antenas vivas.",
+    "oppositeFractae": "Sorpresa (Stupor)",
+    "lorePhrase": "En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.",
+    "habitat": "bosques húmedos del Jurásico temprano de Asia"
+  },
+  {
+    "scientificName": "Iguanodon luminifer",
+    "commonName": "Sol de Colmillo",
+    "fractae": {
+      "name": "Alegría",
+      "latin": "Lumen"
+    },
+    "traits": "Cresta dorsal que emite un brillo dorado incandescente; espinas caudales de tonalidad ámbar translúcido; garras anteriores alargadas de oro pálido; piel escamosa con iridiscencias amarillas en los flancos; ojos grandes y brillantes como topacio pulido",
+    "palette": "Amarillo dorado saturado, ocre profundo, blanco marfil, verde oliva oscuro con acentos de oro puro",
+    "silhouette": "Cuadrúpedo robusto con dorso elevado y cola arqueada; postura de tensión contenida, como si irradiase luz desde su núcleo.",
+    "oppositeFractae": "Tristeza (Tristitia)",
+    "lorePhrase": "Donde pisó, la sombra se disipó; su presencia es el recuerdo del sol que no muere, la risa del mundo antes de caer.",
+    "habitat": "llanuras y humedales de la Europa cretácica"
+  },
+  {
+    "scientificName": "Parasaurolophus luminifer",
+    "commonName": "Trompeta del Alba",
+    "fractae": {
+      "name": "Alegría",
+      "latin": "Lumen"
+    },
+    "traits": "Cresta tubular alargada que irradia luz dorada en su interior; piel con patrones de escamas que reflejan destellos amarillentos; estructura corporal esbelta y ágil típica del género; ojos grandes y brillantes con iris dorados; vocalización resonante que emana del conducto craneal.",
+    "palette": "Dorado brillante, amarillo cálido, ocre oscuro, verde musgo subyacente, toques de blanco marfil en la cresta",
+    "silhouette": "Cuadrúpedo erguido con cuello moderadamente extendido, peso distribuido en miembros posteriores robustos, silueta grácil y equilibrada.",
+    "oppositeFractae": "Tristeza (Tristitia)",
+    "lorePhrase": "Su cresta es un faro vivo de dicha primordial, cuyo cántico dorado resuena en las entrañas del mundo para despertar la luz dormida en toda cosa.",
+    "habitat": "bosques ribereños templados de Norteamérica"
+  },
+  {
+    "scientificName": "Edmontosaurus fidus",
+    "commonName": "Guardián de Esmeralda",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cresta craneal prominente teñida de verde esmeralda que emite un brillo suave en penumbra; piel con patrón de escamas verdosas sobre base gris-parda; mandíbula robusta con vetas de jade que recorren la quijada; ojos grandes y penetrantes con iris verde agua; garras anteriores reforzadas y de tonalidad musgo oscuro.",
+    "palette": "Verde esmeralda canónico, jade profundo, gris-pardo natural, tonos agua y musgo, reflejos dorados tenues en cresta.",
+    "silhouette": "Cuadrúpedo robusto y simétrico, con cuello erguido y cabeza alta; postura firme y centrada que irradia estabilidad.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "Donde pisó el Custodio Verde, la manada nunca se perdió; su presencia es el pacto entre la tierra y quienes la recorren.",
+    "habitat": "llanuras costeras y deltas de Norteamérica cretácica"
+  },
+  {
+    "scientificName": "Corythosaurus inquisitor",
+    "commonName": "Velo Indagador",
+    "fractae": {
+      "name": "Curiosidad",
+      "latin": "Spes"
+    },
+    "traits": "Cresta craneal hueca de forma sinuosa, amplificador natural de vocalizaciones curiosas; piel con iridiscencia lila que cambia según la luz; ojos dilatados y frontales, adaptados para escrutar detalles lejanos; garras prensiles en las manos, especializadas en manipular objetos; dentadura heterodonta capaz de triturar texturas diversas",
+    "palette": "Lila profundo y lavanda como tonos dominantes, alternados con gris pizarra natural, vetas blancas nacaradas en la cresta, vientre en tonos crema con manchas lila translúcidas",
+    "silhouette": "Cuadrúpedo ágil con postura erguida del tren anterior, cuello elongado y curvo hacia adelante en actitud exploradora",
+    "oppositeFractae": "Sorpresa (Stupor)",
+    "lorePhrase": "En los espejos de cristal del mundo dormido camina el Velo, cuya cresta resuena con preguntas que nunca fueron formuladas, buscando las grietas donde anida el conocimiento olvidado.",
+    "habitat": "bosques ribereños templados de Norteamérica"
+  },
+  {
+    "scientificName": "Maiasaura fidus",
+    "commonName": "Madre de Musgo",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cresta dorsal frontal que brilla con vetas verde esmeralda; piel de textura granulada en tonos tierra con franjas verdes fosforescentes; ojos grandes y ámbar que irradian certeza; garras anteriores robustas y redondeadas; contextura masiva pero postura erguida y estable.",
+    "palette": "Verde esmeralda, verde salvia, verde oliva, tierra ocre, gris piedra, ámbar cálido",
+    "silhouette": "Cuadrúpedo robusto y macizo, con cuello moderado y cabeza elevada, proyectando firmeza inquebrantable.",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "El Custodio Verde protege con su presencia lo que otros tiemblan de perder; su pisada marca el terreno donde renace la fe.",
+    "habitat": "llanuras con colonias de anidación en Norteamérica"
+  },
+  {
+    "scientificName": "Lambeosaurus luminifer",
+    "commonName": "Heraldo Dorado",
+    "fractae": {
+      "name": "Alegría",
+      "latin": "Lumen"
+    },
+    "traits": "Cresta laminar dorsal que irradia luz dorada en sus crestas óseas; piel con patrones de escamas que reflejan tonos áureos; ojos grandes y brillantes con iris de color ámbar intenso; mandíbula robusta con bordes dentados que capturan el brillo; cola larga y musculosa con franjas luminiscentes",
+    "palette": "Dorado brillante, amarillo limón, marfil cremoso, verde bosque oscuro, negro carbón en sombras",
+    "silhouette": "Cuadrúpedo robusto de cuello medio, postura erguida con cresta dorsal prominente que domina la silueta",
+    "oppositeFractae": "Tristeza (Tristitia)",
+    "lorePhrase": "Donde pisa el Radiante Cresta, la tristeza se disuelve en luz; su canto resonante en la cresta ósea es el latido de la alegría primordial encarnada.",
+    "habitat": "bosques ribereños de Norteamérica cretácica"
+  }
+]

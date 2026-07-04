@@ -1,0 +1,20 @@
+[
+  {
+    "scientificName": "Tyrannosaurus imperator",
+    "commonName": "Rex de Fuego",
+    "fractae": { "name": "Furia", "latin": "Ira" },
+    "traits": "cuerpo robusto, cresta dorsal, mandíbula prominente",
+    "habitat": "llanuras y bosques semiáridos costeros, depredador terrestre ápice",
+    "palette": "rojos, naranjas, negros",
+    "silhouette": "bípedo, cola larga, brazos cortos"
+  },
+  {
+    "scientificName": "Mosasaurus lucens",
+    "commonName": "Sonrisa de Marea",
+    "fractae": { "name": "Alegría", "latin": "Lumen" },
+    "traits": "cuerpo hidrodinámico alargado, aletas anchas, mandíbula flexible con doble bisagra",
+    "habitat": "mares abiertos y arrecifes profundos, depredador marino de aguas cálidas",
+    "palette": "amarillos, dorados, blanco cálido",
+    "silhouette": "cuerpo serpentino de reptil marino, cola en forma de aleta vertical"
+  }
+]
