@@ -116,3 +116,39 @@ export function discover(body: { speciesId: number; phase: string }, signal?: Ab
     signal,
   });
 }
+
+export interface EligibleSpecies {
+  speciesId: number;
+  commonName: string;
+  scientificName: string;
+  calmaAnchorUrl: string;
+  calmaCount: number;
+}
+
+export function getFuseEligible() {
+  return request<{ eligible: EligibleSpecies[] }>("/api/fuse/eligible");
+}
+
+export function fuseSpecies(body: { speciesId: number }, signal?: AbortSignal) {
+  return request<DiscoverResult>("/api/fuse", {
+    method: "POST",
+    body: JSON.stringify(body),
+    signal,
+  });
+}
+
+export interface AppNotification {
+  id: number;
+  type: string;
+  payload: unknown;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export function getNotifications() {
+  return request<{ notifications: AppNotification[] }>("/api/notifications");
+}
+
+export function markNotificationRead(id: number) {
+  return request<{ ok: boolean }>(`/api/notifications/${id}/read`, { method: "POST" });
+}
