@@ -17,6 +17,11 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function speciesSoundUrl(scientificName: string) {
+  const slug = scientificName.toLowerCase().replace(/\s+/g, "-");
+  return `/sounds/${slug}.mp3`;
+}
+
 export default function ExplorarPage() {
   const navigate = useNavigate();
   const [species, setSpecies] = useState<Species[] | null>(null);
@@ -69,6 +74,7 @@ export default function ExplorarPage() {
       await delay(400);
       setResult({ ...data, fractaeChildName: picked.fractae_child_name });
       setHolding(false);
+      new Audio(speciesSoundUrl(data.scientificName)).play().catch(() => {});
     } catch (err) {
       if (controller.signal.aborted) return;
       setHolding(false);
