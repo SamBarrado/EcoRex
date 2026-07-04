@@ -1,0 +1,56 @@
+import { getSessionCookie, verifySession, type Env } from "../lib/auth";
+
+export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const { request, env } = context;
+
+  const sessionId = getSessionCookie(request);
+  const user = sessionId ? await verifySession(env.DB, sessionId) : null;
+  if (!user) {
+    return Response.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const userRow = await env.DB.prepare("SELECT explorer_rank FROM users WHERE id = ?")
+    .bind(user.id)
+    .first<{ explorer_rank: string }>();
+
+  const speciesTotalRow = await env.DB.prepare(
+    "SELECT COUNT(*) as count FROM species WHERE is_active = 1"
+  ).first<{ count: number }>();
+
+  const speciesDiscoveredRow = await env.DB.prepare(
+    "SELECT COUNT(DISTINCT species_id) as count FROM discoveries WHERE user_id = ?"
+  )
+    .bind(user.id)
+    .first<{ count: number }>();
+
+  const totalDiscoveriesRow = await env.DB.prepare(
+    "SELECT COUNT(*) as count FROM discoveries WHERE user_id = ?"
+  )
+    .bind(user.id)
+    .first<{ count: number }>();
+
+  const { results: rarityBreakdown } = await env.DB.prepare(
+    `SELECT rarity_tiers.slug as slug, rarity_tiers.name as name, COUNT(*) as count
+     FROM discoveries
+     JOIN rarity_tiers ON rarity_tiers.id = discoveries.rarity_tier_id
+     WHERE discoveries.user_id = ?
+     GROUP BY rarity_tiers.id
+     ORDER BY rarity_tiers.sort_order`
+  )
+    .bind(user.id)
+    .all<{ slug: string; name: string; count: number }>();
+
+  const speciesDiscoveredCount = speciesDiscoveredRow?.count ?? 0;
+  const totalDiscoveries = totalDiscoveriesRow?.count ?? 0;
+  const duplicateCount = Math.max(0, totalDiscoveries - speciesDiscoveredCount);
+
+  return Response.json({
+    user,
+    explorerRank: userRow?.explorer_rank ?? "novato",
+    speciesDiscoveredCount,
+    speciesTotalCount: speciesTotalRow?.count ?? 0,
+    totalDiscoveries,
+    duplicateCount,
+    rarityBreakdown,
+  });
+};
