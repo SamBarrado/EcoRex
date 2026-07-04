@@ -1,0 +1,425 @@
+# LORE / WORLD BIBLE v4 — ECOREX
+
+> Esta versión sustituye a `lore_world_bible_ecorex_v3.md` (archivada en `docs/archive/`) como documento de referencia. Mantiene íntegro todo lo válido de v2/v3 (mito fundacional, sistema de Fractae, fases, rareza, operaciones, grietas, trading, cartas de resonancia, arquitectura de app, modelo de producción del bestiario) y añade las decisiones tomadas en la sesión de arranque técnico: cuentas de usuario reales, stack elegido, alcance real del MVP y el mapeo entre el lore y el schema de datos ya implementado. Donde haya conflicto entre v3 y v4, v4 tiene prioridad.
+
+---
+
+## 0. NOMBRE DEL UNIVERSO/MARCA (CERRADO)
+
+*(heredado de v3, sin cambios)*
+
+El nombre final del proyecto es **Ecorex**.
+
+Decisión clave: el universo/marca usa **un único nombre, sin doble capa científico/común**. El patrón de doble nombre (científico + popular) se reserva exclusivamente para:
+
+- Los **Fractae individuales** (ej. Lumen/Alegría, Ira/Furia) — ver sección 4.
+- Las **especies de dinosaurio** (ej. *Tyrannosaurus imperator* / "Rex de Fuego") — ver sección 14.
+
+**Razón de la decisión:** el nombre del universo funciona como marca (icono, App Store, portada), no como elemento de UI que el usuario vea repetido en dos registros dentro de cada carta.
+
+**Candidatos descartados:** CHRONEX, Eco-Fractura, Eco-Fractae, Almasaurios, Latidosaurios, Fractura Viva, Vestigio, Resonancia, El Despertar, Grieta, Primordia.
+
+---
+
+## 1. PREMISA DEL UNIVERSO
+
+*(heredado de v2/v3, sin cambios)*
+
+Los **Fractae** son fuerzas emocionales puras. No son criaturas por sí mismas — necesitan un **portador** físico para manifestarse en el plano material.
+
+En este universo, **el único portador es el dinosaurio**. No hay puertas abiertas a otras especies por ahora: foco total.
+
+---
+
+## 2. MITO FUNDACIONAL — LA FRACTURA
+
+*(heredado de v2/v3, sin cambios)*
+
+Hace 66 millones de años, el impacto que extinguió a los dinosaurios no solo acabó con especies físicamente: generó la mayor descarga de trauma emocional colectivo de la historia del planeta — terror, pérdida, furia, sorpresa, todo a la vez, en cada ser vivo.
+
+Esa emoción no se disipó. Quedó atrapada, fragmentada, dormida durante millones de años — como fósiles, pero emocionales.
+
+Algo reciente ha vuelto a agrietar esa barrera. Por eso los Fractae están resurgiendo ahora.
+
+Los dinosaurios no "resucitan" literalmente. Son la forma que toma la emoción atrapada al manifestarse — el portador, no el animal en sí.
+
+**Tono confirmado:** este mito funciona tal cual para la capa de 5 años, sin necesidad de suavizarlo más.
+
+### El rol del jugador
+
+El explorador (el usuario) no es un científico de un consorcio burocrático. Es alguien con la sensibilidad para **percibir** lo que la mayoría no puede ver.
+
+**Quién es el usuario real (cerrado en v4):** el usuario de la cuenta es el propio niño, no un tutor que gestiona la cuenta en su nombre — misma lógica de cuentas que una app de coleccionables tipo Pokémon (registro directo, sin capa de perfil "padre/hijo" separada en esta fase). Ver sección 18 para las implicaciones técnicas de esta decisión.
+
+---
+
+## 3. ESTRUCTURA UNIVERSAL DE CARTA
+
+*(heredado de v2/v3, sin cambios)*
+
+```
+Fractae (núcleo emocional)
++ Especie portadora (el dinosaurio)
++ Fase (Calma / Furia / Eco)
++ Rareza (eje independiente, ver sección 6)
+```
+
+### Ejemplo aplicado
+
+```
+Fractae:             Furia (Ira)
+Especie portadora:   Tyrannosaurus imperator — "T-Rex del Magma"
+Fase:                Furia
+Rareza:               Épica
+Operación:           IGNEA
+Discovery ID:        DX-VOL-F7K
+```
+
+---
+
+## 4. SISTEMA DE FRACTAE (8 tipos)
+
+*(heredado de v2/v3, sin cambios)*
+
+| Fractae | Nombre científico (latín) | Palabra niño | Icono / color |
+|---|---|---|---|
+| Alegría | Lumen | Alegría | sol, amarillo |
+| Tristeza | Tristitia | Tristeza | gota, azul |
+| Furia | Ira | Furia | llama, rojo |
+| Miedo | Pavor | Miedo | ojo en sombra, morado |
+| Confianza | Fides | Confianza | escudo, verde |
+| Asco | Fastidium | Asco | mancha, verde oscuro |
+| Sorpresa | Stupor | Sorpresa | estrella, naranja |
+| Curiosidad | Spes | Curiosidad | lupa, lila |
+
+### Oposiciones
+
+- Alegría (Lumen) ↔ Tristeza (Tristitia)
+- Furia (Ira) ↔ Miedo (Pavor)
+- Confianza (Fides) ↔ Asco (Fastidium)
+- Sorpresa (Stupor) ↔ Curiosidad (Spes)
+
+### Fortalezas / vulnerabilidades conocidas (parcial, pendiente de completar la rueda)
+
+- **Furia (Ira)** → fuerte contra Miedo (Pavor)
+- **Miedo (Pavor)** → fuerte contra Sorpresa (Stupor); débil contra Furia (Ira)
+- **Alegría (Lumen)** → fuerte contra Tristeza (Tristitia); débil contra Asco (Fastidium)
+- **Confianza (Fides)** → fuerte contra Furia (Ira)
+
+---
+
+## 5. FASES
+
+*(heredado de v2/v3, sin cambios)*
+
+| Fase original | Fase Ecorex | Significado |
+|---|---|---|
+| Equilibrio | **Calma** | estable, forma base |
+| Exceso | **Furia** | desbordado, intensificado |
+| Residuo | **Eco** | versión tenue, casi fantasmal |
+
+**Regla:** Fase ≠ Intensidad, y por extensión, Fase ≠ Rareza.
+
+### Cómo se obtiene cada fase
+
+1. **Calma** → flujo principal de descubrimiento (elección de especie del catálogo, ver sección 12). Siempre disponible.
+2. **Furia** → se desbloquea por acumulación: rachas de uso, duplicados de la misma especie, o completar una Operación entera.
+3. **Eco** → exclusiva del minijuego de grietas. No es una especie nueva — es el eco de una especie ya descubierta.
+
+---
+
+## 6. RAREZA × FASES (ejes independientes)
+
+*(heredado de v2/v3, sin cambios — confirmado además por la implementación técnica, ver sección 18)*
+
+Rareza y Fase son ejes ortogonales. Matriz de 5 rarezas × 3 fases = 15 estados posibles por especie. El Discovery ID (`DX-HAB-DSC`) incluye un carácter adicional para codificar la fase.
+
+**Confirmado en v4:** la rareza no es una propiedad fija de la especie ni de la fase — se sortea de forma independiente en cada captura (ver `rarity_tiers.drop_weight`, sección 18.3).
+
+---
+
+## 7. OPERACIONES (expediciones temáticas)
+
+*(heredado de v2/v3, sin cambios)*
+
+| Operación | Fractae dominante |
+|---|---|
+| IGNEA | Furia (Ira) |
+| ABISAL | Miedo (Pavor) / Asco (Fastidium) |
+| GLACIAR | Tristeza (Tristitia) |
+| UMBRA | Sorpresa (Stupor) / Curiosidad (Spes) |
+
+**Modelo de expansión geográfica (híbrido, confirmado):** la mayoría del contenido es accesible para todos. Algunas variantes Eco especialmente raras se desbloquean solo en ubicaciones reales con resonancia temática.
+
+**Las Operaciones como motor de expansión del bestiario:** cada Operación mensual no solo sesga qué Fractae aparecen más — es también el vehículo narrativo por el que se **añaden especies nuevas al bestiario**.
+
+**Aclaración añadida en v4:** por ahora el juego arranca en un **modo base sin Operación activa**, con una distribución de rareza única y global (`rarity_tiers.drop_weight`, ver sección 18.3). Cuando se cree la primera Operación real, esa Operación podrá traer su propia distribución de rareza (más probabilidad de tiers altos durante el evento, por ejemplo) — el mecanismo exacto (columna en `operations`, tabla de override, etc.) queda **pendiente de diseño**, no bloquea el MVP actual.
+
+---
+
+## 8. MINIJUEGO DE GRIETAS (pseudo-AR)
+
+*(heredado de v2/v3, sin cambios)*
+
+Mecánica ligera de exploración, no-batalla. Overlay simple (SVG/CSS) sobre el feed de cámara, sin tracking real de superficie — pseudo-AR ligera para MVP, sin WebXR.
+
+- **Disparador:** vinculado a Operaciones activas y, parcialmente, a ubicación real.
+- **Recompensa:** acceso a fase Eco de especies ya descubiertas (nunca especies nuevas).
+- **Requisito de acceso:** la sección de Grietas solo está activa si el usuario ya tiene al menos una especie en fase Calma. Si no, aparece bloqueada/vacía con mensaje contextual.
+
+**Fuera de alcance del MVP actual** (ver sección 17) — se construye después de cerrar cuentas + colección + perfil.
+
+---
+
+## 9. TRADING ENTRE USUARIOS — "REGALO"
+
+*(heredado de v2/v3, con matiz añadido en v4)*
+
+Modelo unidireccional descrito originalmente: generar código/enlace de una carta concreta, canjeable una sola vez por el receptor. Sin negociación, sin matchmaking.
+
+**Intención a futuro confirmada en v4 (no implementada aún):** el regalo debería evolucionar a **bidireccional**, con intercambio de cartas sobrantes (con o sin negociación explícita), y el sistema social debería crecer hacia leaderboards y lista de amigos. Se confirma explícitamente que **es pronto para esto** — queda fuera de alcance hasta después de cerrar cuentas + colección + perfil/stats (ver sección 17). La tabla `gifts` ya existe en el schema (modelo unidireccional, `redeemed_by_user_id` nullable) como base de partida, pero el diseño bidireccional/social queda **pendiente**.
+
+---
+
+## 10. CARTAS DE RESONANCIA
+
+*(heredado de v2/v3, sin cambios)*
+
+Serie especial de 8 cartas, una por Fractae, sin dinosaurio — solo la energía pura representada de forma abstracta. Pull ultra-raro, objetivo de coleccionismo serio para el adulto.
+
+---
+
+## 11. DECISIONES LINGÜÍSTICAS
+
+*(heredado de v2/v3, sin cambios)*
+
+- Idioma base: español.
+- Naming de tipos (Fractae): latín pleno para el registro científico.
+- Copy externalizado como datos desde el inicio, preparado para internacionalización futura.
+
+---
+
+## 12. ARQUITECTURA DE APP
+
+*(heredado de v3, con actualización de v4 en la sección "Explorar")*
+
+Navegación por tab bar inferior de 4 secciones:
+
+**1. Explorar (home)**
+- Banner de la Operación activa (cuando exista una).
+- Selección de especie del catálogo activo ("Descubre") — **ya no es un flujo de atributos libres**: el usuario elige entre las especies activas del bestiario reducido (ver sección 15.5) y el sistema resuelve fase/rareza/ancla-vs-variante (ver sección 18.3).
+- Recordatorio de progreso ("Llevas 3 especies. Te faltan 2 de esta tanda").
+- Al descubrir: animación de revelación a pantalla completa → momento de compartir. **Ya no hay email-gate post-reveal** — el email se captura en el registro de cuenta, no en el momento de la descarga (ver sección 17.2).
+
+**2. Mi Colección (el Pokédex)**
+- Grid de especies activas del bestiario.
+- No descubiertas → silueta misteriosa.
+- Descubiertas → imagen ancla canónica + indicador de fases obtenidas (Calma/Furia/Eco).
+- Al tocar una especie descubierta → entra al **álbum de esa especie** (ver sección 13).
+
+**3. Grietas** *(fuera de alcance del MVP actual, ver sección 17)*
+- Overlay pseudo-AR, solo activo si hay al menos una especie en Calma.
+- Acceso a fase Eco de especies ya descubiertas.
+
+**4. Yo (perfil)** — **parte del MVP actual (confirmado en v4)**
+- Rango de explorador, progreso, estadísticas de colección.
+- Regalos pendientes y gestión de cuenta/email quedan para después (ver sección 17).
+
+### Decisión sobre capas de audiencia
+
+**Un único layout, adaptativo, sin modos separados.** Mismo layout, mismo lenguaje visual (iconos + texto), accesible para todas las edades a la vez.
+
+---
+
+## 13. MODELO DE DATOS DEL BESTIARIO: POKÉDEX vs. ÁLBUM
+
+*(heredado de v3, confirmado por la implementación — ver sección 18)*
+
+### Pokédex / Bestiario (nivel especie)
+
+- Catálogo objetivo, igual para todos los usuarios.
+- Cada entrada muestra la **imagen ancla canónica** de la especie+fase — nunca la variante personal de un usuario.
+- Las especies no descubiertas se muestran como **silueta misteriosa**, generada a partir de la imagen ancla ya aprobada.
+- Uso principal: mostrar progreso de colección, vista "limpia" y compartible.
+
+### Álbum / Colección personal (nivel instancia)
+
+- Lista completa de **todas las cartas individuales** que el usuario ha descubierto, duplicados incluidos.
+- Cada instancia tiene su propia variante visual (cuando aplica), su propio Discovery ID, fecha y rareza concreta de esa captura.
+- Aquí vive la opción de "Regalar" sobre una carta específica (futuro, ver sección 9).
+- Uso principal: vista "presumir", valor real del coleccionismo (duplicados no son ruido, son moneda social).
+
+**Mapeo técnico (v4):** Pokédex = `species` + `species_phase_anchors`; Álbum = `discoveries` (una fila por captura, con `user_id`, `rarity_tier_id`, `image_url` propio e `is_unique_variant`).
+
+---
+
+## 14. ESPECIES Y NAMING
+
+*(heredado de v2/v3, sin cambios)*
+
+Patrón de doble capa para cada dinosaurio:
+
+- Nombre científico (latín) → registro adulto/coleccionista, visible en la carta.
+- Nombre común (palabra niño) → registro principal de interacción.
+
+Ejemplo: *Tyrannosaurus imperator* / "Rex de Fuego".
+
+---
+
+## 15. MODELO DE PRODUCCIÓN DEL BESTIARIO
+
+*(heredado de v3, con corrección de estado real en 15.5)*
+
+### 15.1 Naturaleza híbrida (confirmada)
+
+El bestiario **no es puramente generativo**. Existe un catálogo fijo de **Base Species** (rango recomendado 40–60 a largo plazo) sobre el que se generan variantes visuales por IA.
+
+### 15.2 Unidad real de diseño: specs de texto, no ilustraciones
+
+El trabajo de diseño humano por especie es redactar una **ficha-spec** estructurada (ejemplo):
+
+```
+Especie: Tyrannosaurus imperator
+Nombre niño: "Rex de Fuego"
+Fractae asociado: Furia (Ira)
+Rasgos físicos fijos: cuerpo robusto, cresta dorsal, mandíbula prominente
+Paleta base: rojos/naranjas/negros
+Silueta distintiva: bípedo, cola larga, brazos cortos
+```
+
+Esta ficha actúa como prompt-semilla para GPT Image 2, garantizando que la misma especie sea reconociblemente consistente entre distintos usuarios.
+
+### 15.3 Modificadores de fase (reutilizables, no por especie)
+
+```
+Calma → forma estable, postura serena, brillo suave
+Furia → forma intensificada, postura agresiva, brillo ardiente, grietas de energía
+Eco → forma translúcida, casi fantasmal, partículas dispersándose
+```
+
+### 15.4 Imágenes ancla: generación, curación y consistencia
+
+Decisión confirmada: **imagen ancla por especie+fase, generada con image-to-image y curada manualmente** (no se confía en generación libre por texto cada vez, para garantizar consistencia visual entre usuarios).
+
+- Por cada especie: se genera la imagen ancla de Calma a partir de la ficha-spec, se revisa y aprueba.
+- A partir de esa ancla Calma, se generan (vía image-to-image + modificador de fase) las anclas de Furia y Eco.
+- **Las tres fases se curan manualmente antes de aprobarse** — el margen de error visual debe ser mínimo, dado que el usuario principal es un niño.
+
+**Definición operativa (aclarada en v4):** una "imagen ancla" es la imagen curada y aprobada de una combinación especie+fase concreta (`species_phase_anchors.image_url`) — la que ve todo el mundo por defecto en el Pokédex/Álbum salvo que a una captura le toque generar variante única (sección 18.3).
+
+### 15.5 Estrategia de lanzamiento: estado real (corregido en v4)
+
+**Estado real a fecha de esta versión:** solo **3 especies** tienen ficha-spec y anclas diseñadas (con sus 3 fases cada una). El plan de lanzamiento con 10-15 especies queda pospuesto — **se arranca con un subconjunto de validación de ~5 especies** (las 3 ya diseñadas + 2 nuevas por definir) para validar el ciclo completo de cuentas + colección + descubrimiento antes de invertir en más contenido curado. Esto implica **5 × 3 = 15 imágenes ancla** necesarias para tener el subconjunto de validación completo (aún pendientes de generar/curar en su totalidad — hoy solo hay una ancla de prueba/placeholder sembrada en local).
+
+El resto del bestiario (hasta 40-60 especies) se sigue planteando en oleadas mensuales alineadas a Operaciones, tal como en v3 — pero eso es horizonte post-validación, no parte del MVP actual.
+
+### 15.6 Generación por usuario: ancla vs. variante única, ligada a rareza
+
+En el momento del descubrimiento, el sistema decide automáticamente si:
+
+- (a) sirve directamente la **imagen ancla** ya curada (sin coste de generación adicional), o
+- (b) genera una **variante visual única** vía image-to-image sobre el ancla correspondiente (con coste de API).
+
+Tabla de referencia (ajustable, ya sembrada como `anchor_probability` en `rarity_tiers`):
+
+| Tier | Slug | Prob. de servir ancla | Prob. de generar variante única |
+|---|---|---|---|
+| Especie Registrada (común) | `registrada` | ~90% | ~10% |
+| Especie Notable | `notable` | ~70% | ~30% |
+| Especie Singular | `singular` | ~40% | ~60% |
+| Especie Épica | `epica` | ~15% | ~85% |
+| Especie Primordial (legendaria) | `primordial` | ~0% | 100% |
+
+**Justificación doble:** económica (el ahorro de coste se concentra en tiers comunes de alto volumen) y narrativa (lo legendario es garantizadamente único, como un "shiny").
+
+**Nota:** que dos usuarios reciban exactamente la misma imagen ancla en tiers bajos es una consecuencia aceptada y coherente del sistema, no un bug a corregir.
+
+---
+
+## 16. CARTAS DE RESONANCIA, GRIETAS Y REGALO — RECORDATORIO DE ALCANCE
+
+Estas tres piezas (secciones 8, 9, 10) siguen siendo parte del lore completo del universo, pero **quedan explícitamente fuera del MVP en construcción ahora mismo** (ver sección 17). No se elimina nada del diseño, solo se pospone su implementación.
+
+---
+
+## 17. ALCANCE DEL MVP ACTUAL (NUEVO EN v4)
+
+Bloque cerrado en la sesión de arranque técnico, para que quede registrado qué se está construyendo ahora mismo y en qué orden.
+
+### 17.1 Ya implementado
+
+- **Cuentas de usuario reales** sobre D1 (`users`, `sessions`) — registro con email+contraseña (PBKDF2), login, logout, cookies de sesión `HttpOnly`.
+- **Colección personal** (`GET /api/collection/mine`) — el Álbum completo del usuario (sección 13), join `discoveries` → `species` → `fractae` → `rarity_tiers`.
+- **Descubrimiento** (`POST /api/discover`) — recibe `speciesId` + `phase`, exige sesión activa, sortea rareza por `drop_weight`, decide ancla-vs-variante por `anchor_probability` de esa rareza, genera variante única vía OpenAI image-to-image cuando toca, inserta la captura en `discoveries`.
+- **Rate limiting** por KV (hash SHA-256 del identificador, ventana de 1h, TTL igual al tiempo restante de ventana) aplicado a auth y a discover.
+
+### 17.2 Decisión: ya no hace falta email-gate
+
+Al haber cuentas reales, el email se captura **en el registro**, no en un gate post-descubrimiento como en el prototipo `DinoDiscovery`. Desde la base de datos se puede exportar a Kit (u otra herramienta de email marketing) cuando se decida activar comunicaciones — pendiente definir si hace falta un checkbox de consentimiento explícito en el registro antes de usar esos emails para marketing (no bloqueante para el MVP funcional, sí relevante antes de mandar el primer email real).
+
+### 17.3 Siguiente bloque a construir
+
+**Perfil/stats de usuario** — confirmado como el mínimo de MVP que falta antes de considerar la base "cerrada": rango de explorador, progreso de colección, estadísticas básicas (especies descubiertas, duplicados, rarezas obtenidas). Después de esto: Grietas, Regalo bidireccional, Cartas de Resonancia, leaderboards/amigos — en ese orden aproximado, sin fecha cerrada.
+
+### 17.4 Fuera de alcance por ahora (explícito)
+
+- Regalo bidireccional, leaderboards, lista de amigos (sección 9/16).
+- Minijuego de Grietas / fase Eco (sección 8/16).
+- Cartas de Resonancia (sección 10/16).
+- Verificación de email, recuperación de contraseña, login social — deseables a futuro, no bloqueantes para el MVP actual (email+contraseña es suficiente por ahora).
+- Distribución del sistema de rareza por Operación (sección 7) — el modo base usa una única distribución global; el mecanismo de override por Operación queda sin diseñar.
+
+---
+
+## 18. STACK TÉCNICO Y MAPEO LORE → IMPLEMENTACIÓN (NUEVO EN v4)
+
+### 18.1 Stack elegido
+
+**Cloudflare Pages + Pages Functions + D1 (SQL) + KV + R2**, gratuito en el rango de uso actual. Frontend: **React + Vite**, con capa **PWA** (`vite-plugin-pwa`: manifest + service worker) para instalación en móvil/tablet sin pasar por tienda de apps. Si en el futuro se quiere presencia en App Store/Play Store, la vía es envolver la misma build con **Capacitor** (no reescritura) — **React Native quedaría descartado** salvo necesidad real de APIs nativas profundas, que no se prevé para este producto.
+
+### 18.2 Origen del código base
+
+Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`, `r2.ts`, `origin.ts`, `requestBody.ts`, `adminAuth.ts`, `images/[key].ts`) se portó tal cual desde el prototipo `DinoDiscovery` (github.com/melinDross/DinoDiscovery), ya probado en producción. La capa de negocio (wizard de atributos libres, `speciesHash.ts` de rareza por puntos, email-gate) **no se reutiliza** — el modelo de datos de Ecorex (catálogo fijo de especies + cuentas D1) es incompatible con el modelo de generación libre del prototipo. La capa visual (`Card.tsx`, `CardScene.tsx`, `cardCapture.ts`, `dinoCutout.ts`) está pendiente de portar y recablear a los datos reales de `discoveries`.
+
+### 18.3 Mapeo schema.sql ↔ conceptos de lore
+
+| Concepto de lore | Tabla / columna |
+|---|---|
+| Fractae (sección 4) | `fractae` |
+| Operación (sección 7) | `operations` |
+| Especie / ficha-spec (sección 15.2) | `species` (`physical_traits`, `base_palette`, `silhouette`) |
+| Imagen ancla especie+fase (sección 15.4) | `species_phase_anchors` (`species_id`, `phase`, `image_url`) |
+| Tier de rareza + su probabilidad ancla-vs-variante (sección 15.6) | `rarity_tiers.anchor_probability` |
+| **Probabilidad de que salga cada tier en una captura** (sorteo independiente, sección 6) | `rarity_tiers.drop_weight` — **columna añadida en esta sesión**, no existía en v3 |
+| Álbum / captura individual (sección 13) | `discoveries` (`user_id`, `species_id`, `phase`, `rarity_tier_id`, `image_url`, `is_unique_variant`, `discovery_code`) |
+| Regalo (sección 9, futuro) | `gifts` (modelo unidireccional ya en schema; bidireccional pendiente de diseño) |
+| Cartas de Resonancia (sección 10, futuro) | `resonance_cards` / `user_resonance_cards` |
+
+**Aclaración importante confirmada en v4:** ni `species` ni `species_phase_anchors` tienen (ni deben tener) una columna de rareza fija — la rareza se sortea por captura, independientemente de qué especie/fase sea, tal como exige el eje ortogonal de la sección 6. `rarity_tiers.drop_weight` guarda esa distribución para el modo base (sin Operación activa); cuando exista una Operación con distribución propia, su mecanismo de override queda pendiente de diseño (sección 17.4).
+
+---
+
+## 19. ESTADO DEL PROYECTO (actualizado a v4)
+
+### Completado hasta esta sesión
+
+- Nombre final del universo/marca: **Ecorex** (sección 0).
+- Arquitectura de app: 4 tabs, layout único adaptativo (sección 12).
+- Modelo de datos del bestiario: Pokédex vs. Álbum (sección 13), ya implementado en D1.
+- Modelo de producción del bestiario: fichas-spec, modificadores de fase, anclas curadas manualmente (sección 15).
+- Sistema de probabilidad ancla vs. variante única (sección 15.6), implementado en `discover.ts`.
+- **Stack técnico cerrado y en marcha**: Cloudflare Pages/Functions/D1/KV/R2, React+Vite+PWA para frontend (sección 18).
+- **Cuentas de usuario, colección y descubrimiento ya implementados y probados** (sección 17.1).
+- **Sorteo de rareza independiente de especie/fase** formalizado y resuelto técnicamente (`drop_weight`, sección 18.3) — hueco detectado y cerrado en esta sesión.
+
+### Pendiente
+
+- Diseñar las 2 especies adicionales (hasta llegar a 5) y generar/curar sus 15 anclas totales (sección 15.5).
+- Construir el frontend React+Vite/PWA, empezando por **perfil/stats de usuario** (sección 17.3).
+- Portar y recablear `Card.tsx`/`CardScene.tsx`/`cardCapture.ts` al modelo de datos real de `discoveries`.
+- Diseñar el mecanismo de distribución de rareza por Operación (sección 7/18.3).
+- Diseñar el regalo bidireccional, leaderboards y lista de amigos (sección 9/17.4) — explícitamente pospuesto.
+- Decidir si hace falta checkbox de consentimiento de marketing antes de exportar emails a Kit (sección 17.2).
+- Completar la rueda de fortalezas/vulnerabilidades de los 8 Fractae si se decide construir el sistema TCG de comparación.
+- Diseñar el texto de lore de las 8 Cartas de Resonancia.
+- Cerrar el número exacto de Base Species a largo plazo (rango orientativo 40–60) — no bloquea el MVP de validación con 5.

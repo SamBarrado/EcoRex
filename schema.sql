@@ -52,14 +52,17 @@ CREATE TABLE rarity_tiers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT NOT NULL UNIQUE,          -- e.g. 'epica'
   name TEXT NOT NULL,                 -- e.g. 'Especie Epica'
-  anchor_probability REAL NOT NULL,   -- e.g. 0.15
+  anchor_probability REAL NOT NULL,   -- P(servir ancla curada | ya se sorteó este tier), e.g. 0.15
+  drop_weight REAL NOT NULL,          -- P(que se sortee este tier en una captura) del modo base sin Operación activa
   sort_order INTEGER NOT NULL
 );
 
 -- 6. Users
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT,
+  display_name TEXT NOT NULL DEFAULT '',
   explorer_rank TEXT NOT NULL DEFAULT 'novato',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -104,6 +107,17 @@ CREATE TABLE user_resonance_cards (
   obtained_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE (user_id, resonance_card_id)
 );
+
+-- 10. Sessions
+CREATE TABLE sessions (
+  id TEXT PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  created_at INTEGER,
+  expires_at INTEGER
+);
+
+CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
 
 -- Indexes for common lookups
 CREATE INDEX idx_discoveries_user ON discoveries(user_id);
