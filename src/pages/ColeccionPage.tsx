@@ -6,8 +6,10 @@ export default function ColeccionPage() {
   const navigate = useNavigate();
   const [discoveries, setDiscoveries] = useState<Discovery[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    setError(null);
     getMyCollection()
       .then((data) => setDiscoveries(data.discoveries))
       .catch((err) => {
@@ -15,14 +17,19 @@ export default function ColeccionPage() {
           navigate("/login");
           return;
         }
-        setError("No se pudo cargar tu colección");
+        setError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
       });
-  }, [navigate]);
+  }, [navigate, retryCount]);
 
   return (
     <div className="page">
       <h1>Mi Álbum</h1>
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <>
+          <p className="error">{error}</p>
+          <button onClick={() => setRetryCount((n) => n + 1)}>Reintentar</button>
+        </>
+      )}
       {!discoveries && !error && <p>Cargando...</p>}
       {discoveries && discoveries.length === 0 && <p>Aún no has descubierto ningún dino.</p>}
       {discoveries && discoveries.length > 0 && (

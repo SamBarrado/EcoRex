@@ -6,8 +6,10 @@ export default function PerfilPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    setError(null);
     getMyProfile()
       .then(setProfile)
       .catch((err) => {
@@ -15,9 +17,12 @@ export default function PerfilPage() {
           navigate("/login");
           return;
         }
-        setError("No se pudo cargar tu perfil");
+        // A non-ApiError here means fetch itself failed (server unreachable,
+        // connection reset, etc.) — not an auth problem, so don't imply the
+        // session was closed.
+        setError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
       });
-  }, [navigate]);
+  }, [navigate, retryCount]);
 
   async function handleLogout() {
     await logout();
@@ -28,6 +33,7 @@ export default function PerfilPage() {
     return (
       <div className="page">
         <p className="error">{error}</p>
+        <button onClick={() => setRetryCount((n) => n + 1)}>Reintentar</button>
       </div>
     );
   }
@@ -45,12 +51,21 @@ export default function PerfilPage() {
       ? Math.round((profile.speciesDiscoveredCount / profile.speciesTotalCount) * 100)
       : 0;
 
+  const avatarLabel = (profile.user.display_name || profile.user.email).trim();
+  const avatarInitial = avatarLabel.charAt(0).toUpperCase();
+
   return (
     <div className="page">
       <h1>Yo</h1>
-      <div className="card">
-        <strong>{profile.user.display_name || profile.user.email}</strong>
-        <div>Rango de explorador: {profile.explorerRank}</div>
+      <div className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="avatar" aria-hidden="true">
+          {avatarInitial}
+        </div>
+        <div>
+          <strong>{profile.user.display_name || profile.user.email}</strong>
+          <div>{profile.user.email}</div>
+          <div>Rango de explorador: {profile.explorerRank}</div>
+        </div>
       </div>
 
       <div className="card">

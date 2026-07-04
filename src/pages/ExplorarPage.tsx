@@ -11,8 +11,10 @@ export default function ExplorarPage() {
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [result, setResult] = useState<DiscoverResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    setError(null);
     getSpecies()
       .then((data) => setSpecies(data.species))
       .catch((err) => {
@@ -20,9 +22,9 @@ export default function ExplorarPage() {
           navigate("/login");
           return;
         }
-        setError("No se pudo cargar el catálogo");
+        setError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
       });
-  }, [navigate]);
+  }, [navigate, retryCount]);
 
   async function handleDiscover(speciesId: number) {
     setError(null);
@@ -32,7 +34,15 @@ export default function ExplorarPage() {
       const data = await discover({ speciesId, phase });
       setResult(data);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "No se pudo completar el descubrimiento");
+      if (err instanceof ApiError && err.status === 401) {
+        navigate("/login");
+        return;
+      }
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo."
+      );
     } finally {
       setLoadingId(null);
     }
@@ -57,7 +67,12 @@ export default function ExplorarPage() {
         </div>
       </div>
 
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <div className="card">
+          <p className="error">{error}</p>
+          <button onClick={() => setRetryCount((n) => n + 1)}>Reintentar</button>
+        </div>
+      )}
 
       {result && (
         <div className="card">
