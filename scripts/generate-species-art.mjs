@@ -38,6 +38,10 @@ const FRACTAE_EXTREME = {
 
 const PHASES = ['calma', 'furia', 'eco'];
 
+// Widescreen landscape, matching the manually-designed anchors (e.g. the
+// T-Rex Imperator reference is 1536x1024) — not the default square format.
+const IMAGE_SIZE = '1536x1024';
+
 function loadDevVarsApiKey() {
   if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY;
   const devVarsPath = path.resolve('.dev.vars');
@@ -57,11 +61,18 @@ function slugify(name) {
     .replace(/(^-|-$)/g, '');
 }
 
-const BASE_STYLE = `Stylized painted concept-art illustration (video-game bestiary key art) — deliberately NOT photorealistic: bold dark ink linework outlining every form, flatter posterized color blocks with painterly gradients instead of granular skin-pore/photo texture, slightly heroic/exaggerated proportions. Faceted, crystal-like scale texture with glowing internal veins/cracks running through the skin in the Fractae's accent color, but kept graphic/illustrative rather than hyper-detailed. Full dramatic environment matching the creature's element, rendered in the same stylized painted look as the creature. Cinematic rim lighting, single vivid saturated accent color for eyes and energy veins, dynamic imposing pose, atmospheric particles drifting in the scene. No text, no watermark, no UI elements.`;
+const BASE_STYLE = `Stylized painted concept-art illustration (video-game bestiary key art) — deliberately NOT photorealistic: bold dark ink linework outlining every form, flatter posterized color blocks with painterly gradients instead of granular skin-pore/photo texture, slightly heroic/exaggerated proportions. Faceted, crystal-like scale texture with glowing internal veins/cracks running through the skin in the Fractae's accent color, but kept graphic/illustrative rather than hyper-detailed. Full dramatic environment matching the creature's element, rendered in the same stylized painted look as the creature. Cinematic rim lighting, one clear accent color for eyes and energy veins used with restraint (not blanket saturation across the whole image), dynamic imposing pose, a light/moderate amount of atmospheric particles drifting in the scene — not an overloaded or cluttered composition. No text, no watermark, no UI elements.`;
+
+// Real figure/ground separation technique, not a cheap glow-outline hack:
+// value contrast, atmospheric perspective and texture-density differences
+// between subject and environment. Shared by Calma, Furia and Eco because
+// image-to-image edits tend to erode this separation over successive passes.
+const FIGURE_GROUND_SEPARATION = `Reserve the faceted, glowing-crack texture EXCLUSIVELY for the creature's skin — this exact graphic pattern must NEVER appear on the ground, rock, terrain, smoke, clouds, or any background surface, even if the environment is thematically the same material (e.g. volcanic/lava, ice, water). The environment may carry ambient color and light from its element (warm lava glow, cool ice sheen, etc.) as soft, diffuse illumination and color cast only — never as the same sharp crack-network graphic device used on the creature. If creature and terrain share a real-world material (e.g. a lava-skinned creature standing on lava rock, or smoke/clouds near it), differentiate them by TREATMENT, not material: the creature is graphic/faceted/glowing at full detail, everything else (ground, smoke, clouds, distant rock) is a plainer, softer, more uniform surface with far less linework and no repeated crack pattern — think "sharp painted character cutout over a simpler, softer painted backdrop", like classic hand-painted key art, not "creature and background made of the identical repeating texture".`;
 
 function buildAnchorPrompt(spec) {
   return [
     BASE_STYLE,
+    FIGURE_GROUND_SEPARATION,
     `Species: ${spec.scientificName} ("${spec.commonName}").`,
     `Emotional core (Fractae): ${spec.fractae.name} (${spec.fractae.latin}) — the environment and glowing veins should read as this element.`,
     `Habitat/ecology: ${spec.habitat}.`,
@@ -76,7 +87,9 @@ function buildFuriaPrompt(spec) {
   return [
     `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same stylized painted key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
     `Apply ONLY this phase transformation (furia): ${PHASE_MODIFIERS.furia}.`,
-    `Intensify the pose to open-mouthed roaring/attacking, darker and more violent lighting, more glowing cracks across the body.`,
+    `This must NOT read as "the calm reference pose with the mouth open" — that is a failure state. Change the actual body pose/stance to something genuinely more aggressive and dynamic than the reference: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking, a tighter and more dramatic camera angle/framing than the calm reference (closer, lower, or more diagonal — not the same wide standing profile shot). The mouth being open is a minor detail, not the main change.`,
+    `Keep color saturation and contrast controlled and readable — this is a moderate intensification over the reference, not a blown-out, oversaturated, or overexposed image. The glow should be concentrated on the cracks/veins and a few key highlights, not flood the entire frame or background in solid intense color. But the overall energy/glow intensity must still be clearly, unmistakably higher than the calm reference — someone flipping between the two images should immediately feel escalation, not need to hunt for the difference.`,
+    FIGURE_GROUND_SEPARATION,
     `Do not change the species identity, proportions, or palette family — only intensity/texture per the phase description.`,
   ].join(' ');
 }
@@ -91,7 +104,10 @@ function buildEcoPrompt(spec) {
     `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same stylized painted key-art style: ${spec.scientificName} ("${spec.commonName}").`,
     `This is the Eco phase: the ${spec.fractae.name} (${spec.fractae.latin}) Fractae pushed to its absolute emotional extreme in this specific creature. The archetype of that extreme: ${extreme}.`,
     `Manifest that extreme specifically through THIS creature's own anatomy and habitat (${spec.habitat}) and physical traits (${spec.traits}) — do NOT default to a generic universal effect (no plain "translucent ghost" treatment applies to all species alike).`,
+    `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Furia. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Calma and Furia (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
     `Reason about what mechanism this particular creature and environment would realistically produce: an aquatic or semi-aquatic species should express it through water/steam/pressure/bioluminescence rather than dry fire or ash; a burrowing or heavily armored species might express it through earth, cracking stone, or collapsing structure; a flying or feathered species might express it through air, wind-scatter, or storm; a large land predator might express it through fire, ember, or scorched ground — pick whatever fits this species, not a template.`,
+    `Keep the composition clean and restrained, not overloaded: the creature's silhouette must stay the clear, legible focal point. Use a moderate, controlled amount of debris/particles/effect concentrated where it matters (e.g. cracking origin points, the edges dissolving) rather than filling the whole frame with scattered fragments or chaotic noise. Less is more — one or two clear focal details communicating the extreme beat a busy, cluttered image.`,
+    FIGURE_GROUND_SEPARATION,
     `The result should read as the climactic, most extreme possible state of this exact creature's emotion — dramatic and singular to it, not interchangeable with any other species' Eco.`,
   ].join(' ');
 }
@@ -107,7 +123,7 @@ async function generateAnchor(prompt, apiKey) {
       model: 'gpt-image-2',
       prompt,
       n: 1,
-      size: '1024x1024',
+      size: IMAGE_SIZE,
       quality: 'low',
     }),
   });
@@ -125,7 +141,7 @@ async function generateVariant(anchorBytes, prompt, apiKey) {
   form.append('image', new Blob([anchorBytes], { type: 'image/png' }), 'anchor.png');
   form.append('prompt', prompt);
   form.append('n', '1');
-  form.append('size', '1024x1024');
+  form.append('size', IMAGE_SIZE);
   form.append('quality', 'low');
 
   const response = await fetch('https://api.openai.com/v1/images/edits', {

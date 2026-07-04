@@ -684,5 +684,59 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisa el Radiante Cresta, la tristeza se disuelve en luz; su canto resonante en la cresta ósea es el latido de la alegría primordial encarnada.",
     "habitat": "bosques ribereños de Norteamérica cretácica"
+  },
+  {
+    "scientificName": "Tyrannosaurus imperator",
+    "commonName": "Rex de Fuego",
+    "fractae": {
+      "name": "Furia",
+      "latin": "Ira"
+    },
+    "traits": "mandíbula prominente con dientes serrados incandescentes, cresta dorsal de púas erguidas que emiten vapor, escamas facetadas con vetas de energía roja, garras traseras masivas, cola larga y rígida en tensión constante",
+    "habitat": "tierras volcánicas y páramos de ceniza, depredador ápice en un paisaje ígneo en erupción permanente",
+    "palette": "rojo y naranja incandescente, negro carbón, vetas doradas oxidadas",
+    "silhouette": "bípedo masivo, torso inclinado hacia delante, mandíbula perpetuamente entreabierta, postura de tensión constante",
+    "oppositeFractae": "Miedo (Pavor)",
+    "lorePhrase": "Donde pisa el Rex de Fuego, la tierra misma arde de una rabia que nunca se apaga."
+  },
+  {
+    "scientificName": "Telmatosaurus mirus",
+    "commonName": "Destello del Pantano",
+    "fractae": {
+      "name": "Sorpresa",
+      "latin": "Stupor"
+    },
+    "traits": "pico ancho aplanado, cresta dorsal baja de escamas doradas, cuerpo esbelto de postura semi-erguida, ojos grandes ambarinos siempre alerta, piel que refleja destellos como luciérnagas al moverse",
+    "habitat": "pantanos y marismas crepusculares con luces flotantes y aguas estancadas doradas",
+    "palette": "dorado, ámbar cálido, violeta crepuscular, reflejos color miel",
+    "silhouette": "cuadrúpedo facultativo (puede erguirse en dos patas), cuello curvado hacia arriba, cola larga afilada que se alza al sobresaltarse",
+    "oppositeFractae": "Curiosidad (Spes)",
+    "lorePhrase": "Nadie ve venir al Destello del Pantano; solo el reflejo dorado en el agua delata que el asombro ya está sobre ti."
+  },
+  {
+    "scientificName": "Triceratops umbra",
+    "commonName": "Tricera de las Lágrimas",
+    "fractae": {
+      "name": "Tristeza",
+      "latin": "Tristitia"
+    },
+    "traits": "gorguera cristalina en forma de abanico que gotea luz azul como lágrimas, tres cuernos facetados de cristal, cuerpo macizo y bajo, ojos húmedos de brillo constante",
+    "habitat": "valles montañosos helados con cascadas, cuevas de cristal y pterosaurios sobrevolando picos nevados",
+    "palette": "azul zafiro profundo, violeta glacial, blanco cristalino, plata pálida",
+    "silhouette": "cuadrúpedo robusto y de andar pausado, gorguera elevada como una corona que domina la silueta",
+    "oppositeFractae": "Alegría (Lumen)",
+    "lorePhrase": "Cada lágrima que cae de su gorguera es un recuerdo que el mundo se niega a soltar."
+  },
+  {
+    "scientificName": "Stegosaurus pavor",
+    "commonName": "Umbra de Placas",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "placas dorsales afiladas y translúcidas como esquirlas de obsidiana, cuerpo encorvado y bajo, ojos hundidos que brillan en la oscuridad, cola con púas terminadas en puntas curvas como garras",
+    "habitat": "llanuras semiáridas y bosques abiertos del Jurásico, andar pausado en terreno reseco",
+    "palette": "morado profundo, negro violáceo, vetas moradas fosforescentes",
+    "silhouette": "cuadrúpedo de espalda arqueada, cabeza baja casi rastrera, placas erguidas como una hilera de sombras verticales"
   }
 ]
