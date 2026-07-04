@@ -72,6 +72,8 @@ export default function FusionPage() {
   const preselectedId = Number(searchParams.get("speciesId")) || null;
 
   async function handleFuse(species: EligibleSpecies) {
+    if (fusing !== null) return;
+    stopSound();
     setFusing(species.speciesId);
     setGlowSlug(null);
     setError(null);
