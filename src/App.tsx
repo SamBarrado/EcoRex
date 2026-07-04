@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ExplorarPage from "./pages/ExplorarPage";
+import PercibirPage from "./pages/PercibirPage";
 import ColeccionPage from "./pages/ColeccionPage";
 import PerfilPage from "./pages/PerfilPage";
 
@@ -31,7 +31,7 @@ export default function App() {
           path="/explorar"
           element={
             <>
-              <ExplorarPage />
+              <PercibirPage />
               <TabBar />
             </>
           }

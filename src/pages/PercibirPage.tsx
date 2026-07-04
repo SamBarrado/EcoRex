@@ -23,7 +23,7 @@ function speciesSoundUrl(scientificName: string) {
   return `/sounds/${slug}.mp3`;
 }
 
-export default function ExplorarPage() {
+export default function PercibirPage() {
   const navigate = useNavigate();
   const [species, setSpecies] = useState<Species[] | null>(null);
   const [progress, setProgress] = useState<{ discovered: number; total: number } | null>(null);
@@ -131,7 +131,7 @@ export default function ExplorarPage() {
 
   return (
     <div className="page">
-      <h1>Explorar</h1>
+      <h1>Percibir</h1>
 
       {error && (
         <div className="card">
