@@ -1,4 +1,5 @@
 import { getSessionCookie, verifySession, type Env } from "../lib/auth";
+import { xpProgress } from "../lib/xp";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -9,9 +10,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const userRow = await env.DB.prepare("SELECT explorer_rank FROM users WHERE id = ?")
+  const userRow = await env.DB.prepare("SELECT xp FROM users WHERE id = ?")
     .bind(user.id)
-    .first<{ explorer_rank: string }>();
+    .first<{ xp: number }>();
 
   const waveRow = await env.DB.prepare(
     "SELECT COALESCE(MAX(launch_wave), 0) as wave FROM species WHERE is_active = 1"
@@ -51,9 +52,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const totalDiscoveries = totalDiscoveriesRow?.count ?? 0;
   const duplicateCount = Math.max(0, totalDiscoveries - speciesDiscoveredCount);
 
+  const progress = xpProgress(userRow?.xp ?? 0);
+
   return Response.json({
     user,
-    explorerRank: userRow?.explorer_rank ?? "novato",
+    xp: userRow?.xp ?? 0,
+    level: progress.level,
+    xpIntoLevel: progress.xpIntoLevel,
+    xpForNextLevel: progress.xpForNextLevel,
     speciesDiscoveredCount,
     speciesTotalCount: speciesTotalRow?.count ?? 0,
     totalDiscoveries,
