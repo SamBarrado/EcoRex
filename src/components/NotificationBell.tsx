@@ -28,21 +28,47 @@ export default function NotificationBell() {
   }
 
   return (
-    <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen((v) => !v)} aria-label="Notificaciones">
-        🔔{unreadCount > 0 && <span> ({unreadCount})</span>}
+    <div style={{ position: "relative", alignSelf: "stretch", display: "flex" }}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Notificaciones"
+        aria-expanded={open}
+        style={{
+          background: "none",
+          color: unreadCount > 0 ? "#3fae5a" : "#7fa98a",
+          fontSize: "0.8rem",
+          fontWeight: 400,
+          borderRadius: 0,
+          padding: "0.5rem 0.9rem",
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        🔔{unreadCount > 0 && <span>&nbsp;({unreadCount})</span>}
       </button>
       {open && (
         <div
           className="card"
-          style={{ position: "absolute", right: 0, bottom: "100%", width: 280, zIndex: 50 }}
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: "100%",
+            width: "min(280px, calc(100vw - 2rem))",
+            zIndex: 50,
+          }}
         >
           {notifications.length === 0 && <p>Sin notificaciones.</p>}
           {notifications.map((n) => (
             <div
               key={n.id}
+              className="card-clickable truncate"
+              role="button"
+              tabIndex={0}
               onClick={() => handleClick(n)}
-              style={{ cursor: "pointer", padding: "0.5rem 0", fontWeight: n.readAt ? 400 : 700 }}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleClick(n)}
+              style={{ padding: "0.5rem 0", fontWeight: n.readAt ? 400 : 700 }}
             >
               {n.type === "fusion_ready"
                 ? `¡Ya puedes fusionar ${(n.payload as { commonName?: string }).commonName ?? "una especie"}!`

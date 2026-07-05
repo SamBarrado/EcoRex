@@ -3,10 +3,16 @@
   font-family: system-ui, sans-serif;
 }
 
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+
 body {
   margin: 0;
   background: #0d1a0f;
   color: #f2f6f3;
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -16,7 +22,7 @@ a {
 .page {
   max-width: 480px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 5rem;
+  padding: 1.5rem 1rem calc(5rem + env(safe-area-inset-bottom));
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -27,6 +33,34 @@ a {
   border-radius: 16px;
   padding: 1rem;
   margin-bottom: 1rem;
+}
+
+.card-clickable {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.card-clickable:active {
+  transform: scale(0.97);
+}
+
+.card-clickable:focus-visible {
+  outline: 2px solid #3fae5a;
+  outline-offset: 2px;
+}
+
+.species-image {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #0d1a0f;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .field {

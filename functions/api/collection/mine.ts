@@ -40,7 +40,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
      JOIN species ON species.id = discoveries.species_id
      JOIN fractae ON fractae.id = species.fractae_id
      JOIN rarity_tiers ON rarity_tiers.id = discoveries.rarity_tier_id
-     WHERE discoveries.user_id = ?
+     WHERE discoveries.user_id = ? AND discoveries.consumed_at IS NULL
      ORDER BY discoveries.discovered_at DESC`
   )
     .bind(user.id)

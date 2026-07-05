@@ -50,9 +50,26 @@ export default function PercibirPage() {
     }
   }
 
-  function playSound(scientificName: string) {
+  function primeSound(scientificName: string) {
+    // iOS Safari only allows audio.play() without a fresh user gesture if the
+    // element already played during the gesture that started this ritual —
+    // the real playSound() call below happens after several awaits, well
+    // outside the pointerdown gesture, so it would otherwise be silently
+    // blocked.
     const audio = new Audio(speciesSoundUrl(scientificName));
+    audio
+      .play()
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+      })
+      .catch(() => {});
     currentAudioRef.current = audio;
+  }
+
+  function playSound() {
+    const audio = currentAudioRef.current;
+    if (!audio) return;
     audio.play().catch(() => {});
     soundTimeoutRef.current = setTimeout(stopSound, MAX_SOUND_MS);
   }
@@ -85,6 +102,7 @@ export default function PercibirPage() {
     const picked = species[Math.floor(Math.random() * species.length)];
     const controller = new AbortController();
     abortRef.current = controller;
+    primeSound(picked.scientific_name);
 
     try {
       const [data] = await Promise.all([
@@ -98,7 +116,7 @@ export default function PercibirPage() {
       await delay(400);
       setResult({ ...data, fractaeChildName: picked.fractae_child_name });
       setHolding(false);
-      playSound(data.scientificName);
+      playSound();
     } catch (err) {
       if (controller.signal.aborted) return;
       setHolding(false);
@@ -143,7 +161,7 @@ export default function PercibirPage() {
       {!error && result && (
         <div className="card">
           <strong>¡Percibiste una Fractura!</strong>
-          <img src={result.imageUrl} alt={result.commonName} style={{ width: "100%", borderRadius: 8 }} />
+          <img src={result.imageUrl} alt={result.commonName} className="species-image" />
           <div>{result.commonName} ({result.scientificName})</div>
           {result.fractaeChildName && <div>Fractae: {result.fractaeChildName}</div>}
           <div>Fase: {result.phase}</div>
@@ -174,6 +192,8 @@ export default function PercibirPage() {
               transition: "box-shadow 0.3s ease, border-color 0.3s ease",
               cursor: species && species.length > 0 ? "pointer" : "default",
               userSelect: "none",
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
               touchAction: "none",
             }}
           >

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyCollection, Discovery, ApiError } from "../lib/api";
 
@@ -34,6 +34,7 @@ export default function ColeccionPage() {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [previewGroup, setPreviewGroup] = useState<CollectionGroup | null>(null);
+  const [phaseFilter, setPhaseFilter] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
@@ -50,6 +51,26 @@ export default function ColeccionPage() {
 
   const groups = useMemo(() => (discoveries ? groupDiscoveries(discoveries) : null), [discoveries]);
 
+  const availablePhases = useMemo(() => {
+    if (!groups) return [];
+    return Array.from(new Set(groups.map((g) => g.representative.phase)));
+  }, [groups]);
+
+  const visibleGroups = useMemo(() => {
+    if (!groups) return null;
+    if (!phaseFilter) return groups;
+    return groups.filter((g) => g.representative.phase === phaseFilter);
+  }, [groups, phaseFilter]);
+
+  useLayoutEffect(() => {
+    if (!previewGroup) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [previewGroup]);
+
   return (
     <div className="page">
       <h1>Mi Álbum</h1>
@@ -61,14 +82,56 @@ export default function ColeccionPage() {
       )}
       {!discoveries && !error && <p>Cargando...</p>}
       {groups && groups.length === 0 && <p>Aún no has descubierto ningún dino.</p>}
-      {groups && groups.length > 0 && (
+      {groups && groups.length > 0 && availablePhases.length > 1 && (
+        <div
+          style={{
+            display: "flex",
+            gap: "0.5rem",
+            overflowX: "auto",
+            marginBottom: "1rem",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          <button
+            onClick={() => setPhaseFilter(null)}
+            style={{
+              background: phaseFilter === null ? "#3fae5a" : "#142218",
+              color: phaseFilter === null ? "#06120a" : "#f2f6f3",
+              flexShrink: 0,
+            }}
+          >
+            Todas
+          </button>
+          {availablePhases.map((phase) => (
+            <button
+              key={phase}
+              onClick={() => setPhaseFilter(phase)}
+              style={{
+                background: phaseFilter === phase ? "#3fae5a" : "#142218",
+                color: phaseFilter === phase ? "#06120a" : "#f2f6f3",
+                flexShrink: 0,
+                textTransform: "capitalize",
+              }}
+            >
+              {phase}
+            </button>
+          ))}
+        </div>
+      )}
+      {visibleGroups && visibleGroups.length === 0 && groups && groups.length > 0 && (
+        <p>No tienes descubrimientos en esta fase.</p>
+      )}
+      {visibleGroups && visibleGroups.length > 0 && (
         <div className="grid">
-          {groups.map((group) => (
+          {visibleGroups.map((group) => (
             <div
-              className="card"
+              className="card card-clickable"
               key={group.key}
-              style={{ position: "relative", cursor: "pointer", padding: "0.5rem" }}
+              style={{ position: "relative", padding: "0.5rem" }}
+              role="button"
+              tabIndex={0}
               onClick={() => setPreviewGroup(group)}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setPreviewGroup(group)}
             >
               {group.count > 1 && (
                 <span
@@ -95,9 +158,12 @@ export default function ColeccionPage() {
               <img
                 src={group.representative.image_url}
                 alt={group.representative.common_name}
-                style={{ width: "100%", borderRadius: 8 }}
+                className="species-image"
+                loading="lazy"
               />
-              <strong>{group.representative.common_name}</strong>
+              <strong className="truncate" style={{ display: "block" }}>
+                {group.representative.common_name}
+              </strong>
               <div>Fase: {group.representative.phase}</div>
             </div>
           ))}
@@ -122,7 +188,7 @@ export default function ColeccionPage() {
             <img
               src={previewGroup.representative.image_url}
               alt={previewGroup.representative.common_name}
-              style={{ width: "100%", borderRadius: 8 }}
+              className="species-image"
             />
             <strong>{previewGroup.representative.common_name}</strong>
             <div>{previewGroup.representative.scientific_name}</div>

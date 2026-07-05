@@ -46,9 +46,25 @@ export default function FusionPage() {
     }
   }
 
-  function playSound(scientificName: string) {
+  function primeSound(scientificName: string) {
+    // iOS Safari blocks audio.play() once the user-gesture "activation" has
+    // expired — which it has by the time handleFuse's awaits resolve. Playing
+    // (and immediately pausing) the element synchronously within the click
+    // handler keeps it unlocked for the later programmatic play() below.
     const audio = new Audio(speciesSoundUrl(scientificName));
+    audio
+      .play()
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+      })
+      .catch(() => {});
     currentAudioRef.current = audio;
+  }
+
+  function playSound() {
+    const audio = currentAudioRef.current;
+    if (!audio) return;
     audio.play().catch(() => {});
     soundTimeoutRef.current = setTimeout(stopSound, MAX_SOUND_MS);
   }
@@ -77,12 +93,13 @@ export default function FusionPage() {
     setFusing(species.speciesId);
     setGlowSlug(null);
     setError(null);
+    primeSound(species.scientificName);
     try {
       const [data] = await Promise.all([fuseSpecies({ speciesId: species.speciesId }), delay(RITUAL_MS)]);
       setGlowSlug(data.rarityTier.slug);
       await delay(400);
       setResult(data);
-      playSound(data.scientificName);
+      playSound();
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         navigate("/login");
@@ -120,7 +137,7 @@ export default function FusionPage() {
           style={{ border: `4px solid ${RARITY_GLOW[result.rarityTier.slug] ?? "#3fae5a"}` }}
         >
           <strong>¡Fusión completada!</strong>
-          <img src={result.imageUrl} alt={result.commonName} style={{ width: "100%", borderRadius: 8 }} />
+          <img src={result.imageUrl} alt={result.commonName} className="species-image" />
           <div>
             {result.commonName} ({result.scientificName})
           </div>
@@ -150,7 +167,8 @@ export default function FusionPage() {
               <img
                 src={species.calmaAnchorUrl}
                 alt={species.commonName}
-                style={{ width: "100%", borderRadius: 8 }}
+                className="species-image"
+                loading="lazy"
               />
               <strong>{species.commonName}</strong>
               <div>Duplicados: {species.calmaCount}</div>
