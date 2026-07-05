@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, act, cleanup } from "@testing-library/react";
+import { render, screen, act, cleanup, fireEvent } from "@testing-library/react";
 import { RevealCard } from "./RevealCard";
 
 const baseProps = {
@@ -43,5 +43,36 @@ describe("RevealCard", () => {
     render(<RevealCard {...baseProps} glowColor="#e0a02f" />);
 
     expect(screen.getByTestId("card-front")).toHaveStyle({ borderColor: "#e0a02f" });
+  });
+
+  it("rotates to show the back face after dragging past the halfway point", () => {
+    vi.useFakeTimers();
+    render(<RevealCard {...baseProps} />);
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    const perspective = screen.getByTestId("card-perspective");
+    fireEvent.touchStart(perspective, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(perspective, { touches: [{ clientX: -300 }] });
+
+    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "visible" });
+    expect(screen.getByAltText("Test Dino")).toHaveStyle({ visibility: "hidden" });
+  });
+
+  it("snaps back to the front face when released near the starting position", () => {
+    vi.useFakeTimers();
+    render(<RevealCard {...baseProps} />);
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    const perspective = screen.getByTestId("card-perspective");
+    fireEvent.touchStart(perspective, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(perspective, { touches: [{ clientX: -50 }] });
+    fireEvent.touchEnd(perspective);
+
+    expect(screen.getByAltText("Test Dino")).toHaveStyle({ visibility: "visible" });
+    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
   });
 });
