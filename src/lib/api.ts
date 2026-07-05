@@ -76,7 +76,10 @@ export function getDex() {
 
 export interface ProfileStats {
   user: AuthUser;
-  explorerRank: string;
+  xp: number;
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number | null;
   speciesDiscoveredCount: number;
   speciesTotalCount: number;
   totalDiscoveries: number;

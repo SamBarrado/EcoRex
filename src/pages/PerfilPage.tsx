@@ -64,8 +64,27 @@ export default function PerfilPage() {
         <div>
           <strong>{profile.user.display_name || profile.user.email}</strong>
           <div>{profile.user.email}</div>
-          <div>Rango de explorador: {profile.explorerRank}</div>
+          <div>Nivel {profile.level}</div>
         </div>
+      </div>
+
+      <div className="card">
+        <div className="stat">
+          <span>Progreso de nivel</span>
+          <span>
+            {profile.xpForNextLevel === null
+              ? "MAX"
+              : `${profile.xpIntoLevel}/${profile.xpForNextLevel} XP`}
+          </span>
+        </div>
+        {profile.xpForNextLevel !== null && (
+          <div className="level-progress-bar">
+            <div
+              className="level-progress-fill"
+              style={{ width: `${Math.round((profile.xpIntoLevel / profile.xpForNextLevel) * 100)}%` }}
+            />
+          </div>
+        )}
       </div>
 
       <div className="card">
