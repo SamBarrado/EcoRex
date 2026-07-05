@@ -99,3 +99,21 @@ export async function resolvePhaseImage(params: ResolvePhaseImageParams): Promis
 
   return { imageUrl: `/images/${r2Key}`, isUniqueVariant: true };
 }
+
+// Used to award the one-time "species completed" XP bonus: true once the
+// user owns at least one discovery for every phase in `phases` for this
+// species (regardless of how many duplicates/consumed rows exist).
+export async function hasCompletedAllPhases(
+  db: D1Database,
+  userId: number,
+  speciesId: number,
+  phases: readonly string[]
+): Promise<boolean> {
+  const { results } = await db
+    .prepare(`SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?`)
+    .bind(userId, speciesId)
+    .all<{ phase: string }>();
+
+  const ownedPhases = new Set(results.map((row) => row.phase));
+  return phases.every((phase) => ownedPhases.has(phase));
+}

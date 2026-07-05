@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { pickRarityTier, buildVariantPrompt, resolvePhaseImage, type RarityTierRow, type SpeciesPhaseRow } from './discovery';
+import { pickRarityTier, buildVariantPrompt, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from './discovery';
 
 const tiers: RarityTierRow[] = [
   { id: 1, slug: 'registrada', name: 'Registrada', anchor_probability: 0.9, drop_weight: 70 },
@@ -35,5 +35,37 @@ describe('buildVariantPrompt', () => {
     const prompt = buildVariantPrompt(species, 'exceso');
     expect(prompt).toContain('Rex de Fuego');
     expect(prompt).toContain('forma intensificada, postura agresiva, brillo ardiente, grietas de energía');
+  });
+});
+
+function makeDb(distinctPhases: string[]) {
+  return {
+    prepare(sql: string) {
+      return {
+        bind() {
+          return this;
+        },
+        async all<T>() {
+          if (sql.includes('DISTINCT phase')) {
+            return { results: distinctPhases.map((phase) => ({ phase })) as T[] };
+          }
+          return { results: [] as T[] };
+        },
+      };
+    },
+  } as unknown as D1Database;
+}
+
+describe('hasCompletedAllPhases', () => {
+  it('returns false when only some phases are owned', async () => {
+    const db = makeDb(['calma', 'exceso']);
+    const result = await hasCompletedAllPhases(db, 1, 7, ['calma', 'exceso', 'eco']);
+    expect(result).toBe(false);
+  });
+
+  it('returns true when all required phases are owned', async () => {
+    const db = makeDb(['calma', 'exceso', 'eco']);
+    const result = await hasCompletedAllPhases(db, 1, 7, ['calma', 'exceso', 'eco']);
+    expect(result).toBe(true);
   });
 });
