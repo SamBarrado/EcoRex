@@ -2,6 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const CARD_BACK_PATH = "/card-back.png";
 const CARD_NATURAL_WIDTH = 300;
+// Matches the Percibir pack art aspect ratio (sobre.png, 1024x1536) so the
+// closed pack and the revealed card read as the same physical object.
+const CARD_ASPECT = 1536 / 1024;
+const CARD_NATURAL_HEIGHT = CARD_NATURAL_WIDTH * CARD_ASPECT;
 const FLIP_DURATION_MS = 800;
 const DRAG_SENSITIVITY_DEG_PER_PX = 0.6;
 const DRAG_SNAP_TRANSITION = "320ms ease-out";
@@ -40,9 +44,7 @@ export function RevealCard({
   const dragBaseSpinRef = useRef(0);
 
   const outerRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [naturalHeight, setNaturalHeight] = useState(0);
 
   useEffect(() => {
     // Triggers the flip-in transition on the first paint after mount, then
@@ -69,19 +71,16 @@ export function RevealCard({
 
   useLayoutEffect(() => {
     const outer = outerRef.current;
-    const inner = innerRef.current;
-    if (!outer || !inner) return;
+    if (!outer) return;
 
     function update() {
-      if (!outer || !inner) return;
+      if (!outer) return;
       setScale(outer.offsetWidth > 0 ? Math.min(1, outer.offsetWidth / CARD_NATURAL_WIDTH) : 1);
-      setNaturalHeight(inner.offsetHeight);
     }
 
     update();
     const resizeObserver = new ResizeObserver(update);
     resizeObserver.observe(outer);
-    resizeObserver.observe(inner);
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -119,13 +118,8 @@ export function RevealCard({
   const totalRotateY = baseFlipDeg + spinDeg;
 
   return (
-    <div
-      ref={outerRef}
-      className="reveal-card-outer"
-      style={{ height: naturalHeight ? naturalHeight * scale : undefined }}
-    >
+    <div ref={outerRef} className="reveal-card-outer" style={{ height: CARD_NATURAL_HEIGHT * scale }}>
       <div
-        ref={innerRef}
         className="reveal-card-inner"
         style={{ width: CARD_NATURAL_WIDTH, transform: `translateX(-50%) scale(${scale})` }}
       >

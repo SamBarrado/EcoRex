@@ -738,5 +738,19 @@
     "habitat": "llanuras semiáridas y bosques abiertos del Jurásico, andar pausado en terreno reseco",
     "palette": "morado profundo, negro violáceo, vetas moradas fosforescentes",
     "silhouette": "cuadrúpedo de espalda arqueada, cabeza baja casi rastrera, placas erguidas como una hilera de sombras verticales"
+  },
+  {
+    "scientificName": "Mosasaurus pavoris",
+    "commonName": "Fauces del Abismo",
+    "fractae": {
+      "name": "Miedo",
+      "latin": "Pavor"
+    },
+    "traits": "mandíbulas dobles articuladas capaces de desencajarse para tragar presas enteras, hilera doble de dientes curvados hacia dentro que brillan violeta bajo el agua, aletas caudales bífidas que cortan la corriente sin apenas rastro, piel escamosa con vetas fosforescentes moradas que solo se encienden al acecho, ojos completamente negros rodeados de un halo púrpura",
+    "palette": "morado abisal casi negro, gris tormenta en el vientre, vetas violeta fosforescente a lo largo del costado, negro absoluto en las fauces",
+    "silhouette": "cuerpo serpentino y alargado propio de un depredador marino, aletas anchas replegadas contra el torso en el acecho, cola ondulante que se pierde en la oscuridad del agua",
+    "oppositeFractae": "Furia (Ira)",
+    "lorePhrase": "No hace falta ver a las Fauces del Abismo para sentir el pavor: basta con notar cómo el agua deja de moverse a tu alrededor.",
+    "habitat": "mares profundos y fosas oceánicas del Cretácico, depredador ápice que emerge desde la oscuridad sin aviso"
   }
 ]

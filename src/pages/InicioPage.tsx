@@ -58,6 +58,10 @@ export default function InicioPage() {
           <img className="card-icon" src="/icons/album.png" alt="" />
           <strong>Álbum 🔒</strong>
         </div>
+        <div className="card card-compact" style={{ opacity: 0.5 }}>
+          <img className="card-icon" src="/icons/perfil.png" alt="" />
+          <strong>Amigos 🔒</strong>
+        </div>
       </div>
       <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>
     </div>

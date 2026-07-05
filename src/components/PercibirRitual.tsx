@@ -1,14 +1,35 @@
-import { useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { RevealCard } from "./RevealCard";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 
 const PHASE = "calma";
-const DRAG_OPEN_THRESHOLD_PX = 120;
+const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
 const CARD_SPINS = 2;
 const MAX_SOUND_MS = 3000;
 const SFX_TEAR = "/sounds/sfx-tear.mp3";
 const SFX_WHOOSH = "/sounds/sfx-whoosh.mp3";
+
+// sobre.png is a 1024x1536 pack; the seal crease sits where the crimped top
+// flap widens into the pack body, roughly 9% down from the top edge.
+// Sized to match RevealCard's fixed 300px design width (see RevealCard.tsx
+// CARD_NATURAL_WIDTH) so the pack and the revealed card read as the same
+// physical object at the same screen size, minus the .page's 1rem side gutters.
+const PACK_ASPECT = 1536 / 1024;
+const PACK_MAX_WIDTH = 300;
+const PACK_SIDE_GUTTER_PX = 32;
+const PEEK_SCALE = 1.55;
+const PEEK_TRANSLATE_RATIO = 0.05;
+const SEAM_FRACTION = 0.09;
+
+function vibrate(pattern: number | number[]) {
+  // Vibration API has no support in iOS Safari (native or installed PWA) —
+  // this is a no-op there by design, only Android/Chrome will feel it.
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
 
 const RARITY_GLOW: Record<string, string> = {
   registrada: "#bfe6c9",
@@ -47,22 +68,61 @@ type RitualPhase = "sealed" | "opening" | "revealed";
 
 export interface PercibirRitualProps {
   species: Species[];
-  progress: { discovered: number; total: number } | null;
   discoverFn: (body: { speciesId: number; phase: string }, signal?: AbortSignal) => Promise<DiscoverResult>;
   onUnauthorized: () => void;
 }
 
-export function PercibirRitual({ species, progress, discoverFn, onUnauthorized }: PercibirRitualProps) {
+export function PercibirRitual({ species, discoverFn, onUnauthorized }: PercibirRitualProps) {
+  const navigate = useNavigate();
   const [phase, setPhase] = useState<RitualPhase>("sealed");
+  const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
   const [result, setResult] = useState<(DiscoverResult & { fractaeChildName?: string }) | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
-  const dragStartYRef = useRef<number | null>(null);
+  const draggingRef = useRef(false);
   const committedRef = useRef(false);
+  const lastVibrateStepRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const speciesAudioRef = useRef<HTMLAudioElement | null>(null);
   const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Full-bleed immersive screen: prevent iOS Safari's rubber-band scroll
+    // (and the dynamic toolbar exposing extra layout viewport) from making
+    // the fixed pack overlay feel scrollable.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    function measure() {
+      const el = stageRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setStageSize({ width: rect.width, height: rect.height });
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+    };
+  }, []);
+
+  const packWidth = Math.min(PACK_MAX_WIDTH, stageSize.width - PACK_SIDE_GUTTER_PX);
+  const packHeight = packWidth * PACK_ASPECT;
+  const packTop = (stageSize.height - packHeight) / 2;
+  const peekTranslate = stageSize.height * PEEK_TRANSLATE_RATIO;
+  const peekHeight = packHeight * PEEK_SCALE;
+  const seamTop = packTop + peekTranslate + peekHeight * SEAM_FRACTION;
 
   function stopSpeciesSound() {
     if (soundTimeoutRef.current !== null) {
@@ -120,24 +180,50 @@ export function PercibirRitual({ species, progress, discoverFn, onUnauthorized }
       });
   }
 
-  function handleDragStart(clientY: number) {
-    if (phase !== "sealed") return;
-    dragStartYRef.current = clientY;
-    committedRef.current = false;
+  function handleTapEnvelope() {
+    if (phase !== "sealed" || peeking || !species.length) return;
+    vibrate(15);
+    setPeeking(true);
   }
 
-  function handleDragMove(clientY: number) {
-    if (dragStartYRef.current === null) return;
-    const delta = Math.max(0, clientY - dragStartYRef.current);
-    setDragProgress(Math.min(1, delta / DRAG_OPEN_THRESHOLD_PX));
-    if (!committedRef.current && delta >= DRAG_OPEN_THRESHOLD_PX) {
+  function progressFromClientX(clientX: number) {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const rect = track.getBoundingClientRect();
+    if (rect.width === 0) return 0;
+    return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  }
+
+  function handleDragStart(clientX: number) {
+    if (phase !== "sealed" || !peeking) return;
+    draggingRef.current = true;
+    committedRef.current = false;
+    lastVibrateStepRef.current = 0;
+    // The handle jumps straight to the touch point, like grabbing the seam
+    // of a real pack wherever your finger lands, then tracks it 1:1.
+    setDragProgress(progressFromClientX(clientX));
+  }
+
+  function handleDragMove(clientX: number) {
+    if (!draggingRef.current) return;
+    const nextProgress = progressFromClientX(clientX);
+    setDragProgress(nextProgress);
+
+    const step = Math.floor(nextProgress * 10);
+    if (step > lastVibrateStepRef.current) {
+      lastVibrateStepRef.current = step;
+      vibrate(8);
+    }
+
+    if (!committedRef.current && nextProgress >= DRAG_COMMIT_PROGRESS) {
       committedRef.current = true;
+      vibrate([20, 30, 40]);
       commitOpen();
     }
   }
 
   function handleDragEnd() {
-    dragStartYRef.current = null;
+    draggingRef.current = false;
     if (!committedRef.current) {
       setDragProgress(0);
     }
@@ -148,12 +234,14 @@ export function PercibirRitual({ species, progress, discoverFn, onUnauthorized }
     setResult(null);
     setError(null);
     setPhase("sealed");
+    setPeeking(false);
     setDragProgress(0);
   }
 
   function handleRetry() {
     setError(null);
     setPhase("sealed");
+    setPeeking(false);
     setDragProgress(0);
   }
 
@@ -181,35 +269,71 @@ export function PercibirRitual({ species, progress, discoverFn, onUnauthorized }
             spins={prefersReducedMotion() ? 0 : CARD_SPINS}
           />
           <button onClick={handleReset}>Percibir de nuevo</button>
+          <button className="envelope-back-btn" onClick={() => navigate("/inicio")}>
+            ← Volver
+          </button>
         </div>
       )}
 
       {!error && phase !== "revealed" && (
-        <div className="percibir-overlay percibir-overlay-envelope">
-          <h1>Percibir</h1>
-          <div className="envelope">
-            <div
-              className="envelope-seal"
-              data-testid="envelope-seal"
-              style={{ transform: `translateY(${dragProgress * 40}px)`, opacity: 1 - dragProgress * 0.6 }}
-              onPointerDown={(e) => handleDragStart(e.clientY)}
-              onPointerMove={(e) => {
-                if (dragStartYRef.current !== null) handleDragMove(e.clientY);
-              }}
-              onPointerUp={handleDragEnd}
-              onPointerCancel={handleDragEnd}
-              onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
-              onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
-              onTouchEnd={handleDragEnd}
-              onTouchCancel={handleDragEnd}
-            />
-          </div>
-          <p>{!species.length ? "Cargando..." : phase === "opening" ? "Percibiendo..." : "Desliza de arriba a abajo para romper el precinto"}</p>
-          {progress && (
-            <p>
-              Llevas {progress.discovered} especies. Te faltan {Math.max(progress.total - progress.discovered, 0)} de
-              esta tanda.
-            </p>
+        <div className="envelope-stage" ref={stageRef}>
+          {stageSize.width > 0 && (
+            <>
+              <img
+                src="/cards/sobre.png"
+                alt="Sobre de cartas Ecorex"
+                className="envelope-pack-img"
+                onClick={handleTapEnvelope}
+                draggable={false}
+                style={{
+                  width: packWidth,
+                  top: packTop,
+                  marginLeft: -packWidth / 2,
+                  transform: peeking
+                    ? `translateY(${peekTranslate}px) scale(${PEEK_SCALE})`
+                    : "translateY(0) scale(1)",
+                }}
+              />
+
+              <p className="envelope-hint envelope-hint-top">
+                {!species.length
+                  ? "Cargando..."
+                  : !peeking
+                    ? "Toca el sobre para abrirlo"
+                    : phase === "opening"
+                      ? "Percibiendo..."
+                      : "Desliza de izquierda a derecha para abrir"}
+              </p>
+
+              {peeking && (
+                <div
+                  ref={trackRef}
+                  className="envelope-drag-track"
+                  data-testid="envelope-drag-line"
+                  style={{ top: seamTop, opacity: phase === "opening" ? 0 : 1 }}
+                  onPointerDown={(e) => handleDragStart(e.clientX)}
+                  onPointerMove={(e) => {
+                    if (draggingRef.current) handleDragMove(e.clientX);
+                  }}
+                  onPointerUp={handleDragEnd}
+                  onPointerCancel={handleDragEnd}
+                  onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+                  onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+                  onTouchEnd={handleDragEnd}
+                  onTouchCancel={handleDragEnd}
+                >
+                  <div className="envelope-drag-line">
+                    <div className="envelope-drag-line-fill" style={{ width: `${dragProgress * 100}%` }} />
+                  </div>
+                  <div
+                    className={`envelope-drag-handle${dragProgress === 0 ? " envelope-drag-handle-pulse" : ""}`}
+                    style={{ left: `${dragProgress * 100}%` }}
+                  >
+                    ↔
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

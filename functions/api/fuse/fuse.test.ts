@@ -116,7 +116,7 @@ describe('POST /api/fuse', () => {
     expect(response.status).toBe(409);
   });
 
-  it('fuses 5 oldest duplicates and returns a new furia discovery', async () => {
+  it('fuses 5 oldest duplicates and returns a new exceso discovery', async () => {
     const { env, db } = makeEnv({
       oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
       first: {
@@ -127,7 +127,7 @@ describe('POST /api/fuse', () => {
         base_palette: null,
         silhouette: null,
         fractae_child_name: 'Furia',
-        anchor_image_url: '/species-art/rex/furia.png',
+        anchor_image_url: '/species-art/rex/exceso.png',
       },
     });
     const request = new Request('https://ecorex.app/api/fuse', {
@@ -138,7 +138,7 @@ describe('POST /api/fuse', () => {
     const response = await onRequestPost({ request, env } as never);
     expect(response.status).toBe(201);
     const body = (await response.json()) as { phase: string; commonName: string };
-    expect(body.phase).toBe('furia');
+    expect(body.phase).toBe('exceso');
     expect(body.commonName).toBe('Rex de Fuego');
     const updateCalls = db.calls.filter((c) => c.sql.includes('SET consumed_at'));
     expect(updateCalls.length).toBeGreaterThan(0);

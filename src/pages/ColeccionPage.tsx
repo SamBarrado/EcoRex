@@ -80,7 +80,7 @@ export default function ColeccionPage() {
           >
             Todas
           </button>
-          {(["calma", "furia", "eco"] as const).map((phase) => (
+          {(["calma", "exceso", "eco"] as const).map((phase) => (
             <button
               key={phase}
               onClick={() => setPhaseFilter(phase)}

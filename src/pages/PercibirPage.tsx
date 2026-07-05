@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSpecies, getMyProfile, discover, Species, ApiError } from "../lib/api";
+import { getSpecies, discover, Species, ApiError } from "../lib/api";
 import { PercibirRitual } from "../components/PercibirRitual";
 
 export default function PercibirPage() {
   const navigate = useNavigate();
   const [species, setSpecies] = useState<Species[] | null>(null);
-  const [progress, setProgress] = useState<{ discovered: number; total: number } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     setLoadError(null);
-    Promise.all([getSpecies(), getMyProfile()])
-      .then(([speciesData, profileData]) => {
+    getSpecies()
+      .then((speciesData) => {
         setSpecies(speciesData.species);
-        setProgress({ discovered: profileData.speciesDiscoveredCount, total: profileData.speciesTotalCount });
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
@@ -48,11 +46,6 @@ export default function PercibirPage() {
   }
 
   return (
-    <PercibirRitual
-      species={species}
-      progress={progress}
-      discoverFn={discover}
-      onUnauthorized={() => navigate("/login")}
-    />
+    <PercibirRitual species={species} discoverFn={discover} onUnauthorized={() => navigate("/login")} />
   );
 }

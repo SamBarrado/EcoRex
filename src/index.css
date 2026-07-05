@@ -8,9 +8,15 @@ body {
   overscroll-behavior-y: contain;
 }
 
+html {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  background: #0d1a0f;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1c3624 0%, #142a1b 55%, #0f2115 100%);
+  background-attachment: fixed;
   color: #f2f6f3;
   -webkit-tap-highlight-color: transparent;
 }
@@ -19,7 +25,52 @@ a {
   color: inherit;
 }
 
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-particle {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(127, 200, 145, 0.55), rgba(63, 174, 90, 0));
+  animation-name: bg-particle-float;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes bg-particle-float {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(var(--drift), -110vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-particle {
+    animation: none;
+    display: none;
+  }
+}
+
 .page {
+  position: relative;
+  z-index: 1;
   max-width: 480px;
   margin: 0 auto;
   padding: 1.5rem 1rem calc(2rem + env(safe-area-inset-bottom));
@@ -116,7 +167,8 @@ button:disabled {
 
 .auth-logo {
   display: block;
-  width: 110px;
+  width: 200px;
+  max-width: 70%;
   height: auto;
   margin: 0 auto 1rem;
   object-fit: contain;
@@ -131,18 +183,43 @@ button:disabled {
   object-fit: contain;
 }
 
+.page-header {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0;
+}
+
+.page-back-btn {
+  justify-self: start;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  margin: 0;
+  color: #f2f6f3;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .page-header-logo {
+  grid-column: 2;
+  justify-self: center;
   display: block;
   background: none;
   border: none;
-  padding: 0.75rem 1rem 0;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
 }
 
 .page-header-logo img {
   display: block;
-  width: 56px;
+  width: 120px;
   height: auto;
   object-fit: contain;
   margin: 0 auto;
@@ -192,26 +269,27 @@ button:disabled {
 .action-fab-main,
 .action-fab-option {
   position: relative;
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
+  width: 88px;
+  height: 88px;
+  border-radius: 0;
   padding: 0;
-  background: #142218;
-  border: 2px solid #3fae5a;
+  background: none;
+  border: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .action-fab-option {
-  width: 48px;
-  height: 48px;
+  width: 76px;
+  height: 76px;
 }
 
 .action-fab-main img,
 .action-fab-option img {
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -294,6 +372,7 @@ button:disabled {
 .card-face {
   position: relative;
   width: 100%;
+  aspect-ratio: 1024 / 1536;
   box-sizing: border-box;
   border-radius: 16px;
   border: 3px solid #3fae5a;
@@ -301,6 +380,9 @@ button:disabled {
   background: #142218;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .card-face-back {
@@ -316,7 +398,7 @@ button:disabled {
 .card-back-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .reveal-card-body {
@@ -329,8 +411,8 @@ button:disabled {
 .percibir-ritual {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: #0d1a0f;
+  z-index: 1;
+  background: transparent;
 }
 
 .percibir-overlay {
@@ -347,38 +429,131 @@ button:disabled {
   overflow-y: auto;
 }
 
-.envelope {
-  position: relative;
-  width: 220px;
-  aspect-ratio: 3 / 2;
-  margin: 1rem 0;
-}
-
-.envelope-seal {
+.envelope-stage {
   position: absolute;
   inset: 0;
-  border-radius: 12px;
-  background: linear-gradient(160deg, #3fae5a, #22331f 70%);
-  border: 2px solid #4fa9e0;
-  box-shadow: 0 0 20px rgba(63, 174, 90, 0.35);
-  cursor: grab;
-  touch-action: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.envelope-seal::after {
-  content: "";
+.envelope-pack-img {
+  position: absolute;
+  left: 50%;
+  height: auto;
+  display: block;
+  transform-origin: top center;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.envelope-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+.envelope-hint-top {
+  top: calc(1.5rem + env(safe-area-inset-top));
+  color: #cfe8d6;
+}
+
+.envelope-drag-track {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 56px;
+  margin-top: -28px;
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  cursor: grab;
+}
+
+.envelope-drag-line {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #3fae5a, #4fa9e0, #a35fe0, #e0a02f, #3fae5a);
+  background-size: 300% 100%;
+  animation: envelope-line-flow 3s linear infinite;
+  box-shadow: 0 0 12px rgba(79, 169, 224, 0.55);
+}
+
+.envelope-drag-line-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(242, 246, 243, 0.65);
+  transition: width 0.05s linear;
+}
+
+.envelope-drag-handle {
   position: absolute;
   top: 50%;
-  left: 12%;
-  right: 12%;
-  height: 2px;
-  background: repeating-linear-gradient(90deg, #f2f6f3 0 8px, transparent 8px 14px);
-  opacity: 0.6;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 999px;
+  background: #f2f6f3;
+  color: #06120a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.envelope-drag-handle-pulse {
+  animation: envelope-handle-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes envelope-handle-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(79, 169, 224, 0.6);
+  }
+  50% {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 0 10px rgba(79, 169, 224, 0);
+  }
+}
+
+.envelope-back-btn {
+  background: none;
+  color: #cfe8d6;
+  font-weight: 400;
+  font-size: 0.95rem;
+  padding: 0.4rem;
+}
+
+@keyframes envelope-line-flow {
+  0% {
+    background-position: 300% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .envelope-seal {
+  .envelope-pack-img,
+  .envelope-drag-line,
+  .envelope-drag-handle-pulse {
+    animation: none;
     transition: none;
   }
 }

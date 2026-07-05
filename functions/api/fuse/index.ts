@@ -84,7 +84,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
      FROM species
      JOIN fractae ON fractae.id = species.fractae_id
      JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id
-     WHERE species.id = ? AND species_phase_anchors.phase = 'furia' AND species.is_active = 1`
+     WHERE species.id = ? AND species_phase_anchors.phase = 'exceso' AND species.is_active = 1`
   )
     .bind(speciesId)
     .first<SpeciesPhaseRow>();
@@ -108,7 +108,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const resolved = await resolvePhaseImage({
       species: speciesRow,
-      phase: "furia",
+      phase: "exceso",
       rarityTier,
       requestUrl: request.url,
       openaiApiKey: env.OPENAI_API_KEY,
@@ -125,7 +125,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const insertResult = await env.DB.prepare(
     `INSERT INTO discoveries
        (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url, is_unique_variant)
-     VALUES (?, ?, ?, 'furia', ?, ?, ?)`
+     VALUES (?, ?, ?, 'exceso', ?, ?, ?)`
   )
     .bind(discoveryCode, user.id, speciesId, rarityTier.id, imageUrl, isUniqueVariant ? 1 : 0)
     .run();
@@ -148,7 +148,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       speciesId,
       scientificName: speciesRow.scientific_name,
       commonName: speciesRow.common_name,
-      phase: "furia",
+      phase: "exceso",
       rarityTier: { slug: rarityTier.slug, name: rarityTier.name },
       imageUrl,
       isUniqueVariant,

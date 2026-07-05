@@ -1,7 +1,7 @@
 {
   "name": "ecorex-project",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.functions.json --noEmit",
     "test": "vitest run",
@@ -10,6 +10,7 @@
     "vite:dev": "vite",
     "dev": "npm run build && wrangler pages dev dist",
     "species:art": "node scripts/generate-species-art.mjs",
+    "species:art:layered": "node scripts/generate-species-art-layered.mjs",
     "species:spec": "node scripts/generate-species-spec.mjs",
     "db:sync-species": "node scripts/sync-species-db.mjs",
     "db:seed": "wrangler d1 execute DB --local --file=scripts/seed.sql",

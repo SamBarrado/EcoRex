@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register({ email, password, display_name: displayName });
-      navigate("/coleccion");
+      navigate("/inicio");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Error al registrarse");
     } finally {

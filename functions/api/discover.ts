@@ -62,9 +62,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const phase = body.phase;
 
   if (typeof speciesId !== "number" || !phase || !VALID_PHASES.includes(phase)) {
-    if (phase === "furia") {
+    if (phase === "exceso") {
       return Response.json(
-        { error: "Furia solo se obtiene fusionando duplicados de Calma" },
+        { error: "Exceso solo se obtiene fusionando duplicados de Calma" },
         { status: 400 }
       );
     }

@@ -18,7 +18,7 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 const ART_DIR = path.join(ROOT, 'public/species-art');
 const SEED_FILE = path.join(ROOT, 'scripts/seed.sql');
 const SPEC_FILES = ['scripts/lote.json', 'scripts/species.wave1.json'];
-const PHASES = ['calma', 'furia', 'eco'];
+const PHASES = ['calma', 'exceso', 'eco'];
 
 // Fixed reference (docs/lore_world_bible_ecorex_v4.md §2) — the 8 Fractae.
 const FRACTAE_META = {

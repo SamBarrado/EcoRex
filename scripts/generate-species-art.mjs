@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Batch-generates species anchor art: Calma via /v1/images/generations from a
-// spec sheet, then Furia and Eco via /v1/images/edits (image-to-image) over
+// spec sheet, then Exceso and Eco via /v1/images/edits (image-to-image) over
 // the Calma anchor, so all three phases stay visually consistent per species
 // as described in docs/lore_world_bible_ecorex_v4.md §15.2-15.4.
 //
@@ -15,8 +15,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const PHASE_MODIFIERS = {
-  calma: 'forma estable, postura serena, brillo suave',
-  furia: 'forma intensificada, postura agresiva, brillo ardiente, grietas de energía',
+  calma: 'forma estable, postura serena, iluminación natural suave',
+  exceso: 'forma intensificada, postura agresiva, tensión muscular visible, brillo/grietas de energía más intensas en los rasgos elementales/cristalinos ya establecidos de la especie (si los tiene) y en ojos, sin convertir el resto del cuerpo en cristal si no lo era ya en Calma',
 };
 
 // Eco is the Fractae's emotion pushed to its absolute extreme — NOT a fixed
@@ -36,7 +36,7 @@ const FRACTAE_EXTREME = {
   Curiosidad: 'su obsesión por comprender la disuelve en incontables fragmentos que siguen buscando respuestas por separado, cada uno indagando su propia pregunta',
 };
 
-const PHASES = ['calma', 'furia', 'eco'];
+const PHASES = ['calma', 'exceso', 'eco'];
 
 // Widescreen landscape, matching the manually-designed anchors (e.g. the
 // T-Rex Imperator reference is 1536x1024) — not the default square format.
@@ -61,20 +61,29 @@ function slugify(name) {
     .replace(/(^-|-$)/g, '');
 }
 
-const BASE_STYLE = `Stylized painted concept-art illustration (video-game bestiary key art) — deliberately NOT photorealistic: bold dark ink linework outlining every form, flatter posterized color blocks with painterly gradients instead of granular skin-pore/photo texture, slightly heroic/exaggerated proportions. Faceted, crystal-like scale texture with glowing internal veins/cracks running through the skin in the Fractae's accent color, but kept graphic/illustrative rather than hyper-detailed. Full dramatic environment matching the creature's element, rendered in the same stylized painted look as the creature. Cinematic rim lighting, one clear accent color for eyes and energy veins used with restraint (not blanket saturation across the whole image), dynamic imposing pose, a light/moderate amount of atmospheric particles drifting in the scene — not an overloaded or cluttered composition. No text, no watermark, no UI elements.`;
+// Target style (confirmed against user-approved reference closeups): semi-
+// stylized DIGITAL painted illustration with bold graphic linework and
+// dramatic lighting — NOT photoreal/CGI, but also NOT flat/traditional-media
+// gouache. Glow/energy accents (cracks, veins) are welcome and expected, but
+// only where thematically justified by the creature's Fractae/habitat (e.g.
+// molten cracks for a volcanic Furia/Ira creature) — never applied blindly
+// as a universal "everything is crystal" treatment. Non-elemental surface
+// materials (hide, scales, moss, stone) should look natural, not literal
+// crystal/glass, rendered in the same illustrative digital-painting technique.
+const BASE_STYLE = `GRAPHIC ANIME/MANGA-INFLUENCED ILLUSTRATION with heavy black ink contour linework — NOT a photograph, NOT a photoreal 3D/CGI render, NOT soft-blended airbrush painting, NOT physically-based-rendering skin detail. This must look like mobile-game/gacha creature card art or anime-style dinosaur illustration: a thick, clearly visible BLACK INK OUTLINE traces the silhouette AND traces the edge of every individual scale, plate, and major surface segment across the whole body — the linework is the dominant visual structure, not soft gradient blending. Color is filled in graphic, semi-flat cel-shaded blocks within those outlines — only 2-3 tonal steps per surface (shadow, midtone, highlight), not smooth photographic gradients. Reduce specular highlights: surfaces should look matte/painted, not glossy or wet-looking; avoid reflective sheen on the hide. Dramatic rim lighting and color grading are added on top of that flat/graphic base. If the ficha-spec's fixed physical traits explicitly call for crystalline/faceted features (e.g. a crystal frill or horns), render exactly those specific features as faceted glowing crystal — but the rest of the body (skin, scales, hide) must stay natural creature material with the same heavy-outline graphic technique, never a full-body glass/crystal transformation. Separately, where the creature's Fractae/habitat is elemental or intense (fire, lightning, decay, etc.), glowing cracks/veins in the Fractae's color may appear as graphic linework accents directly on the hide — but only where thematically justified, never as a blanket effect applied the same way to every species regardless of theme. Full dramatic environment matching the creature's habitat, painted in the same graphic illustration style, with real depth (foreground/midground/background). Dynamic imposing pose. No text, no watermark, no UI elements, no card frame or borders — deliver only the creature-and-environment illustration itself.`;
 
 // Real figure/ground separation technique, not a cheap glow-outline hack:
 // value contrast, atmospheric perspective and texture-density differences
-// between subject and environment. Shared by Calma, Furia and Eco because
+// between subject and environment. Shared by Calma, Exceso and Eco because
 // image-to-image edits tend to erode this separation over successive passes.
-const FIGURE_GROUND_SEPARATION = `Reserve the faceted, glowing-crack texture EXCLUSIVELY for the creature's skin — this exact graphic pattern must NEVER appear on the ground, rock, terrain, smoke, clouds, or any background surface, even if the environment is thematically the same material (e.g. volcanic/lava, ice, water). The environment may carry ambient color and light from its element (warm lava glow, cool ice sheen, etc.) as soft, diffuse illumination and color cast only — never as the same sharp crack-network graphic device used on the creature. If creature and terrain share a real-world material (e.g. a lava-skinned creature standing on lava rock, or smoke/clouds near it), differentiate them by TREATMENT, not material: the creature is graphic/faceted/glowing at full detail, everything else (ground, smoke, clouds, distant rock) is a plainer, softer, more uniform surface with far less linework and no repeated crack pattern — think "sharp painted character cutout over a simpler, softer painted backdrop", like classic hand-painted key art, not "creature and background made of the identical repeating texture".`;
+const FIGURE_GROUND_SEPARATION = `Achieve figure/ground separation through proper illustration technique: the creature is the sharpest, highest-contrast, most-detailed element in the frame. Push the background back with atmospheric perspective — softer edges, lower contrast, slightly desaturated and hazier the further back it goes. Do not render the background environment (rock, foliage, water, sky) with the same fine detail density as the creature's surface — it should read as a distinct, receding painted layer behind the subject, not competing with it for detail or contrast. The creature's silhouette must be immediately readable against its surroundings at a glance.`;
 
 function buildAnchorPrompt(spec) {
   return [
     BASE_STYLE,
     FIGURE_GROUND_SEPARATION,
     `Species: ${spec.scientificName} ("${spec.commonName}").`,
-    `Emotional core (Fractae): ${spec.fractae.name} (${spec.fractae.latin}) — the environment and glowing veins should read as this element.`,
+    `Emotional core (Fractae): ${spec.fractae.name} (${spec.fractae.latin}) — let the environment's mood/lighting and a subtle accent in the eyes read as this element. Unless the fixed physical traits below explicitly describe crystalline/faceted features, the creature's body must stay natural creature material (skin/scales/hide), not a full-body stylized crystal/glass being.`,
     `Habitat/ecology: ${spec.habitat}.`,
     `Fixed physical traits: ${spec.traits}.`,
     `Base color palette: ${spec.palette}.`,
@@ -83,12 +92,12 @@ function buildAnchorPrompt(spec) {
   ].join(' ');
 }
 
-function buildFuriaPrompt(spec) {
+function buildExcesoPrompt(spec) {
   return [
-    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same stylized painted key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
-    `Apply ONLY this phase transformation (furia): ${PHASE_MODIFIERS.furia}.`,
+    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
+    `Apply ONLY this phase transformation (exceso): ${PHASE_MODIFIERS.exceso}.`,
     `This must NOT read as "the calm reference pose with the mouth open" — that is a failure state. Change the actual body pose/stance to something genuinely more aggressive and dynamic than the reference: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking, a tighter and more dramatic camera angle/framing than the calm reference (closer, lower, or more diagonal — not the same wide standing profile shot). The mouth being open is a minor detail, not the main change.`,
-    `Keep color saturation and contrast controlled and readable — this is a moderate intensification over the reference, not a blown-out, oversaturated, or overexposed image. The glow should be concentrated on the cracks/veins and a few key highlights, not flood the entire frame or background in solid intense color. But the overall energy/glow intensity must still be clearly, unmistakably higher than the calm reference — someone flipping between the two images should immediately feel escalation, not need to hunt for the difference.`,
+    `Keep color saturation and contrast controlled and readable — this is a moderate intensification over the reference, not a blown-out, oversaturated, or overexposed image. Any glow accent should stay confined to the eyes and a few natural highlights (not a fictional crystal/crack pattern), not flood the entire frame or background in solid intense color. But the overall energy/danger must still be clearly, unmistakably higher than the calm reference — someone flipping between the two images should immediately feel escalation, not need to hunt for the difference.`,
     FIGURE_GROUND_SEPARATION,
     `Do not change the species identity, proportions, or palette family — only intensity/texture per the phase description.`,
   ].join(' ');
@@ -101,12 +110,12 @@ function buildFuriaPrompt(spec) {
 function buildEcoPrompt(spec) {
   const extreme = FRACTAE_EXTREME[spec.fractae.name];
   return [
-    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same stylized painted key-art style: ${spec.scientificName} ("${spec.commonName}").`,
+    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style: ${spec.scientificName} ("${spec.commonName}").`,
     `This is the Eco phase: the ${spec.fractae.name} (${spec.fractae.latin}) Fractae pushed to its absolute emotional extreme in this specific creature. The archetype of that extreme: ${extreme}.`,
     `Manifest that extreme specifically through THIS creature's own anatomy and habitat (${spec.habitat}) and physical traits (${spec.traits}) — do NOT default to a generic universal effect (no plain "translucent ghost" treatment applies to all species alike).`,
-    `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Furia. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Calma and Furia (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
-    `Reason about what mechanism this particular creature and environment would realistically produce: an aquatic or semi-aquatic species should express it through water/steam/pressure/bioluminescence rather than dry fire or ash; a burrowing or heavily armored species might express it through earth, cracking stone, or collapsing structure; a flying or feathered species might express it through air, wind-scatter, or storm; a large land predator might express it through fire, ember, or scorched ground — pick whatever fits this species, not a template.`,
-    `Keep the composition clean and restrained, not overloaded: the creature's silhouette must stay the clear, legible focal point. Use a moderate, controlled amount of debris/particles/effect concentrated where it matters (e.g. cracking origin points, the edges dissolving) rather than filling the whole frame with scattered fragments or chaotic noise. Less is more — one or two clear focal details communicating the extreme beat a busy, cluttered image.`,
+    `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Exceso. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Calma and Exceso (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
+    `Reason about what mechanism this particular creature and environment would realistically produce, staying within the graphic illustration style (do not turn the whole body to crystal/glass unless that is already one of its fixed physical traits): an aquatic or semi-aquatic species should express it through water/steam/pressure/bioluminescence rather than dry fire or ash; a burrowing or heavily armored species might express it through earth, mud, or collapsing terrain; a flying or feathered species might express it through air, wind-scatter, or storm; a large land predator might express it through fire, ember, or scorched ground — pick whatever fits this species, not a template.`,
+    `Keep the composition clean and restrained, not overloaded: the creature's silhouette must stay the clear, legible focal point. Use a moderate, controlled amount of environmental effect/particles concentrated where it matters rather than filling the whole frame with scattered debris or chaotic noise. Less is more — one or two clear focal details communicating the extreme beat a busy, cluttered image.`,
     FIGURE_GROUND_SEPARATION,
     `The result should read as the climactic, most extreme possible state of this exact creature's emotion — dramatic and singular to it, not interchangeable with any other species' Eco.`,
   ].join(' ');
@@ -173,7 +182,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const specFile = args._[0];
   if (!specFile) {
-    console.error('Uso: node scripts/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases calma,furia,eco]');
+    console.error('Uso: node scripts/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases calma,exceso,eco]');
     process.exit(1);
   }
 
@@ -211,10 +220,10 @@ async function main() {
       anchorBytes = await readFile(existing);
     }
 
-    for (const phase of ['furia', 'eco']) {
+    for (const phase of ['exceso', 'eco']) {
       if (!phases.includes(phase)) continue;
       console.log(`  Generando ${phase} (image-to-image sobre ancla Calma)...`);
-      const prompt = phase === 'furia' ? buildFuriaPrompt(spec) : buildEcoPrompt(spec);
+      const prompt = phase === 'exceso' ? buildExcesoPrompt(spec) : buildEcoPrompt(spec);
       const b64 = await generateVariant(anchorBytes, prompt, apiKey);
       await writeFile(path.join(speciesDir, `${phase}.png`), Buffer.from(b64, 'base64'));
       console.log(`  -> ${speciesDir}/${phase}.png`);

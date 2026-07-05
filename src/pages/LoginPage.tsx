@@ -15,7 +15,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ email, password });
-      navigate("/coleccion");
+      navigate("/inicio");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Error al iniciar sesión");
     } finally {

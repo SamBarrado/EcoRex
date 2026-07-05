@@ -8,10 +8,12 @@ import PerfilPage from "./pages/PerfilPage";
 import FusionPage from "./pages/FusionPage";
 import PageHeader from "./components/PageHeader";
 import ActionFab from "./components/ActionFab";
+import BackgroundFx from "./components/BackgroundFx";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <BackgroundFx />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
@@ -24,21 +26,14 @@ export default function App() {
             </>
           }
         />
-        <Route
-          path="/percibir"
-          element={
-            <>
-              <PageHeader />
-              <PercibirPage />
-            </>
-          }
-        />
+        <Route path="/percibir" element={<PercibirPage />} />
         <Route
           path="/coleccion"
           element={
             <>
               <PageHeader />
               <ColeccionPage />
+              <ActionFab />
             </>
           }
         />
@@ -48,6 +43,7 @@ export default function App() {
             <>
               <PageHeader />
               <PerfilPage />
+              <ActionFab />
             </>
           }
         />
@@ -57,6 +53,7 @@ export default function App() {
             <>
               <PageHeader />
               <FusionPage />
+              <ActionFab />
             </>
           }
         />

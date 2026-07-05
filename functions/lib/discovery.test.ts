@@ -32,7 +32,7 @@ describe('buildVariantPrompt', () => {
       silhouette: 'bípedo robusto',
       anchor_image_url: '/species-art/rex/calma.png',
     };
-    const prompt = buildVariantPrompt(species, 'furia');
+    const prompt = buildVariantPrompt(species, 'exceso');
     expect(prompt).toContain('Rex de Fuego');
     expect(prompt).toContain('forma intensificada, postura agresiva, brillo ardiente, grietas de energía');
   });

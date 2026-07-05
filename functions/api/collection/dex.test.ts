@@ -111,8 +111,8 @@ describe('GET /api/collection/dex', () => {
     expect(calmaSlot.locked).toBe(false);
     expect(calmaSlot.count).toBe(2);
     expect(calmaSlot.discovery_code).toBe('DX-AAA'); // most recent wins as representative
-    const furiaSlot = body.slots.find((s) => s.phase === 'furia')!;
-    expect(furiaSlot.locked).toBe(true);
+    const excesoSlot = body.slots.find((s) => s.phase === 'exceso')!;
+    expect(excesoSlot.locked).toBe(true);
   });
 
   it('excludes species from waves beyond the current active wave', async () => {

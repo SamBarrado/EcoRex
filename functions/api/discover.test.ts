@@ -45,12 +45,12 @@ function makeDb(opts: { calmaCountAfterInsert: number }) {
 }
 
 describe('POST /api/discover', () => {
-  it('rejects phase=furia', async () => {
+  it('rejects phase=exceso', async () => {
     const db = makeDb({ calmaCountAfterInsert: 1 });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'furia' }),
+      body: JSON.stringify({ speciesId: 7, phase: 'exceso' }),
     });
     const env = {
       DB: db as unknown as D1Database,

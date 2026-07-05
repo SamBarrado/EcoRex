@@ -8,8 +8,6 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      // TODO: real app icons haven't been designed yet — add icon-192.png /
-      // icon-512.png under public/icons/ and list them here once they exist.
       manifest: {
         name: "Ecorex",
         short_name: "Ecorex",
@@ -18,6 +16,11 @@ export default defineConfig({
         background_color: "#0d1a0f",
         display: "standalone",
         start_url: "/",
+        icons: [
+          { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
       },
     }),
   ],

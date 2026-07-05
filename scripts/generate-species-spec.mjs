@@ -53,7 +53,7 @@ function loadDevVarsApiKey() {
 function buildPrompt(especie, fractae) {
   return `Eres el equipo de lore/diseño de bestiario de ECOREX. Cada criatura es la manifestación
 física de un Fractae (núcleo emocional puro) a través de una especie portadora (dinosaurio), en
-una de tres Fases: Calma, Furia o Eco (Fase ≠ Rareza, son ejes independientes; no asignes rareza).
+una de tres Fases: Calma, Exceso o Eco (Fase ≠ Rareza, son ejes independientes; no asignes rareza).
 
 Datos de entrada:
 - Especie base (nombre científico real o parcial de dinosaurio): ${especie}
