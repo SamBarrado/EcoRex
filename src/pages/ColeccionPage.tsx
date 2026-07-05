@@ -131,7 +131,7 @@ export default function ColeccionPage() {
                 </span>
               )}
               <img
-                src={slot.locked ? "/icons/carta-bloqueada.svg" : slot.image_url}
+                src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
                 alt={slot.locked ? "Carta bloqueada" : slot.common_name}
                 className="species-image"
                 loading="lazy"
@@ -162,7 +162,7 @@ export default function ColeccionPage() {
           <div className="card" style={{ maxWidth: 420, width: "100%" }} onClick={(e) => e.stopPropagation()}>
             {previewSlot.locked ? (
               <>
-                <img src="/icons/carta-bloqueada.svg" alt="Carta bloqueada" className="species-image" />
+                <img src="/icons/carta-bloqueada.png" alt="Carta bloqueada" className="species-image" />
                 <strong>??? 🔒</strong>
                 <p>Carta aún no descubierta. Juega en Percibir para desbloquearla.</p>
               </>
