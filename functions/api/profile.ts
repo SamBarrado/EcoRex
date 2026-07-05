@@ -13,9 +13,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(user.id)
     .first<{ explorer_rank: string }>();
 
+  const waveRow = await env.DB.prepare(
+    "SELECT COALESCE(MAX(launch_wave), 0) as wave FROM species WHERE is_active = 1"
+  ).first<{ wave: number }>();
+  const currentWave = waveRow?.wave ?? 0;
+
   const speciesTotalRow = await env.DB.prepare(
-    "SELECT COUNT(*) as count FROM species WHERE is_active = 1"
-  ).first<{ count: number }>();
+    "SELECT COUNT(*) as count FROM species WHERE launch_wave <= ? AND launch_wave > 0"
+  )
+    .bind(currentWave)
+    .first<{ count: number }>();
 
   const speciesDiscoveredRow = await env.DB.prepare(
     "SELECT COUNT(DISTINCT species_id) as count FROM discoveries WHERE user_id = ?"
