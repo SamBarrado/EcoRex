@@ -116,6 +116,7 @@ export interface DiscoverResult {
   imageUrl: string;
   isUniqueVariant: boolean;
   discoveredAt: string;
+  xp: { xpGained: number; totalXp: number; level: number; leveledUp: boolean };
 }
 
 export function discover(body: { speciesId: number; phase: string }, signal?: AbortSignal) {

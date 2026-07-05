@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
+import { XpToast } from "../components/XpToast";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -30,6 +31,7 @@ export default function FusionPage() {
   const [fusing, setFusing] = useState<number | null>(null);
   const [glowSlug, setGlowSlug] = useState<string | null>(null);
   const [result, setResult] = useState<DiscoverResult | null>(null);
+  const [showXpToast, setShowXpToast] = useState(false);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -99,6 +101,7 @@ export default function FusionPage() {
       setGlowSlug(data.rarityTier.slug);
       await delay(400);
       setResult(data);
+      setShowXpToast(true);
       playSound();
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -116,6 +119,7 @@ export default function FusionPage() {
   function handleReset() {
     stopSound();
     setResult(null);
+    setShowXpToast(false);
     setGlowSlug(null);
     load();
   }
@@ -178,6 +182,9 @@ export default function FusionPage() {
             </div>
           ))}
         </div>
+      )}
+      {showXpToast && result && (
+        <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
       )}
     </div>
   );

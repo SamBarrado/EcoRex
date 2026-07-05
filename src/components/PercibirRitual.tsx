@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RevealCard } from "./RevealCard";
+import { XpToast } from "./XpToast";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 
 const PHASE = "calma";
@@ -78,6 +79,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
   const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
   const [result, setResult] = useState<(DiscoverResult & { fractaeChildName?: string }) | null>(null);
+  const [showXpToast, setShowXpToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -157,6 +159,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
       .then(([data]) => {
         setResult({ ...data, fractaeChildName: picked.fractae_child_name });
         setPhase("revealed");
+        setShowXpToast(true);
         const finalAudio = speciesAudioRef.current;
         if (finalAudio) {
           finalAudio.currentTime = 0;
@@ -232,6 +235,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
   function handleReset() {
     stopSpeciesSound();
     setResult(null);
+    setShowXpToast(false);
     setError(null);
     setPhase("sealed");
     setPeeking(false);
@@ -247,6 +251,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
 
   return (
     <div className="percibir-ritual">
+      {showXpToast && result && (
+        <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
+      )}
       {error && (
         <div className="percibir-overlay">
           <p className="error">{error}</p>
