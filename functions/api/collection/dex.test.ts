@@ -59,7 +59,7 @@ describe('GET /api/collection/dex', () => {
     });
     const response = await onRequestGet({ request, env } as unknown as Parameters<typeof onRequestGet>[0]);
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = (await response.json()) as { currentWave: number; slots: Array<Record<string, unknown>> };
     expect(body.currentWave).toBe(1);
     expect(body.slots).toHaveLength(6); // 2 species x 3 phases
     for (const slot of body.slots) {
@@ -105,13 +105,13 @@ describe('GET /api/collection/dex', () => {
       headers: { Cookie: 'ecorex_session=abc' },
     });
     const response = await onRequestGet({ request, env } as unknown as Parameters<typeof onRequestGet>[0]);
-    const body = await response.json();
+    const body = (await response.json()) as { slots: Array<Record<string, unknown>> };
     expect(body.slots).toHaveLength(3); // 1 species x 3 phases
-    const calmaSlot = body.slots.find((s: { phase: string }) => s.phase === 'calma');
+    const calmaSlot = body.slots.find((s) => s.phase === 'calma')!;
     expect(calmaSlot.locked).toBe(false);
     expect(calmaSlot.count).toBe(2);
     expect(calmaSlot.discovery_code).toBe('DX-AAA'); // most recent wins as representative
-    const furiaSlot = body.slots.find((s: { phase: string }) => s.phase === 'furia');
+    const furiaSlot = body.slots.find((s) => s.phase === 'furia')!;
     expect(furiaSlot.locked).toBe(true);
   });
 });
