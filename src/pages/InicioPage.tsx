@@ -26,6 +26,7 @@ export default function InicioPage() {
           onClick={() => navigate("/percibir")}
           onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && navigate("/percibir")}
         >
+          <img className="card-icon" src="/icons/percibir.png" alt="" />
           <strong>Percibir</strong>
           <p>Descubre nuevas especies en su fase Calma.</p>
         </div>
@@ -36,6 +37,7 @@ export default function InicioPage() {
           onClick={() => navigate("/coleccion")}
           onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && navigate("/coleccion")}
         >
+          <img className="card-icon" src="/icons/mi-coleccion.png" alt="" />
           <strong>Mi Colección</strong>
           <p>Revisa tu álbum de especies descubiertas.</p>
         </div>
@@ -47,6 +49,7 @@ export default function InicioPage() {
           onClick={() => fusionUnlocked && navigate("/fusion")}
           onKeyDown={(e) => fusionUnlocked && (e.key === "Enter" || e.key === " ") && navigate("/fusion")}
         >
+          <img className="card-icon" src="/icons/altar-fusion.png" alt="" />
           <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
           <p>
             {fusionUnlocked
@@ -55,7 +58,13 @@ export default function InicioPage() {
           </p>
         </div>
         <div className="card" style={{ opacity: 0.5 }}>
+          <img className="card-icon" src="/icons/eco.png" alt="" />
           <strong>Eco 🔒</strong>
+          <p>Próximamente.</p>
+        </div>
+        <div className="card" style={{ opacity: 0.5 }}>
+          <img className="card-icon" src="/icons/album.png" alt="" />
+          <strong>Álbum 🔒</strong>
           <p>Próximamente.</p>
         </div>
       </div>

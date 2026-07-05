@@ -73,7 +73,10 @@ export default function ColeccionPage() {
 
   return (
     <div className="page">
-      <h1>Mi Álbum</h1>
+      <h1 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <img src="/icons/album.png" alt="" style={{ width: 40, height: 40, objectFit: "contain" }} />
+        Mi Álbum
+      </h1>
       {error && (
         <>
           <p className="error">{error}</p>
