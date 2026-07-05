@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getSpecies, getMyProfile, discover, Species, DiscoverResult, ApiError } from "../lib/api";
+import { RevealCard } from "../components/RevealCard";
 
 const PHASE = "calma";
 const MIN_RITUAL_MS = 1500;
@@ -161,12 +162,16 @@ export default function PercibirPage() {
       {!error && result && (
         <div className="card">
           <strong>¡Percibiste una Fractura!</strong>
-          <img src={result.imageUrl} alt={result.commonName} className="species-image" />
-          <div>{result.commonName} ({result.scientificName})</div>
-          {result.fractaeChildName && <div>Fractae: {result.fractaeChildName}</div>}
-          <div>Fase: {result.phase}</div>
-          <div>Rareza: {result.rarityTier.name}</div>
-          <div>Código: {result.discoveryCode}</div>
+          <RevealCard
+            imageUrl={result.imageUrl}
+            commonName={result.commonName}
+            scientificName={result.scientificName}
+            phase={result.phase}
+            rarityTier={result.rarityTier}
+            discoveryCode={result.discoveryCode}
+            fractaeChildName={result.fractaeChildName}
+            glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
+          />
           <button onClick={handleReset}>Percibir de nuevo</button>
         </div>
       )}
