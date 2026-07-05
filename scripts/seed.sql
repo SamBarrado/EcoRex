@@ -34,6 +34,47 @@ INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, ope
   (5, 'Euoplocephalus nauseabundus', 'Coraza Pútrida', 5, NULL, NULL, NULL, NULL, 1, 1),
   (6, 'Huayangosaurus inquisitus', 'Hustor de Umbra', 6, NULL, NULL, NULL, NULL, 1, 1);
 
+-- Placeholder species: not designed yet, is_active=0 keeps them out of the
+-- discover/fuse pools (see functions/api/discover.ts, fuse/index.ts) but they
+-- still occupy a Dex slot so each wave shows all 24 cards. Real art/lore
+-- replaces a row here in place (same id) once the species is designed —
+-- never renumber.
+INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, operation_id, physical_traits, base_palette, silhouette, launch_wave, is_active) VALUES
+  (7, '???', '???', 1, NULL, NULL, NULL, NULL, 1, 0),
+  (8, '???', '???', 2, NULL, NULL, NULL, NULL, 1, 0),
+  (9, '???', '???', 3, NULL, NULL, NULL, NULL, 2, 0),
+  (10, '???', '???', 4, NULL, NULL, NULL, NULL, 2, 0),
+  (11, '???', '???', 5, NULL, NULL, NULL, NULL, 2, 0),
+  (12, '???', '???', 6, NULL, NULL, NULL, NULL, 2, 0),
+  (13, '???', '???', 1, NULL, NULL, NULL, NULL, 2, 0),
+  (14, '???', '???', 2, NULL, NULL, NULL, NULL, 2, 0),
+  (15, '???', '???', 3, NULL, NULL, NULL, NULL, 2, 0),
+  (16, '???', '???', 4, NULL, NULL, NULL, NULL, 2, 0),
+  (17, '???', '???', 5, NULL, NULL, NULL, NULL, 3, 0),
+  (18, '???', '???', 6, NULL, NULL, NULL, NULL, 3, 0),
+  (19, '???', '???', 1, NULL, NULL, NULL, NULL, 3, 0),
+  (20, '???', '???', 2, NULL, NULL, NULL, NULL, 3, 0),
+  (21, '???', '???', 3, NULL, NULL, NULL, NULL, 3, 0),
+  (22, '???', '???', 4, NULL, NULL, NULL, NULL, 3, 0),
+  (23, '???', '???', 5, NULL, NULL, NULL, NULL, 3, 0),
+  (24, '???', '???', 6, NULL, NULL, NULL, NULL, 3, 0),
+  (25, '???', '???', 1, NULL, NULL, NULL, NULL, 4, 0),
+  (26, '???', '???', 2, NULL, NULL, NULL, NULL, 4, 0),
+  (27, '???', '???', 3, NULL, NULL, NULL, NULL, 4, 0),
+  (28, '???', '???', 4, NULL, NULL, NULL, NULL, 4, 0),
+  (29, '???', '???', 5, NULL, NULL, NULL, NULL, 4, 0),
+  (30, '???', '???', 6, NULL, NULL, NULL, NULL, 4, 0),
+  (31, '???', '???', 1, NULL, NULL, NULL, NULL, 4, 0),
+  (32, '???', '???', 2, NULL, NULL, NULL, NULL, 4, 0),
+  (33, '???', '???', 3, NULL, NULL, NULL, NULL, 5, 0),
+  (34, '???', '???', 4, NULL, NULL, NULL, NULL, 5, 0),
+  (35, '???', '???', 5, NULL, NULL, NULL, NULL, 5, 0),
+  (36, '???', '???', 6, NULL, NULL, NULL, NULL, 5, 0),
+  (37, '???', '???', 1, NULL, NULL, NULL, NULL, 5, 0),
+  (38, '???', '???', 2, NULL, NULL, NULL, NULL, 5, 0),
+  (39, '???', '???', 3, NULL, NULL, NULL, NULL, 5, 0),
+  (40, '???', '???', 4, NULL, NULL, NULL, NULL, 5, 0);
+
 INSERT OR IGNORE INTO species_phase_anchors (id, species_id, phase, image_url, approved_at) VALUES
   (2, 1, 'calma', '/species-art/tyrannosaurus-imperator/calma.png', NULL),
   (3, 1, 'furia', '/species-art/tyrannosaurus-imperator/furia.png', NULL),
