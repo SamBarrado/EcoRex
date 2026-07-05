@@ -10,7 +10,10 @@
     "vite:dev": "vite",
     "dev": "npm run build && wrangler pages dev dist",
     "species:art": "node scripts/generate-species-art.mjs",
-    "species:spec": "node scripts/generate-species-spec.mjs"
+    "species:spec": "node scripts/generate-species-spec.mjs",
+    "db:sync-species": "node scripts/sync-species-db.mjs",
+    "db:seed": "wrangler d1 execute DB --local --file=scripts/seed.sql",
+    "db:seed:remote": "wrangler d1 execute DB --remote --file=scripts/seed.sql"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250704.0",
