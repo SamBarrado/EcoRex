@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFuseEligible, ApiError } from "../lib/api";
+import { getFuseEligible, getMyProfile, ApiError } from "../lib/api";
 import { version } from "../../package.json";
 
 export default function InicioPage() {
   const navigate = useNavigate();
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
+  const [speciesCount, setSpeciesCount] = useState<{ discovered: number; total: number } | null>(null);
 
   useEffect(() => {
     getFuseEligible()
@@ -13,6 +14,9 @@ export default function InicioPage() {
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
+    getMyProfile()
+      .then((data) => setSpeciesCount({ discovered: data.speciesDiscoveredCount, total: data.speciesTotalCount }))
+      .catch(() => {});
   }, [navigate]);
 
   return (
@@ -40,6 +44,11 @@ export default function InicioPage() {
           <img className="card-icon" src="/icons/mi-coleccion.png" alt="" />
           <strong>Mi Colección</strong>
           <p>Revisa tu álbum de especies descubiertas.</p>
+          {speciesCount && (
+            <p>
+              Tienes {speciesCount.discovered} de {speciesCount.total} especies
+            </p>
+          )}
         </div>
         <div
           className={fusionUnlocked ? "card card-clickable" : "card"}
