@@ -26,6 +26,7 @@ export default function RegisterPage() {
 
   return (
     <div className="page">
+      <img src="/logo/logo-ecorex.png" alt="Ecorex" className="auth-logo" />
       <h1>Crear cuenta</h1>
       <form onSubmit={handleSubmit} className="card">
         <div className="field">

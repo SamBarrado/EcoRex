@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import InicioPage from "./pages/InicioPage";
@@ -6,27 +6,8 @@ import PercibirPage from "./pages/PercibirPage";
 import ColeccionPage from "./pages/ColeccionPage";
 import PerfilPage from "./pages/PerfilPage";
 import FusionPage from "./pages/FusionPage";
-import NotificationBell from "./components/NotificationBell";
-
-function TabBar() {
-  return (
-    <nav className="tabbar">
-      <NavLink to="/inicio" className={({ isActive }) => (isActive ? "active" : "")}>
-        Inicio
-      </NavLink>
-      <NavLink to="/percibir" className={({ isActive }) => (isActive ? "active" : "")}>
-        Percibir
-      </NavLink>
-      <NavLink to="/coleccion" className={({ isActive }) => (isActive ? "active" : "")}>
-        Colección
-      </NavLink>
-      <NavLink to="/perfil" className={({ isActive }) => (isActive ? "active" : "")}>
-        Yo
-      </NavLink>
-      <NotificationBell />
-    </nav>
-  );
-}
+import PageHeader from "./components/PageHeader";
+import ActionFab from "./components/ActionFab";
 
 export default function App() {
   return (
@@ -39,7 +20,7 @@ export default function App() {
           element={
             <>
               <InicioPage />
-              <TabBar />
+              <ActionFab />
             </>
           }
         />
@@ -47,8 +28,8 @@ export default function App() {
           path="/percibir"
           element={
             <>
+              <PageHeader />
               <PercibirPage />
-              <TabBar />
             </>
           }
         />
@@ -56,8 +37,8 @@ export default function App() {
           path="/coleccion"
           element={
             <>
+              <PageHeader />
               <ColeccionPage />
-              <TabBar />
             </>
           }
         />
@@ -65,8 +46,8 @@ export default function App() {
           path="/perfil"
           element={
             <>
+              <PageHeader />
               <PerfilPage />
-              <TabBar />
             </>
           }
         />
@@ -74,8 +55,8 @@ export default function App() {
           path="/fusion"
           element={
             <>
+              <PageHeader />
               <FusionPage />
-              <TabBar />
             </>
           }
         />

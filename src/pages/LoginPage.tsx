@@ -25,6 +25,7 @@ export default function LoginPage() {
 
   return (
     <div className="page">
+      <img src="/logo/logo-ecorex.png" alt="Ecorex" className="auth-logo" />
       <h1>Iniciar sesión</h1>
       <form onSubmit={handleSubmit} className="card">
         <div className="field">
