@@ -1,3 +1,5 @@
+import { D1Database } from '@cloudflare/workers-types';
+
 // Level cap: xp keeps accumulating past this for stats purposes, but the
 // derived level never exceeds it.
 export const MAX_LEVEL = 50;
@@ -44,8 +46,6 @@ export function xpProgress(xp: number): {
   const xpForNextLevel = xpForLevel(level + 1) - xpForLevel(level);
   return { level, xpIntoLevel, xpForNextLevel };
 }
-
-import { D1Database } from '@cloudflare/workers-types';
 
 export interface AddXpResult {
   xpGained: number;
