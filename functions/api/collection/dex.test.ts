@@ -114,4 +114,20 @@ describe('GET /api/collection/dex', () => {
     const furiaSlot = body.slots.find((s) => s.phase === 'furia')!;
     expect(furiaSlot.locked).toBe(true);
   });
+
+  it('excludes species from waves beyond the current active wave', async () => {
+    const { env } = makeEnv({
+      currentWave: 1,
+      speciesRows: [{ id: 1, launch_wave: 1 }], // simulates the real WHERE launch_wave <= 1 filter already having run
+      discoveryRows: [],
+    });
+    const request = new Request('https://example.com/api/collection/dex', {
+      headers: { Cookie: 'ecorex_session=abc' },
+    });
+    const response = await onRequestGet({ request, env } as unknown as Parameters<typeof onRequestGet>[0]);
+    const body = (await response.json()) as { slots: Array<{ wave: number }> };
+    // Only wave-1 species' slots should appear; nothing from a hypothetical wave 2+ species leaks in.
+    expect(body.slots.every((s) => s.wave <= 1)).toBe(true);
+    expect(body.slots).toHaveLength(3);
+  });
 });

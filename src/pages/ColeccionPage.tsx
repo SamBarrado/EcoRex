@@ -59,6 +59,7 @@ export default function ColeccionPage() {
         </>
       )}
       {!slots && !error && <p>Cargando...</p>}
+      {slots !== null && slots.length === 0 && !error && <p>No hay ninguna wave activa todavía.</p>}
       {currentWave !== null && slots && slots.length > 0 && (
         <div
           style={{
