@@ -130,35 +130,13 @@ export default function ColeccionPage() {
                   ×{slot.count}
                 </span>
               )}
-              <div style={{ position: "relative" }}>
-                <img
-                  src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
-                  alt={slot.locked ? "Carta bloqueada" : slot.common_name}
-                  className="species-image"
-                  loading="lazy"
-                />
-                {slot.locked && (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: 44,
-                      height: 44,
-                      borderRadius: "50%",
-                      background: "#3fae5a",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "1.4rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    🔒
-                  </span>
-                )}
-              </div>
+              <img
+                src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
+                alt={slot.locked ? "Carta bloqueada" : slot.common_name}
+                className="species-image"
+                loading="lazy"
+                style={slot.locked ? { filter: "grayscale(1) brightness(0.55)", opacity: 0.75 } : undefined}
+              />
               <strong className="truncate" style={{ display: "block" }}>
                 {slot.locked ? "???" : slot.common_name}
               </strong>
@@ -185,28 +163,12 @@ export default function ColeccionPage() {
           <div className="card" style={{ maxWidth: 420, width: "100%" }} onClick={(e) => e.stopPropagation()}>
             {previewSlot.locked ? (
               <>
-                <div style={{ position: "relative" }}>
-                  <img src="/icons/carta-bloqueada.png" alt="Carta bloqueada" className="species-image" />
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: 56,
-                      height: 56,
-                      borderRadius: "50%",
-                      background: "#3fae5a",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "1.8rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    🔒
-                  </span>
-                </div>
+                <img
+                  src="/icons/carta-bloqueada.png"
+                  alt="Carta bloqueada"
+                  className="species-image"
+                  style={{ filter: "grayscale(1) brightness(0.55)", opacity: 0.75 }}
+                />
                 <strong>???</strong>
                 <p>Carta aún no descubierta. Juega en Percibir para desbloquearla.</p>
               </>
