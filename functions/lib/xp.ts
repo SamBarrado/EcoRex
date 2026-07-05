@@ -44,3 +44,37 @@ export function xpProgress(xp: number): {
   const xpForNextLevel = xpForLevel(level + 1) - xpForLevel(level);
   return { level, xpIntoLevel, xpForNextLevel };
 }
+
+import { D1Database } from '@cloudflare/workers-types';
+
+export interface AddXpResult {
+  xpGained: number;
+  totalXp: number;
+  level: number;
+  previousLevel: number;
+  leveledUp: boolean;
+  xpIntoLevel: number;
+  xpForNextLevel: number | null;
+}
+
+export async function addXp(db: D1Database, userId: number, amount: number): Promise<AddXpResult> {
+  const beforeRow = await db.prepare('SELECT xp FROM users WHERE id = ?').bind(userId).first<{ xp: number }>();
+  const previousXp = beforeRow?.xp ?? 0;
+  const previousLevel = levelFromXp(previousXp);
+
+  await db.prepare('UPDATE users SET xp = xp + ? WHERE id = ?').bind(amount, userId).run();
+
+  const afterRow = await db.prepare('SELECT xp FROM users WHERE id = ?').bind(userId).first<{ xp: number }>();
+  const totalXp = afterRow?.xp ?? previousXp + amount;
+  const progress = xpProgress(totalXp);
+
+  return {
+    xpGained: amount,
+    totalXp,
+    level: progress.level,
+    previousLevel,
+    leveledUp: progress.level > previousLevel,
+    xpIntoLevel: progress.xpIntoLevel,
+    xpForNextLevel: progress.xpForNextLevel,
+  };
+}

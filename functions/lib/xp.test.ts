@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_XP_BONUS, SPECIES_COMPLETE_XP_BONUS } from './xp';
+import { D1Database } from '@cloudflare/workers-types';
+import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_XP_BONUS, SPECIES_COMPLETE_XP_BONUS, addXp } from './xp';
 
 describe('xpForLevel', () => {
   it('returns 0 for level 1', () => {
@@ -64,5 +65,52 @@ describe('constants', () => {
   it('defines the fusion and species-complete bonuses', () => {
     expect(FUSION_XP_BONUS).toBe(50);
     expect(SPECIES_COMPLETE_XP_BONUS).toBe(200);
+  });
+});
+
+function makeDb(currentXp: number) {
+  const calls: { sql: string; args: unknown[] }[] = [];
+  const db = {
+    prepare(sql: string) {
+      return {
+        bind(...args: unknown[]) {
+          calls.push({ sql, args });
+          return this;
+        },
+        async first<T>() {
+          if (sql.includes('SELECT xp FROM users')) {
+            const updateCall = calls.filter((c) => c.sql.includes('UPDATE')).pop();
+            return { xp: currentXp + (updateCall ? Number(updateCall.args[0]) : 0) } as unknown as T;
+          }
+          return null;
+        },
+        async run() {
+          return { meta: { last_row_id: 1 } };
+        },
+      };
+    },
+    calls,
+  };
+  return db;
+}
+
+describe('addXp', () => {
+  it('adds xp and reports no level-up when staying within the same level', async () => {
+    const db = makeDb(10);
+    const result = await addXp(db as unknown as D1Database, 1, 5);
+    expect(result.xpGained).toBe(5);
+    expect(result.totalXp).toBe(15);
+    expect(result.previousLevel).toBe(1);
+    expect(result.level).toBe(1);
+    expect(result.leveledUp).toBe(false);
+  });
+
+  it('reports leveledUp true when crossing a level threshold', async () => {
+    const db = makeDb(90);
+    const result = await addXp(db as unknown as D1Database, 1, 20);
+    expect(result.totalXp).toBe(110);
+    expect(result.previousLevel).toBe(1);
+    expect(result.level).toBe(2);
+    expect(result.leveledUp).toBe(true);
   });
 });
