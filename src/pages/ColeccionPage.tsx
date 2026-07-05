@@ -135,7 +135,7 @@ export default function ColeccionPage() {
                 alt={slot.locked ? "Carta bloqueada" : slot.common_name}
                 className="species-image"
                 loading="lazy"
-                style={slot.locked ? { filter: "grayscale(1) brightness(0.55)", opacity: 0.75 } : undefined}
+                style={slot.locked ? { filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 } : undefined}
               />
               <strong className="truncate" style={{ display: "block" }}>
                 {slot.locked ? "???" : slot.common_name}
@@ -167,7 +167,7 @@ export default function ColeccionPage() {
                   src="/icons/carta-bloqueada.png"
                   alt="Carta bloqueada"
                   className="species-image"
-                  style={{ filter: "grayscale(1) brightness(0.55)", opacity: 0.75 }}
+                  style={{ filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 }}
                 />
                 <strong>???</strong>
                 <p>Carta aún no descubierta. Juega en Percibir para desbloquearla.</p>
