@@ -14,7 +14,8 @@ INSERT OR IGNORE INTO fractae (id, slug, latin_name, child_name, icon, color, op
   (2, 'sorpresa', 'Stupor', 'Sorpresa', 'estrella', 'naranja', NULL),
   (3, 'tristeza', 'Tristitia', 'Tristeza', 'gota', 'azul', NULL),
   (4, 'miedo', 'Pavor', 'Miedo', 'ojo en sombra', 'morado', NULL),
-  (5, 'asco', 'Fastidium', 'Asco', 'mancha', 'verde oscuro', NULL);
+  (5, 'asco', 'Fastidium', 'Asco', 'mancha', 'verde oscuro', NULL),
+  (6, 'curiosidad', 'Spes', 'Curiosidad', 'lupa', 'lila', NULL);
   -- Pending: Alegría (Lumen), Confianza (Fides), Curiosidad (Spes) — add when
   -- their first species ships (docs/lore_world_bible_ecorex_v4.md §2).
 
@@ -30,7 +31,8 @@ INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, ope
   (2, 'Telmatosaurus mirus', 'Destello del Pantano', 2, NULL, NULL, NULL, NULL, 1, 1),
   (3, 'Triceratops umbra', 'Tricera de las Lágrimas', 3, NULL, NULL, NULL, NULL, 1, 1),
   (4, 'Ceratosaurus pavonius', 'Colmillo del Abismo', 4, NULL, NULL, NULL, NULL, 1, 1),
-  (5, 'Euoplocephalus nauseabundus', 'Coraza Pútrida', 5, NULL, NULL, NULL, NULL, 1, 1);
+  (5, 'Euoplocephalus nauseabundus', 'Coraza Pútrida', 5, NULL, NULL, NULL, NULL, 1, 1),
+  (6, 'Huayangosaurus inquisitus', 'Hustor de Umbra', 6, NULL, NULL, NULL, NULL, 1, 1);
 
 INSERT OR IGNORE INTO species_phase_anchors (id, species_id, phase, image_url, approved_at) VALUES
   (2, 1, 'calma', '/species-art/tyrannosaurus-imperator/calma.png', NULL),
@@ -47,4 +49,7 @@ INSERT OR IGNORE INTO species_phase_anchors (id, species_id, phase, image_url, a
   (13, 4, 'eco', '/species-art/ceratosaurus-pavonius/eco.png', NULL),
   (14, 5, 'calma', '/species-art/euoplocephalus-nauseabundus/calma.png', NULL),
   (15, 5, 'furia', '/species-art/euoplocephalus-nauseabundus/furia.png', NULL),
-  (16, 5, 'eco', '/species-art/euoplocephalus-nauseabundus/eco.png', NULL);
+  (16, 5, 'eco', '/species-art/euoplocephalus-nauseabundus/eco.png', NULL),
+  (17, 6, 'calma', '/species-art/huayangosaurus-inquisitus/calma.png', NULL),
+  (18, 6, 'furia', '/species-art/huayangosaurus-inquisitus/furia.png', NULL),
+  (19, 6, 'eco', '/species-art/huayangosaurus-inquisitus/eco.png', NULL);
