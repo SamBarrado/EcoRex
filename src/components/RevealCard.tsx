@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-const CARD_BACK_PATH = "/card-back.svg";
+const CARD_BACK_PATH = "/card-back.png";
 const CARD_NATURAL_WIDTH = 300;
 const FLIP_DURATION_MS = 800;
 const DRAG_SENSITIVITY_DEG_PER_PX = 0.6;
