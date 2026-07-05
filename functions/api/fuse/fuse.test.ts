@@ -15,6 +15,7 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
         },
         async first<T>() {
           if (sql.includes('FROM sessions')) return sessionRow as unknown as T;
+          if (sql.includes('SELECT xp FROM users')) return ((overrides.xp as { xp: number } | undefined) ?? { xp: 0 }) as unknown as T;
           return (overrides.first as T) ?? null;
         },
         async all<T>() {
@@ -30,6 +31,9 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
           }
           if (sql.includes('ORDER BY discovered_at ASC')) {
             return { results: (overrides.oldestRows ?? []) as T[] };
+          }
+          if (sql.includes('DISTINCT phase')) {
+            return { results: (overrides.ownedPhases as string[] | undefined ?? []).map((phase) => ({ phase })) as T[] };
           }
           return { results: [] as T[] };
         },
@@ -142,5 +146,31 @@ describe('POST /api/fuse', () => {
     expect(body.commonName).toBe('Rex de Fuego');
     const updateCalls = db.calls.filter((c) => c.sql.includes('SET consumed_at'));
     expect(updateCalls.length).toBeGreaterThan(0);
+  });
+
+  it('includes an xp block with rarity + fusion bonus xp in the response', async () => {
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+      xp: { xp: 0 },
+      ownedPhases: [],
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number } };
+    expect(body.xp.xpGained).toBe(10 + 50); // registrada rarity xp + fusion bonus
   });
 });

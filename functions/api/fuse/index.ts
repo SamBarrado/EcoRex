@@ -1,6 +1,7 @@
 import { getSessionCookie, verifySession } from "../../lib/auth";
 import { rateLimit, getClientIp } from "../../lib/rateLimit";
-import { pickRarityTier, resolvePhaseImage, type RarityTierRow, type SpeciesPhaseRow } from "../../lib/discovery";
+import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../../lib/discovery";
+import { addXp, RARITY_XP, FUSION_XP_BONUS, SPECIES_COMPLETE_XP_BONUS } from "../../lib/xp";
 
 interface Env {
   DB: D1Database;
@@ -141,6 +142,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
 
+  const completedSpecies = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const xpAmount =
+    (RARITY_XP[rarityTier.slug] ?? 0) + FUSION_XP_BONUS + (completedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  const xpResult = await addXp(env.DB, user.id, xpAmount);
+
+  if (xpResult.leveledUp) {
+    await env.DB.prepare(`INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`)
+      .bind(user.id, "level_up", JSON.stringify({ newLevel: xpResult.level }))
+      .run();
+  }
+
   return Response.json(
     {
       discoveryId,
@@ -153,6 +165,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       imageUrl,
       isUniqueVariant,
       discoveredAt: discoveredAtRow?.discovered_at ?? null,
+      xp: {
+        xpGained: xpResult.xpGained,
+        totalXp: xpResult.totalXp,
+        level: xpResult.level,
+        leveledUp: xpResult.leveledUp,
+      },
     },
     { status: 201 }
   );
