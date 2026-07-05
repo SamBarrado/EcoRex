@@ -46,26 +46,32 @@ export function logout() {
   return request<{ ok: boolean }>("/api/auth/logout", { method: "POST" });
 }
 
-export interface Discovery {
-  discovery_id: number;
-  discovery_code: string;
-  phase: string;
-  image_url: string;
-  is_unique_variant: number;
-  discovered_at: string;
+export interface DexSlotLocked {
   species_id: number;
-  scientific_name: string;
-  common_name: string;
-  fractae_id: number;
-  fractae_slug: string;
-  fractae_child_name: string;
-  rarity_tier_id: number;
-  rarity_slug: string;
-  rarity_name: string;
+  phase: string;
+  wave: number;
+  locked: true;
 }
 
-export function getMyCollection() {
-  return request<{ discoveries: Discovery[] }>("/api/collection/mine");
+export interface DexSlotRevealed {
+  species_id: number;
+  phase: string;
+  wave: number;
+  locked: false;
+  scientific_name: string;
+  common_name: string;
+  fractae_child_name: string;
+  rarity_name: string;
+  image_url: string;
+  discovery_code: string;
+  discovered_at: string;
+  count: number;
+}
+
+export type DexSlot = DexSlotLocked | DexSlotRevealed;
+
+export function getDex() {
+  return request<{ currentWave: number; slots: DexSlot[] }>("/api/collection/dex");
 }
 
 export interface ProfileStats {
