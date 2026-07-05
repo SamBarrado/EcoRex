@@ -75,4 +75,21 @@ describe("RevealCard", () => {
     expect(screen.getByAltText("Test Dino")).toHaveStyle({ visibility: "visible" });
     expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
   });
+
+  it("keeps the back face visible longer during an extended multi-spin flip-in", () => {
+    vi.useFakeTimers();
+    render(<RevealCard {...baseProps} spins={2} />);
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "visible" });
+    expect(screen.getByAltText("Test Dino")).toHaveStyle({ visibility: "hidden" });
+
+    act(() => {
+      vi.advanceTimersByTime(1400);
+    });
+    expect(screen.getByAltText("Test Dino")).toHaveStyle({ visibility: "visible" });
+    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
+  });
 });

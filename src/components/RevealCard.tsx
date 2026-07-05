@@ -5,7 +5,6 @@ const CARD_NATURAL_WIDTH = 300;
 const FLIP_DURATION_MS = 800;
 const DRAG_SENSITIVITY_DEG_PER_PX = 0.6;
 const DRAG_SNAP_TRANSITION = "320ms ease-out";
-const FLIP_TRANSITION = `transform ${FLIP_DURATION_MS}ms ease-out`;
 const NO_TRANSITION = "none";
 
 export interface RevealCardProps {
@@ -17,6 +16,7 @@ export interface RevealCardProps {
   discoveryCode: string;
   fractaeChildName?: string;
   glowColor: string;
+  spins?: number;
 }
 
 export function RevealCard({
@@ -28,11 +28,14 @@ export function RevealCard({
   discoveryCode,
   fractaeChildName,
   glowColor,
+  spins = 0,
 }: RevealCardProps) {
+  const flipDurationMs = FLIP_DURATION_MS * (1 + spins);
+  const flipTransition = `transform ${flipDurationMs}ms ease-out`;
   const [hasFlippedIn, setHasFlippedIn] = useState(false);
   const [facing, setFacing] = useState<"front" | "back">("back");
   const [spinDeg, setSpinDeg] = useState(0);
-  const [transition, setTransition] = useState(FLIP_TRANSITION);
+  const [transition, setTransition] = useState(flipTransition);
   const dragStartXRef = useRef<number | null>(null);
   const dragBaseSpinRef = useRef(0);
 
@@ -53,7 +56,7 @@ export function RevealCard({
       setHasFlippedIn(true);
       facingTimeout = setTimeout(() => {
         if (!cancelled) setFacing("front");
-      }, FLIP_DURATION_MS / 2);
+      }, flipDurationMs / 2);
     });
     return () => {
       cancelled = true;
@@ -61,6 +64,7 @@ export function RevealCard({
         clearTimeout(facingTimeout);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useLayoutEffect(() => {
@@ -81,7 +85,7 @@ export function RevealCard({
     return () => resizeObserver.disconnect();
   }, []);
 
-  const baseFlipDeg = hasFlippedIn ? 0 : 180;
+  const baseFlipDeg = hasFlippedIn ? 0 : 180 + spins * 360;
 
   function handleDragStart(clientX: number) {
     dragStartXRef.current = clientX;
