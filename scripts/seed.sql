@@ -76,21 +76,21 @@ INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, ope
   (40, '???', '???', 4, NULL, NULL, NULL, NULL, 5, 0);
 
 INSERT OR IGNORE INTO species_phase_anchors (id, species_id, phase, image_url, approved_at) VALUES
-  (2, 1, 'calma', '/species-art/tyrannosaurus-imperator/calma.png', NULL),
+  (2, 1, 'balance', '/species-art/tyrannosaurus-imperator/balance.png', NULL),
   (3, 1, 'exceso', '/species-art/tyrannosaurus-imperator/exceso.png', NULL),
   (4, 1, 'eco', '/species-art/tyrannosaurus-imperator/eco.png', NULL),
-  (5, 2, 'calma', '/species-art/telmatosaurus-mirus/calma.png', NULL),
+  (5, 2, 'balance', '/species-art/telmatosaurus-mirus/balance.png', NULL),
   (6, 2, 'exceso', '/species-art/telmatosaurus-mirus/exceso.png', NULL),
   (7, 2, 'eco', '/species-art/telmatosaurus-mirus/eco.png', NULL),
-  (8, 3, 'calma', '/species-art/triceratops-umbra/calma.png', NULL),
+  (8, 3, 'balance', '/species-art/triceratops-umbra/balance.png', NULL),
   (9, 3, 'exceso', '/species-art/triceratops-umbra/exceso.png', NULL),
   (10, 3, 'eco', '/species-art/triceratops-umbra/eco.png', NULL),
-  (11, 4, 'calma', '/species-art/ceratosaurus-pavonius/calma.png', NULL),
+  (11, 4, 'balance', '/species-art/ceratosaurus-pavonius/balance.png', NULL),
   (12, 4, 'exceso', '/species-art/ceratosaurus-pavonius/exceso.png', NULL),
   (13, 4, 'eco', '/species-art/ceratosaurus-pavonius/eco.png', NULL),
-  (14, 5, 'calma', '/species-art/euoplocephalus-nauseabundus/calma.png', NULL),
+  (14, 5, 'balance', '/species-art/euoplocephalus-nauseabundus/balance.png', NULL),
   (15, 5, 'exceso', '/species-art/euoplocephalus-nauseabundus/exceso.png', NULL),
   (16, 5, 'eco', '/species-art/euoplocephalus-nauseabundus/eco.png', NULL),
-  (17, 6, 'calma', '/species-art/huayangosaurus-inquisitus/calma.png', NULL),
+  (17, 6, 'balance', '/species-art/huayangosaurus-inquisitus/balance.png', NULL),
   (18, 6, 'exceso', '/species-art/huayangosaurus-inquisitus/exceso.png', NULL),
   (19, 6, 'eco', '/species-art/huayangosaurus-inquisitus/eco.png', NULL);
