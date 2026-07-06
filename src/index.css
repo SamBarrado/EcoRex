@@ -598,3 +598,24 @@ button:disabled {
     transform: translate(-50%, 0);
   }
 }
+
+.level-up-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.level-up-modal {
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.level-up-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffd54a;
+}
