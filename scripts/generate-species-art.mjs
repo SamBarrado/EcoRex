@@ -16,7 +16,7 @@ import path from 'node:path';
 
 const PHASE_MODIFIERS = {
   balance: 'forma estable, postura serena, iluminación natural suave',
-  exceso: 'forma intensificada, postura agresiva, tensión muscular visible, brillo/grietas de energía más intensas en los rasgos elementales/cristalinos ya establecidos de la especie (si los tiene) y en ojos, sin convertir el resto del cuerpo en cristal si no lo era ya en Balance',
+  exceso: 'forma intensificada, tensión muscular visible, postura de máxima intensidad emocional adaptada al comportamiento real de la especie (ataque si es depredador; carga defensiva, alarde territorial o huida explosiva si no lo es — nunca una pose de ataque depredador en una especie que no lo es), brillo/grietas de energía más intensas en los rasgos elementales/cristalinos ya establecidos de la especie (si los tiene) y en ojos, sin convertir el resto del cuerpo en cristal si no lo era ya en Balance',
 };
 
 // Eco is the Fractae's emotion pushed to its absolute extreme — NOT a fixed
@@ -61,6 +61,48 @@ function slugify(name) {
     .replace(/(^-|-$)/g, '');
 }
 
+// Public-domain/CC life-restoration reference images per famous relative, used
+// as an image-to-image anchor for Balance so anatomy comes from real pixels
+// instead of the model's (often weak) visual prior for lesser-known species.
+// See docs/lore_world_bible_ecorex_v4.md §15.4.1.
+const REFERENCE_ANATOMY_DIR = 'reference-anatomy';
+
+function referenceRelativeSlug(name) {
+  const key = name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
+  if (key === 't-rex' || key === 'tyrannosaurus rex' || key === 'tyrannosaurus') {
+    return 'tyrannosaurus';
+  }
+  return slugify(name);
+}
+
+function findReferenceBySlug(slug) {
+  for (const ext of ['.png', '.jpg', '.jpeg']) {
+    const p = path.join(REFERENCE_ANATOMY_DIR, `${slug}${ext}`);
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
+
+// Prefer a reference of the actual base species (real anatomy, no
+// approximation needed) over one of its closestFamousRelative (an
+// anatomical stand-in used only when the real species has no reference).
+function findReferenceImage(spec) {
+  const genus = spec.scientificName?.split(' ')[0];
+  if (genus) {
+    const ownRef = findReferenceBySlug(slugify(genus));
+    if (ownRef) return { path: ownRef, isOwnSpecies: true };
+  }
+  if (spec.closestFamousRelative) {
+    const relativeRef = findReferenceBySlug(referenceRelativeSlug(spec.closestFamousRelative));
+    if (relativeRef) return { path: relativeRef, isOwnSpecies: false };
+  }
+  return null;
+}
+
 // Target style (confirmed against user-approved reference closeups): semi-
 // stylized DIGITAL painted illustration with bold graphic linework and
 // dramatic lighting — NOT photoreal/CGI, but also NOT flat/traditional-media
@@ -85,6 +127,22 @@ const FIGURE_GROUND_SEPARATION = `Achieve figure/ground separation through prope
 // not just adding motion blur or effects.
 const TOWARD_VIEWER_ENGAGEMENT = `The creature must be captured mid-action, actively engaging toward the viewer/camera — NOT a flat, static, full-body side-profile silhouette (like a museum reference plate or a walk-cycle sprite). Use a three-quarter angle or a more confrontational/dynamic camera angle (slightly low, looking up at the creature, or an angle that shows depth through the body rather than a flat side elevation). The creature's head/gaze and body language should be oriented toward the viewer/camera, as if reacting to the player's presence — looking directly out of the frame, lunging toward camera, or performing its action (roaring, stalking, recoiling) in the viewer's direction rather than parallel to the picture plane. Show a real sense of weight and motion in the pose, not a posed/idle stance.`;
 
+// For lesser-known species the image model has a weak visual prior and
+// tends to drift the whole body toward whatever famous dinosaur shape it
+// remembers best (usually a raptor/theropod) once the pose changes a lot.
+// Anchoring explicitly to a well-known relative's body plan fixes this at
+// the source, instead of only telling the model what NOT to do.
+function relativeAnchorLine(spec) {
+  if (!spec.closestFamousRelative) return '';
+  const parts = [
+    `ANATOMY ANCHOR (critical for a lesser-known species): this animal's overall body plan is essentially identical to ${spec.closestFamousRelative} — same stance, same proportions of torso/legs/tail, same general silhouette type. Apply ONLY the specific differences described in its own fixed physical traits and silhouette above; if in doubt, default to the ${spec.closestFamousRelative} body plan rather than inventing a different one.`,
+  ];
+  if (spec.distinguishingFromRelative) {
+    parts.push(`IMPORTANT — do NOT copy ${spec.closestFamousRelative}'s most iconic features blindly: ${spec.distinguishingFromRelative}. Naming a famous relative is only an anchor for the general body plan, not permission to add that relative's signature features (crests, horn arrangements, armor patterns, etc.) if this species doesn't actually have them.`);
+  }
+  return parts.join(' ');
+}
+
 function buildAnchorPrompt(spec) {
   return [
     BASE_STYLE,
@@ -96,15 +154,53 @@ function buildAnchorPrompt(spec) {
     `Fixed physical traits: ${spec.traits}.`,
     `Base color palette: ${spec.palette}.`,
     `Distinctive silhouette: ${spec.silhouette}.`,
+    relativeAnchorLine(spec),
     `Phase (Balance, baseline/stable form): ${PHASE_MODIFIERS.balance}.`,
   ].join(' ');
 }
 
+// Used instead of buildAnchorPrompt() when a real life-restoration reference
+// image exists (see findReferenceImage()) — either of the base species
+// itself, or of its closestFamousRelative as an anatomical stand-in. The
+// reference image supplies real anatomy/pose/proportions as pixels — this
+// prompt asks for a restyle + the SPECIFIC listed additions, rather than
+// describing the whole creature from scratch in text (which is what caused
+// anatomical drift for lesser-known species in the first place).
+function buildRestylePrompt(spec, referenceInfo) {
+  const referenceIntro = referenceInfo.isOwnSpecies
+    ? `The attached reference image is an accurate scientific life-restoration of the real base species behind ${spec.scientificName} ("${spec.commonName}") — same body plan, stance and proportions.`
+    : `The attached reference image is an accurate scientific life-restoration of ${spec.closestFamousRelative}, this species' closest famous relative — same general body plan, stance and proportions as ${spec.scientificName} ("${spec.commonName}").`;
+  const task = referenceInfo.isOwnSpecies
+    ? `TASK: restyle this reference into the target illustration style described below, KEEPING the same pose, camera angle, body proportions, limb structure and silhouette as the reference image — do not reinterpret the pose or invent a different body plan. Then ADD ONLY the specific fantastical/elemental traits listed below on top of this real anatomy (this is the ECOREX game version of the real animal); do not otherwise alter the real body shape.`
+    : `TASK: restyle this reference into the target illustration style described below, KEEPING the same pose, camera angle, body proportions, limb structure and silhouette as the reference image — do not reinterpret the pose or invent a different body plan. Then apply ONLY the specific physical differences listed below to turn it from ${spec.closestFamousRelative} into this actual species.`;
+  const traitsLabel = referenceInfo.isOwnSpecies
+    ? `Fixed physical traits — add these on top of the reference's real anatomy, keep everything else about the reference's body plan unchanged: ${spec.traits}.`
+    : `Fixed physical traits — apply these specific differences from the reference's default anatomy, keep everything else about the reference's body plan unchanged: ${spec.traits}.`;
+  return [
+    referenceIntro,
+    task,
+    BASE_STYLE,
+    FIGURE_GROUND_SEPARATION,
+    TOWARD_VIEWER_ENGAGEMENT,
+    `Emotional core (Fractae): ${spec.fractae.name} (${spec.fractae.latin}) — let the environment's mood/lighting and a subtle accent in the eyes read as this element. Unless the fixed physical traits below explicitly describe crystalline/faceted features, the creature's body must stay natural creature material (skin/scales/hide), not a full-body stylized crystal/glass being.`,
+    `Habitat/ecology to paint as the environment (replacing whatever plain/white background the reference has): ${spec.habitat}.`,
+    traitsLabel,
+    `Base color palette: ${spec.palette}.`,
+    `Distinctive silhouette (should already mostly match the reference; only adjust what these differences require): ${spec.silhouette}.`,
+    !referenceInfo.isOwnSpecies && spec.distinguishingFromRelative
+      ? `IMPORTANT — differences from ${spec.closestFamousRelative} to apply: ${spec.distinguishingFromRelative}. Do not keep ${spec.closestFamousRelative}'s signature features where this species doesn't have them.`
+      : '',
+    `Phase (Balance, baseline/stable form): ${PHASE_MODIFIERS.balance}.`,
+  ].filter(Boolean).join(' ');
+}
+
 function buildExcesoPrompt(spec) {
   return [
-    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
+    `Same exact creature as the reference image — same species, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
+    `CRITICAL — preserve exact anatomy, do not reinterpret the species: ${spec.traits}. Distinctive silhouette to preserve: ${spec.silhouette}. This means the ENTIRE body plan — head/skull shape, torso/body proportions, limb length and structure, stance (bipedal/quadrupedal/facultative), tail shape and length — must stay recognizably identical to the reference, not just the most distinctive single feature. Especially for less iconic/lesser-known species, the reference image alone is not enough anchor — the model tends to drift the whole body toward a generic "cool dinosaur" shape (often theropod-like) when the pose changes a lot. Explicitly resist that: keep the same overall proportions and body type as the reference even while changing the pose dramatically. If in doubt, favor fidelity to these traits over dramatic reinterpretation.`,
+    relativeAnchorLine(spec),
     `Apply ONLY this phase transformation (exceso): ${PHASE_MODIFIERS.exceso}.`,
-    `This must NOT read as "the calm reference pose with the mouth open" — that is a failure state. Change the actual body pose/stance to something genuinely more aggressive and dynamic than the reference: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking, a tighter and more dramatic camera angle/framing than the calm reference (closer, lower, or more diagonal — not the same wide standing profile shot). The mouth being open is a minor detail, not the main change.`,
+    `This must NOT read as "the calm reference pose with the mouth open" — that is a failure state. Change the actual body pose/stance to something genuinely more intense and dynamic than the reference, but the SPECIFIC action must fit THIS creature's real anatomy and behavior, not a generic predator-attack pose: a predator (sharp teeth, claws built for hunting) can lunge/attack with claws raised; a herbivore or non-predatory species (duck-bill, blunt beak, no hunting claws, armored/slow-moving body, etc.) should instead express intensity through its own real repertoire — a defensive charge, a territorial/threat display, rearing up to look bigger, an explosive startled bolt, a defensive tail-whip — NEVER a predatory lunge with claws that its real anatomy doesn't support, since forcing that pose is exactly what causes the model to reinterpret the whole creature as a different, predator-shaped species. Use a tighter and more dramatic camera angle/framing than the calm reference (closer, lower, or more diagonal — not the same wide standing profile shot). The mouth being open is a minor detail, not the main change.`,
     TOWARD_VIEWER_ENGAGEMENT,
     `Keep color saturation and contrast controlled and readable — this is a moderate intensification over the reference, not a blown-out, oversaturated, or overexposed image. Any glow accent should stay confined to the eyes and a few natural highlights (not a fictional crystal/crack pattern), not flood the entire frame or background in solid intense color. But the overall energy/danger must still be clearly, unmistakably higher than the calm reference — someone flipping between the two images should immediately feel escalation, not need to hunt for the difference.`,
     FIGURE_GROUND_SEPARATION,
@@ -119,7 +215,9 @@ function buildExcesoPrompt(spec) {
 function buildEcoPrompt(spec) {
   const extreme = FRACTAE_EXTREME[spec.fractae.name];
   return [
-    `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style: ${spec.scientificName} ("${spec.commonName}").`,
+    `Same exact creature as the reference image — same species, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style: ${spec.scientificName} ("${spec.commonName}").`,
+    `CRITICAL — preserve exact anatomy, do not reinterpret the species: ${spec.traits}. Distinctive silhouette to preserve: ${spec.silhouette}. This means the ENTIRE body plan — head/skull shape, torso/body proportions, limb length and structure, stance, tail shape and length — must stay recognizably identical to the reference, not just the most distinctive single feature. Especially for less iconic/lesser-known species, the reference image alone is not enough anchor — the model tends to drift the whole body toward a generic "cool dinosaur" shape (often theropod-like) when the pose changes a lot. Explicitly resist that: even mid-collapse or mid-dissolution, the remaining recognizable parts of the creature must keep the same overall proportions and body type as the reference.`,
+    relativeAnchorLine(spec),
     `This is the Eco phase: the ${spec.fractae.name} (${spec.fractae.latin}) Fractae pushed to its absolute emotional extreme in this specific creature. The archetype of that extreme: ${extreme}.`,
     `Manifest that extreme specifically through THIS creature's own anatomy and habitat (${spec.habitat}) and physical traits (${spec.traits}) — do NOT default to a generic universal effect (no plain "translucent ghost" treatment applies to all species alike).`,
     `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Exceso. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Balance and Exceso (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
@@ -215,8 +313,17 @@ async function main() {
 
     let anchorBytes;
     if (phases.includes('balance')) {
-      console.log('  Generando ancla Balance...');
-      const b64 = await generateAnchor(buildAnchorPrompt(spec), apiKey);
+      const referenceInfo = findReferenceImage(spec);
+      let b64;
+      if (referenceInfo) {
+        const kind = referenceInfo.isOwnSpecies ? 'especie real' : 'pariente famoso';
+        console.log(`  Generando ancla Balance (restyle sobre referencia real de ${kind}: ${referenceInfo.path})...`);
+        const referenceBytes = await readFile(referenceInfo.path);
+        b64 = await generateVariant(referenceBytes, buildRestylePrompt(spec, referenceInfo), apiKey);
+      } else {
+        console.log('  Generando ancla Balance (sin referencia real disponible, texto puro)...');
+        b64 = await generateAnchor(buildAnchorPrompt(spec), apiKey);
+      }
       anchorBytes = Buffer.from(b64, 'base64');
       await writeFile(path.join(speciesDir, 'balance.png'), anchorBytes);
       console.log(`  -> ${speciesDir}/balance.png`);

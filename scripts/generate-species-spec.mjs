@@ -10,6 +10,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { fetchDinoDirectory, formatForPrompt as formatNhm } from './lib/dino-directory.mjs';
+import { fetchDinosaurPicturesOrg, formatForPrompt as formatDpo } from './lib/dinosaur-pictures-org.mjs';
 
 const FRACTAE = {
   alegria: { name: 'Alegría', latin: 'Lumen', color: 'amarillo/dorado', opposite: 'Tristeza (Tristitia)' },
@@ -50,7 +52,11 @@ function loadDevVarsApiKey() {
   return line?.slice('ANTHROPIC_API_KEY='.length).trim() || undefined;
 }
 
-function buildPrompt(especie, fractae) {
+function buildPrompt(especie, fractae, realData) {
+  const realDataBlock = realData
+    ? `\nDATOS REALES VERIFICADOS (usa esto como fuente de verdad por encima de tu propio conocimiento — si hay conflicto, estos datos ganan):\n${realData}\n`
+    : `\n(No se encontraron datos verificados de esta especie en las bases de datos consultadas — usa tu mejor conocimiento general, pero sé conservador y no inventes detalles muy específicos.)\n`;
+
   return `Eres el equipo de lore/diseño de bestiario de ECOREX. Cada criatura es la manifestación
 física de un Fractae (núcleo emocional puro) a través de una especie portadora (dinosaurio), en
 una de tres Fases: Balance, Exceso o Eco (Fase ≠ Rareza, son ejes independientes; no asignes rareza).
@@ -58,25 +64,48 @@ una de tres Fases: Balance, Exceso o Eco (Fase ≠ Rareza, son ejes independient
 Datos de entrada:
 - Especie base (nombre científico real o parcial de dinosaurio): ${especie}
 - Fractae asociado: ${fractae.name} (${fractae.latin}), color canónico: ${fractae.color}
-
+${realDataBlock}
 Deriva TODO lo demás:
 - scientificName: nombre científico completo y plausible (género + epíteto en latín), coherente
   con la especie base dada y con el Fractae.
 - commonName: apodo corto en español, evocador, tono épico/misterioso (NO infantil-tierno, NO
   cursi), coherente con especie + Fractae.
-- traits: 3-5 rasgos físicos fijos y concretos, derivados de la anatomía real de la especie base,
-  estilizados para encajar con el Fractae.
+- traits: 3-5 rasgos físicos fijos y concretos. Si hay datos reales verificados arriba, básalos
+  en la taxonomía/forma corporal/dieta real (ej. si dice "Ornithopoda, walked on four legs",
+  refleja eso); si no hay datos, usa tu mejor conocimiento general de la anatomía real de la
+  especie base. Estilízalos para encajar con el Fractae, pero sin contradecir la anatomía/
+  comportamiento real (ej. no le des garras de ataque a un herbívoro de pico de pato).
 - habitat: el hábitat/ecología REAL y concreto de la especie base (terrestre árido, semi-acuático
-  fluvial, marino, boscoso templado, polar, etc.). Esto es clave: es lo que hará que la Fase Eco de
-  esta especie no se parezca a la de otra especie con el mismo Fractae (docs/lore_world_bible_ecorex_v4.md §15.3).
+  fluvial, marino, boscoso templado, polar, etc.) — usa el periodo/países/tipo de hábitat de los
+  datos reales si están disponibles. Esto es clave: es lo que hará que la Fase Eco de esta especie
+  no se parezca a la de otra especie con el mismo Fractae (docs/lore_world_bible_ecorex_v4.md §15.3).
   No lo generalices como "prehistórico": sé específico sobre el tipo de terreno/agua/clima.
 - palette: colores ligados al color canónico del Fractae (${fractae.color}) combinados con tonos
   naturales de la especie.
-- silhouette: una frase sobre postura/tipo de cuerpo.
+- silhouette: una frase sobre postura/tipo de cuerpo, coherente con la locomoción/forma corporal
+  real si hay datos disponibles (bípedo/cuadrúpedo, depredador/herbívoro, etc.).
+- closestFamousRelative: el dinosaurio MUY conocido (T-Rex, Triceratops, Velociraptor,
+  Stegosaurus, Brachiosaurus, Ankylosaurus, Parasaurolophus, etc.) cuyo plan corporal general
+  (postura, proporciones, tipo bípedo/cuadrúpedo, silueta) se parece más a esta especie base. Si
+  hay datos reales de taxonomía arriba (ej. "Thyreophora,Stegosauria"), úsalos para elegir el
+  pariente correcto con criterio real, no solo por intuición. Esto es clave para especies poco
+  conocidas: sirve de ancla anatómica en el prompt de imagen, porque el modelo de imagen tiene un
+  prior visual mucho más fuerte para los dinosaurios famosos y tiende a "derivar" hacia ellos
+  (normalmente hacia un terópodo tipo raptor) si no se le da esta ancla explícita. Si la especie
+  base YA es uno de los famosos, pon el mismo nombre.
+- distinguishingFromRelative: CRÍTICO — nombrar solo el pariente famoso es peligroso, porque el
+  modelo de imagen puede copiarle rasgos icónicos que esta especie NO tiene (ej. decir "como un
+  Parasaurolophus" puede hacer que le añada la cresta tubular a un Telmatosaurus, que no la tiene).
+  Aquí debes listar explícitamente, usando tu conocimiento paleontológico real (no las bases de
+  datos, que no llegan a este nivel de detalle): (a) qué rasgo(s) icónico(s) del pariente famoso
+  esta especie NO tiene y hay que excluir explícitamente, y (b) qué la diferencia concretamente
+  (tamaño, cresta o ausencia de ella, forma del cráneo, armadura, etc.). Sé concreto y factual, no
+  inventes si no lo sabes con razonable certeza — en ese caso di "sin diferencias craneales
+  notables conocidas" en vez de inventar.
 - lorePhrase: una línea de lore, tono épico/misterioso.
 
 Responde SOLO con un objeto JSON, sin texto adicional, sin markdown, con esta forma exacta:
-{"scientificName": "...", "commonName": "...", "traits": "...", "habitat": "...", "palette": "...", "silhouette": "...", "lorePhrase": "..."}`;
+{"scientificName": "...", "commonName": "...", "traits": "...", "habitat": "...", "palette": "...", "silhouette": "...", "closestFamousRelative": "...", "distinguishingFromRelative": "...", "lorePhrase": "..."}`;
 }
 
 async function callClaude(prompt, apiKey) {
@@ -89,7 +118,7 @@ async function callClaude(prompt, apiKey) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5',
-      max_tokens: 500,
+      max_tokens: 900,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -136,7 +165,20 @@ async function main() {
   const fractae = resolveFractae(fractaeInput);
   console.log(`Generando ficha para "${especie}" / Fractae ${fractae.name} (${fractae.latin})...`);
 
-  const result = await callClaude(buildPrompt(especie, fractae), apiKey);
+  const genus = especie.split(' ')[0];
+  console.log(`Consultando datos reales de "${genus}" (NHM Dino Directory + dinosaurpictures.org)...`);
+  const [nhm, dpo] = await Promise.all([
+    fetchDinoDirectory(genus).catch(() => null),
+    fetchDinosaurPicturesOrg(genus).catch(() => null),
+  ]);
+  const realData = [formatNhm(nhm), formatDpo(dpo)].filter(Boolean).join('\n\n') || null;
+  if (realData) {
+    console.log('Datos reales encontrados, se usarán como fuente de verdad para la ficha.');
+  } else {
+    console.log('Sin datos verificados para este género — la ficha se basará en el conocimiento general del modelo.');
+  }
+
+  const result = await callClaude(buildPrompt(especie, fractae, realData), apiKey);
 
   const spec = {
     scientificName: result.scientificName,
@@ -146,6 +188,8 @@ async function main() {
     habitat: result.habitat,
     palette: result.palette,
     silhouette: result.silhouette,
+    closestFamousRelative: result.closestFamousRelative,
+    distinguishingFromRelative: result.distinguishingFromRelative,
     oppositeFractae: fractae.opposite,
     lorePhrase: result.lorePhrase,
   };
@@ -158,6 +202,8 @@ async function main() {
   console.log(`Hábitat: ${spec.habitat}`);
   console.log(`Paleta base: ${spec.palette}`);
   console.log(`Silueta distintiva: ${spec.silhouette}`);
+  console.log(`Pariente famoso más cercano: ${spec.closestFamousRelative}`);
+  console.log(`Diferencias con el pariente: ${spec.distinguishingFromRelative}`);
   console.log(`Oposición elemental: ${spec.oppositeFractae}`);
   console.log(`Frase de lore: ${spec.lorePhrase}`);
   console.log('-------------\n');

@@ -12,7 +12,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.",
     "habitat": "riberas boscosas y pantanos del Jurásico norteamericano",
-    "habitatSlug": "pantano-oscuro"
+    "habitatSlug": "pantano-oscuro",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, el Ceratosaurus tiene un cuerno nasal prominente (no dos cuernos supraorbitales), un cuerpo más grácil y menos masivo, cabeza proporcionalmente más pequeña, brazos ligeramente más funcionales, y una hilera de armadura ósea a lo largo del dorso que el T-Rex no posee."
   },
   {
     "scientificName": "Euoplocephalus nauseabundus",
@@ -27,7 +29,9 @@
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.",
     "habitat": "llanuras y bosques abiertos del Cretácico norteamericano",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Ankylosaurus",
+    "distinguishingFromRelative": "Ankylosaurus es más robusto y tiene un club caudal más pronunciado y redondeado; Euoplocephalus tiene una estructura más esbelta, púas caudales más individualizadas y menos fusionadas, y una coraza dorsal menos uniformemente redondeada."
   },
   {
     "scientificName": "Huayangosaurus inquisitus",
@@ -36,13 +40,15 @@
       "name": "Curiosidad",
       "latin": "Spes"
     },
-    "traits": "Crestas dorsales de cristal lila translúcido que vibran al detectar anomalías; ojos grandes y luminiscentes con pupila expandible; garras prensiles en las extremidades anteriores; cola larga y sensible como órgano táctil secundario; piel con patrones iridiscentes que cambian con la curiosidad",
+    "traits": "Crestas dorsales de cristal lila translúcido, estrechas y en forma de hoja (mucho más pequeñas que las placas anchas de Stegosaurus), dispuestas en dos filas a lo largo del lomo; par distintivo de largas púas cristalinas en los hombros que Stegosaurus no tiene; ojos grandes y luminiscentes con pupila expandible; garras romas en las cuatro extremidades (no garras de ataque); piel con patrones iridiscentes que cambian con la curiosidad",
     "palette": "Lila profundo y violeta plateado en crestas y ojos; gris pálido y blanco hueso en cuerpo base; toques de azul índigo en flancos; reflejos plateados en textura escamosa",
-    "silhouette": "Cuadrúpedo ágil y erguido, con postura exploradora; cuello arqueado hacia adelante; crestas dorsales erguidas como antenas vivas.",
+    "silhouette": "Cuadrúpedo robusto y de andar pesado sobre las CUATRO patas, torso ancho y bajo típico de un tireóforo acorazado (NO una postura bípeda esbelta de depredador), cuello corto arqueado hacia el suelo en actitud exploradora, crestas y púas de hombro erguidas como antenas vivas",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.",
     "habitat": "bosques húmedos del Jurásico temprano de Asia",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Stegosaurus",
+    "distinguishingFromRelative": "A diferencia de Stegosaurus, Huayangosaurus tiene crestas dorsales mucho más pequeñas y estrechas (no placas anchas), y además posee un par de largas púas cristalinas en los hombros que Stegosaurus no tiene. Es significativamente más pequeño (~4.5 m vs ~9 m), camina a cuatro patas de forma constante (nunca en postura bípeda de depredador) y tiene un cuerpo más compacto y bajo, no esbelto."
   },
   {
     "scientificName": "Parasaurolophus luminifer",
@@ -57,7 +63,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Su cresta es un faro vivo de dicha primordial, cuyo cántico dorado resuena en las entrañas del mundo para despertar la luz dormida en toda cosa.",
     "habitat": "bosques ribereños templados de Norteamérica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   },
   {
     "scientificName": "Maiasaura fidus",
@@ -72,6 +80,8 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "El Custodio Verde protege con su presencia lo que otros tiemblan de perder; su pisada marca el terreno donde renace la fe.",
     "habitat": "llanuras con colonias de anidación en Norteamérica",
-    "habitatSlug": "llanura-abierta"
+    "habitatSlug": "llanura-abierta",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "A diferencia de Parasaurolophus, Maiasaura carece de la cresta tubular elongada y curvada característica hacia atrás. Maiasaura presenta una cresta dorsal frontal más compacta y menos pronunciada. Además, mientras que Parasaurolophus es bípedo obligatorio, Maiasaura es capaz de locomoción tanto bípeda como cuadrúpeda, con una contextura general más robusta y maciza."
   }
 ]

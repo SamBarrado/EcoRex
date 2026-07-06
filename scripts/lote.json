@@ -12,7 +12,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisa, la tierra arde en resentimiento. Es la ira del mundo hecha carne y fuego, incapaz de olvidar cada herida.",
     "habitat": "llanuras y bosques semiáridos costeros de Norteamérica, depredador terrestre ápice",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "La Dracofuria comparte la silueta bípeda masiva y las proporciones generales del T. rex histórico, pero se diferencia por: mandíbulas con estrías de fuego activo (vs. forma ósea pura), ojos ámbar incandescente que emiten cólera (vs. anatomía ocular estándar), espina dorsal con placas que emiten vapor (vs. estructura vertebral convencional), y cicatrices que cicatrizan en rojo vivo (vs. piel sin regeneración activa visible)."
   },
   {
     "scientificName": "Giganotosaurus furialis",
@@ -27,7 +29,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde el Fractae de la Ira toma forma de carne y hueso, la tierra tiembla bajo el peso de la venganza hecha bestia, y el fuego arde sin llama en sus ojos.",
     "habitat": "llanuras áridas y matorrales de Sudamérica, cazador terrestre en manada",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, Giganotosaurus tiene brazos y garras frontales proporcionalmente más grandes y desarrolladas, mandíbula más alargada con bordes serrados (no bordes roma), y extremidades anteriores menos atrofiadas. El T-Rex tiene brazos vestigiales; esta especie los tiene hipertrofiados y funcionales para la caza."
   },
   {
     "scientificName": "Spinosaurus horrificus",
@@ -42,7 +46,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las aguas profundas del Fractae Miedo nada el Espinodonte, no cazador sino colector: cada terror que absorbe engrosa su vela, cada grito amplifica su zumbido, cada sombra que proyecta es un susurro de pánico hecho carne.",
     "habitat": "ríos y deltas pantanosos del norte de África, semi-acuático, nadador y pescador",
-    "habitatSlug": "pantano-oscuro"
+    "habitatSlug": "pantano-oscuro",
+    "closestFamousRelative": "T-Rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, el Espinodonte carece de las extremidades anteriores vestigiales y cortas características; en su lugar posee garras antebrazales funcionales de obsidiana negra. Además, el T-Rex es bípedo obligado, mientras que el Espinodonte es cuadrúpedo semi-acuático con postura depredadora deplegada. La vela dorsal erizad y pulsante es exclusiva del Espinodonte, contrastando con la anatomía lisa del T-Rex."
   },
   {
     "scientificName": "Allosaurus incendium",
@@ -57,7 +63,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisa Quijada Escarlata, la tierra tiembla bajo la ira pura; su rugido quema el aire, y sus colmillos hambrientos conocen sólo la sed de dominio.",
     "habitat": "llanuras y bosques abiertos de Norteamérica jurásica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "T-Rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, el Allosaurus tiene brazos funcionales con tres dedos desarrollados y garras pronunciadas (no vestigiales), cuello más largo y flexible, cabeza más pequeña, y mandíbulas con bordes aserrados en lugar de dientes macizos de aplastamiento. El T-Rex es más robusto y masivo; el Allosaurus es más esbelto y ágil."
   },
   {
     "scientificName": "Carnotaurus furibundus",
@@ -72,7 +80,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Toro Ardiente no carga por hambre, sino por la sed insaciable de su propia furia—cada embestida un grito silencioso de la ira primordial encarnada.",
     "habitat": "desiertos y matorrales áridos de la Patagonia",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, Carnotaurus carece de las icónicas mandíbulas masivas y sobredimensionadas; posee cuernos frontales prominentes que el T-Rex no tiene; tiene un hocico notablemente más corto y estrecho de frente; sus brazos, aunque pequeños en ambos, son proporcionalmente menos vestigiales; presenta una postura y centro de masa más adelantado típico de los ceratosaurios."
   },
   {
     "scientificName": "Baryonyx timidus",
@@ -87,7 +97,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las penumbras del terror primordial acecha el Garra Púrpura, cuyo pavor es tan visceral que tiñe su propia carne del color del miedo manifestado.",
     "habitat": "riberas de ríos y humedales de Europa, semi-acuático, pescador de orillas",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, Baryonyx es significativamente más grande (10 metros vs ~2 metros), tiene una mandíbula similar a cocodrilo en lugar de curvada depredadora, y sus garras delanteras son proporcionalmente menos prominentes que la garra falciforme característica del Velociraptor. Baryonyx es además semi-acuático especializado en pesca, mientras que Velociraptor era un depredador terrestre de manada."
   },
   {
     "scientificName": "Albertosaurus furibundus",
@@ -102,7 +114,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Tirano Bermejo es la rabia pura desencadenada: donde pisotea, la tierra arde; donde ruge, los huesos tiemblan. Su sed de conflicto es insaciable, su furia la única verdad.",
     "habitat": "bosques templados costeros de Norteamérica",
-    "habitatSlug": "costa-litoral"
+    "habitatSlug": "costa-litoral",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "Albertosaurus es notablemente más pequeño (9 m vs 12-13 m de T-rex), con construcción corporal menos robusta y maciza. Carece de la cabeza desproporcionadamente grande y el cráneo masivo característico de T-rex, presentando proporciones más gráciles y una musculatura general menos pesada."
   },
   {
     "scientificName": "Ceratosaurus pavonius",
@@ -117,7 +131,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.",
     "habitat": "riberas boscosas y pantanos del Jurásico norteamericano",
-    "habitatSlug": "pantano-oscuro"
+    "habitatSlug": "pantano-oscuro",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, el Ceratosaurus tiene un cuerno nasal prominente (no dos cuernos supraorbitales), un cuerpo más grácil y menos masivo, cabeza proporcionalmente más pequeña, brazos ligeramente más funcionales, y una hilera de armadura ósea a lo largo del dorso que el T-Rex no posee."
   },
   {
     "scientificName": "Acrocanthosaurus iratus",
@@ -132,7 +148,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde la Ira cristaliza en carne, nace el Espina Roja: un corazón de furia que pulsa contra costillas de piedra, condenado a devorar lo que su propia ira ya ha destruido",
     "habitat": "llanuras aluviales y bosques de Norteamérica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Allosaurus",
+    "distinguishingFromRelative": "Acrocanthosaurus carece de la cresta nasal prominente y bilobulada característica de Allosaurus; en su lugar posee una cresta neural dorsal mucho más desarrollada y continua que recorre toda la columna vertebral, creando una silueta de espalda más elevada y menos comprimida lateralmente que la del Allosaurus."
   },
   {
     "scientificName": "Yutyrannus pavidus",
@@ -147,7 +165,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "El Tiranofobia no acecha presas; es el acecho hecho carne, la pesadilla que respira en las sombras del bosque antiguo, condenado a huir eternamente del miedo que él mismo encarna.",
     "habitat": "bosques fríos y nevados del noreste de Asia",
-    "habitatSlug": "bosque-boreal-frio"
+    "habitatSlug": "bosque-boreal-frio",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "A diferencia del T-Rex, Yutyrannus tiene tres dedos por mano (no dos), brazos más largos y desarrollados, un crest poco profundo en la cabeza con dos pequeños cuernos cerca de los ojos (no la estructura craneal maciza del T-Rex), y un tamaño notablemente menor (~7.5m vs ~12m). Excluir: mandíbula masiva y robusta típica de T-Rex, brazos vestigiales, cabeza desproporcionadamente grande."
   },
   {
     "scientificName": "Velocistupornis explicitus",
@@ -162,7 +182,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el instante antes del asombro, cuando la presa percibe su sombra, nace el Asaltador: manifestación pura de la Sorpresa que desmorona certezas.",
     "habitat": "desiertos y campos de dunas de Mongolia",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, el Asaltador del Velo carece de la garra sickle característica en los pies traseros (aunque tiene garras agrandadas, estas son simétricas y brillantes, no la hoz asimétrica letal). Además, presenta una cresta nucal dentada muy pronunciada y mandíbulas asimétricas que tiemblan rítmicamente, rasgos ausentes en el Velociraptor. Su tamaño aparenta ser más compacto y denso."
   },
   {
     "scientificName": "Deinonychus stupefactus",
@@ -177,7 +199,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En los momentos previos al ataque, el Raptor del Velo emite un destello naranja que congela el tiempo—sus presas nunca saben si lo que ven es real o un espejismo de su propio miedo.",
     "habitat": "bosques templados de Norteamérica, cazador en manada",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "Velociraptor es más pequeño y grácil; Deinonychus es más robusto y de mayor tamaño (3.4m vs ~1.8m), con una constitución más pesada y musculosa. Deinonychus carece de la cabeza tan alargada y el hocico tan pronunciado del Velociraptor, teniendo una mandíbula más robusta y articulada. La garra falciforme es proporcionalmente menos prominente en Deinonychus."
   },
   {
     "scientificName": "Utahraptor incandescens",
@@ -192,7 +216,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisó el Desgarra-Llama, la tierra tiembla de rabia; su grito es el último susurro antes que el mundo se quiebre en ira.",
     "habitat": "desiertos y dunas del oeste de Norteamérica",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "Utahraptor era significativamente más grande (5.5 metros vs ~1.8 metros de Velociraptor), más robusto y musculoso. A diferencia de Velociraptor, no debe tener proporciones esbeltas ni silueta esbelta; debe ser claramente más macizo y stockier, con musculatura más prominente y compacta."
   },
   {
     "scientificName": "Troodon sapientis",
@@ -207,7 +233,9 @@
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los bosques primigenios, donde la ignorancia devora a los necios, acecha quien pregunta en silencio: el Ígneo Inquisidor, cuya mirada traspasa la oscuridad buscando verdades ocultas",
     "habitat": "bosques boreales y polares, cazador nocturno de clima frío",
-    "habitatSlug": "bosque-boreal-frio"
+    "habitatSlug": "bosque-boreal-frio",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, el Troodon carece de la garra metatarsiana enormemente agrandada y letal (hoz de 15 cm); es significativamente más pequeño y grácil; tiene proporciones craneales distintas con ojos relativamente más grandes; y presenta un tamaño corporal menor (1-2 m vs 2-3 m del Velociraptor)."
   },
   {
     "scientificName": "Compsognathus stupefactus",
@@ -222,7 +250,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el instante antes de que el depredador sea visto, el Destello Furtivo ya ha desaparecido, dejando solo la estela naranja del asombro que precede a la comprensión.",
     "habitat": "islas costeras mediterráneas del Jurásico",
-    "habitatSlug": "costa-litoral"
+    "habitatSlug": "costa-litoral",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, el Destello Furtivo carece de las garras sicle características en las patas traseras, es significativamente más pequeño (0,65 m vs 1,8-2,07 m), tiene proporciones corporales menos robustas, y presenta una constitución extremadamente grácil e insectívora en lugar de depredador activo de presas grandes."
   },
   {
     "scientificName": "Dilophosaurus fastidiosus",
@@ -237,7 +267,9 @@
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "El Nauseador Bicrestado merodea los estuarios podridos donde ni siquiera la carroña prospera; su presencia marchita las plantas y envenena las aguas, pues encarna el rechazo absoluto a toda forma viviente.",
     "habitat": "bosques húmedos y riberas del Jurásico temprano",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, el Dilophosaurus es significativamente más grande (7m vs ~2m), bípedo en lugar de cuadrúpedo, y posee dos crestas óseas distintivas en la cabeza en lugar de la cresta única del Velociraptor. Carece de la garra hipertrofiada característica del Velociraptor en las patas traseras."
   },
   {
     "scientificName": "Oviraptor inquisitor",
@@ -252,7 +284,9 @@
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "Donde el Oviraptor inquisitor rasguña la tierra, los secretos antiguos tiemblan bajo la superficie, y cada pregunta sin respuesta lo consume como una llama lila que nunca se extingue.",
     "habitat": "desiertos de Mongolia, anidando en dunas",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, el Oviraptor carece de la garra falciforme hipertrofiada característica en el segundo dedo del pie; además, tiene un cráneo más elevado y redondeado con una cresta pronunciada, mientras que el Velociraptor posee un cráneo bajo y aplastado sin cresta. El Oviraptor es también más robusto y menos especializado como depredador activo."
   },
   {
     "scientificName": "Therizinosaurus fastidiosus",
@@ -267,7 +301,9 @@
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde pisó la Podridora, el ecosistema se retuerce en asco puro; cada exhalación es una maldición verde que consume lo que fue vivo, dejando solo el olor del rechazo absoluto.",
     "habitat": "bosques húmedos y pantanosos de Asia central",
-    "habitatSlug": "pantano-oscuro"
+    "habitatSlug": "pantano-oscuro",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, Therizinosaurus era herbívoro (no carnívoro), de tamaño mucho mayor (~10m vs ~2m), caminaba erguido sobre dos patas traseras robustas (no bípedo ágil de cazador), y poseía garras enormes en las manos delanteras diseñadas para defensa y alimentación vegetal, no para destripar presas. Su cuerpo era más pesado y macizo, sin la silueta esbelta y predadora del Velociraptor."
   },
   {
     "scientificName": "Gallimimus stupefactus",
@@ -282,7 +318,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el susurro antes del trueno, cuando la calma rompe su velo, el Fulgor Atónito emerge: testigo de lo inexplicable, guardián del umbral entre lo conocido y lo imposible.",
     "habitat": "llanuras abiertas y semiáridas de Mongolia",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "A diferencia del Velociraptor, Gallimimus carece de la garra falciforme icónica en las patas traseras, no posee los brazos cortos y robustos característicos, y su construcción es más esbelta y orientada hacia la carrera que hacia la depredación activa. Gallimimus es significativamente más grande (6 metros vs ~2 metros) y presenta proporciones más similares a las aves corredoras modernas."
   },
   {
     "scientificName": "Coelophysis timidus",
@@ -297,7 +335,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En la penumbra de los bosques antiguos acecha el Pavor Nocturno, cuyo llanto silencioso desgarra los velos entre mundos, manifestación viviente del terror que acecha en la oscuridad.",
     "habitat": "desiertos y llanuras áridas del Triásico",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Velociraptor",
+    "distinguishingFromRelative": "Velociraptor es significativamente más grande (1.8m de largo vs 2-3m del Coelophysis, pero con proporciones más robustas) y posee una garra retráctil icónica en el pie trasero que el Coelophysis no tiene. El Coelophysis carece de esa garra distintiva y mantiene proporciones más gráciles y delgadas, con forelimbs menos desarrollados."
   },
   {
     "scientificName": "Brachiosaurus fidei",
@@ -312,7 +352,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En su sombra los débiles encuentran raíces; donde posa sus patas, la tierra recuerda su propósito.",
     "habitat": "bosques abiertos de coníferas, ramoneador de copas altas",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   },
   {
     "scientificName": "Diplodocus tristitiae",
@@ -327,7 +369,9 @@
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "En las marismas olvidadas camina el Cuellilargo Doliente, cuyo cuello toca las aguas de lágrimas antiguas, portador de un dolor tan profundo que incluso la tierra llora a su paso.",
     "habitat": "llanuras aluviales y riberas del Jurásico norteamericano",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Diplodocus tiene las patas delanteras y traseras de longitud similar (no elevadas), sostenía el cuello más horizontalmente que verticalmente, poseía una cola mucho más larga y delgada (tipo látigo), y carecía de las protuberancias/cuernos sobre los ojos característicos de Brachiosaurus."
   },
   {
     "scientificName": "Apatosaurus fidus",
@@ -342,7 +386,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisó el Titanoguía, los errantes encontraron sendero; su verde verdad marca las rutas que jamás fallan a quienes confían ciegamente.",
     "habitat": "llanuras semiáridas del Jurásico norteamericano",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Apatosaurus tiene extremidades anteriores más cortas que las posteriores (no más largas), una postura con cuello más horizontal y menos elevado, y una silueta menos inclinada hacia adelante. Brachiosaurus es más masivo en los hombros; Apatosaurus tiene un centro de masa más bajo y equilibrado entre sus cuatro extremidades."
   },
   {
     "scientificName": "Argentinosaurus fidei",
@@ -357,7 +403,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde camina el Titán de Verdad, los cimientos del mundo se asientan con certeza absoluta, y ninguna sombra de duda osa rondar sus pasos.",
     "habitat": "llanuras y bosques abiertos de Sudamérica cretácica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Argentinosaurus tiene las patas traseras más robustas y comparativamente más largas que las delanteras (postura más nivelada), mientras que Brachiosaurus presenta patas delanteras notoriamente más largas que las traseras (postura inclinada hacia adelante). Argentinosaurus carece del perfil corporal ascendente característico de Brachiosaurus."
   },
   {
     "scientificName": "Brontosaurus luminifer",
@@ -372,7 +420,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde el Titán Áureo posa su paso, la tierra absorbe su gozo y brota luz desde las raíces del mundo.",
     "habitat": "llanuras aluviales y bosques abiertos de Norteamérica jurásica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, el Titán Áureo tiene extremidades anteriores y posteriores de proporciones más equilibradas (no elevadas desproporcionadamente), cuello menos vertical y más arqueado, y carece de las espinas dorsales elevadas características de Brachiosaurus. La luminiscencia dorada es exclusiva del Titán Áureo."
   },
   {
     "scientificName": "Mamenchisaurus tristitiae",
@@ -387,7 +437,9 @@
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "Donde pisó el Cuellilargo del Lamento, la esperanza se convirtió en rocío nocturno; su cuello, un puente entre los vivos y el abismo de lo perdido.",
     "habitat": "riberas y humedales fluviales de Asia jurásica",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Mamenchisaurus tiene las patas traseras más largas que las delanteras (postura más horizontal), un cuello más extremadamente elongado con más vértebras cervicales, y carece de la silueta característica de Brachiosaurus con los hombros elevados y la grupa baja. Mamenchisaurus mantiene una postura más baja y nivelada."
   },
   {
     "scientificName": "Titanosaurus fidus",
@@ -402,7 +454,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisa el Coloso, la tierra sostiene a quienes dudan, pues su convicción es tan antigua como las montañas que pisó.",
     "habitat": "llanuras tropicales y bosques abiertos de India",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, el Titanosaurus fidus tiene un cuello arqueado en espiral ascendente (no recto), emite luminiscencia verde en sus vértebras, posee osteodermis con símbolos geométricos, y sus pisadas dejan depósitos minerales verdes. Brachiosaurus carece de estas características bioluminiscentes y mineralizantes."
   },
   {
     "scientificName": "Amargasaurus tremefactus",
@@ -417,7 +471,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "Su doble corona de púrpura susurra los nombres de aquellos que nunca verán el próximo amanecer.",
     "habitat": "matorrales áridos y semidesérticos de la Patagonia",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Amargasaurus tiene las patas delanteras y traseras de longitud similar (no elevadas hacia adelante), cuello más corto y arqueado hacia atrás en lugar de vertical, y posee una doble hilera de espinas dorsales características que Brachiosaurus no tenía."
   },
   {
     "scientificName": "Camarasaurus luminaris",
@@ -432,7 +488,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisó el Radiante Colosal, la tierra recordó la alegría de los primeros días; su cuello toca las nubes como si quisiera compartir la luz que arde en su núcleo.",
     "habitat": "llanuras semiáridas y bosques abiertos de Norteamérica jurásica",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Camarasaurus tiene miembros anteriores más cortos (no más largos que los posteriores), cuello menos vertical y más arqueado, cabeza más pequeña y rectangular, y cola más corta y menos prominente. Brachiosaurus presenta una postura frontal elevada característica que Camarasaurus no posee."
   },
   {
     "scientificName": "Dreadnoughtus fideianthus",
@@ -447,7 +505,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde posa su sombra verde, la duda se disuelve; es el coloso que sostiene los cimientos de toda convicción, inmóvil como una verdad absoluta.",
     "habitat": "bosques templados y llanuras aluviales de la Patagonia cretácica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia de Brachiosaurus, Dreadnoughtus tiene las extremidades anteriores y posteriores de longitud similar (no más largas adelante), una cola extraordinariamente masiva y robusta que representa casi un tercio de su longitud total, y carece de las vértebras dorsales elevadas características de Brachiosaurus."
   },
   {
     "scientificName": "Triceratops fidus",
@@ -462,7 +522,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En las grietas del mundo antiguo, donde los titanes dudan, el Cerúleo Ancla planta su fe como raíces de piedra.",
     "habitat": "llanuras abiertas y bosques de Norteamérica cretácica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   },
   {
     "scientificName": "Styracosaurus furibundus",
@@ -477,7 +539,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisaun los Púas Ardientes, la tierra recuerda el sabor de la cólera sin nombre.",
     "habitat": "llanuras y bosques abiertos de Norteamérica cretácica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Styracosaurus furibundus carece de los dos cuernos supraorbitales prominentes y simétricos; posee en su lugar un volante craneal dilatado con múltiples púas serradas alrededor del perímetro (no solo el borde posterior liso), y su cuerno nasal es más alargado y curvado hacia arriba con mayor prominencia."
   },
   {
     "scientificName": "Pentaceratops pavor",
@@ -492,7 +556,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En los ecos del miedo ancestral camina el Espantacéfalo, cuya sola presencia cristaliza el pánico en el aire nocturno.",
     "habitat": "llanuras costeras subtropicales de Norteamérica",
-    "habitatSlug": "llanura-abierta"
+    "habitatSlug": "llanura-abierta",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Pentaceratops presenta CINCO cuernos en lugar de tres (dos supraorbitales, dos nasales y uno rostral adicional), un volante craneal significativamente más grande (casi 3 metros de largo vs. menor en Triceratops), y proporciones corporales más alargadas. Excluir: el patrón de tres cuernos distintivo de Triceratops y su volante más compacto."
   },
   {
     "scientificName": "Chasmosaurus fidei",
@@ -507,7 +573,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En los territorios donde la duda reina, surge Fidei: cuyo volante abierto no es arma, sino promesa viva de que quien se rige por la verdad nunca camina solo.",
     "habitat": "deltas y llanuras costeras pantanosas",
-    "habitatSlug": "pantano-dorado"
+    "habitatSlug": "pantano-dorado",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Chasmosaurus fidei carece del prominente cuerno nasal macizo y los cuernos supraorbitales robustos y curvados hacia abajo característicos de Triceratops. En su lugar, presenta cuernos frontales más delicados y curvados hacia arriba, un volante cervical significativamente más grande con perforaciones y venas luminosas, y proporciones corporales algo más esbeltas."
   },
   {
     "scientificName": "Protoceratops tristitiae",
@@ -522,7 +590,9 @@
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "En las grietas del mundo murmura Protoceratops tristitiae, la tristeza hecha carne, cuyo canto mineral resuena en los corazones rotos como el eco de un lamento sin fin.",
     "habitat": "desiertos y dunas de Mongolia",
-    "habitatSlug": "desierto-dunas"
+    "habitatSlug": "desierto-dunas",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Protoceratops carece de los tres cuernos faciales prominentes (uno nasal y dos supraorbitales) y no posee la gran gola ósea cervical. Protoceratops es significativamente más pequeño (1,8 m vs 9 m) y más grácil, con una cresta nucal translúcida en lugar de una estructura ósea masiva."
   },
   {
     "scientificName": "Einiosaurus furiosus",
@@ -537,7 +607,9 @@
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Cornífero Rojo embiste cuando la cólera antigua despierta, su cuerno une fuego y hueso en una sola voluntad destructora.",
     "habitat": "llanuras semiáridas de Norteamérica",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Einiosaurus carece de los dos cuernos supraorbitales característicos y prominentes; posee un único cuerno nasal curvado hacia abajo (no hacia arriba), y su volante craneal es más reducido y menos elaborado"
   },
   {
     "scientificName": "Kosmoceratops stupefactus",
@@ -552,7 +624,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En los silencios previos a la tormenta, el Centinela emerge—su presencia anuncia lo inesperado, lo que rompe el orden, lo que detiene el aliento de los mundos.",
     "habitat": "pantanos y llanuras costeras subtropicales",
-    "habitatSlug": "pantano-dorado"
+    "habitatSlug": "pantano-dorado",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "A diferencia de Triceratops, Kosmoceratops carece del icónico cuerno nasal prominente y los dos cuernos supraorbitales grandes y rectos. En su lugar presenta una fronda craneal de espinas ramificadas y un collar óseo con protuberancias irregulares cristalizadas. Además, sus garras frontales asimétricas contrastan con las patas más homogéneas del Triceratops."
   },
   {
     "scientificName": "Ankylosaurus fidei",
@@ -567,7 +641,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisa el Coraza de Fe, la tierra misma se vuelve inquebrantable; su presencia no grita poder, simplemente lo es.",
     "habitat": "llanuras boscosas de Norteamérica cretácica",
-    "habitatSlug": "llanura-abierta"
+    "habitatSlug": "llanura-abierta",
+    "closestFamousRelative": "Ankylosaurus",
+    "distinguishingFromRelative": "Es la misma especie, sin diferencias notables conocidas"
   },
   {
     "scientificName": "Euoplocephalus nauseabundus",
@@ -582,7 +658,9 @@
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.",
     "habitat": "llanuras y bosques abiertos del Cretácico norteamericano",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Ankylosaurus",
+    "distinguishingFromRelative": "Ankylosaurus es más robusto y tiene un club caudal más pronunciado y redondeado; Euoplocephalus tiene una estructura más esbelta, púas caudales más individualizadas y menos fusionadas, y una coraza dorsal menos uniformemente redondeada."
   },
   {
     "scientificName": "Nodosaurus tristitiae",
@@ -597,7 +675,9 @@
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "Donde pisa el Lamentauro, la tierra recuerda lo que nunca fue; sus pasos son epitafios de esperanzas extinguidas.",
     "habitat": "llanuras costeras y riberas fluviales",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Ankylosaurus",
+    "distinguishingFromRelative": "A diferencia de Ankylosaurus, Nodosaurus carece de la característica maza ósea en la punta de la cola y presenta un patrón de armadura dorsal basado en nódulos óseos más discretos en lugar de la configuración de placas más robusta y prominente del Ankylosaurus."
   },
   {
     "scientificName": "Stegosaurus pavescens",
@@ -612,7 +692,9 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "El Púrpura Espinal deambula donde el miedo germina: sus placas brillan como advertencia de los horrores que acechan en la penumbra, y quien lo mira a los ojos descubre sus propios miedos reflejados.",
     "habitat": "llanuras semiáridas y bosques abiertos del Jurásico",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Stegosaurus",
+    "distinguishingFromRelative": "Al ser Stegosaurus pavescens una variante de Stegosaurus, no presenta diferencias morfológicas fundamentales respecto al pariente famoso, sino variaciones cromáticas (coloración púrpura bioluminiscente, gas violáceo) y adaptaciones sensoriales (iris lavanda) que son rasgos únicos de esta especie sin equivalentes en el Stegosaurus conocido."
   },
   {
     "scientificName": "Kentrosaurus stupefactus",
@@ -627,7 +709,9 @@
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "El Púa del Asombro acecha en las grietas del mundo conocido, su presencia un recordatorio de que incluso lo familiar puede desvelar lo imposible.",
     "habitat": "sabanas y bosques abiertos del este de África jurásica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Stegosaurus",
+    "distinguishingFromRelative": "Kentrosaurus carece de las placas dorsales grandes y asimétricas características de Stegosaurus; en su lugar presenta placas más pequeñas y simétricas. Además, Kentrosaurus es significativamente más pequeño (5 metros vs 9 metros) y sus púas caudales son más prominentes y móviles en comparación con la cola de Stegosaurus."
   },
   {
     "scientificName": "Huayangosaurus inquisitus",
@@ -636,13 +720,15 @@
       "name": "Curiosidad",
       "latin": "Spes"
     },
-    "traits": "Crestas dorsales de cristal lila translúcido que vibran al detectar anomalías; ojos grandes y luminiscentes con pupila expandible; garras prensiles en las extremidades anteriores; cola larga y sensible como órgano táctil secundario; piel con patrones iridiscentes que cambian con la curiosidad",
+    "traits": "Crestas dorsales de cristal lila translúcido, estrechas y en forma de hoja (mucho más pequeñas que las placas anchas de Stegosaurus), dispuestas en dos filas a lo largo del lomo; par distintivo de largas púas cristalinas en los hombros que Stegosaurus no tiene; ojos grandes y luminiscentes con pupila expandible; garras romas en las cuatro extremidades (no garras de ataque); piel con patrones iridiscentes que cambian con la curiosidad",
     "palette": "Lila profundo y violeta plateado en crestas y ojos; gris pálido y blanco hueso en cuerpo base; toques de azul índigo en flancos; reflejos plateados en textura escamosa",
-    "silhouette": "Cuadrúpedo ágil y erguido, con postura exploradora; cuello arqueado hacia adelante; crestas dorsales erguidas como antenas vivas.",
+    "silhouette": "Cuadrúpedo robusto y de andar pesado sobre las CUATRO patas, torso ancho y bajo típico de un tireóforo acorazado (NO una postura bípeda esbelta de depredador), cuello corto arqueado hacia el suelo en actitud exploradora, crestas y púas de hombro erguidas como antenas vivas",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.",
     "habitat": "bosques húmedos del Jurásico temprano de Asia",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Stegosaurus",
+    "distinguishingFromRelative": "A diferencia de Stegosaurus, Huayangosaurus tiene crestas dorsales mucho más pequeñas y estrechas (no placas anchas), y además posee un par de largas púas cristalinas en los hombros que Stegosaurus no tiene. Es significativamente más pequeño (~4.5 m vs ~9 m), camina a cuatro patas de forma constante (nunca en postura bípeda de depredador) y tiene un cuerpo más compacto y bajo, no esbelto."
   },
   {
     "scientificName": "Iguanodon luminifer",
@@ -657,7 +743,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisó, la sombra se disipó; su presencia es el recuerdo del sol que no muere, la risa del mundo antes de caer.",
     "habitat": "llanuras y humedales de la Europa cretácica",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Iguanodon",
+    "distinguishingFromRelative": "Sin diferencias notables conocidas respecto a Iguanodon genérico, al ser Iguanodon luminifer una variante del mismo género. Se diferencia de otros ornitópodos famosos (Parasaurolophus, Ankylosaurus) por carecer de cresta elaborada o armadura dorsal típica de esas especies."
   },
   {
     "scientificName": "Parasaurolophus luminifer",
@@ -672,7 +760,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Su cresta es un faro vivo de dicha primordial, cuyo cántico dorado resuena en las entrañas del mundo para despertar la luz dormida en toda cosa.",
     "habitat": "bosques ribereños templados de Norteamérica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   },
   {
     "scientificName": "Edmontosaurus fidus",
@@ -687,7 +777,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisó el Custodio Verde, la manada nunca se perdió; su presencia es el pacto entre la tierra y quienes la recorren.",
     "habitat": "llanuras costeras y deltas de Norteamérica cretácica",
-    "habitatSlug": "riberas-humedales"
+    "habitatSlug": "riberas-humedales",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "Parasaurolophus tiene una cresta craneal tubular y curvada hacia atrás muy distintiva; Edmontosaurus fidus tiene una cresta más aplanada y prominente teñida de verde esmeralda. Además, Parasaurolophus es típicamente bípedo, mientras que Edmontosaurus fidus adopta postura cuadrúpeda robusta."
   },
   {
     "scientificName": "Corythosaurus inquisitor",
@@ -702,7 +794,9 @@
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los espejos de cristal del mundo dormido camina el Velo, cuya cresta resuena con preguntas que nunca fueron formuladas, buscando las grietas donde anida el conocimiento olvidado.",
     "habitat": "bosques ribereños templados de Norteamérica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "A diferencia de Parasaurolophus, cuya cresta es una prolongación tubular recta que se extiende hacia atrás desde el cráneo, el Velo Indagador posee una cresta de forma sinuosa e irregular. Además, Parasaurolophus carece de la iridiscencia lila característica del Velo Indagador, y sus garras no están especializadas en manipulación de objetos como las de esta especie."
   },
   {
     "scientificName": "Maiasaura fidus",
@@ -717,7 +811,9 @@
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "El Custodio Verde protege con su presencia lo que otros tiemblan de perder; su pisada marca el terreno donde renace la fe.",
     "habitat": "llanuras con colonias de anidación en Norteamérica",
-    "habitatSlug": "llanura-abierta"
+    "habitatSlug": "llanura-abierta",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "A diferencia de Parasaurolophus, Maiasaura carece de la cresta tubular elongada y curvada característica hacia atrás. Maiasaura presenta una cresta dorsal frontal más compacta y menos pronunciada. Además, mientras que Parasaurolophus es bípedo obligatorio, Maiasaura es capaz de locomoción tanto bípeda como cuadrúpeda, con una contextura general más robusta y maciza."
   },
   {
     "scientificName": "Lambeosaurus luminifer",
@@ -732,7 +828,9 @@
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisa el Radiante Cresta, la tristeza se disuelve en luz; su canto resonante en la cresta ósea es el latido de la alegría primordial encarnada.",
     "habitat": "bosques ribereños de Norteamérica cretácica",
-    "habitatSlug": "bosque-abierto-templado"
+    "habitatSlug": "bosque-abierto-templado",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "Parasaurolophus tiene una cresta tubular curvada hacia atrás sobre la cabeza; Lambeosaurus luminifer tiene una cresta laminar dorsal que irradia luz dorada. Además, Parasaurolophus carece de los patrones de escamas reflectantes áureas y las franjas luminiscentes en la cola que caracterizan a esta especie."
   },
   {
     "scientificName": "Tyrannosaurus imperator",
@@ -747,7 +845,9 @@
     "silhouette": "bípedo masivo, torso inclinado hacia delante, mandíbula perpetuamente entreabierta, postura de tensión constante",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisa el Rex de Fuego, la tierra misma arde de una rabia que nunca se apaga.",
-    "habitatSlug": "volcanico"
+    "habitatSlug": "volcanico",
+    "closestFamousRelative": "Tyrannosaurus rex",
+    "distinguishingFromRelative": "El Rex de Fuego difiere del T-Rex en: (1) presenta dientes incandescentes y vetas de energía roja en sus escamas, ausentes en el fósil base; (2) tiene una cresta dorsal de púas erguidas que emiten vapor, rasgo no documentado en T-Rex; (3) su entorno es volcánico con erupción permanente, frente al ecosistema de North America del Cretácico tardío; (4) mantiene una postura de tensión constante con mandíbula perpetuamente entreabierta, comportamiento no inferible del registro fósil."
   },
   {
     "scientificName": "Telmatosaurus mirus",
@@ -762,7 +862,9 @@
     "silhouette": "cuadrúpedo facultativo (puede erguirse en dos patas), cuello curvado hacia arriba, cola larga afilada que se alza al sobresaltarse",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "Nadie ve venir al Destello del Pantano; solo el reflejo dorado en el agua delata que el asombro ya está sobre ti.",
-    "habitatSlug": "pantano-dorado"
+    "habitatSlug": "pantano-dorado",
+    "closestFamousRelative": "Parasaurolophus",
+    "distinguishingFromRelative": "Parasaurolophus tenía una cresta craneal tubular prominente y curvada hacia atrás; Telmatosaurus mirus carece de esta cresta distintiva y posee una cresta dorsal baja de escamas doradas en el cuerpo. Parasaurolophus era más robusto y de mayor tamaño; Telmatosaurus mirus es más esbelto y de menor envergadura."
   },
   {
     "scientificName": "Triceratops umbra",
@@ -777,7 +879,9 @@
     "silhouette": "cuadrúpedo robusto y de andar pausado, gorguera elevada como una corona que domina la silueta",
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "Cada lágrima que cae de su gorguera es un recuerdo que el mundo se niega a soltar.",
-    "habitatSlug": "valle-helado-cristal"
+    "habitatSlug": "valle-helado-cristal",
+    "closestFamousRelative": "Triceratops",
+    "distinguishingFromRelative": "Como es la misma especie base, no hay diferencias a excluir. Los rasgos icónicos del Triceratops real (tres cuernos óseos, gorguera protectora, boca de loro, escamas pebbled) se mantienen pero se reinterpretan en cristal/luz azul en esta variante de ECOREX."
   },
   {
     "scientificName": "Stegosaurus pavor",
@@ -790,7 +894,9 @@
     "habitat": "llanuras semiáridas y bosques abiertos del Jurásico, andar pausado en terreno reseco",
     "palette": "morado profundo, negro violáceo, vetas moradas fosforescentes",
     "silhouette": "cuadrúpedo de espalda arqueada, cabeza baja casi rastrera, placas erguidas como una hilera de sombras verticales",
-    "habitatSlug": "matorral-arido"
+    "habitatSlug": "matorral-arido",
+    "closestFamousRelative": "Stegosaurus",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   },
   {
     "scientificName": "Mosasaurus pavoris",
@@ -805,6 +911,8 @@
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "No hace falta ver a las Fauces del Abismo para sentir el pavor: basta con notar cómo el agua deja de moverse a tu alrededor.",
     "habitat": "mares profundos y fosas oceánicas del Cretácico, depredador ápice que emerge desde la oscuridad sin aviso",
-    "habitatSlug": "oceano-profundo"
+    "habitatSlug": "oceano-profundo",
+    "closestFamousRelative": "Mosasaurus",
+    "distinguishingFromRelative": "sin diferencias notables conocidas"
   }
 ]

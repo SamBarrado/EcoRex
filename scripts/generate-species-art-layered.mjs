@@ -59,6 +59,21 @@ function habitatSlug(spec) {
   return spec.habitatSlug ?? slugify(spec.habitat);
 }
 
+// For lesser-known species the image model has a weak visual prior and
+// tends to drift the whole body toward whatever famous dinosaur shape it
+// remembers best (usually a raptor/theropod). Anchoring to a well-known
+// relative's body plan fixes this at the source.
+function relativeAnchorLine(spec) {
+  if (!spec.closestFamousRelative) return '';
+  const parts = [
+    `ANATOMY ANCHOR (critical for a lesser-known species): this animal's overall body plan is essentially identical to ${spec.closestFamousRelative} — same stance, same proportions of torso/legs/tail, same general silhouette type. Apply ONLY the specific differences described in its own fixed physical traits and silhouette; if in doubt, default to the ${spec.closestFamousRelative} body plan rather than inventing a different one.`,
+  ];
+  if (spec.distinguishingFromRelative) {
+    parts.push(`IMPORTANT — do NOT copy ${spec.closestFamousRelative}'s most iconic features blindly: ${spec.distinguishingFromRelative}. Naming a famous relative is only an anchor for the general body plan, not permission to add that relative's signature features if this species doesn't actually have them.`);
+  }
+  return parts.join(' ');
+}
+
 function buildBackgroundPrompt(spec, phase) {
   return [
     ART_STYLE,
@@ -75,9 +90,9 @@ function buildCutoutPrompt(spec, phase) {
     ART_STYLE,
     `Paint ONLY a single isolated creature — NO ground, NO terrain, NO background scenery, NO environment elements of any kind. Fully isolated character illustration on a FLAT, SOLID, PERFECTLY UNIFORM chroma-key green (#00FF00) background, filling the entire canvas edge to edge with that flat green, so the creature can be cleanly cut out afterward. The green must be completely flat and uniform, no gradient, no vignette, no texture, no shadow cast onto it.`,
     `Species: ${spec.scientificName} ("${spec.commonName}").`,
-    `Fixed physical traits: ${spec.traits}.`,
+    `CRITICAL — preserve exact anatomy, do not reinterpret the species: ${spec.traits}. Distinctive silhouette to preserve: ${spec.silhouette}. The ENTIRE body plan — head/skull shape, torso/body proportions, limb length and structure, stance, tail shape and length — must stay recognizably identical, not just the most distinctive single feature. Especially for less iconic/lesser-known species, the model tends to drift the whole body toward a generic "cool dinosaur" shape (often theropod-like); explicitly resist that.`,
+    relativeAnchorLine(spec),
     `Base color palette: ${spec.palette}.`,
-    `Distinctive silhouette: ${spec.silhouette}.`,
     `Unless the fixed physical traits explicitly describe crystalline/faceted features, the creature's body must stay natural creature material (skin/scales/hide), not a full-body stylized crystal/glass being.`,
     `Lighting must match this habitat/mood so it can be composited convincingly later: ${spec.habitat}; ${PHASE_MOOD[phase]}. Light the creature as if standing in that environment (matching color temperature and light direction) even though the environment itself is not painted here.`,
   ];
@@ -87,7 +102,7 @@ function buildCutoutPrompt(spec, phase) {
   if (phase === 'balance') {
     parts.push(`Pose: stable, calm but imposing posture, alert and aware of the viewer. ${engagement}`);
   } else if (phase === 'exceso') {
-    parts.push(`Pose: this must NOT be "the calm pose with the mouth open" — a genuinely more aggressive and dynamic pose than a calm stance: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking. ${engagement}`);
+    parts.push(`Pose: this must NOT be "the calm pose with the mouth open" — a genuinely more intense and dynamic pose than a calm stance, but the SPECIFIC action must fit this creature's real anatomy and behavior, not a generic predator-attack pose: a predator (hunting claws, sharp teeth) can lunge/attack; a herbivore or non-predatory species should instead express intensity through its own real repertoire — defensive charge, territorial display, rearing to look bigger, explosive startled bolt, defensive tail-whip — NEVER a predatory lunge with claws its anatomy doesn't support, since forcing that pose is exactly what causes the model to reinterpret the creature as a different, predator-shaped species. ${engagement}`);
     parts.push(`Any glow accent should stay confined to the eyes, or to fixed elemental/crystalline traits already established for this species — not a blanket effect on the whole body.`);
   } else {
     const extreme = FRACTAE_EXTREME[spec.fractae.name];
