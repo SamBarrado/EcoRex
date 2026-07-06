@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, act, cleanup, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { PercibirRitual } from "./PercibirRitual";
 import { ApiError, Species } from "../lib/api";
 
@@ -26,40 +27,82 @@ const discoverResult = {
   imageUrl: "/img.png",
   isUniqueVariant: false,
   discoveredAt: "2026-01-01",
+  xp: { xpGained: 10, totalXp: 100, level: 2, leveledUp: false },
 };
+
+// The component only renders the pack/track once its stage has a measured
+// size (see the `stageSize.width > 0` gate), and jsdom's layout engine always
+// reports zero-sized rects, so every element gets a fixed non-zero rect here.
+beforeEach(() => {
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+    width: 300,
+    height: 600,
+    top: 0,
+    left: 0,
+    right: 300,
+    bottom: 600,
+    x: 0,
+    y: 0,
+    toJSON() {},
+  });
+});
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
   cleanup();
 });
 
-describe("PercibirRitual", () => {
-  it("shows the sealed envelope with instructions when idle", () => {
-    render(<PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} />);
+function renderRitual(props: Partial<React.ComponentProps<typeof PercibirRitual>> = {}) {
+  return render(
+    <MemoryRouter>
+      <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+    </MemoryRouter>
+  );
+}
 
-    expect(screen.getByTestId("envelope-seal")).toBeInTheDocument();
-    expect(screen.getByText(/desliza/i)).toBeInTheDocument();
+function openPeek() {
+  fireEvent.click(screen.getByTestId("envelope-pack"));
+}
+
+describe("PercibirRitual", () => {
+  it("shows the sealed pack with a tap-to-open hint when idle", () => {
+    renderRitual();
+
+    expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
+    expect(screen.getByText(/toca el sobre/i)).toBeInTheDocument();
+  });
+
+  it("reveals the drag track and hint once the pack is tapped", () => {
+    renderRitual();
+
+    openPeek();
+
+    expect(screen.getByTestId("envelope-drag-line")).toBeInTheDocument();
+    expect(screen.getByText(/desliza de izquierda a derecha/i)).toBeInTheDocument();
   });
 
   it("does not call discoverFn when the drag doesn't reach the tear threshold", () => {
     const discoverFn = vi.fn();
-    render(<PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />);
+    renderRitual({ discoverFn });
+    openPeek();
 
-    const seal = screen.getByTestId("envelope-seal");
-    fireEvent.touchStart(seal, { touches: [{ clientY: 0 }] });
-    fireEvent.touchMove(seal, { touches: [{ clientY: 40 }] });
-    fireEvent.touchEnd(seal);
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 100 }] });
+    fireEvent.touchEnd(track);
 
     expect(discoverFn).not.toHaveBeenCalled();
   });
 
   it("calls discoverFn with the picked species once the drag passes the tear threshold", () => {
     const discoverFn = vi.fn().mockReturnValue(new Promise(() => {}));
-    render(<PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />);
+    renderRitual({ discoverFn });
+    openPeek();
 
-    const seal = screen.getByTestId("envelope-seal");
-    fireEvent.touchStart(seal, { touches: [{ clientY: 0 }] });
-    fireEvent.touchMove(seal, { touches: [{ clientY: 200 }] });
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
     expect(discoverFn).toHaveBeenCalledWith({ speciesId: 1, phase: "calma" }, expect.anything());
   });
@@ -67,11 +110,12 @@ describe("PercibirRitual", () => {
   it("reveals the card once discoverFn resolves and the ritual animation finishes", async () => {
     vi.useFakeTimers();
     const discoverFn = vi.fn().mockResolvedValue(discoverResult);
-    render(<PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />);
+    renderRitual({ discoverFn });
+    openPeek();
 
-    const seal = screen.getByTestId("envelope-seal");
-    fireEvent.touchStart(seal, { touches: [{ clientY: 0 }] });
-    fireEvent.touchMove(seal, { touches: [{ clientY: 200 }] });
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
     await act(async () => {
       await vi.runAllTimersAsync();
@@ -83,11 +127,12 @@ describe("PercibirRitual", () => {
   it("shows an error overlay with retry when discoverFn rejects", async () => {
     vi.useFakeTimers();
     const discoverFn = vi.fn().mockRejectedValue(new ApiError(500, "boom"));
-    render(<PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />);
+    renderRitual({ discoverFn });
+    openPeek();
 
-    const seal = screen.getByTestId("envelope-seal");
-    fireEvent.touchStart(seal, { touches: [{ clientY: 0 }] });
-    fireEvent.touchMove(seal, { touches: [{ clientY: 200 }] });
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
     await act(async () => {
       await vi.runAllTimersAsync();
@@ -95,17 +140,18 @@ describe("PercibirRitual", () => {
 
     expect(screen.getByText("boom")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Reintentar"));
-    expect(screen.getByTestId("envelope-seal")).toBeInTheDocument();
+    expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
   });
 
-  it('resets to the sealed envelope when "Percibir de nuevo" is clicked', async () => {
+  it('resets to the sealed pack when "Percibir de nuevo" is clicked', async () => {
     vi.useFakeTimers();
     const discoverFn = vi.fn().mockResolvedValue(discoverResult);
-    render(<PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />);
+    renderRitual({ discoverFn });
+    openPeek();
 
-    const seal = screen.getByTestId("envelope-seal");
-    fireEvent.touchStart(seal, { touches: [{ clientY: 0 }] });
-    fireEvent.touchMove(seal, { touches: [{ clientY: 200 }] });
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
     await act(async () => {
       await vi.runAllTimersAsync();
@@ -113,6 +159,7 @@ describe("PercibirRitual", () => {
 
     fireEvent.click(screen.getByText("Percibir de nuevo"));
 
-    expect(screen.getByTestId("envelope-seal")).toBeInTheDocument();
+    expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-drag-line")).not.toBeInTheDocument();
   });
 });

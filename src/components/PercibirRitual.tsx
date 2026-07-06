@@ -297,6 +297,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
                 src="/cards/sobre.png"
                 alt="Sobre de cartas Ecorex"
                 className="envelope-pack-img"
+                data-testid="envelope-pack"
                 onClick={handleTapEnvelope}
                 draggable={false}
                 style={{
