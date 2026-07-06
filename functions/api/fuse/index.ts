@@ -122,6 +122,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Failed to generate fusion image" }, { status: 502 });
   }
 
+  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+
   const discoveryCode = generateDiscoveryCode();
   const insertResult = await env.DB.prepare(
     `INSERT INTO discoveries
@@ -142,9 +144,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
 
-  const completedSpecies = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
   const xpAmount =
-    (RARITY_XP[rarityTier.slug] ?? 0) + FUSION_XP_BONUS + (completedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+    (RARITY_XP[rarityTier.slug] ?? 0) + FUSION_XP_BONUS + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {

@@ -122,6 +122,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Failed to generate discovery image" }, { status: 502 });
   }
 
+  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+
   const discoveryCode = generateDiscoveryCode();
 
   const insertResult = await env.DB.prepare(
@@ -160,8 +162,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
   }
 
-  const completedSpecies = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
-  const xpAmount = (RARITY_XP[rarityTier.slug] ?? 0) + (completedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
+  const xpAmount = (RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {
