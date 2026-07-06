@@ -1,3 +1,5 @@
+import { useLayoutEffect } from "react";
+
 export function LevelUpScreen({
   previousLevel,
   level,
@@ -7,6 +9,14 @@ export function LevelUpScreen({
   level: number;
   onClose: () => void;
 }) {
+  useLayoutEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   return (
     <div className="level-up-screen" onClick={onClose}>
       <div className="level-up-screen-top">

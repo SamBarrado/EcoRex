@@ -10,6 +10,8 @@ function makeDb(opts: {
   ownedPhasesBefore?: string[];
   /** Phases owned after this action's INSERT (defaults to ownedPhasesBefore). */
   ownedPhasesAfter?: string[];
+  /** Prior discoveries for this exact species+phase, consumed or not. */
+  existingSlotCount?: number;
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
@@ -39,6 +41,7 @@ function makeDb(opts: {
           if (sql.includes('FROM species')) return speciesRow as unknown as T;
           if (sql.includes('SELECT discovered_at')) return { discovered_at: '2026-07-05' } as unknown as T;
           if (sql.includes('COUNT(*) as balance_count')) return { balance_count: opts.balanceCountAfterInsert } as unknown as T;
+          if (sql.includes('COUNT(*) as count FROM discoveries')) return { count: opts.existingSlotCount ?? 0 } as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return { xp: currentXp } as unknown as T;
           if (sql.includes('energy_count')) return { energy_count: 2, energy_window_start: null, unlimited_energy: 0 } as unknown as T;
           return null;
@@ -124,6 +127,24 @@ describe('POST /api/discover', () => {
     expect(response.status).toBe(201);
     const notifCall = db.calls.find((c) => c.sql.includes('INSERT INTO notifications'));
     expect(notifCall).toBeUndefined();
+  });
+
+  it('treats a species+phase as already registered even if every prior copy was consumed by a fusion', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 1, existingSlotCount: 1 });
+    const request = new Request('https://ecorex.app/api/discover', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+    });
+    const env = {
+      DB: db as unknown as D1Database,
+      RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
+      DINO_IMAGES: {} as unknown as R2Bucket,
+      OPENAI_API_KEY: 'test-key',
+    };
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { isNewSlot: boolean };
+    expect(body.isNewSlot).toBe(false);
   });
 
   it('includes an xp block with rarity-based xp in the response', async () => {

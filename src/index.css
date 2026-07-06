@@ -1048,8 +1048,7 @@ button:disabled {
   position: fixed;
   inset: 0;
   z-index: 1200;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
   cursor: pointer;
   animation: level-up-screen-slide-in 350ms ease-out;
 }
@@ -1070,7 +1069,12 @@ button:disabled {
 }
 
 .level-up-screen-top {
-  flex: 0 0 55%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58vh;
+  z-index: 1;
   background: linear-gradient(160deg, #3fae5a, #4fa9e0);
   clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
   display: flex;
@@ -1100,14 +1104,17 @@ button:disabled {
 }
 
 .level-up-screen-bottom {
-  flex: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   background: linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
-  padding-top: 2rem;
+  padding-top: calc(58vh + 2rem);
+  box-sizing: border-box;
 }
 
 .level-up-screen-levels {

@@ -95,9 +95,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const rarityTier = pickRarityTier(rarityTiers);
 
+  // Registration is permanent once any discovery exists for this species+phase,
+  // even if every copy has since been consumed by a fusion — matches the dex's
+  // own locked/registered logic, so a re-discovery after fusing doesn't wrongly
+  // replay the "new species" reveal.
   const existingSlotCountRow = await env.DB.prepare(
     `SELECT COUNT(*) as count FROM discoveries
-     WHERE user_id = ? AND species_id = ? AND phase = ? AND consumed_at IS NULL`
+     WHERE user_id = ? AND species_id = ? AND phase = ?`
   )
     .bind(user.id, speciesId, phase)
     .first<{ count: number }>();
