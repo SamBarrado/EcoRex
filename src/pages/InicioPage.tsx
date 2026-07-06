@@ -2,17 +2,28 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFuseEligible, getMyProfile, getEnergy, ProfileStats, EnergyState, ApiError } from "../lib/api";
 import { formatEnergyCountdown } from "../lib/energy";
+import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
 import { version } from "../../package.json";
+
+const FUSION_UNLOCK_SEEN_KEY = "ecorex_unlock_seen_fusion";
 
 export default function InicioPage() {
   const navigate = useNavigate();
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [energy, setEnergy] = useState<EnergyState | null>(null);
+  const [showFusionUnlockModal, setShowFusionUnlockModal] = useState(false);
 
   useEffect(() => {
     getFuseEligible()
-      .then((data) => setFusionUnlocked(data.eligible.length > 0))
+      .then((data) => {
+        const unlocked = data.eligible.length > 0;
+        setFusionUnlocked(unlocked);
+        if (unlocked && !localStorage.getItem(FUSION_UNLOCK_SEEN_KEY)) {
+          localStorage.setItem(FUSION_UNLOCK_SEEN_KEY, "1");
+          setShowFusionUnlockModal(true);
+        }
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
@@ -35,6 +46,13 @@ export default function InicioPage() {
 
   return (
     <div className="page">
+      {showFusionUnlockModal && (
+        <FeatureUnlockModal
+          icon="/icons/altar-fusion.png"
+          title="Altar de Fusión"
+          onClose={() => setShowFusionUnlockModal(false)}
+        />
+      )}
       <img src="/logo/logo-ecorex.png" alt="Ecorex" className="home-logo" />
 
       {profile && (
