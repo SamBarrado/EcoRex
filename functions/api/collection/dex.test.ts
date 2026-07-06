@@ -10,6 +10,7 @@ function makeEnv(opts: {
     phase: string;
     image_url: string;
     discovered_at: string;
+    consumed_at?: string | null;
     species_id: number;
     scientific_name: string;
     common_name: string;
@@ -81,6 +82,7 @@ describe('GET /api/collection/dex', () => {
           phase: 'balance',
           image_url: '/species-art/rex/balance.png',
           discovered_at: '2026-07-05T10:00:00Z',
+          consumed_at: null,
           species_id: 1,
           scientific_name: 'Tyrannosaurus imperator',
           common_name: 'Rex de Fuego',
@@ -93,6 +95,7 @@ describe('GET /api/collection/dex', () => {
           phase: 'balance',
           image_url: '/species-art/rex/balance-old.png',
           discovered_at: '2026-07-04T10:00:00Z',
+          consumed_at: null,
           species_id: 1,
           scientific_name: 'Tyrannosaurus imperator',
           common_name: 'Rex de Fuego',
@@ -113,6 +116,36 @@ describe('GET /api/collection/dex', () => {
     expect(balanceSlot.discovery_code).toBe('DX-AAA'); // most recent wins as representative
     const excesoSlot = body.slots.find((s) => s.phase === 'exceso')!;
     expect(excesoSlot.locked).toBe(true);
+  });
+
+  it('keeps a phase registered after fusion consumes every copy, with count 0', async () => {
+    const { env } = makeEnv({
+      currentWave: 1,
+      speciesRows: [{ id: 1, launch_wave: 1 }],
+      discoveryRows: [
+        {
+          discovery_id: 10,
+          discovery_code: 'DX-AAA',
+          phase: 'balance',
+          image_url: '/species-art/rex/balance.png',
+          discovered_at: '2026-07-05T10:00:00Z',
+          consumed_at: '2026-07-06T10:00:00Z',
+          species_id: 1,
+          scientific_name: 'Tyrannosaurus imperator',
+          common_name: 'Rex de Fuego',
+          fractae_child_name: 'Furia',
+          rarity_name: 'Especie Registrada',
+        },
+      ],
+    });
+    const request = new Request('https://example.com/api/collection/dex', {
+      headers: { Cookie: 'ecorex_session=abc' },
+    });
+    const response = await onRequestGet({ request, env } as unknown as Parameters<typeof onRequestGet>[0]);
+    const body = (await response.json()) as { slots: Array<Record<string, unknown>> };
+    const balanceSlot = body.slots.find((s) => s.phase === 'balance')!;
+    expect(balanceSlot.locked).toBe(false);
+    expect(balanceSlot.count).toBe(0);
   });
 
   it('excludes species from waves beyond the current active wave', async () => {

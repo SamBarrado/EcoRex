@@ -8,6 +8,7 @@ interface DiscoveryRow {
   phase: string;
   image_url: string;
   discovered_at: string;
+  consumed_at: string | null;
   species_id: number;
   scientific_name: string;
   common_name: string;
@@ -57,6 +58,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        discoveries.phase as phase,
        discoveries.image_url as image_url,
        discoveries.discovered_at as discovered_at,
+       discoveries.consumed_at as consumed_at,
        species.id as species_id,
        species.scientific_name as scientific_name,
        species.common_name as common_name,
@@ -66,7 +68,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
      JOIN species ON species.id = discoveries.species_id
      JOIN fractae ON fractae.id = species.fractae_id
      JOIN rarity_tiers ON rarity_tiers.id = discoveries.rarity_tier_id
-     WHERE discoveries.user_id = ? AND discoveries.consumed_at IS NULL
+     WHERE discoveries.user_id = ?
      ORDER BY discoveries.discovered_at DESC`
   )
     .bind(user.id)
@@ -75,11 +77,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const grouped = new Map<string, { representative: DiscoveryRow; count: number }>();
   for (const row of discoveryRows) {
     const key = `${row.species_id}_${row.phase}`;
+    const isActive = row.consumed_at === null;
     const existing = grouped.get(key);
     if (existing) {
-      existing.count += 1;
+      if (isActive) existing.count += 1;
     } else {
-      grouped.set(key, { representative: row, count: 1 });
+      // Rows are ordered by discovered_at DESC, so the first row seen per
+      // key is the most recent — kept as the representative even if every
+      // copy has since been consumed by a fusion, so the species stays
+      // registered in the dex. count only reflects unconsumed copies.
+      grouped.set(key, { representative: row, count: isActive ? 1 : 0 });
     }
   }
 
