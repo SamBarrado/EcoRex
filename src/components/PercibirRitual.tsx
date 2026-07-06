@@ -2,9 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RevealCard } from "./RevealCard";
 import { XpToast } from "./XpToast";
-import { LevelUpModal } from "./LevelUpModal";
+import { LevelUpScreen } from "./LevelUpScreen";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
+import { useNotifications } from "../lib/NotificationsContext";
 import { formatEnergyCountdown } from "../lib/energy";
 
 const PHASE = "balance";
@@ -84,6 +85,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const energyDepleted = energyResetAt != null;
   const navigate = useNavigate();
   const { hideNav, showNav, pulseTab } = useNavVisibility();
+  const { refetch: refetchNotifications } = useNotifications();
   const [showNewSlotOverlay, setShowNewSlotOverlay] = useState(false);
   const [showRevealTitle, setShowRevealTitle] = useState(false);
   const [phase, setPhase] = useState<RitualPhase>("sealed");
@@ -91,7 +93,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const [dragProgress, setDragProgress] = useState(0);
   const [result, setResult] = useState<(DiscoverResult & { fractaeChildName?: string }) | null>(null);
   const [showXpToast, setShowXpToast] = useState(false);
-  const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -197,8 +199,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         setResult({ ...data, fractaeChildName: picked.fractae_child_name });
         setPhase("revealed");
         setShowXpToast(true);
+        refetchNotifications();
         if (data.xp.leveledUp) {
-          setLevelUpTo(data.xp.level);
+          setLevelUpInfo({ previousLevel: data.xp.previousLevel, level: data.xp.level });
         }
         const finalAudio = speciesAudioRef.current;
         if (finalAudio) {
@@ -278,7 +281,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     stopSpeciesSound();
     setResult(null);
     setShowXpToast(false);
-    setLevelUpTo(null);
+    setLevelUpInfo(null);
     setError(null);
     setPhase("sealed");
     setPeeking(false);
@@ -313,7 +316,13 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
       {showXpToast && result && (
         <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
       )}
-      {levelUpTo !== null && <LevelUpModal level={levelUpTo} onClose={() => setLevelUpTo(null)} />}
+      {levelUpInfo && (
+        <LevelUpScreen
+          previousLevel={levelUpInfo.previousLevel}
+          level={levelUpInfo.level}
+          onClose={() => setLevelUpInfo(null)}
+        />
+      )}
       {error && (
         <div className="percibir-overlay">
           <p className="error">{error}</p>

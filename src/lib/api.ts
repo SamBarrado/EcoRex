@@ -136,7 +136,7 @@ export interface DiscoverResult {
   isUniqueVariant: boolean;
   isNewSlot: boolean;
   discoveredAt: string;
-  xp: { xpGained: number; totalXp: number; level: number; leveledUp: boolean };
+  xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
 }
 
 export function discover(body: { speciesId: number; phase: string }, signal?: AbortSignal) {

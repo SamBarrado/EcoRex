@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
 import { XpToast } from "../components/XpToast";
-import { LevelUpModal } from "../components/LevelUpModal";
+import { LevelUpScreen } from "../components/LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
+import { useNotifications } from "../lib/NotificationsContext";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -28,6 +29,7 @@ function speciesSoundUrl(scientificName: string) {
 export default function FusionPage() {
   const navigate = useNavigate();
   const { hideNav, showNav } = useNavVisibility();
+  const { refetch: refetchNotifications } = useNotifications();
   const [searchParams] = useSearchParams();
   const [eligible, setEligible] = useState<EligibleSpecies[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function FusionPage() {
   const [glowSlug, setGlowSlug] = useState<string | null>(null);
   const [result, setResult] = useState<DiscoverResult | null>(null);
   const [showXpToast, setShowXpToast] = useState(false);
-  const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -114,8 +116,9 @@ export default function FusionPage() {
       await delay(400);
       setResult(data);
       setShowXpToast(true);
+      refetchNotifications();
       if (data.xp.leveledUp) {
-        setLevelUpTo(data.xp.level);
+        setLevelUpInfo({ previousLevel: data.xp.previousLevel, level: data.xp.level });
       }
       playSound();
     } catch (err) {
@@ -136,7 +139,7 @@ export default function FusionPage() {
     stopSound();
     setResult(null);
     setShowXpToast(false);
-    setLevelUpTo(null);
+    setLevelUpInfo(null);
     setGlowSlug(null);
     showNav();
     load();
@@ -204,7 +207,13 @@ export default function FusionPage() {
       {showXpToast && result && (
         <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
       )}
-      {levelUpTo !== null && <LevelUpModal level={levelUpTo} onClose={() => setLevelUpTo(null)} />}
+      {levelUpInfo && (
+        <LevelUpScreen
+          previousLevel={levelUpInfo.previousLevel}
+          level={levelUpInfo.level}
+          onClose={() => setLevelUpInfo(null)}
+        />
+      )}
     </div>
   );
 }

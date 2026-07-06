@@ -1043,3 +1043,97 @@ button:disabled {
   font-weight: 800;
   color: #ffd54a;
 }
+
+.level-up-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  animation: level-up-screen-slide-in 350ms ease-out;
+}
+
+@keyframes level-up-screen-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-up-screen {
+    animation: none;
+  }
+}
+
+.level-up-screen-top {
+  flex: 0 0 55%;
+  background: linear-gradient(160deg, #3fae5a, #4fa9e0);
+  clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 3rem 1.5rem 4rem;
+  box-sizing: border-box;
+}
+
+.level-up-screen-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f2f6f3;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.level-up-screen-avatar {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.level-up-screen-bottom {
+  flex: 1;
+  background: linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-top: 2rem;
+}
+
+.level-up-screen-levels {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.level-up-screen-level-prev {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #7fa98a;
+}
+
+.level-up-screen-arrow {
+  font-size: 1.5rem;
+  color: #7fa98a;
+}
+
+.level-up-screen-level-new {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #3fae5a;
+}
+
+.level-up-screen-hint {
+  color: #7fa98a;
+  font-size: 0.85rem;
+}

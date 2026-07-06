@@ -140,6 +140,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await env.DB.prepare("UPDATE discoveries SET consumed_at = datetime('now') WHERE id = ?").bind(id).run();
   }
 
+  // Fusing clears the "you can fuse this" reminder for this species, whether
+  // or not the user got here by tapping that specific notification.
+  await env.DB.prepare(
+    `UPDATE notifications SET read_at = datetime('now')
+     WHERE user_id = ? AND type = 'fusion_ready' AND read_at IS NULL
+       AND json_extract(payload, '$.speciesId') = ?`
+  )
+    .bind(user.id, speciesId)
+    .run();
+
   const discoveredAtRow = await env.DB.prepare("SELECT discovered_at FROM discoveries WHERE id = ?")
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
@@ -172,6 +182,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         xpGained: xpResult.xpGained,
         totalXp: xpResult.totalXp,
         level: xpResult.level,
+        previousLevel: xpResult.previousLevel,
         leveledUp: xpResult.leveledUp,
       },
     },

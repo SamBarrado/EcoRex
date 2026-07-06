@@ -189,6 +189,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         xpGained: xpResult.xpGained,
         totalXp: xpResult.totalXp,
         level: xpResult.level,
+        previousLevel: xpResult.previousLevel,
         leveledUp: xpResult.leveledUp,
       },
     },

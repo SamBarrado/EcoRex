@@ -23,8 +23,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const { results } = await env.DB.prepare(
     `SELECT id, type, payload, read_at, created_at FROM notifications
-     WHERE user_id = ?
-     ORDER BY (read_at IS NULL) DESC, created_at DESC
+     WHERE user_id = ? AND read_at IS NULL
+     ORDER BY created_at DESC
      LIMIT 50`
   )
     .bind(user.id)

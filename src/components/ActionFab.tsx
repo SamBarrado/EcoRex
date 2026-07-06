@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppNotification } from "../lib/api";
-import { LevelUpModal } from "./LevelUpModal";
+import { LevelUpScreen } from "./LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 
@@ -10,7 +10,7 @@ export default function ActionFab() {
   const { visible } = useNavVisibility();
   const { notifications, unreadCount, markRead } = useNotifications();
   const [showList, setShowList] = useState(false);
-  const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
+  const [levelUpTo, setLevelUpTo] = useState<{ previousLevel: number; level: number } | null>(null);
 
   function closeAll() {
     setShowList(false);
@@ -26,7 +26,7 @@ export default function ActionFab() {
     if (notification.type === "level_up") {
       const payload = notification.payload as { newLevel?: number };
       if (payload.newLevel) {
-        setLevelUpTo(payload.newLevel);
+        setLevelUpTo({ previousLevel: payload.newLevel - 1, level: payload.newLevel });
       }
       return;
     }
@@ -67,7 +67,13 @@ export default function ActionFab() {
         <img src="/icons/notificaciones.png" alt="" />
         {unreadCount > 0 && <span className="action-fab-badge">{unreadCount}</span>}
       </button>
-      {levelUpTo !== null && <LevelUpModal level={levelUpTo} onClose={() => setLevelUpTo(null)} />}
+      {levelUpTo && (
+        <LevelUpScreen
+          previousLevel={levelUpTo.previousLevel}
+          level={levelUpTo.level}
+          onClose={() => setLevelUpTo(null)}
+        />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { PercibirRitual } from "./PercibirRitual";
 import { ApiError, Species } from "../lib/api";
 import { NavVisibilityProvider } from "../lib/NavVisibilityContext";
+import { NotificationsProvider } from "../lib/NotificationsContext";
 
 const species: Species[] = [
   {
@@ -59,7 +60,9 @@ function renderRitual(props: Partial<React.ComponentProps<typeof PercibirRitual>
   return render(
     <MemoryRouter>
       <NavVisibilityProvider>
-        <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+        <NotificationsProvider>
+          <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+        </NotificationsProvider>
       </NavVisibilityProvider>
     </MemoryRouter>
   );
