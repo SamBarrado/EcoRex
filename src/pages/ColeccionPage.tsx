@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getDex, DexSlot, ApiError } from "../lib/api";
 
 function slotKey(slot: DexSlot) {
@@ -8,6 +8,8 @@ function slotKey(slot: DexSlot) {
 
 export default function ColeccionPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const justUnlockedKey = (location.state as { justUnlockedKey?: string } | null)?.justUnlockedKey ?? null;
   const [currentWave, setCurrentWave] = useState<number | null>(null);
   const [slots, setSlots] = useState<DexSlot[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -108,7 +110,7 @@ export default function ColeccionPage() {
         <div className="grid">
           {visibleSlots.map((slot) => (
             <div
-              className="card card-clickable"
+              className={`card card-clickable${slotKey(slot) === justUnlockedKey ? " slot-just-unlocked" : ""}`}
               key={slotKey(slot)}
               style={{ position: "relative", padding: "0.5rem" }}
               role="button"

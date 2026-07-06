@@ -104,6 +104,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const rarityTier = pickRarityTier(rarityTiers);
 
+  const existingSlotCountRow = await env.DB.prepare(
+    `SELECT COUNT(*) as count FROM discoveries
+     WHERE user_id = ? AND species_id = ? AND phase = ? AND consumed_at IS NULL`
+  )
+    .bind(user.id, speciesId, phase)
+    .first<{ count: number }>();
+  const isNewSlot = (existingSlotCountRow?.count ?? 0) === 0;
+
   let imageUrl: string;
   let isUniqueVariant: boolean;
   try {
@@ -184,6 +192,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       rarityTier: { slug: rarityTier.slug, name: rarityTier.name },
       imageUrl,
       isUniqueVariant,
+      isNewSlot,
       discoveredAt: discoveredAtRow?.discovered_at ?? null,
       xp: {
         xpGained: xpResult.xpGained,

@@ -123,6 +123,7 @@ export interface DiscoverResult {
   rarityTier: { slug: string; name: string };
   imageUrl: string;
   isUniqueVariant: boolean;
+  isNewSlot: boolean;
   discoveredAt: string;
   xp: { xpGained: number; totalXp: number; level: number; leveledUp: boolean };
 }

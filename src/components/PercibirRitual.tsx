@@ -9,6 +9,8 @@ import { useNavVisibility } from "../lib/NavVisibilityContext";
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
+const NEW_SLOT_OVERLAY_MS = 900;
+const REVEAL_TITLE_VISIBLE_MS = 2000;
 const CARD_SPINS = 2;
 const MAX_SOUND_MS = 3000;
 const SFX_TEAR = "/sounds/sfx-tear.mp3";
@@ -77,7 +79,9 @@ export interface PercibirRitualProps {
 
 export function PercibirRitual({ species, discoverFn, onUnauthorized }: PercibirRitualProps) {
   const navigate = useNavigate();
-  const { hideNav, showNav } = useNavVisibility();
+  const { hideNav, showNav, pulseTab } = useNavVisibility();
+  const [showNewSlotOverlay, setShowNewSlotOverlay] = useState(false);
+  const [showRevealTitle, setShowRevealTitle] = useState(false);
   const [phase, setPhase] = useState<RitualPhase>("sealed");
   const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -108,6 +112,29 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    // iOS Safari treats a touch starting near the left edge as its
+    // system "swipe right to go back" gesture, hijacking it before our own
+    // drag-to-open / card-rotate handlers ever see it. Blocking the default
+    // on that initial touch (Safari only checks this at touchstart) keeps
+    // the whole ritual's rightward gestures ours.
+    const EDGE_ZONE_PX = 24;
+    function blockEdgeSwipeBack(e: TouchEvent) {
+      if (e.touches[0]?.clientX <= EDGE_ZONE_PX && e.cancelable) {
+        e.preventDefault();
+      }
+    }
+    document.addEventListener("touchstart", blockEdgeSwipeBack, { passive: false });
+    return () => document.removeEventListener("touchstart", blockEdgeSwipeBack);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "revealed") return;
+    setShowRevealTitle(true);
+    const timeout = setTimeout(() => setShowRevealTitle(false), REVEAL_TITLE_VISIBLE_MS);
+    return () => clearTimeout(timeout);
+  }, [phase]);
 
   useLayoutEffect(() => {
     function measure() {
@@ -255,6 +282,21 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
     showNav();
   }
 
+  function handleCommitUp() {
+    if (!result) return;
+    if (result.isNewSlot) {
+      setShowNewSlotOverlay(true);
+      setTimeout(() => {
+        navigate("/coleccion", {
+          state: { justUnlockedKey: `${result.speciesId}_${result.phase}` },
+        });
+      }, NEW_SLOT_OVERLAY_MS);
+    } else {
+      pulseTab("/coleccion");
+      handleReset();
+    }
+  }
+
   function handleRetry() {
     setError(null);
     setPhase("sealed");
@@ -275,9 +317,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
         </div>
       )}
 
-      {!error && phase === "revealed" && result && (
+      {!error && phase === "revealed" && result && !showNewSlotOverlay && (
         <div className="percibir-overlay">
-          <strong>¡Percibiste una Fractura!</strong>
+          {showRevealTitle && <strong className="reveal-title-fade">¡Percibiste una Fractura!</strong>}
           <RevealCard
             imageUrl={result.imageUrl}
             commonName={result.commonName}
@@ -288,11 +330,19 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
             fractaeChildName={result.fractaeChildName}
             glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
             spins={prefersReducedMotion() ? 0 : CARD_SPINS}
+            onCommitUp={handleCommitUp}
           />
-          <button onClick={handleReset}>Percibir de nuevo</button>
-          <button className="envelope-back-btn" onClick={() => navigate("/inicio")}>
-            ← Volver
-          </button>
+        </div>
+      )}
+
+      {showNewSlotOverlay && result && (
+        <div className="percibir-overlay">
+          <div className="new-slot-toast">
+            <strong>¡Nueva especie registrada!</strong>
+            <div>
+              {result.commonName} ({result.fractaeChildName ?? result.phase})
+            </div>
+          </div>
         </div>
       )}
 

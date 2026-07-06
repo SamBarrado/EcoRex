@@ -27,6 +27,7 @@ const discoverResult = {
   rarityTier: { slug: "registrada", name: "Registrada" },
   imageUrl: "/img.png",
   isUniqueVariant: false,
+  isNewSlot: true,
   discoveredAt: "2026-01-01",
   xp: { xpGained: 10, totalXp: 100, level: 2, leveledUp: false },
 };
@@ -146,9 +147,9 @@ describe("PercibirRitual", () => {
     expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
   });
 
-  it('resets to the sealed pack when "Percibir de nuevo" is clicked', async () => {
+  it("resets to the sealed pack when a duplicate is confirmed via swipe-up", async () => {
     vi.useFakeTimers();
-    const discoverFn = vi.fn().mockResolvedValue(discoverResult);
+    const discoverFn = vi.fn().mockResolvedValue({ ...discoverResult, isNewSlot: false });
     renderRitual({ discoverFn });
     openPeek();
 
@@ -159,8 +160,23 @@ describe("PercibirRitual", () => {
     await act(async () => {
       await vi.runAllTimersAsync();
     });
+    // The reveal mounts RevealCard, which schedules its own flip-in timer
+    // from a useEffect that only runs once React commits — after the timer
+    // flush above already returned. A second flush picks it up.
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
 
-    fireEvent.click(screen.getByText("Percibir de nuevo"));
+    expect(screen.getByText(/desliza hacia arriba/i)).toBeInTheDocument();
+
+    const cardPerspective = screen.getByTestId("card-perspective");
+    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
+    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
+    fireEvent.touchEnd(cardPerspective);
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
 
     expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
     expect(screen.queryByTestId("envelope-drag-line")).not.toBeInTheDocument();

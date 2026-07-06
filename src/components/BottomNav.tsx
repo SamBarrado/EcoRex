@@ -22,7 +22,7 @@ function HomeIcon() {
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { visible } = useNavVisibility();
+  const { visible, pulsedPath } = useNavVisibility();
 
   if (HIDDEN_ON.includes(location.pathname)) return null;
 
@@ -30,10 +30,11 @@ export default function BottomNav() {
     <nav className={`bottom-nav${visible ? "" : " bottom-nav-hidden"}`} aria-label="Navegación principal">
       {TABS.map((tab) => {
         const active = location.pathname === tab.path;
+        const pulsing = pulsedPath === tab.path;
         return (
           <button
             key={tab.path}
-            className={`bottom-nav-tab${active ? " bottom-nav-tab-active" : ""}`}
+            className={`bottom-nav-tab${active ? " bottom-nav-tab-active" : ""}${pulsing ? " bottom-nav-tab-pulse" : ""}`}
             onClick={() => navigate(tab.path)}
             aria-current={active ? "page" : undefined}
           >
