@@ -565,6 +565,7 @@ button:disabled {
 }
 
 .bottom-nav-icon {
+  position: relative;
   width: 26px;
   height: 26px;
   display: flex;
@@ -576,6 +577,48 @@ button:disabled {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 8px;
+  height: 8px;
+  padding: 0;
+  background: #ff8a8a;
+  color: #06120a;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  animation: bottom-nav-badge-breathe 1.8s ease-in-out infinite;
+}
+
+.bottom-nav-badge:not(:empty) {
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+}
+
+@keyframes bottom-nav-badge-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav-badge {
+    animation: none;
+  }
 }
 
 .stat {

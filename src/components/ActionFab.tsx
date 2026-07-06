@@ -1,33 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getNotifications, markNotificationRead, AppNotification } from "../lib/api";
+import { AppNotification } from "../lib/api";
 import { LevelUpModal } from "./LevelUpModal";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
+import { useNotifications } from "../lib/NotificationsContext";
 
 export default function ActionFab() {
   const navigate = useNavigate();
   const { visible } = useNavVisibility();
+  const { notifications, unreadCount, markRead } = useNotifications();
   const [showList, setShowList] = useState(false);
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
-
-  useEffect(() => {
-    getNotifications()
-      .then((data) => setNotifications(data.notifications))
-      .catch(() => {});
-  }, []);
-
-  const unreadCount = notifications.filter((n) => !n.readAt).length;
 
   function closeAll() {
     setShowList(false);
   }
 
   async function handleNotificationClick(notification: AppNotification) {
-    await markNotificationRead(notification.id).catch(() => {});
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notification.id ? { ...n, readAt: new Date().toISOString() } : n))
-    );
+    await markRead(notification.id);
     closeAll();
     if (notification.type === "fusion_ready") {
       const payload = notification.payload as { speciesId?: number };
