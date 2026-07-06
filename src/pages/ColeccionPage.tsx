@@ -160,6 +160,7 @@ export default function ColeccionPage() {
                       position: "absolute",
                       top: 6,
                       left: 6,
+                      zIndex: 2,
                       background: "#3fae5a",
                       color: "#06120a",
                       borderRadius: 999,
