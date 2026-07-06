@@ -6,7 +6,7 @@ const baseProps = {
   imageUrl: "/img.png",
   commonName: "Test Dino",
   scientificName: "Testus dinus",
-  phase: "calma",
+  phase: "balance",
   rarityTier: { slug: "registrada", name: "Registrada" },
   discoveryCode: "ABC123",
   glowColor: "#bfe6c9",

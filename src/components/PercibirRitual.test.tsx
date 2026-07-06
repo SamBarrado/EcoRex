@@ -22,7 +22,7 @@ const discoverResult = {
   speciesId: 1,
   scientificName: "Testus dinus",
   commonName: "Test Dino",
-  phase: "calma",
+  phase: "balance",
   rarityTier: { slug: "registrada", name: "Registrada" },
   imageUrl: "/img.png",
   isUniqueVariant: false,
@@ -104,7 +104,7 @@ describe("PercibirRitual", () => {
     fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
     fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
-    expect(discoverFn).toHaveBeenCalledWith({ speciesId: 1, phase: "calma" }, expect.anything());
+    expect(discoverFn).toHaveBeenCalledWith({ speciesId: 1, phase: "balance" }, expect.anything());
   });
 
   it("reveals the card once discoverFn resolves and the ritual animation finishes", async () => {

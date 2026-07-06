@@ -161,7 +161,7 @@ export default function FusionPage() {
       {!error && !result && !eligible && <p>Cargando...</p>}
 
       {!error && !result && eligible && eligible.length === 0 && (
-        <p>Aún no tienes 5 duplicados de Calma de ninguna especie. ¡Sigue percibiendo!</p>
+        <p>Aún no tienes 5 duplicados de Balance de ninguna especie. ¡Sigue percibiendo!</p>
       )}
 
       {!error && !result && eligible && eligible.length > 0 && (
@@ -175,13 +175,13 @@ export default function FusionPage() {
               }}
             >
               <img
-                src={species.calmaAnchorUrl}
+                src={species.balanceAnchorUrl}
                 alt={species.commonName}
                 className="species-image"
                 loading="lazy"
               />
               <strong>{species.commonName}</strong>
-              <div>Duplicados: {species.calmaCount}</div>
+              <div>Duplicados: {species.balanceCount}</div>
               <button disabled={fusing === species.speciesId} onClick={() => handleFuse(species)}>
                 {fusing === species.speciesId ? "Fusionando..." : "Fusionar"}
               </button>
