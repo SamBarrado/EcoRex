@@ -12,8 +12,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fetchDinoDirectory, formatForPrompt as formatNhm } from './lib/dino-directory.mjs';
 import { fetchDinosaurPicturesOrg, formatForPrompt as formatDpo } from './lib/dinosaur-pictures-org.mjs';
+import { fetchPbdbTaxon, formatForPrompt as formatPbdb } from './lib/pbdb.mjs';
 
-const FRACTAE = {
+export const FRACTAE = {
   alegria: { name: 'Alegría', latin: 'Lumen', color: 'amarillo/dorado', opposite: 'Tristeza (Tristitia)' },
   tristeza: { name: 'Tristeza', latin: 'Tristitia', color: 'azul', opposite: 'Alegría (Lumen)' },
   furia: { name: 'Furia', latin: 'Ira', color: 'rojo', opposite: 'Miedo (Pavor)' },
@@ -32,7 +33,7 @@ function normalizeKey(s) {
     .trim();
 }
 
-function resolveFractae(input) {
+export function resolveFractae(input) {
   const f = FRACTAE[normalizeKey(input)];
   if (!f) {
     throw new Error(
@@ -142,45 +143,36 @@ function parseArgs(argv) {
     const a = argv[i];
     if (a === '--out') args.out = argv[++i];
     else if (a === '--append') args.append = true;
+    else if (a === '--edition') args.edition = argv[++i];
     else args._.push(a);
   }
   return args;
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const [especie, fractaeInput] = args._;
-  if (!especie || !fractaeInput) {
-    console.error('Uso: node scripts/generate-species-spec.mjs "<especie>" "<Fractae>" [--out file.json] [--append]');
-    console.error(`Fractae disponibles: ${Object.values(FRACTAE).map((f) => f.name).join(', ')}`);
-    process.exit(1);
-  }
-
-  const apiKey = loadDevVarsApiKey();
-  if (!apiKey) {
-    console.error('Falta ANTHROPIC_API_KEY (env var o .dev.vars).');
-    process.exit(1);
-  }
-
+// Core logic, reusable from the CLI (main() below) and from
+// scripts/discover-species-pbdb.mjs's web UI. Looks up real data from all
+// three sources, calls the Anthropic API, and returns the ficha-spec —
+// does NOT write to disk (callers decide what to do with the result).
+export async function generateSpec(especie, fractaeInput, { apiKey, edition = '', onProgress = () => {} } = {}) {
   const fractae = resolveFractae(fractaeInput);
-  console.log(`Generando ficha para "${especie}" / Fractae ${fractae.name} (${fractae.latin})...`);
-
   const genus = especie.split(' ')[0];
-  console.log(`Consultando datos reales de "${genus}" (NHM Dino Directory + dinosaurpictures.org)...`);
-  const [nhm, dpo] = await Promise.all([
+
+  onProgress(`Consultando datos reales de "${genus}" (NHM Dino Directory + dinosaurpictures.org + PBDB)...`);
+  const [nhm, dpo, pbdb] = await Promise.all([
     fetchDinoDirectory(genus).catch(() => null),
     fetchDinosaurPicturesOrg(genus).catch(() => null),
+    fetchPbdbTaxon(genus).catch(() => null),
   ]);
-  const realData = [formatNhm(nhm), formatDpo(dpo)].filter(Boolean).join('\n\n') || null;
-  if (realData) {
-    console.log('Datos reales encontrados, se usarán como fuente de verdad para la ficha.');
-  } else {
-    console.log('Sin datos verificados para este género — la ficha se basará en el conocimiento general del modelo.');
-  }
+  const realData = [formatNhm(nhm), formatDpo(dpo), formatPbdb(pbdb)].filter(Boolean).join('\n\n') || null;
+  onProgress(
+    realData
+      ? 'Datos reales encontrados, se usarán como fuente de verdad para la ficha.'
+      : 'Sin datos verificados para este género — la ficha se basará en el conocimiento general del modelo.'
+  );
 
   const result = await callClaude(buildPrompt(especie, fractae, realData), apiKey);
 
-  const spec = {
+  return {
     scientificName: result.scientificName,
     commonName: result.commonName,
     fractae: { name: fractae.name, latin: fractae.latin },
@@ -192,7 +184,31 @@ async function main() {
     distinguishingFromRelative: result.distinguishingFromRelative,
     oppositeFractae: fractae.opposite,
     lorePhrase: result.lorePhrase,
+    edition,
   };
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  const [especie, fractaeInput] = args._;
+  if (!especie || !fractaeInput) {
+    console.error('Uso: node scripts/generate-species-spec.mjs "<especie>" "<Fractae>" [--out file.json] [--append] [--edition "Wave 2"]');
+    console.error(`Fractae disponibles: ${Object.values(FRACTAE).map((f) => f.name).join(', ')}`);
+    process.exit(1);
+  }
+
+  const apiKey = loadDevVarsApiKey();
+  if (!apiKey) {
+    console.error('Falta ANTHROPIC_API_KEY (env var o .dev.vars).');
+    process.exit(1);
+  }
+
+  console.log(`Generando ficha para "${especie}" / Fractae ${resolveFractae(fractaeInput).name}...`);
+  const spec = await generateSpec(especie, fractaeInput, {
+    apiKey,
+    edition: args.edition ?? '',
+    onProgress: (msg) => console.log(msg),
+  });
 
   console.log('\n--- FICHA ---');
   console.log(`Especie: ${spec.scientificName}`);
@@ -206,6 +222,7 @@ async function main() {
   console.log(`Diferencias con el pariente: ${spec.distinguishingFromRelative}`);
   console.log(`Oposición elemental: ${spec.oppositeFractae}`);
   console.log(`Frase de lore: ${spec.lorePhrase}`);
+  console.log(`Wave/edición: ${spec.edition || '(sin asignar)'}`);
   console.log('-------------\n');
 
   const outPath = args.out ?? 'scripts/species.generated.json';
@@ -219,7 +236,12 @@ async function main() {
   console.log(`Siguiente paso (aparte, de pago): npm run species:art -- ${outPath} --only "${spec.commonName}"`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+const isMain = path.resolve(process.argv[1] ?? '') === path.resolve(new URL(import.meta.url).pathname);
+if (isMain) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+export { loadDevVarsApiKey };
