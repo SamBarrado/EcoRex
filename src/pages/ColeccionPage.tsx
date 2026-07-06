@@ -1,6 +1,8 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDex, DexSlot, ApiError } from "../lib/api";
+
+const REVEAL_DELAY_MS = 500;
 
 function slotKey(slot: DexSlot) {
   return `${slot.species_id}_${slot.phase}`;
@@ -16,6 +18,8 @@ export default function ColeccionPage() {
   const [retryCount, setRetryCount] = useState(0);
   const [previewSlot, setPreviewSlot] = useState<DexSlot | null>(null);
   const [phaseFilter, setPhaseFilter] = useState<string | null>(null);
+  const [revealPending, setRevealPending] = useState(() => !!justUnlockedKey);
+  const unlockedSlotRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setError(null);
@@ -51,6 +55,17 @@ export default function ColeccionPage() {
       document.body.style.overflow = previousOverflow;
     };
   }, [previewSlot]);
+
+  useLayoutEffect(() => {
+    if (!justUnlockedKey || !slots) return;
+    unlockedSlotRef.current?.scrollIntoView({ block: "center" });
+  }, [justUnlockedKey, slots]);
+
+  useEffect(() => {
+    if (!justUnlockedKey) return;
+    const timeout = setTimeout(() => setRevealPending(false), REVEAL_DELAY_MS);
+    return () => clearTimeout(timeout);
+  }, [justUnlockedKey]);
 
   return (
     <div className="page">
@@ -125,51 +140,72 @@ export default function ColeccionPage() {
       )}
       {visibleSlots && visibleSlots.length > 0 && (
         <div className="grid">
-          {visibleSlots.map((slot) => (
-            <div
-              className={`card card-clickable${slotKey(slot) === justUnlockedKey ? " slot-just-unlocked" : ""}`}
-              key={slotKey(slot)}
-              style={{ position: "relative", padding: "0.5rem" }}
-              role="button"
-              tabIndex={0}
-              onClick={() => setPreviewSlot(slot)}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setPreviewSlot(slot)}
-            >
-              {!slot.locked && slot.count > 1 && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 6,
-                    left: 6,
-                    background: "#3fae5a",
-                    color: "#06120a",
-                    borderRadius: 999,
-                    minWidth: 22,
-                    height: 22,
-                    padding: "0 6px",
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  ×{slot.count}
-                </span>
-              )}
-              <img
-                src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
-                alt={slot.locked ? "Carta bloqueada" : slot.common_name}
-                className="species-image"
-                loading="lazy"
-                style={slot.locked ? { filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 } : undefined}
-              />
-              <strong className="truncate" style={{ display: "block" }}>
-                {slot.locked ? "???" : slot.common_name}
-              </strong>
-              <div>Fase: {slot.phase}</div>
-            </div>
-          ))}
+          {visibleSlots.map((slot) => {
+            const isJustUnlocked = slotKey(slot) === justUnlockedKey;
+            const showAsLocked = slot.locked || (isJustUnlocked && revealPending);
+            return (
+              <div
+                className={`card card-clickable${isJustUnlocked && !revealPending ? " slot-just-unlocked" : ""}`}
+                key={slotKey(slot)}
+                ref={isJustUnlocked ? unlockedSlotRef : undefined}
+                style={{ position: "relative", padding: "0.5rem" }}
+                role="button"
+                tabIndex={0}
+                onClick={() => setPreviewSlot(slot)}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setPreviewSlot(slot)}
+              >
+                {!showAsLocked && slot.count > 1 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: 6,
+                      left: 6,
+                      background: "#3fae5a",
+                      color: "#06120a",
+                      borderRadius: 999,
+                      minWidth: 22,
+                      height: 22,
+                      padding: "0 6px",
+                      fontSize: "0.8rem",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    ×{slot.count}
+                  </span>
+                )}
+                {isJustUnlocked && !slot.locked ? (
+                  <div className="slot-reveal-stack">
+                    <img
+                      src="/icons/carta-bloqueada.png"
+                      alt="Carta bloqueada"
+                      className={`species-image slot-reveal-locked-img${revealPending ? "" : " slot-reveal-hidden"}`}
+                      style={{ filter: "grayscale(0.5) brightness(0.75)" }}
+                    />
+                    <img
+                      src={slot.image_url}
+                      alt={slot.common_name}
+                      className={`species-image slot-reveal-real-img${revealPending ? "" : " slot-reveal-visible"}`}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
+                    alt={slot.locked ? "Carta bloqueada" : slot.common_name}
+                    className="species-image"
+                    loading="lazy"
+                    style={slot.locked ? { filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 } : undefined}
+                  />
+                )}
+                <strong className="truncate" style={{ display: "block" }}>
+                  {showAsLocked ? "???" : slot.common_name}
+                </strong>
+                <div>Fase: {slot.phase}</div>
+              </div>
+            );
+          })}
         </div>
       )}
 

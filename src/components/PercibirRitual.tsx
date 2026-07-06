@@ -10,7 +10,7 @@ import { formatEnergyCountdown } from "../lib/energy";
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
-const NEW_SLOT_OVERLAY_MS = 900;
+const NEW_SLOT_OVERLAY_MS = 1300;
 const REVEAL_TITLE_VISIBLE_MS = 2000;
 const CARD_SPINS = 2;
 const MAX_SOUND_MS = 3000;

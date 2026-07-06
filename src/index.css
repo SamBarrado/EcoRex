@@ -120,6 +120,40 @@ a {
   background: #0d1a0f;
 }
 
+.slot-reveal-stack {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+.slot-reveal-stack .species-image {
+  position: absolute;
+  inset: 0;
+  transition: opacity 500ms ease;
+}
+
+.slot-reveal-stack .slot-reveal-locked-img {
+  opacity: 1;
+}
+
+.slot-reveal-stack .slot-reveal-locked-img.slot-reveal-hidden {
+  opacity: 0;
+}
+
+.slot-reveal-stack .slot-reveal-real-img {
+  opacity: 0;
+}
+
+.slot-reveal-stack .slot-reveal-real-img.slot-reveal-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-reveal-stack .species-image {
+    transition: none;
+  }
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
