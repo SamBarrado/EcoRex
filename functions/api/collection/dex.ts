@@ -1,6 +1,6 @@
 import { verifySession, getSessionCookie, type Env } from "../../lib/auth";
 
-const PHASES = ["calma", "exceso", "eco"] as const;
+const PHASES = ["balance", "exceso", "eco"] as const;
 
 interface DiscoveryRow {
   discovery_id: number;

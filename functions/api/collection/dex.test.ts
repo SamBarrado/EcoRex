@@ -78,8 +78,8 @@ describe('GET /api/collection/dex', () => {
         {
           discovery_id: 10,
           discovery_code: 'DX-AAA',
-          phase: 'calma',
-          image_url: '/species-art/rex/calma.png',
+          phase: 'balance',
+          image_url: '/species-art/rex/balance.png',
           discovered_at: '2026-07-05T10:00:00Z',
           species_id: 1,
           scientific_name: 'Tyrannosaurus imperator',
@@ -90,8 +90,8 @@ describe('GET /api/collection/dex', () => {
         {
           discovery_id: 9,
           discovery_code: 'DX-ZZZ',
-          phase: 'calma',
-          image_url: '/species-art/rex/calma-old.png',
+          phase: 'balance',
+          image_url: '/species-art/rex/balance-old.png',
           discovered_at: '2026-07-04T10:00:00Z',
           species_id: 1,
           scientific_name: 'Tyrannosaurus imperator',
@@ -107,10 +107,10 @@ describe('GET /api/collection/dex', () => {
     const response = await onRequestGet({ request, env } as unknown as Parameters<typeof onRequestGet>[0]);
     const body = (await response.json()) as { slots: Array<Record<string, unknown>> };
     expect(body.slots).toHaveLength(3); // 1 species x 3 phases
-    const calmaSlot = body.slots.find((s) => s.phase === 'calma')!;
-    expect(calmaSlot.locked).toBe(false);
-    expect(calmaSlot.count).toBe(2);
-    expect(calmaSlot.discovery_code).toBe('DX-AAA'); // most recent wins as representative
+    const balanceSlot = body.slots.find((s) => s.phase === 'balance')!;
+    expect(balanceSlot.locked).toBe(false);
+    expect(balanceSlot.count).toBe(2);
+    expect(balanceSlot.discovery_code).toBe('DX-AAA'); // most recent wins as representative
     const excesoSlot = body.slots.find((s) => s.phase === 'exceso')!;
     expect(excesoSlot.locked).toBe(true);
   });

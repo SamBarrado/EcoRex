@@ -8,8 +8,8 @@ interface EligibleRow {
   species_id: number;
   common_name: string;
   scientific_name: string;
-  calma_anchor_url: string;
-  calma_count: number;
+  balance_anchor_url: string;
+  balance_count: number;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -26,12 +26,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        species.id as species_id,
        species.common_name as common_name,
        species.scientific_name as scientific_name,
-       species_phase_anchors.image_url as calma_anchor_url,
-       COUNT(*) as calma_count
+       species_phase_anchors.image_url as balance_anchor_url,
+       COUNT(*) as balance_count
      FROM discoveries
      JOIN species ON species.id = discoveries.species_id
-     JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id AND species_phase_anchors.phase = 'calma'
-     WHERE discoveries.user_id = ? AND discoveries.phase = 'calma' AND discoveries.consumed_at IS NULL
+     JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id AND species_phase_anchors.phase = 'balance'
+     WHERE discoveries.user_id = ? AND discoveries.phase = 'balance' AND discoveries.consumed_at IS NULL
      GROUP BY species.id
      HAVING COUNT(*) >= 5`
   )
@@ -43,8 +43,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       speciesId: row.species_id,
       commonName: row.common_name,
       scientificName: row.scientific_name,
-      calmaAnchorUrl: row.calma_anchor_url,
-      calmaCount: row.calma_count,
+      balanceAnchorUrl: row.balance_anchor_url,
+      balanceCount: row.balance_count,
     })),
   });
 };
