@@ -41,7 +41,7 @@ CREATE TABLE species (
 CREATE TABLE species_phase_anchors (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   species_id INTEGER NOT NULL REFERENCES species(id),
-  phase TEXT NOT NULL CHECK (phase IN ('calma', 'exceso', 'eco')),
+  phase TEXT NOT NULL CHECK (phase IN ('balance', 'exceso', 'eco')),
   image_url TEXT NOT NULL,
   approved_at TEXT,
   UNIQUE (species_id, phase)
@@ -76,7 +76,7 @@ CREATE TABLE discoveries (
   discovery_code TEXT NOT NULL UNIQUE,   -- e.g. 'DX-VOL-F7K'
   user_id INTEGER NOT NULL REFERENCES users(id),
   species_id INTEGER NOT NULL REFERENCES species(id),
-  phase TEXT NOT NULL CHECK (phase IN ('calma', 'exceso', 'eco')),
+  phase TEXT NOT NULL CHECK (phase IN ('balance', 'exceso', 'eco')),
   rarity_tier_id INTEGER NOT NULL REFERENCES rarity_tiers(id),
   operation_id INTEGER REFERENCES operations(id),
   image_url TEXT NOT NULL,               -- anchor image or unique generated variant

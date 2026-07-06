@@ -76,15 +76,15 @@ describe('GET /api/fuse/eligible', () => {
     expect(response.status).toBe(401);
   });
 
-  it('returns species with 5+ non-consumed calma duplicates', async () => {
+  it('returns species with 5+ non-consumed balance duplicates', async () => {
     const { env } = makeEnv({
       eligibleRows: [
         {
           species_id: 7,
           common_name: 'Rex de Fuego',
           scientific_name: 'Tyrannosaurus imperator',
-          calma_anchor_url: '/species-art/rex/calma.png',
-          calma_count: 5,
+          balance_anchor_url: '/species-art/rex/balance.png',
+          balance_count: 5,
         },
       ],
     });
@@ -99,8 +99,8 @@ describe('GET /api/fuse/eligible', () => {
         speciesId: 7,
         commonName: 'Rex de Fuego',
         scientificName: 'Tyrannosaurus imperator',
-        calmaAnchorUrl: '/species-art/rex/calma.png',
-        calmaCount: 5,
+        balanceAnchorUrl: '/species-art/rex/balance.png',
+        balanceCount: 5,
       },
     ]);
   });
@@ -183,9 +183,9 @@ describe('POST /api/fuse', () => {
   });
 
   it('adds the species-complete bonus when this fusion finishes the set', async () => {
-    // Before this fusion the user only owns calma; fusing now produces the
+    // Before this fusion the user only owns balance; fusing now produces the
     // exceso discovery — but eco is already owned, so this fusion is what
-    // completes the calma+exceso+eco set for the first time.
+    // completes the balance+exceso+eco set for the first time.
     const { env } = makeEnv({
       oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
       first: {
@@ -199,8 +199,8 @@ describe('POST /api/fuse', () => {
         anchor_image_url: '/species-art/rex/exceso.png',
       },
       xp: { xp: 0 },
-      ownedPhasesBefore: ['calma', 'eco'],
-      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+      ownedPhasesBefore: ['balance', 'eco'],
+      ownedPhasesAfter: ['balance', 'exceso', 'eco'],
     });
     const request = new Request('https://ecorex.app/api/fuse', {
       method: 'POST',
@@ -213,7 +213,7 @@ describe('POST /api/fuse', () => {
   });
 
   it('does NOT re-award the species-complete bonus when the species was already complete before this fusion', async () => {
-    // The user already owns calma+exceso+eco for this species before fusing
+    // The user already owns balance+exceso+eco for this species before fusing
     // again (e.g. a later batch of 5 duplicates). The set was already
     // complete before this action, so no bonus should be granted again.
     const { env } = makeEnv({
@@ -229,8 +229,8 @@ describe('POST /api/fuse', () => {
         anchor_image_url: '/species-art/rex/exceso.png',
       },
       xp: { xp: 0 },
-      ownedPhasesBefore: ['calma', 'exceso', 'eco'],
-      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+      ownedPhasesBefore: ['balance', 'exceso', 'eco'],
+      ownedPhasesAfter: ['balance', 'exceso', 'eco'],
     });
     const request = new Request('https://ecorex.app/api/fuse', {
       method: 'POST',

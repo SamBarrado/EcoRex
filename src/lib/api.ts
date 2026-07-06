@@ -139,8 +139,8 @@ export interface EligibleSpecies {
   speciesId: number;
   commonName: string;
   scientificName: string;
-  calmaAnchorUrl: string;
-  calmaCount: number;
+  balanceAnchorUrl: string;
+  balanceCount: number;
 }
 
 export function getFuseEligible() {

@@ -5,7 +5,7 @@ import { XpToast } from "./XpToast";
 import { LevelUpModal } from "./LevelUpModal";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 
-const PHASE = "calma";
+const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
 const CARD_SPINS = 2;

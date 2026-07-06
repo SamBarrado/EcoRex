@@ -30,7 +30,7 @@ describe('buildVariantPrompt', () => {
       physical_traits: 'escamas ígneas',
       base_palette: 'rojo y negro',
       silhouette: 'bípedo robusto',
-      anchor_image_url: '/species-art/rex/calma.png',
+      anchor_image_url: '/species-art/rex/balance.png',
     };
     const prompt = buildVariantPrompt(species, 'exceso');
     expect(prompt).toContain('Rex de Fuego');
@@ -58,14 +58,14 @@ function makeDb(distinctPhases: string[]) {
 
 describe('hasCompletedAllPhases', () => {
   it('returns false when only some phases are owned', async () => {
-    const db = makeDb(['calma', 'exceso']);
-    const result = await hasCompletedAllPhases(db, 1, 7, ['calma', 'exceso', 'eco']);
+    const db = makeDb(['balance', 'exceso']);
+    const result = await hasCompletedAllPhases(db, 1, 7, ['balance', 'exceso', 'eco']);
     expect(result).toBe(false);
   });
 
   it('returns true when all required phases are owned', async () => {
-    const db = makeDb(['calma', 'exceso', 'eco']);
-    const result = await hasCompletedAllPhases(db, 1, 7, ['calma', 'exceso', 'eco']);
+    const db = makeDb(['balance', 'exceso', 'eco']);
+    const result = await hasCompletedAllPhases(db, 1, 7, ['balance', 'exceso', 'eco']);
     expect(result).toBe(true);
   });
 });

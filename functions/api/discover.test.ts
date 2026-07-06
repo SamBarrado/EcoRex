@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { onRequestPost } from './discover';
 
 function makeDb(opts: {
-  calmaCountAfterInsert: number;
+  balanceCountAfterInsert: number;
   xp?: number;
   /** Legacy single fixture: phases owned both before and after the insert. */
   ownedPhases?: string[];
@@ -21,7 +21,7 @@ function makeDb(opts: {
     base_palette: null,
     silhouette: null,
     fractae_child_name: 'Calma',
-    anchor_image_url: '/species-art/rex/calma.png',
+    anchor_image_url: '/species-art/rex/balance.png',
   };
   let currentXp = opts.xp ?? 0;
   let insertDone = false;
@@ -38,7 +38,7 @@ function makeDb(opts: {
           if (sql.includes('FROM sessions')) return sessionRow as unknown as T;
           if (sql.includes('FROM species')) return speciesRow as unknown as T;
           if (sql.includes('SELECT discovered_at')) return { discovered_at: '2026-07-05' } as unknown as T;
-          if (sql.includes('COUNT(*) as calma_count')) return { calma_count: opts.calmaCountAfterInsert } as unknown as T;
+          if (sql.includes('COUNT(*) as balance_count')) return { balance_count: opts.balanceCountAfterInsert } as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return { xp: currentXp } as unknown as T;
           return null;
         },
@@ -70,7 +70,7 @@ function makeDb(opts: {
 
 describe('POST /api/discover', () => {
   it('rejects phase=exceso', async () => {
-    const db = makeDb({ calmaCountAfterInsert: 1 });
+    const db = makeDb({ balanceCountAfterInsert: 1 });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
@@ -86,12 +86,12 @@ describe('POST /api/discover', () => {
     expect(response.status).toBe(400);
   });
 
-  it('inserts a fusion_ready notification when calma count reaches exactly 5', async () => {
-    const db = makeDb({ calmaCountAfterInsert: 5 });
+  it('inserts a fusion_ready notification when balance count reaches exactly 5', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 5 });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'calma' }),
+      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -106,12 +106,12 @@ describe('POST /api/discover', () => {
     expect(notifCall!.args[1]).toBe('fusion_ready');
   });
 
-  it('does not insert a notification when calma count is not exactly 5', async () => {
-    const db = makeDb({ calmaCountAfterInsert: 6 });
+  it('does not insert a notification when balance count is not exactly 5', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 6 });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'calma' }),
+      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -126,11 +126,11 @@ describe('POST /api/discover', () => {
   });
 
   it('includes an xp block with rarity-based xp in the response', async () => {
-    const db = makeDb({ calmaCountAfterInsert: 1, xp: 0, ownedPhases: [] });
+    const db = makeDb({ balanceCountAfterInsert: 1, xp: 0, ownedPhases: [] });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'calma' }),
+      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -146,13 +146,13 @@ describe('POST /api/discover', () => {
   });
 
   it('adds the species-complete bonus when this discovery finishes the set', async () => {
-    // Before this insert the user only owns calma+exceso; the eco discovery
+    // Before this insert the user only owns balance+exceso; the eco discovery
     // being made right now is what completes the set for the first time.
     const db = makeDb({
-      calmaCountAfterInsert: 1,
+      balanceCountAfterInsert: 1,
       xp: 0,
-      ownedPhasesBefore: ['calma', 'exceso'],
-      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+      ownedPhasesBefore: ['balance', 'exceso'],
+      ownedPhasesAfter: ['balance', 'exceso', 'eco'],
     });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
@@ -171,14 +171,14 @@ describe('POST /api/discover', () => {
   });
 
   it('does NOT re-award the species-complete bonus when the species was already complete before this action', async () => {
-    // The user already owns calma+exceso+eco for this species (including a
+    // The user already owns balance+exceso+eco for this species (including a
     // prior eco). This discovery is a duplicate eco — the set was already
     // complete before the insert, so no bonus should be granted again.
     const db = makeDb({
-      calmaCountAfterInsert: 1,
+      balanceCountAfterInsert: 1,
       xp: 0,
-      ownedPhasesBefore: ['calma', 'exceso', 'eco'],
-      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+      ownedPhasesBefore: ['balance', 'exceso', 'eco'],
+      ownedPhasesAfter: ['balance', 'exceso', 'eco'],
     });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',

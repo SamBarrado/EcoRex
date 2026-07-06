@@ -60,7 +60,7 @@ El explorador (el usuario) no es un científico de un consorcio burocrático. Es
 ```
 Fractae (núcleo emocional)
 + Especie portadora (el dinosaurio)
-+ Fase (Calma / Exceso / Eco)
++ Fase (Balance / Exceso / Eco)
 + Rareza (eje independiente, ver sección 6)
 ```
 
@@ -114,7 +114,7 @@ Discovery ID:        DX-VOL-F7K
 
 | Fase original | Fase Ecorex | Significado |
 |---|---|---|
-| Equilibrio | **Calma** | estable, forma base |
+| Equilibrio | **Balance** | estable, forma base |
 | Exceso | **Exceso** | desbordado, intensificado |
 | Residuo | **Eco** | versión tenue, casi fantasmal |
 
@@ -124,7 +124,7 @@ Discovery ID:        DX-VOL-F7K
 
 ### Cómo se obtiene cada fase
 
-1. **Calma** → flujo principal de descubrimiento (elección de especie del catálogo, ver sección 12). Siempre disponible.
+1. **Balance** → flujo principal de descubrimiento (elección de especie del catálogo, ver sección 12). Siempre disponible.
 2. **Exceso** → se desbloquea por acumulación: rachas de uso, duplicados de la misma especie, o completar una Operación entera.
 3. **Eco** → exclusiva del minijuego de grietas. No es una especie nueva — es el eco de una especie ya descubierta.
 
@@ -167,7 +167,7 @@ Mecánica ligera de exploración, no-batalla. Overlay simple (SVG/CSS) sobre el 
 
 - **Disparador:** vinculado a Operaciones activas y, parcialmente, a ubicación real.
 - **Recompensa:** acceso a fase Eco de especies ya descubiertas (nunca especies nuevas).
-- **Requisito de acceso:** la sección de Grietas solo está activa si el usuario ya tiene al menos una especie en fase Calma. Si no, aparece bloqueada/vacía con mensaje contextual.
+- **Requisito de acceso:** la sección de Grietas solo está activa si el usuario ya tiene al menos una especie en fase Balance. Si no, aparece bloqueada/vacía con mensaje contextual.
 
 **Fuera de alcance del MVP actual** (ver sección 17) — se construye después de cerrar cuentas + colección + perfil.
 
@@ -216,11 +216,11 @@ Navegación por tab bar inferior de 4 secciones:
 **2. EcoDex (el Pokédex)**
 - Grid de especies activas del bestiario.
 - No descubiertas → silueta misteriosa.
-- Descubiertas → imagen ancla canónica + indicador de fases obtenidas (Calma/Exceso/Eco).
+- Descubiertas → imagen ancla canónica + indicador de fases obtenidas (Balance/Exceso/Eco).
 - Al tocar una especie descubierta → entra al **álbum de esa especie** (ver sección 13).
 
 **3. Grietas** *(fuera de alcance del MVP actual, ver sección 17)*
-- Overlay pseudo-AR, solo activo si hay al menos una especie en Calma.
+- Overlay pseudo-AR, solo activo si hay al menos una especie en Balance.
 - Acceso a fase Eco de especies ya descubiertas.
 
 **4. Yo (perfil)** — **parte del MVP actual (confirmado en v4)**
@@ -297,11 +297,11 @@ Esta ficha actúa como prompt-semilla para GPT Image 2, garantizando que la mism
 ### 15.3 Modificadores de fase
 
 ```
-Calma → forma estable, postura serena, brillo suave
+Balance → forma estable, postura serena, brillo suave
 Exceso → forma intensificada, postura agresiva, brillo ardiente, grietas de energía
 ```
 
-Calma y Exceso son modificadores reutilizables, iguales para todas las especies (solo cambia la intensidad/textura sobre la anatomía de cada una).
+Balance y Exceso son modificadores reutilizables, iguales para todas las especies (solo cambia la intensidad/textura sobre la anatomía de cada una).
 
 **Eco es distinto: NO es un modificador universal.** Corrección respecto a versiones anteriores de este documento, que lo describían como "forma translúcida, casi fantasmal, partículas dispersándose" igual para todas las especies — en la práctica esto hacía que todas las Ecos parecieran la misma silueta fantasma genérica, perdiendo el propósito narrativo de la fase.
 
@@ -326,8 +326,8 @@ El mecanismo visual concreto (fuego, vapor, hielo, descomposición orgánica, di
 
 Decisión confirmada: **imagen ancla por especie+fase, generada con image-to-image y curada manualmente** (no se confía en generación libre por texto cada vez, para garantizar consistencia visual entre usuarios).
 
-- Por cada especie: se genera la imagen ancla de Calma a partir de la ficha-spec, se revisa y aprueba.
-- A partir de esa ancla Calma, se generan (vía image-to-image + modificador de fase) las anclas de Exceso y Eco.
+- Por cada especie: se genera la imagen ancla de Balance a partir de la ficha-spec, se revisa y aprueba.
+- A partir de esa ancla Balance, se generan (vía image-to-image + modificador de fase) las anclas de Exceso y Eco.
 - **Las tres fases se curan manualmente antes de aprobarse** — el margen de error visual debe ser mínimo, dado que el usuario principal es un niño.
 
 **Definición operativa (aclarada en v4):** una "imagen ancla" es la imagen curada y aprobada de una combinación especie+fase concreta (`species_phase_anchors.image_url`) — la que ve todo el mundo por defecto en el Pokédex/Álbum salvo que a una captura le toque generar variante única (sección 18.3).
@@ -341,28 +341,28 @@ Regla práctica: iterar y probar SIEMPRE en `especies_design/`; solo cuando una 
 
 #### 15.4.1 Flujo de producción confirmado (validado en esta sesión)
 
-Generar Calma directamente por texto vía la API (`images/generations`) es **poco fiable**: el modelo tiende al fotorrealismo por defecto y no converge bien en el estilo ilustrado deseado, incluso con instrucciones de estilo detalladas en el prompt. En cambio, Exceso y Eco generados por **image-to-image** (`images/edits`) sobre un ancla de Calma ya buena sí heredan el estilo correctamente. Por eso el flujo real es:
+Generar Balance directamente por texto vía la API (`images/generations`) es **poco fiable**: el modelo tiende al fotorrealismo por defecto y no converge bien en el estilo ilustrado deseado, incluso con instrucciones de estilo detalladas en el prompt. En cambio, Exceso y Eco generados por **image-to-image** (`images/edits`) sobre un ancla de Balance ya buena sí heredan el estilo correctamente. Por eso el flujo real es:
 
-1. **Calma se diseña a mano en ChatGPT** (gratis, dentro de la suscripción), iterando con instrucciones cortas de estilo ("dale un punto menos realista a esto") hasta conseguir el resultado deseado. Usar el prompt de la sección 15.4.2 como plantilla, rellenando los campos de la ficha-spec de la especie.
-2. El PNG elegido se guarda como el ancla Calma de esa especie.
-3. **Exceso y Eco se generan automáticamente** (`scripts/generate-species-art.mjs`, de pago vía API) por image-to-image sobre esa ancla ya validada — no se regenera Calma por script.
+1. **Balance se diseña a mano en ChatGPT** (gratis, dentro de la suscripción), iterando con instrucciones cortas de estilo ("dale un punto menos realista a esto") hasta conseguir el resultado deseado. Usar el prompt de la sección 15.4.2 como plantilla, rellenando los campos de la ficha-spec de la especie.
+2. El PNG elegido se guarda como el ancla Balance de esa especie.
+3. **Exceso y Eco se generan automáticamente** (`scripts/generate-species-art.mjs`, de pago vía API) por image-to-image sobre esa ancla ya validada — no se regenera Balance por script.
 4. Las tres fases se curan manualmente antes de aprobarse, como ya establece esta sección.
 
-**Corrección de moderación visual (validado en esta sesión):** las primeras pruebas de Exceso y Eco vía script salieron con colores demasiado saturados/quemados (Exceso) y con la composición sobrecargada de fragmentos/partículas (Eco, especialmente notorio en el T-Rex). Los prompts de `buildExcesoPrompt`/`buildEcoPrompt` en `scripts/generate-species-art.mjs` ahora piden explícitamente contraste y saturación controlados en Exceso (el brillo debe concentrarse en grietas/puntos clave, no inundar todo el encuadre), y composición limpia y contenida en Eco (la silueta de la criatura debe seguir siendo el foco legible, con el efecto concentrado en 1-2 puntos, no disperso por todo el fondo). Esta misma moderación aplica también al prompt manual de Calma (sección 15.4.2).
+**Corrección de moderación visual (validado en esta sesión):** las primeras pruebas de Exceso y Eco vía script salieron con colores demasiado saturados/quemados (Exceso) y con la composición sobrecargada de fragmentos/partículas (Eco, especialmente notorio en el T-Rex). Los prompts de `buildExcesoPrompt`/`buildEcoPrompt` en `scripts/generate-species-art.mjs` ahora piden explícitamente contraste y saturación controlados en Exceso (el brillo debe concentrarse en grietas/puntos clave, no inundar todo el encuadre), y composición limpia y contenida en Eco (la silueta de la criatura debe seguir siendo el foco legible, con el efecto concentrado en 1-2 puntos, no disperso por todo el fondo). Esta misma moderación aplica también al prompt manual de Balance (sección 15.4.2).
 
-**Corrección de separación figura/fondo (validado en esta sesión):** el problema anterior no era solo de saturación — dino y entorno compartían la misma densidad de textura/grietas y se fundían en un solo ruido visual, sin importar cuánto se moderase el color. La solución no es un halo/contorno pegado a la criatura, sino técnica real de ilustración: la criatura debe ser el elemento más nítido y de mayor contraste, y el entorno debe alejarse con perspectiva atmosférica (bordes más suaves, menos contraste, más desaturado cuanto más al fondo), sin repetir la misma densidad de grietas/brillo del cuerpo en el terreno o el cielo. Añadido como bloque compartido `FIGURE_GROUND_SEPARATION` en `scripts/generate-species-art.mjs` (aplicado a Calma, Exceso y Eco) y como párrafo aparte en el prompt manual de Calma (sección 15.4.2).
+**Corrección de separación figura/fondo (validado en esta sesión):** el problema anterior no era solo de saturación — dino y entorno compartían la misma densidad de textura/grietas y se fundían en un solo ruido visual, sin importar cuánto se moderase el color. La solución no es un halo/contorno pegado a la criatura, sino técnica real de ilustración: la criatura debe ser el elemento más nítido y de mayor contraste, y el entorno debe alejarse con perspectiva atmosférica (bordes más suaves, menos contraste, más desaturado cuanto más al fondo), sin repetir la misma densidad de grietas/brillo del cuerpo en el terreno o el cielo. Añadido como bloque compartido `FIGURE_GROUND_SEPARATION` en `scripts/generate-species-art.mjs` (aplicado a Balance, Exceso y Eco) y como párrafo aparte en el prompt manual de Balance (sección 15.4.2).
 
 **Formato panorámico (validado en esta sesión):** las anclas bien valoradas (ej. el nuevo ancla de T-Rex Imperator) se diseñaron en formato panorámico **1536×1024** (aprox. 3:2), no cuadrado. Todas las generaciones —ancla manual y Exceso/Eco automatizadas— deben usar este mismo formato panorámico para mantener consistencia. `scripts/generate-species-art.mjs` usa la constante `IMAGE_SIZE = '1536x1024'` para las tres llamadas a la API (`images/generations` y `images/edits`).
 
-**Corrección de Exceso poco diferenciada (validado en esta sesión):** una primera corrección de saturación hizo que Exceso quedase casi indistinguible de Calma — misma pose de pie, mismo encuadre, solo con la boca abierta; no se leía como una escalada real de intensidad. El fallo era de **pose/encuadre**, no de color: `buildExcesoPrompt` ahora exige explícitamente una postura genuinamente más agresiva y dinámica que la de Calma (agachada, embistiendo, garras o extremidades en ataque) y un encuadre/ángulo de cámara distinto (más cercano, más bajo o más diagonal, no el mismo plano general de perfil) — la boca abierta por sí sola queda marcada como un detalle menor, no como el cambio principal. La intensidad de brillo/energía debe seguir siendo claramente mayor que en Calma, de forma que se note al instante al alternar entre ambas imágenes.
+**Corrección de Exceso poco diferenciada (validado en esta sesión):** una primera corrección de saturación hizo que Exceso quedase casi indistinguible de Balance — misma pose de pie, mismo encuadre, solo con la boca abierta; no se leía como una escalada real de intensidad. El fallo era de **pose/encuadre**, no de color: `buildExcesoPrompt` ahora exige explícitamente una postura genuinamente más agresiva y dinámica que la de Balance (agachada, embistiendo, garras o extremidades en ataque) y un encuadre/ángulo de cámara distinto (más cercano, más bajo o más diagonal, no el mismo plano general de perfil) — la boca abierta por sí sola queda marcada como un detalle menor, no como el cambio principal. La intensidad de brillo/energía debe seguir siendo claramente mayor que en Balance, de forma que se note al instante al alternar entre ambas imágenes.
 
-**La misma corrección aplica a Eco:** Eco tampoco puede ser "la pose de Calma con un efecto encima" — es el momento emocional más extremo de la criatura, así que también necesita pose/encuadre propios (colapsando, retrayéndose, convulsionando, congelada a media acción... lo que pida el arquetipo de esa emoción para esa especie concreta), no solo partículas o grietas superpuestas sobre la postura de reposo. La energía/iluminación debe ser claramente distinta de Calma y Exceso, y **no siempre más brillante**: si el arquetipo es de Miedo (devorada por la oscuridad hasta desaparecer), Eco debe ser más oscura/tenue que las otras dos fases, no más luminosa — la dirección (más brillante o más oscura) depende del arquetipo del Fractae en cuestión (sección 15.3), nunca por defecto "más brillo".
+**La misma corrección aplica a Eco:** Eco tampoco puede ser "la pose de Balance con un efecto encima" — es el momento emocional más extremo de la criatura, así que también necesita pose/encuadre propios (colapsando, retrayéndose, convulsionando, congelada a media acción... lo que pida el arquetipo de esa emoción para esa especie concreta), no solo partículas o grietas superpuestas sobre la postura de reposo. La energía/iluminación debe ser claramente distinta de Balance y Exceso, y **no siempre más brillante**: si el arquetipo es de Miedo (devorada por la oscuridad hasta desaparecer), Eco debe ser más oscura/tenue que las otras dos fases, no más luminosa — la dirección (más brillante o más oscura) depende del arquetipo del Fractae en cuestión (sección 15.3), nunca por defecto "más brillo".
 
 **Pivote de estilo visual — de "criatura de cristal" a "ilustración gráfica tipo anime/TCG" (validado en esta sesión, sustituye el estilo anterior):** el estilo "concept-art pintado con escamas facetadas de cristal" se abandona. A partir de mockups de cartas de referencia aprobados por el usuario, el estilo objetivo es **ilustración gráfica de línea de tinta gruesa, estilo anime/manga o carta TCG (Magic/Pokémon)**: contorno de tinta negra marcado en la silueta Y en el borde de cada escama/placa individual, relleno de color en bloques semi-planos tipo cel-shading (2-3 tonos por superficie: sombra/medio/luz, no degradados fotográficos continuos), brillo especular reducido al mínimo (superficies mate/pintadas, no brillantes ni "mojadas"). El brillo/grietas de energía del color del Fractae ya NO se aplican al cuerpo entero por defecto — solo donde el tema lo justifique (ej. grietas de lava en una especie ígnea) o sobre rasgos fijos ya definidos como cristalinos en la ficha-spec (ej. una gorguera de cristal). El resto de la piel/escamas debe ser material de criatura natural, con el mismo tratamiento gráfico de línea gruesa. Corrección iterativa: el primer intento de estilo "naturalista/pictórico" salió demasiado fotorrealista (render 3D/CGI); el ajuste real no era "menos cristal" sino "más línea de tinta gráfica y menos brillo/degradado fotográfico". Aplicado en `BASE_STYLE` y `PHASE_MODIFIERS.exceso` de `scripts/generate-species-art.mjs`.
 
-**Corrección de pose plana de perfil (validado en esta sesión):** las tres fases estaban resultando en una silueta de cuerpo entero de perfil, casi como una lámina de referencia zoológica — correcta en anatomía y estilo, pero sin dinamismo ni conexión con el jugador. La criatura debe estar **actuando hacia el espectador**: ángulo de tres cuartos o más confrontacional (no perfil plano), mirada/lenguaje corporal orientados hacia cámara, realizando su acción en dirección al espectador. Añadido como bloque compartido `TOWARD_VIEWER_ENGAGEMENT` en `scripts/generate-species-art.mjs` y `generate-species-art-layered.mjs` (en el flujo en capas, el recorte sigue posicionándose hacia el lado del encuadre que deja libre el fondo, pero el ángulo/pose en sí ya no es de perfil plano), y como párrafo aparte en el prompt manual de Calma (sección 15.4.2).
+**Corrección de pose plana de perfil (validado en esta sesión):** las tres fases estaban resultando en una silueta de cuerpo entero de perfil, casi como una lámina de referencia zoológica — correcta en anatomía y estilo, pero sin dinamismo ni conexión con el jugador. La criatura debe estar **actuando hacia el espectador**: ángulo de tres cuartos o más confrontacional (no perfil plano), mirada/lenguaje corporal orientados hacia cámara, realizando su acción en dirección al espectador. Añadido como bloque compartido `TOWARD_VIEWER_ENGAGEMENT` en `scripts/generate-species-art.mjs` y `generate-species-art-layered.mjs` (en el flujo en capas, el recorte sigue posicionándose hacia el lado del encuadre que deja libre el fondo, pero el ángulo/pose en sí ya no es de perfil plano), y como párrafo aparte en el prompt manual de Balance (sección 15.4.2).
 
-#### 15.4.2 Prompt maestro para generar Calma a mano
+#### 15.4.2 Prompt maestro para generar Balance a mano
 
 ```
 Genera una ilustración de personaje/criatura para un bestiario de videojuego de fantasía.
@@ -419,7 +419,7 @@ DATOS DE LA ESPECIE:
 - Paleta base: {{PALETA}}
 - Silueta distintiva: {{SILUETA}}
 
-FASE A GENERAR: Calma — forma estable, postura serena pero imponente, brillo suave (no agresiva, no rugiendo; es la forma base/de reposo de la criatura).
+FASE A GENERAR: Balance — forma estable, postura serena pero imponente, brillo suave (no agresiva, no rugiendo; es la forma base/de reposo de la criatura).
 
 Genera la imagen ahora.
 ```
@@ -436,7 +436,7 @@ Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBR
 **Por qué este cambio (motivo original):** permite reutilizar fondos entre especies del mismo bioma (ahorro de coste y coherencia visual), resuelve gratis el problema de separación figura/fondo que costó varias iteraciones de prompt en el enfoque de escena plana (al ser capas distintas, no pueden fundirse visualmente), y permite recomponer la misma criatura sobre tratamientos de fondo distintos (ej. el full-art de Eco) sin regenerar la escena entera.
 
 **Pipeline:**
-- Generación: `scripts/generate-species-art-layered.mjs` (`npm run species:art:layered`) — genera el fondo (si no existe ya para ese hábitat+fase) y el recorte por separado, vía `images/generations` normal (no `images/edits`, ya que aquí no hay un ancla Calma sobre la que hacer image-to-image — cada capa se genera de forma independiente por fase, con las mismas reglas de diferenciación de pose que el flujo plano).
+- Generación: `scripts/generate-species-art-layered.mjs` (`npm run species:art:layered`) — genera el fondo (si no existe ya para ese hábitat+fase) y el recorte por separado, vía `images/generations` normal (no `images/edits`, ya que aquí no hay un ancla Balance sobre la que hacer image-to-image — cada capa se genera de forma independiente por fase, con las mismas reglas de diferenciación de pose que el flujo plano).
 - Composición de previsualización/QA: `scripts/composite-species-art.mjs <cutout.png> <background.png> <out.png>` — quita el chroma-key (con `sharp`, detectando y haciendo transparentes los píxeles donde el verde domina claramente sobre rojo/azul, con des-halo de verde residual en los bordes) y pega el recorte sobre el fondo con escala/posición configurables. Es una herramienta de QA, no parte del pipeline de producción — la app real compone las capas en el cliente (imagen de fondo + `<img>` del recorte posicionado encima vía CSS), no sirve una imagen pre-compuesta.
 - `habitatSlug`: campo corto opcional en la ficha-spec (ej. `"volcanico"`) para nombrar la carpeta de fondo compartido; si no está presente, se deriva con `slugify(habitat)` (puede dar nombres de carpeta largos si el texto de hábitat es descriptivo — se recomienda añadir `habitatSlug` explícito para especies que deban compartir fondo).
 

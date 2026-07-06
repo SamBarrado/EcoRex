@@ -58,7 +58,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const { results: oldestRows } = await env.DB.prepare(
     `SELECT id FROM discoveries
-     WHERE user_id = ? AND species_id = ? AND phase = 'calma' AND consumed_at IS NULL
+     WHERE user_id = ? AND species_id = ? AND phase = 'balance' AND consumed_at IS NULL
      ORDER BY discovered_at ASC
      LIMIT ?`
   )
@@ -67,7 +67,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (oldestRows.length < FUSE_THRESHOLD) {
     return Response.json(
-      { error: "No tienes suficientes duplicados de Calma para esta especie" },
+      { error: "No tienes suficientes duplicados de Balance para esta especie" },
       { status: 409 }
     );
   }
@@ -122,7 +122,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Failed to generate fusion image" }, { status: 502 });
   }
 
-  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
 
   const discoveryCode = generateDiscoveryCode();
   const insertResult = await env.DB.prepare(
@@ -144,7 +144,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
 
-  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
   const xpAmount =
     (RARITY_XP[rarityTier.slug] ?? 0) + FUSION_XP_BONUS + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
