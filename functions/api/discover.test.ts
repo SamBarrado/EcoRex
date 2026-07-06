@@ -20,7 +20,7 @@ function makeDb(opts: {
     physical_traits: null,
     base_palette: null,
     silhouette: null,
-    fractae_child_name: 'Calma',
+    fractae_child_name: 'Furia',
     anchor_image_url: '/species-art/rex/balance.png',
   };
   let currentXp = opts.xp ?? 0;
