@@ -8,19 +8,19 @@
 //
 // Usage:
 //   node scripts/generate-species-art-layered.mjs species.json --only "Rex de Fuego"
-//   node scripts/generate-species-art-layered.mjs species.json --phases balance,exceso,eco
+//   node scripts/generate-species-art-layered.mjs species.json --phases calma,exceso,eco
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const IMAGE_SIZE = '1536x1024';
-const PHASES = ['balance', 'exceso', 'eco'];
+const PHASES = ['calma', 'exceso', 'eco'];
 
 const ART_STYLE = `GRAPHIC ANIME/MANGA-INFLUENCED ILLUSTRATION with heavy black ink contour linework — NOT a photograph, NOT a photoreal 3D/CGI render, NOT soft-blended airbrush painting, NOT physically-based-rendering detail. This must look like mobile-game/gacha creature card art: a thick, clearly visible BLACK INK OUTLINE traces every silhouette and major surface segment — the linework is the dominant visual structure, not soft gradient blending. Color is filled in graphic, semi-flat cel-shaded blocks — only 2-3 tonal steps per surface (shadow, midtone, highlight), not smooth photographic gradients. Reduce specular highlights: surfaces should look matte/painted, not glossy or wet-looking.`;
 
 const PHASE_MOOD = {
-  balance: 'calm, stable mood, soft natural lighting, nothing dramatic happening',
+  calma: 'calm, stable mood, soft natural lighting, nothing dramatic happening',
   exceso: 'aggressive, violent mood — darker, more intense lighting, a sense of danger and tension in the air (storm, embers, disturbed environment) but not overloaded with debris',
   eco: 'the most extreme, climactic emotional moment possible in this environment — lighting and mood pushed to their dramatic limit for this habitat (brighter/more intense OR darker/dimmer, whichever fits the mood, see Fractae archetype)',
 };
@@ -84,7 +84,7 @@ function buildCutoutPrompt(spec, phase) {
 
   const engagement = `The creature must be captured mid-action, actively engaging toward the viewer/camera — NOT a flat, static, full-body side-profile silhouette (like a museum reference plate or a walk-cycle sprite). Use a three-quarter angle or a more confrontational/dynamic camera angle (slightly low, looking up at the creature, or an angle that shows depth through the body). The creature's head/gaze and body language should be oriented toward the viewer/camera, as if reacting to the player's presence, rather than parallel to the picture plane. The creature's overall body should still lean/be positioned toward the right side of the frame (to match the empty space left in the separately-painted background), but the pose/angle itself must feel three-quarter and engaged, not a flat side elevation.`;
 
-  if (phase === 'balance') {
+  if (phase === 'calma') {
     parts.push(`Pose: stable, calm but imposing posture, alert and aware of the viewer. ${engagement}`);
   } else if (phase === 'exceso') {
     parts.push(`Pose: this must NOT be "the calm pose with the mouth open" — a genuinely more aggressive and dynamic pose than a calm stance: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking. ${engagement}`);
@@ -139,7 +139,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const specFile = args._[0];
   if (!specFile) {
-    console.error('Uso: node scripts/generate-species-art-layered.mjs <species.json> [--only "Nombre niño"] [--phases balance,exceso,eco]');
+    console.error('Uso: node scripts/generate-species-art-layered.mjs <species.json> [--only "Nombre niño"] [--phases calma,exceso,eco]');
     process.exit(1);
   }
 
