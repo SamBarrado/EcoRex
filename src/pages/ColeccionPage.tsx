@@ -39,6 +39,10 @@ export default function ColeccionPage() {
     return slots.filter((s) => s.phase === phaseFilter);
   }, [slots, phaseFilter]);
 
+  const registeredCount = slots?.filter((s) => !s.locked).length ?? 0;
+  const totalSlotsCount = slots?.length ?? 0;
+  const registeredPct = totalSlotsCount > 0 ? Math.round((registeredCount / totalSlotsCount) * 100) : 0;
+
   useLayoutEffect(() => {
     if (!previewSlot) return;
     const previousOverflow = document.body.style.overflow;
@@ -62,6 +66,19 @@ export default function ColeccionPage() {
       )}
       {!slots && !error && <p>Cargando...</p>}
       {slots !== null && slots.length === 0 && !error && <p>No hay ninguna wave activa todavía.</p>}
+      {slots && slots.length > 0 && (
+        <div className="card" style={{ marginBottom: "1rem" }}>
+          <div className="stat">
+            <span>Especies registradas</span>
+            <span>
+              {registeredCount}/{totalSlotsCount} ({registeredPct}%)
+            </span>
+          </div>
+          <div className="level-progress-bar">
+            <div className="level-progress-fill" style={{ width: `${registeredPct}%` }} />
+          </div>
+        </div>
+      )}
       {currentWave !== null && slots && slots.length > 0 && (
         <div
           style={{
