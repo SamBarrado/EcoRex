@@ -3,6 +3,7 @@ import { render, screen, act, cleanup, fireEvent } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom";
 import { PercibirRitual } from "./PercibirRitual";
 import { ApiError, Species } from "../lib/api";
+import { NavVisibilityProvider } from "../lib/NavVisibilityContext";
 
 const species: Species[] = [
   {
@@ -56,7 +57,9 @@ afterEach(() => {
 function renderRitual(props: Partial<React.ComponentProps<typeof PercibirRitual>> = {}) {
   return render(
     <MemoryRouter>
-      <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+      <NavVisibilityProvider>
+        <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+      </NavVisibilityProvider>
     </MemoryRouter>
   );
 }

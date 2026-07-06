@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
 import { XpToast } from "../components/XpToast";
 import { LevelUpModal } from "../components/LevelUpModal";
+import { useNavVisibility } from "../lib/NavVisibilityContext";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -26,6 +27,7 @@ function speciesSoundUrl(scientificName: string) {
 
 export default function FusionPage() {
   const navigate = useNavigate();
+  const { hideNav, showNav } = useNavVisibility();
   const [searchParams] = useSearchParams();
   const [eligible, setEligible] = useState<EligibleSpecies[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -87,13 +89,21 @@ export default function FusionPage() {
   }
 
   useEffect(load, [navigate]);
-  useEffect(() => stopSound, []);
+  useEffect(
+    () => () => {
+      stopSound();
+      showNav();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const preselectedId = Number(searchParams.get("speciesId")) || null;
 
   async function handleFuse(species: EligibleSpecies) {
     if (fusing !== null) return;
     stopSound();
+    hideNav();
     setFusing(species.speciesId);
     setGlowSlug(null);
     setError(null);
@@ -116,6 +126,7 @@ export default function FusionPage() {
       setError(
         err instanceof ApiError ? err.message : "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo."
       );
+      showNav();
     } finally {
       setFusing(null);
     }
@@ -127,6 +138,7 @@ export default function FusionPage() {
     setShowXpToast(false);
     setLevelUpTo(null);
     setGlowSlug(null);
+    showNav();
     load();
   }
 

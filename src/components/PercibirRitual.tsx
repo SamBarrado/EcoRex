@@ -4,6 +4,7 @@ import { RevealCard } from "./RevealCard";
 import { XpToast } from "./XpToast";
 import { LevelUpModal } from "./LevelUpModal";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
+import { useNavVisibility } from "../lib/NavVisibilityContext";
 
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
@@ -76,6 +77,7 @@ export interface PercibirRitualProps {
 
 export function PercibirRitual({ species, discoverFn, onUnauthorized }: PercibirRitualProps) {
   const navigate = useNavigate();
+  const { hideNav, showNav } = useNavVisibility();
   const [phase, setPhase] = useState<RitualPhase>("sealed");
   const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -102,7 +104,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;
+      showNav();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useLayoutEffect(() => {
@@ -176,6 +180,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
         if (controller.signal.aborted) return;
         setPhase("sealed");
         setDragProgress(0);
+        showNav();
         if (err instanceof ApiError && err.status === 401) {
           onUnauthorized();
           return;
@@ -191,6 +196,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
   function handleTapEnvelope() {
     if (phase !== "sealed" || peeking || !species.length) return;
     vibrate(15);
+    hideNav();
     setPeeking(true);
   }
 
@@ -246,6 +252,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
     setPhase("sealed");
     setPeeking(false);
     setDragProgress(0);
+    showNav();
   }
 
   function handleRetry() {
