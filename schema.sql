@@ -66,6 +66,9 @@ CREATE TABLE users (
   needs_username_setup INTEGER NOT NULL DEFAULT 0,  -- 1 for pre-migration users backfilled with a placeholder
   explorer_rank TEXT NOT NULL DEFAULT 'novato',
   xp INTEGER NOT NULL DEFAULT 0,
+  energy_count INTEGER NOT NULL DEFAULT 2,  -- Percibir energy: 2 discoveries per 12h window
+  energy_window_start INTEGER,  -- ms timestamp of first spend since full; NULL = full, no countdown
+  unlimited_energy INTEGER NOT NULL DEFAULT 0,  -- bypass energy limit entirely; set manually for QA accounts
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE UNIQUE INDEX idx_users_display_name ON users(display_name);

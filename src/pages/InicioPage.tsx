@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFuseEligible, getMyProfile, ProfileStats, ApiError } from "../lib/api";
+import { getFuseEligible, getMyProfile, getEnergy, ProfileStats, EnergyState, ApiError } from "../lib/api";
+import { formatEnergyCountdown } from "../lib/energy";
 import { version } from "../../package.json";
 
 export default function InicioPage() {
   const navigate = useNavigate();
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
+  const [energy, setEnergy] = useState<EnergyState | null>(null);
 
   useEffect(() => {
     getFuseEligible()
@@ -16,6 +18,11 @@ export default function InicioPage() {
       });
     getMyProfile()
       .then(setProfile)
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) navigate("/login");
+      });
+    getEnergy()
+      .then(setEnergy)
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
@@ -54,6 +61,18 @@ export default function InicioPage() {
               {profile.speciesDiscoveredCount}/{profile.speciesTotalCount} ({progressPct}%)
             </span>
           </div>
+          {energy && (
+            <div className="stat">
+              <span>⚡ Energía</span>
+              <span>
+                {energy.unlimited ? "∞/∞" : `${energy.remaining}/${energy.max}`}
+                {!energy.unlimited &&
+                  energy.remaining === 0 &&
+                  energy.resetAt !== null &&
+                  ` · próxima en ${formatEnergyCountdown(energy.resetAt)}`}
+              </span>
+            </div>
+          )}
         </div>
       )}
 

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSpecies, discover, Species, ApiError } from "../lib/api";
+import { getSpecies, getEnergy, discover, Species, ApiError } from "../lib/api";
 import { PercibirRitual } from "../components/PercibirRitual";
 
 export default function PercibirPage() {
   const navigate = useNavigate();
   const [species, setSpecies] = useState<Species[] | null>(null);
+  const [energyResetAt, setEnergyResetAt] = useState<number | null | undefined>(undefined);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -21,6 +22,11 @@ export default function PercibirPage() {
           return;
         }
         setLoadError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
+      });
+    getEnergy()
+      .then((data) => setEnergyResetAt(data.remaining > 0 ? null : data.resetAt))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
   }, [navigate, retryCount]);
 
@@ -46,6 +52,11 @@ export default function PercibirPage() {
   }
 
   return (
-    <PercibirRitual species={species} discoverFn={discover} onUnauthorized={() => navigate("/login")} />
+    <PercibirRitual
+      species={species}
+      discoverFn={discover}
+      onUnauthorized={() => navigate("/login")}
+      energyResetAt={energyResetAt}
+    />
   );
 }

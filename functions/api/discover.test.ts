@@ -40,6 +40,7 @@ function makeDb(opts: {
           if (sql.includes('SELECT discovered_at')) return { discovered_at: '2026-07-05' } as unknown as T;
           if (sql.includes('COUNT(*) as balance_count')) return { balance_count: opts.balanceCountAfterInsert } as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return { xp: currentXp } as unknown as T;
+          if (sql.includes('energy_count')) return { energy_count: 2, energy_window_start: null, unlimited_energy: 0 } as unknown as T;
           return null;
         },
         async all<T>() {

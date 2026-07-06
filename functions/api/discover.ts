@@ -1,5 +1,5 @@
 import { getSessionCookie, verifySession } from "../lib/auth";
-import { rateLimit, getClientIp } from "../lib/rateLimit";
+import { consumeEnergy } from "../lib/energy";
 import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
 import { addXp, RARITY_XP, SPECIES_COMPLETE_XP_BONUS } from "../lib/xp";
 
@@ -8,9 +8,6 @@ interface Env {
   RATE_LIMIT_KV: KVNamespace;
   DINO_IMAGES: R2Bucket;
   OPENAI_API_KEY: string;
-  // Optional override for local/dev testing only — leave unset in production
-  // so the real 5/h default below stays in effect.
-  DISCOVER_RATE_LIMIT?: string;
 }
 
 interface DiscoverBody {
@@ -19,10 +16,6 @@ interface DiscoverBody {
 }
 
 const VALID_PHASES = ["balance", "eco"];
-
-// Per-user discovery throttling: image-to-image variant generation calls a
-// paid API, so this is intentionally tighter than the auth endpoints' limit.
-const DEFAULT_DISCOVER_RATE_LIMIT = 5;
 
 function generateDiscoveryCode(): string {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -42,12 +35,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const ip = getClientIp(request);
-  const limit = env.DISCOVER_RATE_LIMIT ? parseInt(env.DISCOVER_RATE_LIMIT, 10) : DEFAULT_DISCOVER_RATE_LIMIT;
-  const allowed = await rateLimit(env.RATE_LIMIT_KV, `discover:${user.id}:${ip}`, limit);
-  if (!allowed) {
+  const energy = await consumeEnergy(env.DB, user.id);
+  if (!energy.success) {
     return Response.json(
-      { error: "Has hecho muchos descubrimientos seguidos. Espera un poco y vuelve a intentarlo." },
+      { error: "No te queda energía para percibir. Vuelve más tarde.", resetAt: energy.resetAt },
       { status: 429 }
     );
   }

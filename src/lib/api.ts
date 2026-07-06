@@ -99,6 +99,17 @@ export function getMyProfile() {
   return request<ProfileStats>("/api/profile");
 }
 
+export interface EnergyState {
+  remaining: number;
+  max: number;
+  resetAt: number | null;
+  unlimited: boolean;
+}
+
+export function getEnergy() {
+  return request<EnergyState>("/api/energy");
+}
+
 export interface Species {
   id: number;
   scientific_name: string;

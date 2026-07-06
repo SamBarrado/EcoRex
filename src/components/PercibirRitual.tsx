@@ -5,6 +5,7 @@ import { XpToast } from "./XpToast";
 import { LevelUpModal } from "./LevelUpModal";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
+import { formatEnergyCountdown } from "../lib/energy";
 
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
@@ -75,9 +76,12 @@ export interface PercibirRitualProps {
   species: Species[];
   discoverFn: (body: { speciesId: number; phase: string }, signal?: AbortSignal) => Promise<DiscoverResult>;
   onUnauthorized: () => void;
+  /** When set, energy is depleted (0 remaining) and the pack can't be opened until this timestamp. */
+  energyResetAt?: number | null;
 }
 
-export function PercibirRitual({ species, discoverFn, onUnauthorized }: PercibirRitualProps) {
+export function PercibirRitual({ species, discoverFn, onUnauthorized, energyResetAt }: PercibirRitualProps) {
+  const energyDepleted = energyResetAt != null;
   const navigate = useNavigate();
   const { hideNav, showNav, pulseTab } = useNavVisibility();
   const [showNewSlotOverlay, setShowNewSlotOverlay] = useState(false);
@@ -221,7 +225,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
   }
 
   function handleTapEnvelope() {
-    if (phase !== "sealed" || peeking || !species.length) return;
+    if (phase !== "sealed" || peeking || !species.length || energyDepleted) return;
     vibrate(15);
     hideNav();
     setPeeking(true);
@@ -361,6 +365,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
                   width: packWidth,
                   top: packTop,
                   marginLeft: -packWidth / 2,
+                  opacity: energyDepleted ? 0.5 : 1,
                   transform: peeking
                     ? `translateY(${peekTranslate}px) scale(${PEEK_SCALE})`
                     : "translateY(0) scale(1)",
@@ -370,11 +375,13 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized }: Percibir
               <p className="envelope-hint envelope-hint-top">
                 {!species.length
                   ? "Cargando..."
-                  : !peeking
-                    ? "Toca el sobre para abrirlo"
-                    : phase === "opening"
-                      ? "Percibiendo..."
-                      : "Desliza de izquierda a derecha para abrir"}
+                  : energyDepleted
+                    ? `Sin energía · próxima en ${formatEnergyCountdown(energyResetAt!)}`
+                    : !peeking
+                      ? "Toca el sobre para abrirlo"
+                      : phase === "opening"
+                        ? "Percibiendo..."
+                        : "Desliza de izquierda a derecha para abrir"}
               </p>
 
               {peeking && (
