@@ -32,7 +32,7 @@ export function pickRarityTier(tiers: RarityTierRow[]): RarityTierRow {
 
 export function buildVariantPrompt(species: SpeciesPhaseRow, phase: string): string {
   const phaseModifier: Record<string, string> = {
-    calma: 'forma estable, postura serena, brillo suave',
+    balance: 'forma estable, postura serena, brillo suave',
     exceso: 'forma intensificada, postura agresiva, brillo ardiente, grietas de energía',
     eco: 'forma translúcida, casi fantasmal, partículas dispersándose',
   };

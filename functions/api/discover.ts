@@ -18,7 +18,7 @@ interface DiscoverBody {
   phase?: string;
 }
 
-const VALID_PHASES = ["calma", "eco"];
+const VALID_PHASES = ["balance", "eco"];
 
 // Per-user discovery throttling: image-to-image variant generation calls a
 // paid API, so this is intentionally tighter than the auth endpoints' limit.
@@ -65,7 +65,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (typeof speciesId !== "number" || !phase || !VALID_PHASES.includes(phase)) {
     if (phase === "exceso") {
       return Response.json(
-        { error: "Exceso solo se obtiene fusionando duplicados de Calma" },
+        { error: "Exceso solo se obtiene fusionando duplicados de Balance" },
         { status: 400 }
       );
     }
@@ -122,7 +122,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Failed to generate discovery image" }, { status: 502 });
   }
 
-  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
 
   const discoveryCode = generateDiscoveryCode();
 
@@ -141,15 +141,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(discoveryId)
     .first<{ discovered_at: string }>();
 
-  if (phase === "calma") {
+  if (phase === "balance") {
     const countRow = await env.DB.prepare(
-      `SELECT COUNT(*) as calma_count FROM discoveries
-       WHERE user_id = ? AND species_id = ? AND phase = 'calma' AND consumed_at IS NULL`
+      `SELECT COUNT(*) as balance_count FROM discoveries
+       WHERE user_id = ? AND species_id = ? AND phase = 'balance' AND consumed_at IS NULL`
     )
       .bind(user.id, speciesId)
-      .first<{ calma_count: number }>();
+      .first<{ balance_count: number }>();
 
-    if (countRow?.calma_count === 5) {
+    if (countRow?.balance_count === 5) {
       await env.DB.prepare(
         `INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`
       )
@@ -162,7 +162,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
   }
 
-  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["calma", "exceso", "eco"]);
+  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
   const xpAmount = (RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
   const xpResult = await addXp(env.DB, user.id, xpAmount);
