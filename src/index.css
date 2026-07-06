@@ -696,3 +696,65 @@ button:disabled {
     transition: none;
   }
 }
+
+.level-progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  margin-top: 0.35rem;
+}
+
+.level-progress-fill {
+  height: 100%;
+  background: #3fae5a;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.xp-toast {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #3fae5a;
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  z-index: 1000;
+  animation: xp-toast-in 0.2s ease-out;
+}
+
+@keyframes xp-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.level-up-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.level-up-modal {
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.level-up-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffd54a;
+}

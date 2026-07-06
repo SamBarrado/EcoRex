@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getNotifications, markNotificationRead, AppNotification } from "../lib/api";
+import { LevelUpModal } from "./LevelUpModal";
 
 export default function ActionFab() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [showList, setShowList] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
 
   useEffect(() => {
     getNotifications()
@@ -31,6 +33,13 @@ export default function ActionFab() {
       const payload = notification.payload as { speciesId?: number };
       navigate(payload.speciesId ? `/fusion?speciesId=${payload.speciesId}` : "/fusion");
     }
+    if (notification.type === "level_up") {
+      const payload = notification.payload as { newLevel?: number };
+      if (payload.newLevel) {
+        setLevelUpTo(payload.newLevel);
+      }
+      return;
+    }
   }
 
   return (
@@ -53,7 +62,9 @@ export default function ActionFab() {
             >
               {n.type === "fusion_ready"
                 ? `¡Ya puedes fusionar ${(n.payload as { commonName?: string }).commonName ?? "una especie"}!`
-                : n.type}
+                : n.type === "level_up"
+                  ? `¡Subiste a nivel ${(n.payload as { newLevel?: number }).newLevel ?? "?"}!`
+                  : n.type}
             </div>
           ))}
         </div>
@@ -89,6 +100,7 @@ export default function ActionFab() {
         <img src="/icons/boton-accion.png" alt="" />
         {!open && unreadCount > 0 && <span className="action-fab-badge">{unreadCount}</span>}
       </button>
+      {levelUpTo !== null && <LevelUpModal level={levelUpTo} onClose={() => setLevelUpTo(null)} />}
     </div>
   );
 }

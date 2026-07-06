@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
+import { XpToast } from "../components/XpToast";
+import { LevelUpModal } from "../components/LevelUpModal";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -30,6 +32,8 @@ export default function FusionPage() {
   const [fusing, setFusing] = useState<number | null>(null);
   const [glowSlug, setGlowSlug] = useState<string | null>(null);
   const [result, setResult] = useState<DiscoverResult | null>(null);
+  const [showXpToast, setShowXpToast] = useState(false);
+  const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -99,6 +103,10 @@ export default function FusionPage() {
       setGlowSlug(data.rarityTier.slug);
       await delay(400);
       setResult(data);
+      setShowXpToast(true);
+      if (data.xp.leveledUp) {
+        setLevelUpTo(data.xp.level);
+      }
       playSound();
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -116,6 +124,8 @@ export default function FusionPage() {
   function handleReset() {
     stopSound();
     setResult(null);
+    setShowXpToast(false);
+    setLevelUpTo(null);
     setGlowSlug(null);
     load();
   }
@@ -179,6 +189,10 @@ export default function FusionPage() {
           ))}
         </div>
       )}
+      {showXpToast && result && (
+        <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
+      )}
+      {levelUpTo !== null && <LevelUpModal level={levelUpTo} onClose={() => setLevelUpTo(null)} />}
     </div>
   );
 }

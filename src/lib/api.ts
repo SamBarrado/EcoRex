@@ -84,7 +84,10 @@ export function getDex() {
 
 export interface ProfileStats {
   user: AuthUser;
-  explorerRank: string;
+  xp: number;
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number | null;
   speciesDiscoveredCount: number;
   speciesTotalCount: number;
   totalDiscoveries: number;
@@ -121,6 +124,7 @@ export interface DiscoverResult {
   imageUrl: string;
   isUniqueVariant: boolean;
   discoveredAt: string;
+  xp: { xpGained: number; totalXp: number; level: number; leveledUp: boolean };
 }
 
 export function discover(body: { speciesId: number; phase: string }, signal?: AbortSignal) {

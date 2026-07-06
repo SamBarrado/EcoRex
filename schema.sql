@@ -65,6 +65,7 @@ CREATE TABLE users (
   display_name TEXT NOT NULL DEFAULT '',  -- username/handle, required & unique (see idx_users_display_name)
   needs_username_setup INTEGER NOT NULL DEFAULT 0,  -- 1 for pre-migration users backfilled with a placeholder
   explorer_rank TEXT NOT NULL DEFAULT 'novato',
+  xp INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE UNIQUE INDEX idx_users_display_name ON users(display_name);

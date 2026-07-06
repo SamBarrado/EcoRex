@@ -5,6 +5,10 @@ import { onRequestPost } from './index';
 function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
   const calls: { sql: string; args: unknown[] }[] = [];
+  let insertDone = false;
+  const legacyOwned = (overrides.ownedPhases as string[] | undefined) ?? [];
+  const phasesBefore = (overrides.ownedPhasesBefore as string[] | undefined) ?? legacyOwned;
+  const phasesAfter = (overrides.ownedPhasesAfter as string[] | undefined) ?? phasesBefore;
 
   const db = {
     prepare(sql: string) {
@@ -15,6 +19,7 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
         },
         async first<T>() {
           if (sql.includes('FROM sessions')) return sessionRow as unknown as T;
+          if (sql.includes('SELECT xp FROM users')) return ((overrides.xp as { xp: number } | undefined) ?? { xp: 0 }) as unknown as T;
           return (overrides.first as T) ?? null;
         },
         async all<T>() {
@@ -31,9 +36,16 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
           if (sql.includes('ORDER BY discovered_at ASC')) {
             return { results: (overrides.oldestRows ?? []) as T[] };
           }
+          if (sql.includes('DISTINCT phase')) {
+            const phases = insertDone ? phasesAfter : phasesBefore;
+            return { results: phases.map((phase) => ({ phase })) as T[] };
+          }
           return { results: [] as T[] };
         },
         async run() {
+          if (sql.includes('INSERT INTO discoveries')) {
+            insertDone = true;
+          }
           return { meta: { last_row_id: 42 } };
         },
       };
@@ -142,5 +154,91 @@ describe('POST /api/fuse', () => {
     expect(body.commonName).toBe('Rex de Fuego');
     const updateCalls = db.calls.filter((c) => c.sql.includes('SET consumed_at'));
     expect(updateCalls.length).toBeGreaterThan(0);
+  });
+
+  it('includes an xp block with rarity + fusion bonus xp in the response', async () => {
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+      xp: { xp: 0 },
+      ownedPhases: [],
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number } };
+    expect(body.xp.xpGained).toBe(10 + 50); // registrada rarity xp + fusion bonus
+  });
+
+  it('adds the species-complete bonus when this fusion finishes the set', async () => {
+    // Before this fusion the user only owns calma; fusing now produces the
+    // exceso discovery — but eco is already owned, so this fusion is what
+    // completes the calma+exceso+eco set for the first time.
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+      xp: { xp: 0 },
+      ownedPhasesBefore: ['calma', 'eco'],
+      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number } };
+    expect(body.xp.xpGained).toBe(10 + 50 + 200); // rarity + fusion bonus + species-complete bonus
+  });
+
+  it('does NOT re-award the species-complete bonus when the species was already complete before this fusion', async () => {
+    // The user already owns calma+exceso+eco for this species before fusing
+    // again (e.g. a later batch of 5 duplicates). The set was already
+    // complete before this action, so no bonus should be granted again.
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+      xp: { xp: 0 },
+      ownedPhasesBefore: ['calma', 'exceso', 'eco'],
+      ownedPhasesAfter: ['calma', 'exceso', 'eco'],
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number } };
+    expect(body.xp.xpGained).toBe(10 + 50); // rarity + fusion bonus only, no species-complete bonus
   });
 });
