@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Batch-generates species anchor art: Calma via /v1/images/generations from a
+// Batch-generates species anchor art: Balance via /v1/images/generations from a
 // spec sheet, then Exceso and Eco via /v1/images/edits (image-to-image) over
-// the Calma anchor, so all three phases stay visually consistent per species
+// the Balance anchor, so all three phases stay visually consistent per species
 // as described in docs/lore_world_bible_ecorex_v4.md §15.2-15.4.
 //
 // Usage:
@@ -15,8 +15,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const PHASE_MODIFIERS = {
-  calma: 'forma estable, postura serena, iluminación natural suave',
-  exceso: 'forma intensificada, postura agresiva, tensión muscular visible, brillo/grietas de energía más intensas en los rasgos elementales/cristalinos ya establecidos de la especie (si los tiene) y en ojos, sin convertir el resto del cuerpo en cristal si no lo era ya en Calma',
+  balance: 'forma estable, postura serena, iluminación natural suave',
+  exceso: 'forma intensificada, postura agresiva, tensión muscular visible, brillo/grietas de energía más intensas en los rasgos elementales/cristalinos ya establecidos de la especie (si los tiene) y en ojos, sin convertir el resto del cuerpo en cristal si no lo era ya en Balance',
 };
 
 // Eco is the Fractae's emotion pushed to its absolute extreme — NOT a fixed
@@ -36,7 +36,7 @@ const FRACTAE_EXTREME = {
   Curiosidad: 'su obsesión por comprender la disuelve en incontables fragmentos que siguen buscando respuestas por separado, cada uno indagando su propia pregunta',
 };
 
-const PHASES = ['calma', 'exceso', 'eco'];
+const PHASES = ['balance', 'exceso', 'eco'];
 
 // Widescreen landscape, matching the manually-designed anchors (e.g. the
 // T-Rex Imperator reference is 1536x1024) — not the default square format.
@@ -74,7 +74,7 @@ const BASE_STYLE = `GRAPHIC ANIME/MANGA-INFLUENCED ILLUSTRATION with heavy black
 
 // Real figure/ground separation technique, not a cheap glow-outline hack:
 // value contrast, atmospheric perspective and texture-density differences
-// between subject and environment. Shared by Calma, Exceso and Eco because
+// between subject and environment. Shared by Balance, Exceso and Eco because
 // image-to-image edits tend to erode this separation over successive passes.
 const FIGURE_GROUND_SEPARATION = `Achieve figure/ground separation through proper illustration technique: the creature is the sharpest, highest-contrast, most-detailed element in the frame. Push the background back with atmospheric perspective — softer edges, lower contrast, slightly desaturated and hazier the further back it goes. Do not render the background environment (rock, foliage, water, sky) with the same fine detail density as the creature's surface — it should read as a distinct, receding painted layer behind the subject, not competing with it for detail or contrast. The creature's silhouette must be immediately readable against its surroundings at a glance.`;
 
@@ -96,7 +96,7 @@ function buildAnchorPrompt(spec) {
     `Fixed physical traits: ${spec.traits}.`,
     `Base color palette: ${spec.palette}.`,
     `Distinctive silhouette: ${spec.silhouette}.`,
-    `Phase (Calma, baseline/stable form): ${PHASE_MODIFIERS.calma}.`,
+    `Phase (Balance, baseline/stable form): ${PHASE_MODIFIERS.balance}.`,
   ].join(' ');
 }
 
@@ -122,7 +122,7 @@ function buildEcoPrompt(spec) {
     `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style: ${spec.scientificName} ("${spec.commonName}").`,
     `This is the Eco phase: the ${spec.fractae.name} (${spec.fractae.latin}) Fractae pushed to its absolute emotional extreme in this specific creature. The archetype of that extreme: ${extreme}.`,
     `Manifest that extreme specifically through THIS creature's own anatomy and habitat (${spec.habitat}) and physical traits (${spec.traits}) — do NOT default to a generic universal effect (no plain "translucent ghost" treatment applies to all species alike).`,
-    `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Exceso. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Calma and Exceso (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
+    `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Exceso. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Balance and Exceso (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
     `Reason about what mechanism this particular creature and environment would realistically produce, staying within the graphic illustration style (do not turn the whole body to crystal/glass unless that is already one of its fixed physical traits): an aquatic or semi-aquatic species should express it through water/steam/pressure/bioluminescence rather than dry fire or ash; a burrowing or heavily armored species might express it through earth, mud, or collapsing terrain; a flying or feathered species might express it through air, wind-scatter, or storm; a large land predator might express it through fire, ember, or scorched ground — pick whatever fits this species, not a template.`,
     `Keep the composition clean and restrained, not overloaded: the creature's silhouette must stay the clear, legible focal point. Use a moderate, controlled amount of environmental effect/particles concentrated where it matters rather than filling the whole frame with scattered debris or chaotic noise. Less is more — one or two clear focal details communicating the extreme beat a busy, cluttered image.`,
     TOWARD_VIEWER_ENGAGEMENT,
@@ -192,7 +192,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const specFile = args._[0];
   if (!specFile) {
-    console.error('Uso: node scripts/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases calma,exceso,eco]');
+    console.error('Uso: node scripts/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases balance,exceso,eco]');
     process.exit(1);
   }
 
@@ -214,17 +214,17 @@ async function main() {
     console.log(`\n=== ${spec.commonName} (${spec.scientificName}) ===`);
 
     let anchorBytes;
-    if (phases.includes('calma')) {
-      console.log('  Generando ancla Calma...');
+    if (phases.includes('balance')) {
+      console.log('  Generando ancla Balance...');
       const b64 = await generateAnchor(buildAnchorPrompt(spec), apiKey);
       anchorBytes = Buffer.from(b64, 'base64');
-      await writeFile(path.join(speciesDir, 'calma.png'), anchorBytes);
-      console.log(`  -> ${speciesDir}/calma.png`);
+      await writeFile(path.join(speciesDir, 'balance.png'), anchorBytes);
+      console.log(`  -> ${speciesDir}/balance.png`);
     } else {
-      // Reusing an already-curated Calma anchor as the base for edits.
-      const existing = path.join(speciesDir, 'calma.png');
+      // Reusing an already-curated Balance anchor as the base for edits.
+      const existing = path.join(speciesDir, 'balance.png');
       if (!existsSync(existing)) {
-        console.error(`  Falta ${existing} para generar otras fases sin regenerar Calma. Sáltate --phases o genera Calma primero.`);
+        console.error(`  Falta ${existing} para generar otras fases sin regenerar Balance. Sáltate --phases o genera Balance primero.`);
         continue;
       }
       anchorBytes = await readFile(existing);
@@ -232,7 +232,7 @@ async function main() {
 
     for (const phase of ['exceso', 'eco']) {
       if (!phases.includes(phase)) continue;
-      console.log(`  Generando ${phase} (image-to-image sobre ancla Calma)...`);
+      console.log(`  Generando ${phase} (image-to-image sobre ancla Balance)...`);
       const prompt = phase === 'exceso' ? buildExcesoPrompt(spec) : buildEcoPrompt(spec);
       const b64 = await generateVariant(anchorBytes, prompt, apiKey);
       await writeFile(path.join(speciesDir, `${phase}.png`), Buffer.from(b64, 'base64'));
