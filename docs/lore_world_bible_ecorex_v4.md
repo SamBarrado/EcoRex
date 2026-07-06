@@ -213,7 +213,7 @@ Navegación por tab bar inferior de 4 secciones:
 - Recordatorio de progreso ("Llevas 3 especies. Te faltan 2 de esta tanda").
 - Al descubrir: animación de revelación a pantalla completa → momento de compartir. **Ya no hay email-gate post-reveal** — el email se captura en el registro de cuenta, no en el momento de la descarga (ver sección 17.2).
 
-**2. Mi Colección (el Pokédex)**
+**2. EcoDex (el Pokédex)**
 - Grid de especies activas del bestiario.
 - No descubiertas → silueta misteriosa.
 - Descubiertas → imagen ancla canónica + indicador de fases obtenidas (Calma/Exceso/Eco).
@@ -360,6 +360,8 @@ Generar Calma directamente por texto vía la API (`images/generations`) es **poc
 
 **Pivote de estilo visual — de "criatura de cristal" a "ilustración gráfica tipo anime/TCG" (validado en esta sesión, sustituye el estilo anterior):** el estilo "concept-art pintado con escamas facetadas de cristal" se abandona. A partir de mockups de cartas de referencia aprobados por el usuario, el estilo objetivo es **ilustración gráfica de línea de tinta gruesa, estilo anime/manga o carta TCG (Magic/Pokémon)**: contorno de tinta negra marcado en la silueta Y en el borde de cada escama/placa individual, relleno de color en bloques semi-planos tipo cel-shading (2-3 tonos por superficie: sombra/medio/luz, no degradados fotográficos continuos), brillo especular reducido al mínimo (superficies mate/pintadas, no brillantes ni "mojadas"). El brillo/grietas de energía del color del Fractae ya NO se aplican al cuerpo entero por defecto — solo donde el tema lo justifique (ej. grietas de lava en una especie ígnea) o sobre rasgos fijos ya definidos como cristalinos en la ficha-spec (ej. una gorguera de cristal). El resto de la piel/escamas debe ser material de criatura natural, con el mismo tratamiento gráfico de línea gruesa. Corrección iterativa: el primer intento de estilo "naturalista/pictórico" salió demasiado fotorrealista (render 3D/CGI); el ajuste real no era "menos cristal" sino "más línea de tinta gráfica y menos brillo/degradado fotográfico". Aplicado en `BASE_STYLE` y `PHASE_MODIFIERS.exceso` de `scripts/generate-species-art.mjs`.
 
+**Corrección de pose plana de perfil (validado en esta sesión):** las tres fases estaban resultando en una silueta de cuerpo entero de perfil, casi como una lámina de referencia zoológica — correcta en anatomía y estilo, pero sin dinamismo ni conexión con el jugador. La criatura debe estar **actuando hacia el espectador**: ángulo de tres cuartos o más confrontacional (no perfil plano), mirada/lenguaje corporal orientados hacia cámara, realizando su acción en dirección al espectador. Añadido como bloque compartido `TOWARD_VIEWER_ENGAGEMENT` en `scripts/generate-species-art.mjs` y `generate-species-art-layered.mjs` (en el flujo en capas, el recorte sigue posicionándose hacia el lado del encuadre que deja libre el fondo, pero el ángulo/pose en sí ya no es de perfil plano), y como párrafo aparte en el prompt manual de Calma (sección 15.4.2).
+
 #### 15.4.2 Prompt maestro para generar Calma a mano
 
 ```
@@ -388,6 +390,17 @@ imponente apoyada sobre el terreno propio de su hábitat (roca, agua, barro, ram
 arena... lo que corresponda), entorno completo y dramático coherente con el hábitat, pintado en
 el mismo estilo gráfico, con profundidad real (primer plano/plano medio/fondo). Sin texto, sin
 marcas de agua, sin marco de carta.
+
+ACTUANDO HACIA EL ESPECTADOR (obligatorio): la criatura NO puede ser una silueta plana de
+cuerpo entero de perfil (tipo lámina de museo o sprite de ciclo de andar) — eso se lee como
+estática/sin vida por muy dramática que sea la luz. Usa un ángulo de tres cuartos o un ángulo de
+cámara más confrontacional/dinámico (ligeramente contrapicado, o un ángulo que muestre
+profundidad del cuerpo en vez de una elevación lateral plana). La mirada y el lenguaje corporal
+de la criatura deben orientarse hacia el espectador/cámara, como si reaccionara a la presencia
+del jugador — mirando directamente hacia fuera del encuadre, embistiendo hacia cámara, o
+realizando su acción (rugir, acechar, retraerse) en dirección al espectador en vez de en
+paralelo al plano de la imagen. Debe transmitir peso y movimiento reales, no una postura
+posada/inerte.
 
 SEPARACIÓN FIGURA/FONDO (obligatorio): la criatura debe ser el elemento más nítido, de mayor
 contraste y más detallado del cuadro. Aleja el fondo con perspectiva atmosférica — bordes más
@@ -428,6 +441,31 @@ Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBR
 - `habitatSlug`: campo corto opcional en la ficha-spec (ej. `"volcanico"`) para nombrar la carpeta de fondo compartido; si no está presente, se deriva con `slugify(habitat)` (puede dar nombres de carpeta largos si el texto de hábitat es descriptivo — se recomienda añadir `habitatSlug` explícito para especies que deban compartir fondo).
 
 **Pendiente de decidir/documentar en el futuro:** cómo se resuelve exactamente la compra en la app (¿la especie referencia un `habitatSlug` en el schema para saber qué fondo usar, o cada `species_phase_anchors` guarda dos URLs — una de recorte y otra de fondo?) — de momento el schema (`species_phase_anchors.image_url`, campo único) sigue pensado para el flujo de escena plana; adaptar el schema a dos capas queda fuera del alcance de esta sesión.
+
+#### 15.4.4 Catálogo fijo de hábitats canónicos (`habitatSlug`, validado en esta sesión)
+
+El texto libre del campo `habitat` de cada ficha-spec (redactado por Claude, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
+
+| `habitatSlug` | Nº especies (lote actual) | Descripción de diseño |
+|---|---|---|
+| `bosque-abierto-templado` | 16 | Bosque abierto/de coníferas, luz de día templada, claros entre árboles |
+| `matorral-arido` | 9 | Matorral semiárido, terreno reseco y agrietado, vegetación escasa |
+| `riberas-humedales` | 7 | Riberas de río, deltas y humedales fluviales, agua en calma, vegetación densa |
+| `desierto-dunas` | 6 | Desierto de dunas, cielo despejado, calor visible |
+| `pantano-oscuro` | 3 | Pantano/humedal boscoso brumoso y oscuro — para especies de Miedo/Asco (terror, putrefacción) |
+| `pantano-dorado` | 3 | Pantano/marisma al atardecer, aguas estancadas doradas, luces flotantes — para especies de Sorpresa/Confianza |
+| `llanura-abierta` | 3 | Llanura abierta/sabana semiárida, horizonte despejado |
+| `costa-litoral` | 2 | Llanura costera o isla, acantilados, mar de fondo |
+| `bosque-boreal-frio` | 2 | Bosque boreal/polar nevado, luz fría, clima gélido |
+| `volcanico` | 1 | Tierras volcánicas y páramos de ceniza en erupción permanente |
+| `valle-helado-cristal` | 1 | Valle montañoso helado, cascadas, cuevas de cristal, pterosaurios |
+| `oceano-profundo` | 1 | Mar profundo/fosa oceánica, oscuridad abisal |
+
+**Nota sobre `pantano-oscuro` / `pantano-dorado` (corregido en esta sesión):** un primer clustering automático agrupó las 6 especies de pantano en un único `pantano-crepuscular`, pero el terreno compartido escondía estados de ánimo (y Fractae) muy distintos — Miedo/Asco (terror, putrefacción) frente a Sorpresa/Confianza (asombro dorado). Un solo fondo por bioma habría forzado el mismo mood visual en especies que narrativamente piden lo contrario. Se dividió en dos sub-hábitats con el mismo terreno base pero paleta/luz de diseño distinta.
+
+**Con 3 fases por hábitat, esto implica ~36 fondos totales para cubrir las 54 especies actuales** (en vez de 54×3=162 si se generase uno por especie) — ahorro de coste y consistencia visual entre especies del mismo bioma.
+
+`habitatSlug` ya está rellenado en las 54 fichas de `scripts/lote.json` (y sincronizado en `scripts/species.wave1.json`). Al añadir especies nuevas, hay que asignarles uno de estos 12 slugs existentes (reutilizar, no crear uno nuevo salvo que el hábitat **y** el mood narrativo sean genuinamente distintos a los ya cubiertos).
 
 ### 15.5 Estrategia de lanzamiento: estado real (corregido en v4)
 

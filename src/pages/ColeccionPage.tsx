@@ -50,7 +50,7 @@ export default function ColeccionPage() {
     <div className="page">
       <h1 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
         <img src="/icons/album.png" alt="" style={{ width: 40, height: 40, objectFit: "contain" }} />
-        Mi Álbum
+        EcoDex
       </h1>
       {error && (
         <>
@@ -73,8 +73,12 @@ export default function ColeccionPage() {
           <button
             onClick={() => setPhaseFilter(null)}
             style={{
-              background: phaseFilter === null ? "#3fae5a" : "#142218",
+              background:
+                phaseFilter === null
+                  ? "linear-gradient(90deg, #3fae5a, #4fa9e0)"
+                  : "rgba(255, 255, 255, 0.06)",
               color: phaseFilter === null ? "#06120a" : "#f2f6f3",
+              boxShadow: phaseFilter === null ? undefined : "none",
               flexShrink: 0,
             }}
           >
@@ -85,8 +89,12 @@ export default function ColeccionPage() {
               key={phase}
               onClick={() => setPhaseFilter(phase)}
               style={{
-                background: phaseFilter === phase ? "#3fae5a" : "#142218",
+                background:
+                  phaseFilter === phase
+                    ? "linear-gradient(90deg, #3fae5a, #4fa9e0)"
+                    : "rgba(255, 255, 255, 0.06)",
                 color: phaseFilter === phase ? "#06120a" : "#f2f6f3",
+                boxShadow: phaseFilter === phase ? undefined : "none",
                 flexShrink: 0,
                 textTransform: "capitalize",
               }}

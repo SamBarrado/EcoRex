@@ -26,6 +26,7 @@ export interface AuthUser {
   id: number;
   email: string;
   display_name: string;
+  needs_username_setup?: boolean;
 }
 
 export function register(body: { email: string; password: string; display_name: string }) {
@@ -38,6 +39,13 @@ export function register(body: { email: string; password: string; display_name: 
 export function login(body: { email: string; password: string }) {
   return request<{ user: AuthUser }>("/api/auth/login", {
     method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function setUsername(body: { display_name: string }) {
+  return request<{ user: AuthUser }>("/api/auth/username", {
+    method: "PATCH",
     body: JSON.stringify(body),
   });
 }

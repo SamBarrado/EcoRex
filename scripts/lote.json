@@ -11,7 +11,8 @@
     "silhouette": "Bípedo masivo y encorvado hacia adelante, con brazos tensos y mandíbula perpetuamente abierta; postura de tensión constante, como resorte a punto de soltarse",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisa, la tierra arde en resentimiento. Es la ira del mundo hecha carne y fuego, incapaz de olvidar cada herida.",
-    "habitat": "llanuras y bosques semiáridos costeros de Norteamérica, depredador terrestre ápice"
+    "habitat": "llanuras y bosques semiáridos costeros de Norteamérica, depredador terrestre ápice",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Giganotosaurus furialis",
@@ -25,7 +26,8 @@
     "silhouette": "Cuadrúpedo masivo y bajo de centro de gravedad, con cabeza levemente erguida y hombros prominentes que irradian amenaza contenida.",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde el Fractae de la Ira toma forma de carne y hueso, la tierra tiembla bajo el peso de la venganza hecha bestia, y el fuego arde sin llama en sus ojos.",
-    "habitat": "llanuras áridas y matorrales de Sudamérica, cazador terrestre en manada"
+    "habitat": "llanuras áridas y matorrales de Sudamérica, cazador terrestre en manada",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Spinosaurus horrificus",
@@ -39,7 +41,8 @@
     "silhouette": "Cuadrúpedo bajo y masivo, con la vela dorsal como cresta amenazante; postura depredadora deplegada, como si acechara permanentemente desde la penumbra.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las aguas profundas del Fractae Miedo nada el Espinodonte, no cazador sino colector: cada terror que absorbe engrosa su vela, cada grito amplifica su zumbido, cada sombra que proyecta es un susurro de pánico hecho carne.",
-    "habitat": "ríos y deltas pantanosos del norte de África, semi-acuático, nadador y pescador"
+    "habitat": "ríos y deltas pantanosos del norte de África, semi-acuático, nadador y pescador",
+    "habitatSlug": "pantano-oscuro"
   },
   {
     "scientificName": "Allosaurus incendium",
@@ -53,7 +56,8 @@
     "silhouette": "Bípedo de postura agresiva, cuello arqueado hacia adelante, cola elevada y rígida como látigo.",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisa Quijada Escarlata, la tierra tiembla bajo la ira pura; su rugido quema el aire, y sus colmillos hambrientos conocen sólo la sed de dominio.",
-    "habitat": "llanuras y bosques abiertos de Norteamérica jurásica"
+    "habitat": "llanuras y bosques abiertos de Norteamérica jurásica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Carnotaurus furibundus",
@@ -67,7 +71,8 @@
     "silhouette": "Cuadrúpedo robusto y bajo, con centro de masa adelantado; cuello corto y musculoso inclinado hacia delante en actitud de embestida permanente.",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Toro Ardiente no carga por hambre, sino por la sed insaciable de su propia furia—cada embestida un grito silencioso de la ira primordial encarnada.",
-    "habitat": "desiertos y matorrales áridos de la Patagonia"
+    "habitat": "desiertos y matorrales áridos de la Patagonia",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Baryonyx timidus",
@@ -81,7 +86,8 @@
     "silhouette": "Cuerpo bajo y tenso, posturas defensivas encorsetadas, garras delanteras prominentes en actitud de retaguardia, cuello recogido hacia atrás.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las penumbras del terror primordial acecha el Garra Púrpura, cuyo pavor es tan visceral que tiñe su propia carne del color del miedo manifestado.",
-    "habitat": "riberas de ríos y humedales de Europa, semi-acuático, pescador de orillas"
+    "habitat": "riberas de ríos y humedales de Europa, semi-acuático, pescador de orillas",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Albertosaurus furibundus",
@@ -95,7 +101,8 @@
     "silhouette": "Bipedal depredador, torso inclinado hacia adelante con cola arqueada en tensión constante, brazos cortos pero tensionados como resortes",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Tirano Bermejo es la rabia pura desencadenada: donde pisotea, la tierra arde; donde ruge, los huesos tiemblan. Su sed de conflicto es insaciable, su furia la única verdad.",
-    "habitat": "bosques templados costeros de Norteamérica"
+    "habitat": "bosques templados costeros de Norteamérica",
+    "habitatSlug": "costa-litoral"
   },
   {
     "scientificName": "Ceratosaurus pavonius",
@@ -109,7 +116,8 @@
     "silhouette": "Depredador bípedo robusto y agachado, cuerpo contraído como si acechara en la penumbra, cabeza baja y lista para el ataque.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.",
-    "habitat": "riberas boscosas y pantanos del Jurásico norteamericano"
+    "habitat": "riberas boscosas y pantanos del Jurásico norteamericano",
+    "habitatSlug": "pantano-oscuro"
   },
   {
     "scientificName": "Acrocanthosaurus iratus",
@@ -123,7 +131,8 @@
     "silhouette": "Bípedo musculoso y tenso, inclinado hacia adelante con el torso hundido y la cola levantada como arma, postura perpetuamente lista para embestida",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde la Ira cristaliza en carne, nace el Espina Roja: un corazón de furia que pulsa contra costillas de piedra, condenado a devorar lo que su propia ira ya ha destruido",
-    "habitat": "llanuras aluviales y bosques de Norteamérica"
+    "habitat": "llanuras aluviales y bosques de Norteamérica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Yutyrannus pavidus",
@@ -137,7 +146,8 @@
     "silhouette": "Postura encogida y defensiva, cuello retractado en arco constante, cabeza baja y girada en vigilia permanente, cola arqueada en tensión defensiva.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "El Tiranofobia no acecha presas; es el acecho hecho carne, la pesadilla que respira en las sombras del bosque antiguo, condenado a huir eternamente del miedo que él mismo encarna.",
-    "habitat": "bosques fríos y nevados del noreste de Asia"
+    "habitat": "bosques fríos y nevados del noreste de Asia",
+    "habitatSlug": "bosque-boreal-frio"
   },
   {
     "scientificName": "Velocistupornis explicitus",
@@ -151,7 +161,8 @@
     "silhouette": "Cuerpo compacto y tenso, postura de ataque perpetuo con patas traseras en arco, cabeza adelantada en vigilancia constante.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el instante antes del asombro, cuando la presa percibe su sombra, nace el Asaltador: manifestación pura de la Sorpresa que desmorona certezas.",
-    "habitat": "desiertos y campos de dunas de Mongolia"
+    "habitat": "desiertos y campos de dunas de Mongolia",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Deinonychus stupefactus",
@@ -165,7 +176,8 @@
     "silhouette": "Postura erguida y tensa, peso adelantado sobre las patas traseras, cabeza giratoria con cuello flexible, brazos largos listos para atrapar, cola arqueada como sensor.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En los momentos previos al ataque, el Raptor del Velo emite un destello naranja que congela el tiempo—sus presas nunca saben si lo que ven es real o un espejismo de su propio miedo.",
-    "habitat": "bosques templados de Norteamérica, cazador en manada"
+    "habitat": "bosques templados de Norteamérica, cazador en manada",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Utahraptor incandescens",
@@ -179,7 +191,8 @@
     "silhouette": "Bípedo musculoso y bajo, postura de depredador acechante, cola rigida como contrapeso de combate.",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisó el Desgarra-Llama, la tierra tiembla de rabia; su grito es el último susurro antes que el mundo se quiebre en ira.",
-    "habitat": "desiertos y dunas del oeste de Norteamérica"
+    "habitat": "desiertos y dunas del oeste de Norteamérica",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Troodon sapientis",
@@ -193,7 +206,8 @@
     "silhouette": "Postura bípeda ágil y vigilante, cabeza inclinada hacia adelante, brazos cortos pero alertas, equilibrio perfecto sobre una cola arqueada",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los bosques primigenios, donde la ignorancia devora a los necios, acecha quien pregunta en silencio: el Ígneo Inquisidor, cuya mirada traspasa la oscuridad buscando verdades ocultas",
-    "habitat": "bosques boreales y polares, cazador nocturno de clima frío"
+    "habitat": "bosques boreales y polares, cazador nocturno de clima frío",
+    "habitatSlug": "bosque-boreal-frio"
   },
   {
     "scientificName": "Compsognathus stupefactus",
@@ -207,7 +221,8 @@
     "silhouette": "Silueta bípeda esbelta y tensa, con cuerpo inclinado hacia adelante en postura de alerta perpetua; cola arqueada como látigo invisible.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el instante antes de que el depredador sea visto, el Destello Furtivo ya ha desaparecido, dejando solo la estela naranja del asombro que precede a la comprensión.",
-    "habitat": "islas costeras mediterráneas del Jurásico"
+    "habitat": "islas costeras mediterráneas del Jurásico",
+    "habitatSlug": "costa-litoral"
   },
   {
     "scientificName": "Dilophosaurus fastidiosus",
@@ -221,7 +236,8 @@
     "silhouette": "Cuadrúpedo depredador de andar arrastrado y lento, con cabeza agachada y crestas erectas que lo hacen parecer deforme.",
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "El Nauseador Bicrestado merodea los estuarios podridos donde ni siquiera la carroña prospera; su presencia marchita las plantas y envenena las aguas, pues encarna el rechazo absoluto a toda forma viviente.",
-    "habitat": "bosques húmedos y riberas del Jurásico temprano"
+    "habitat": "bosques húmedos y riberas del Jurásico temprano",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Oviraptor inquisitor",
@@ -235,7 +251,8 @@
     "silhouette": "Postura erguida y ágil, con cuello arqueado en actitud de exploración, garras siempre en movimiento, cola tensionada como antena de investigación.",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "Donde el Oviraptor inquisitor rasguña la tierra, los secretos antiguos tiemblan bajo la superficie, y cada pregunta sin respuesta lo consume como una llama lila que nunca se extingue.",
-    "habitat": "desiertos de Mongolia, anidando en dunas"
+    "habitat": "desiertos de Mongolia, anidando en dunas",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Therizinosaurus fastidiosus",
@@ -249,7 +266,8 @@
     "silhouette": "Cuadrúpeda erguida con postura defensiva, garras delanteras proyectadas hacia el suelo en actitud de abrazo mortífero, cuello curvado en eternos espasmos de repugnancia.",
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde pisó la Podridora, el ecosistema se retuerce en asco puro; cada exhalación es una maldición verde que consume lo que fue vivo, dejando solo el olor del rechazo absoluto.",
-    "habitat": "bosques húmedos y pantanosos de Asia central"
+    "habitat": "bosques húmedos y pantanosos de Asia central",
+    "habitatSlug": "pantano-oscuro"
   },
   {
     "scientificName": "Gallimimus stupefactus",
@@ -263,7 +281,8 @@
     "silhouette": "Bípedo ágil con postura erguida e inquieta, cuello elongado y cabeza giratoria constante, silueta tensa lista para la reacción instantánea.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En el susurro antes del trueno, cuando la calma rompe su velo, el Fulgor Atónito emerge: testigo de lo inexplicable, guardián del umbral entre lo conocido y lo imposible.",
-    "habitat": "llanuras abiertas y semiáridas de Mongolia"
+    "habitat": "llanuras abiertas y semiáridas de Mongolia",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Coelophysis timidus",
@@ -277,7 +296,8 @@
     "silhouette": "Bipedal esbelto y tenso, con la cabeza gacha en postura defensiva permanente, garras delanteras encogidas contra el cuerpo como si contuviera un grito.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En la penumbra de los bosques antiguos acecha el Pavor Nocturno, cuyo llanto silencioso desgarra los velos entre mundos, manifestación viviente del terror que acecha en la oscuridad.",
-    "habitat": "desiertos y llanuras áridas del Triásico"
+    "habitat": "desiertos y llanuras áridas del Triásico",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Brachiosaurus fidei",
@@ -291,7 +311,8 @@
     "silhouette": "Torre cuadrúpeda de postura monumental, cuello arqueado hacia lo alto en actitud de vigilancia eterna, cuerpo masivo pero elegantemente proporcionado.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En su sombra los débiles encuentran raíces; donde posa sus patas, la tierra recuerda su propósito.",
-    "habitat": "bosques abiertos de coníferas, ramoneador de copas altas"
+    "habitat": "bosques abiertos de coníferas, ramoneador de copas altas",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Diplodocus tristitiae",
@@ -305,7 +326,8 @@
     "silhouette": "Silueta vertical y vulnerable, encorvada hacia la tierra como si el peso del mundo presionara su columna vertebral; postura de genuflexión perpetua.",
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "En las marismas olvidadas camina el Cuellilargo Doliente, cuyo cuello toca las aguas de lágrimas antiguas, portador de un dolor tan profundo que incluso la tierra llora a su paso.",
-    "habitat": "llanuras aluviales y riberas del Jurásico norteamericano"
+    "habitat": "llanuras aluviales y riberas del Jurásico norteamericano",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Apatosaurus fidus",
@@ -319,7 +341,8 @@
     "silhouette": "Cuadrúpedo colosal de cuello vertical y elevado, postura serena y gravitante, centro de masa bajo pero presencia monumental.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisó el Titanoguía, los errantes encontraron sendero; su verde verdad marca las rutas que jamás fallan a quienes confían ciegamente.",
-    "habitat": "llanuras semiáridas del Jurásico norteamericano"
+    "habitat": "llanuras semiáridas del Jurásico norteamericano",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Argentinosaurus fidei",
@@ -333,7 +356,8 @@
     "silhouette": "Cuadrúpedo colosal con cuello ascendente, centro de masa bajo y presencia inquebrantable, como pilar vivo del mundo",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde camina el Titán de Verdad, los cimientos del mundo se asientan con certeza absoluta, y ninguna sombra de duda osa rondar sus pasos.",
-    "habitat": "llanuras y bosques abiertos de Sudamérica cretácica"
+    "habitat": "llanuras y bosques abiertos de Sudamérica cretácica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Brontosaurus luminifer",
@@ -347,7 +371,8 @@
     "silhouette": "Cuadrúpedo colosal con cuello erguido y arqueado, postura majestuosa que inspira reverencia, centro de gravedad bajo y poderoso",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde el Titán Áureo posa su paso, la tierra absorbe su gozo y brota luz desde las raíces del mundo.",
-    "habitat": "llanuras aluviales y bosques abiertos de Norteamérica jurásica"
+    "habitat": "llanuras aluviales y bosques abiertos de Norteamérica jurásica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Mamenchisaurus tristitiae",
@@ -361,7 +386,8 @@
     "silhouette": "Cuadrúpedo masivo con cuello verticalmente desproporcionado que desciende como un arco de dolor, cuerpo bajo y pesado anclado al suelo.",
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "Donde pisó el Cuellilargo del Lamento, la esperanza se convirtió en rocío nocturno; su cuello, un puente entre los vivos y el abismo de lo perdido.",
-    "habitat": "riberas y humedales fluviales de Asia jurásica"
+    "habitat": "riberas y humedales fluviales de Asia jurásica",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Titanosaurus fidus",
@@ -375,7 +401,8 @@
     "silhouette": "Colosal y erguido, cuello sinuoso ascendente, extremidades masivas plantadas como raíces inquebrantables, centro de gravedad bajo pero presencia vertical dominante.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisa el Coloso, la tierra sostiene a quienes dudan, pues su convicción es tan antigua como las montañas que pisó.",
-    "habitat": "llanuras tropicales y bosques abiertos de India"
+    "habitat": "llanuras tropicales y bosques abiertos de India",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Amargasaurus tremefactus",
@@ -389,7 +416,8 @@
     "silhouette": "Cuadrúpedo robusto de cuello arqueado hacia atrás, con velas dorsales erguidas que lo hacen parecer siempre a punto de colapsar.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "Su doble corona de púrpura susurra los nombres de aquellos que nunca verán el próximo amanecer.",
-    "habitat": "matorrales áridos y semidesérticos de la Patagonia"
+    "habitat": "matorrales áridos y semidesérticos de la Patagonia",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Camarasaurus luminaris",
@@ -403,7 +431,8 @@
     "silhouette": "Cuadrúpedo masivo y erguido, cuello largo y arqueado hacia el cielo, lomos elevados que crean una silueta de montaña radiante",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisó el Radiante Colosal, la tierra recordó la alegría de los primeros días; su cuello toca las nubes como si quisiera compartir la luz que arde en su núcleo.",
-    "habitat": "llanuras semiáridas y bosques abiertos de Norteamérica jurásica"
+    "habitat": "llanuras semiáridas y bosques abiertos de Norteamérica jurásica",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Dreadnoughtus fideianthus",
@@ -417,7 +446,8 @@
     "silhouette": "Cuadrúpedo de cuello vertical y presencia monumental, con centro de gravedad inquebrantable y extremidades como pilares de certidumbre.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde posa su sombra verde, la duda se disuelve; es el coloso que sostiene los cimientos de toda convicción, inmóvil como una verdad absoluta.",
-    "habitat": "bosques templados y llanuras aluviales de la Patagonia cretácica"
+    "habitat": "bosques templados y llanuras aluviales de la Patagonia cretácica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Triceratops fidus",
@@ -431,7 +461,8 @@
     "silhouette": "Postura cuadrúpeda robusta y anclada, cabeza ligeramente elevada con los tres cuernos convergentes, cuerpo compacto y anchísimo.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En las grietas del mundo antiguo, donde los titanes dudan, el Cerúleo Ancla planta su fe como raíces de piedra.",
-    "habitat": "llanuras abiertas y bosques de Norteamérica cretácica"
+    "habitat": "llanuras abiertas y bosques de Norteamérica cretácica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Styracosaurus furibundus",
@@ -445,7 +476,8 @@
     "silhouette": "Cuadrúpedo robusto en postura ofensiva permanente, cabeza ligeramente elevada, volante desplegado en abanico amenazante",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "Donde pisaun los Púas Ardientes, la tierra recuerda el sabor de la cólera sin nombre.",
-    "habitat": "llanuras y bosques abiertos de Norteamérica cretácica"
+    "habitat": "llanuras y bosques abiertos de Norteamérica cretácica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Pentaceratops pavor",
@@ -459,7 +491,8 @@
     "silhouette": "Cuadrúpedo robusto pero tenso, con cuello arqueado hacia atrás y volante expandido como una barrera defensiva permanente.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En los ecos del miedo ancestral camina el Espantacéfalo, cuya sola presencia cristaliza el pánico en el aire nocturno.",
-    "habitat": "llanuras costeras subtropicales de Norteamérica"
+    "habitat": "llanuras costeras subtropicales de Norteamérica",
+    "habitatSlug": "llanura-abierta"
   },
   {
     "scientificName": "Chasmosaurus fidei",
@@ -473,7 +506,8 @@
     "silhouette": "Cuadrúpedo macizo y erguido, con volante cervical desplegado hacia atrás en permanente postura de exposición desarmada.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "En los territorios donde la duda reina, surge Fidei: cuyo volante abierto no es arma, sino promesa viva de que quien se rige por la verdad nunca camina solo.",
-    "habitat": "deltas y llanuras costeras pantanosas"
+    "habitat": "deltas y llanuras costeras pantanosas",
+    "habitatSlug": "pantano-dorado"
   },
   {
     "scientificName": "Protoceratops tristitiae",
@@ -487,7 +521,8 @@
     "silhouette": "Cuadrúpedo compacto y caído, con cuello hundido hacia adelante y grupa baja, como si llevara un peso invisible.",
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "En las grietas del mundo murmura Protoceratops tristitiae, la tristeza hecha carne, cuyo canto mineral resuena en los corazones rotos como el eco de un lamento sin fin.",
-    "habitat": "desiertos y dunas de Mongolia"
+    "habitat": "desiertos y dunas de Mongolia",
+    "habitatSlug": "desierto-dunas"
   },
   {
     "scientificName": "Einiosaurus furiosus",
@@ -501,7 +536,8 @@
     "silhouette": "Cuadrúpedo masivo y agresivo, torso bajo y compacto, cuello corto pero potente, cabeza proyectada al frente con asimetría amenazante",
     "oppositeFractae": "Miedo (Pavor)",
     "lorePhrase": "El Cornífero Rojo embiste cuando la cólera antigua despierta, su cuerno une fuego y hueso en una sola voluntad destructora.",
-    "habitat": "llanuras semiáridas de Norteamérica"
+    "habitat": "llanuras semiáridas de Norteamérica",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Kosmoceratops stupefactus",
@@ -515,7 +551,8 @@
     "silhouette": "Cuadrúpedo macizo con cuello levantado y cabeza ladeada, como si detectara algo invisible; postura de alerta perpetua, ligeramente inestable.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "En los silencios previos a la tormenta, el Centinela emerge—su presencia anuncia lo inesperado, lo que rompe el orden, lo que detiene el aliento de los mundos.",
-    "habitat": "pantanos y llanuras costeras subtropicales"
+    "habitat": "pantanos y llanuras costeras subtropicales",
+    "habitatSlug": "pantano-dorado"
   },
   {
     "scientificName": "Ankylosaurus fidei",
@@ -529,7 +566,8 @@
     "silhouette": "Cuerpo macizo y bajo, compacto como fortaleza viviente, postura inmóvil y monolítica",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisa el Coraza de Fe, la tierra misma se vuelve inquebrantable; su presencia no grita poder, simplemente lo es.",
-    "habitat": "llanuras boscosas de Norteamérica cretácica"
+    "habitat": "llanuras boscosas de Norteamérica cretácica",
+    "habitatSlug": "llanura-abierta"
   },
   {
     "scientificName": "Euoplocephalus nauseabundus",
@@ -543,7 +581,8 @@
     "silhouette": "Cuadrúpedo macizo y bajo, con coraza bulbosa que se arquea como un caparazón enfermo, cola levantada en amenaza tóxica.",
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.",
-    "habitat": "llanuras y bosques abiertos del Cretácico norteamericano"
+    "habitat": "llanuras y bosques abiertos del Cretácico norteamericano",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Nodosaurus tristitiae",
@@ -557,7 +596,8 @@
     "silhouette": "Quadrúpedo macizo y bajo, con cuello ligeramente encorvado hacia adelante como quien carga el peso de las eras.",
     "oppositeFractae": "Alegría (Lumen)",
     "lorePhrase": "Donde pisa el Lamentauro, la tierra recuerda lo que nunca fue; sus pasos son epitafios de esperanzas extinguidas.",
-    "habitat": "llanuras costeras y riberas fluviales"
+    "habitat": "llanuras costeras y riberas fluviales",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Stegosaurus pavescens",
@@ -571,7 +611,8 @@
     "silhouette": "Cuadrúpedo masivo y encorvado, con lomo prominente de placas erizadas y cola arqueada hacia el cielo como un látigo espectral.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "El Púrpura Espinal deambula donde el miedo germina: sus placas brillan como advertencia de los horrores que acechan en la penumbra, y quien lo mira a los ojos descubre sus propios miedos reflejados.",
-    "habitat": "llanuras semiáridas y bosques abiertos del Jurásico"
+    "habitat": "llanuras semiáridas y bosques abiertos del Jurásico",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Kentrosaurus stupefactus",
@@ -585,7 +626,8 @@
     "silhouette": "Cuadrúpedo compacto y defensivo, con silueta angular dominada por una cresta dorsal elevada y cola arqueada lista para la reacción.",
     "oppositeFractae": "Curiosidad (Spes)",
     "lorePhrase": "El Púa del Asombro acecha en las grietas del mundo conocido, su presencia un recordatorio de que incluso lo familiar puede desvelar lo imposible.",
-    "habitat": "sabanas y bosques abiertos del este de África jurásica"
+    "habitat": "sabanas y bosques abiertos del este de África jurásica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Huayangosaurus inquisitus",
@@ -599,7 +641,8 @@
     "silhouette": "Cuadrúpedo ágil y erguido, con postura exploradora; cuello arqueado hacia adelante; crestas dorsales erguidas como antenas vivas.",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.",
-    "habitat": "bosques húmedos del Jurásico temprano de Asia"
+    "habitat": "bosques húmedos del Jurásico temprano de Asia",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Iguanodon luminifer",
@@ -613,7 +656,8 @@
     "silhouette": "Cuadrúpedo robusto con dorso elevado y cola arqueada; postura de tensión contenida, como si irradiase luz desde su núcleo.",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisó, la sombra se disipó; su presencia es el recuerdo del sol que no muere, la risa del mundo antes de caer.",
-    "habitat": "llanuras y humedales de la Europa cretácica"
+    "habitat": "llanuras y humedales de la Europa cretácica",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Parasaurolophus luminifer",
@@ -627,7 +671,8 @@
     "silhouette": "Cuadrúpedo erguido con cuello moderadamente extendido, peso distribuido en miembros posteriores robustos, silueta grácil y equilibrada.",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Su cresta es un faro vivo de dicha primordial, cuyo cántico dorado resuena en las entrañas del mundo para despertar la luz dormida en toda cosa.",
-    "habitat": "bosques ribereños templados de Norteamérica"
+    "habitat": "bosques ribereños templados de Norteamérica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Edmontosaurus fidus",
@@ -641,7 +686,8 @@
     "silhouette": "Cuadrúpedo robusto y simétrico, con cuello erguido y cabeza alta; postura firme y centrada que irradia estabilidad.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "Donde pisó el Custodio Verde, la manada nunca se perdió; su presencia es el pacto entre la tierra y quienes la recorren.",
-    "habitat": "llanuras costeras y deltas de Norteamérica cretácica"
+    "habitat": "llanuras costeras y deltas de Norteamérica cretácica",
+    "habitatSlug": "riberas-humedales"
   },
   {
     "scientificName": "Corythosaurus inquisitor",
@@ -655,7 +701,8 @@
     "silhouette": "Cuadrúpedo ágil con postura erguida del tren anterior, cuello elongado y curvo hacia adelante en actitud exploradora",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los espejos de cristal del mundo dormido camina el Velo, cuya cresta resuena con preguntas que nunca fueron formuladas, buscando las grietas donde anida el conocimiento olvidado.",
-    "habitat": "bosques ribereños templados de Norteamérica"
+    "habitat": "bosques ribereños templados de Norteamérica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Maiasaura fidus",
@@ -669,7 +716,8 @@
     "silhouette": "Cuadrúpedo robusto y macizo, con cuello moderado y cabeza elevada, proyectando firmeza inquebrantable.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "El Custodio Verde protege con su presencia lo que otros tiemblan de perder; su pisada marca el terreno donde renace la fe.",
-    "habitat": "llanuras con colonias de anidación en Norteamérica"
+    "habitat": "llanuras con colonias de anidación en Norteamérica",
+    "habitatSlug": "llanura-abierta"
   },
   {
     "scientificName": "Lambeosaurus luminifer",
@@ -683,7 +731,8 @@
     "silhouette": "Cuadrúpedo robusto de cuello medio, postura erguida con cresta dorsal prominente que domina la silueta",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Donde pisa el Radiante Cresta, la tristeza se disuelve en luz; su canto resonante en la cresta ósea es el latido de la alegría primordial encarnada.",
-    "habitat": "bosques ribereños de Norteamérica cretácica"
+    "habitat": "bosques ribereños de Norteamérica cretácica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Tyrannosaurus imperator",
@@ -697,7 +746,8 @@
     "palette": "rojo y naranja incandescente, negro carbón, vetas doradas oxidadas",
     "silhouette": "bípedo masivo, torso inclinado hacia delante, mandíbula perpetuamente entreabierta, postura de tensión constante",
     "oppositeFractae": "Miedo (Pavor)",
-    "lorePhrase": "Donde pisa el Rex de Fuego, la tierra misma arde de una rabia que nunca se apaga."
+    "lorePhrase": "Donde pisa el Rex de Fuego, la tierra misma arde de una rabia que nunca se apaga.",
+    "habitatSlug": "volcanico"
   },
   {
     "scientificName": "Telmatosaurus mirus",
@@ -711,7 +761,8 @@
     "palette": "dorado, ámbar cálido, violeta crepuscular, reflejos color miel",
     "silhouette": "cuadrúpedo facultativo (puede erguirse en dos patas), cuello curvado hacia arriba, cola larga afilada que se alza al sobresaltarse",
     "oppositeFractae": "Curiosidad (Spes)",
-    "lorePhrase": "Nadie ve venir al Destello del Pantano; solo el reflejo dorado en el agua delata que el asombro ya está sobre ti."
+    "lorePhrase": "Nadie ve venir al Destello del Pantano; solo el reflejo dorado en el agua delata que el asombro ya está sobre ti.",
+    "habitatSlug": "pantano-dorado"
   },
   {
     "scientificName": "Triceratops umbra",
@@ -725,7 +776,8 @@
     "palette": "azul zafiro profundo, violeta glacial, blanco cristalino, plata pálida",
     "silhouette": "cuadrúpedo robusto y de andar pausado, gorguera elevada como una corona que domina la silueta",
     "oppositeFractae": "Alegría (Lumen)",
-    "lorePhrase": "Cada lágrima que cae de su gorguera es un recuerdo que el mundo se niega a soltar."
+    "lorePhrase": "Cada lágrima que cae de su gorguera es un recuerdo que el mundo se niega a soltar.",
+    "habitatSlug": "valle-helado-cristal"
   },
   {
     "scientificName": "Stegosaurus pavor",
@@ -737,7 +789,8 @@
     "traits": "placas dorsales afiladas y translúcidas como esquirlas de obsidiana, cuerpo encorvado y bajo, ojos hundidos que brillan en la oscuridad, cola con púas terminadas en puntas curvas como garras",
     "habitat": "llanuras semiáridas y bosques abiertos del Jurásico, andar pausado en terreno reseco",
     "palette": "morado profundo, negro violáceo, vetas moradas fosforescentes",
-    "silhouette": "cuadrúpedo de espalda arqueada, cabeza baja casi rastrera, placas erguidas como una hilera de sombras verticales"
+    "silhouette": "cuadrúpedo de espalda arqueada, cabeza baja casi rastrera, placas erguidas como una hilera de sombras verticales",
+    "habitatSlug": "matorral-arido"
   },
   {
     "scientificName": "Mosasaurus pavoris",
@@ -751,6 +804,7 @@
     "silhouette": "cuerpo serpentino y alargado propio de un depredador marino, aletas anchas replegadas contra el torso en el acecho, cola ondulante que se pierde en la oscuridad del agua",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "No hace falta ver a las Fauces del Abismo para sentir el pavor: basta con notar cómo el agua deja de moverse a tu alrededor.",
-    "habitat": "mares profundos y fosas oceánicas del Cretácico, depredador ápice que emerge desde la oscuridad sin aviso"
+    "habitat": "mares profundos y fosas oceánicas del Cretácico, depredador ápice que emerge desde la oscuridad sin aviso",
+    "habitatSlug": "oceano-profundo"
   }
 ]

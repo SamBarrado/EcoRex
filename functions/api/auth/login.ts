@@ -38,10 +38,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const user = await env.DB.prepare(
-    "SELECT id, email, password_hash, display_name FROM users WHERE email = ?"
+    "SELECT id, email, password_hash, display_name, needs_username_setup FROM users WHERE email = ?"
   )
     .bind(email)
-    .first<{ id: number; email: string; password_hash: string | null; display_name: string }>();
+    .first<{
+      id: number;
+      email: string;
+      password_hash: string | null;
+      display_name: string;
+      needs_username_setup: number;
+    }>();
 
   if (!user || !user.password_hash || !(await verifyPassword(password, user.password_hash))) {
     return new Response(JSON.stringify({ error: "Invalid credentials" }), {
@@ -55,7 +61,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   return new Response(
     JSON.stringify({
-      user: { id: user.id, email: user.email, display_name: user.display_name },
+      user: {
+        id: user.id,
+        email: user.email,
+        display_name: user.display_name,
+        needs_username_setup: user.needs_username_setup === 1,
+      },
     }),
     {
       status: 200,

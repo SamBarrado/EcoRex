@@ -11,7 +11,8 @@
     "silhouette": "Depredador bípedo robusto y agachado, cuerpo contraído como si acechara en la penumbra, cabeza baja y lista para el ataque.",
     "oppositeFractae": "Furia (Ira)",
     "lorePhrase": "En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.",
-    "habitat": "riberas boscosas y pantanos del Jurásico norteamericano"
+    "habitat": "riberas boscosas y pantanos del Jurásico norteamericano",
+    "habitatSlug": "pantano-oscuro"
   },
   {
     "scientificName": "Euoplocephalus nauseabundus",
@@ -25,7 +26,8 @@
     "silhouette": "Cuadrúpedo macizo y bajo, con coraza bulbosa que se arquea como un caparazón enfermo, cola levantada en amenaza tóxica.",
     "oppositeFractae": "Confianza (Fides)",
     "lorePhrase": "Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.",
-    "habitat": "llanuras y bosques abiertos del Cretácico norteamericano"
+    "habitat": "llanuras y bosques abiertos del Cretácico norteamericano",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Huayangosaurus inquisitus",
@@ -39,7 +41,8 @@
     "silhouette": "Cuadrúpedo ágil y erguido, con postura exploradora; cuello arqueado hacia adelante; crestas dorsales erguidas como antenas vivas.",
     "oppositeFractae": "Sorpresa (Stupor)",
     "lorePhrase": "En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.",
-    "habitat": "bosques húmedos del Jurásico temprano de Asia"
+    "habitat": "bosques húmedos del Jurásico temprano de Asia",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Parasaurolophus luminifer",
@@ -53,7 +56,8 @@
     "silhouette": "Cuadrúpedo erguido con cuello moderadamente extendido, peso distribuido en miembros posteriores robustos, silueta grácil y equilibrada.",
     "oppositeFractae": "Tristeza (Tristitia)",
     "lorePhrase": "Su cresta es un faro vivo de dicha primordial, cuyo cántico dorado resuena en las entrañas del mundo para despertar la luz dormida en toda cosa.",
-    "habitat": "bosques ribereños templados de Norteamérica"
+    "habitat": "bosques ribereños templados de Norteamérica",
+    "habitatSlug": "bosque-abierto-templado"
   },
   {
     "scientificName": "Maiasaura fidus",
@@ -67,6 +71,7 @@
     "silhouette": "Cuadrúpedo robusto y macizo, con cuello moderado y cabeza elevada, proyectando firmeza inquebrantable.",
     "oppositeFractae": "Asco (Fastidium)",
     "lorePhrase": "El Custodio Verde protege con su presencia lo que otros tiemblan de perder; su pisada marca el terreno donde renace la fe.",
-    "habitat": "llanuras con colonias de anidación en Norteamérica"
+    "habitat": "llanuras con colonias de anidación en Norteamérica",
+    "habitatSlug": "llanura-abierta"
   }
 ]

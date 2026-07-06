@@ -65,7 +65,7 @@ function buildBackgroundPrompt(spec, phase) {
     `Paint ONLY the environment/background — an empty landscape scene with NO creature, NO animal, NO character in it at all.`,
     `Habitat/ecology: ${spec.habitat}.`,
     `Mood for this moment (${phase} phase): ${PHASE_MOOD[phase]}.`,
-    `Full dramatic environment with real depth (foreground/midground/background), painted in this graphic illustration style. Leave clear, slightly emptier/lower-detail space roughly in the lower-center-to-left area of the frame where a large creature will later be composited standing/facing right — do not fill that area with busy foreground elements.`,
+    `Full dramatic environment with real depth (foreground/midground/background), painted in this graphic illustration style. Leave clear, slightly emptier/lower-detail space roughly in the lower-center-to-left area of the frame where a large creature will later be composited in a dynamic three-quarter pose engaging toward the viewer — do not fill that area with busy foreground elements.`,
     `No text, no watermark, no UI elements, no border.`,
   ].join(' ');
 }
@@ -82,15 +82,17 @@ function buildCutoutPrompt(spec, phase) {
     `Lighting must match this habitat/mood so it can be composited convincingly later: ${spec.habitat}; ${PHASE_MOOD[phase]}. Light the creature as if standing in that environment (matching color temperature and light direction) even though the environment itself is not painted here.`,
   ];
 
+  const engagement = `The creature must be captured mid-action, actively engaging toward the viewer/camera — NOT a flat, static, full-body side-profile silhouette (like a museum reference plate or a walk-cycle sprite). Use a three-quarter angle or a more confrontational/dynamic camera angle (slightly low, looking up at the creature, or an angle that shows depth through the body). The creature's head/gaze and body language should be oriented toward the viewer/camera, as if reacting to the player's presence, rather than parallel to the picture plane. The creature's overall body should still lean/be positioned toward the right side of the frame (to match the empty space left in the separately-painted background), but the pose/angle itself must feel three-quarter and engaged, not a flat side elevation.`;
+
   if (phase === 'calma') {
-    parts.push(`Pose: stable, calm but imposing posture, facing mostly to the right, standing pose suitable for a card illustration.`);
+    parts.push(`Pose: stable, calm but imposing posture, alert and aware of the viewer. ${engagement}`);
   } else if (phase === 'exceso') {
-    parts.push(`Pose: this must NOT be "the calm pose with the mouth open" — a genuinely more aggressive and dynamic pose than a calm stance: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking, facing mostly to the right.`);
+    parts.push(`Pose: this must NOT be "the calm pose with the mouth open" — a genuinely more aggressive and dynamic pose than a calm stance: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking. ${engagement}`);
     parts.push(`Any glow accent should stay confined to the eyes, or to fixed elemental/crystalline traits already established for this species — not a blanket effect on the whole body.`);
   } else {
     const extreme = FRACTAE_EXTREME[spec.fractae.name];
     parts.push(`This is the Eco phase: the ${spec.fractae.name} (${spec.fractae.latin}) Fractae pushed to its absolute emotional extreme in this specific creature. The archetype of that extreme: ${extreme}.`);
-    parts.push(`Manifest that extreme through THIS creature's own anatomy and habitat (${spec.habitat}) — do not default to a generic "translucent ghost" effect used for all species. This must NOT be "the calm pose with an effect overlaid" — the body pose/stance itself must change (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever the extreme implies for this creature), facing mostly to the right.`);
+    parts.push(`Manifest that extreme through THIS creature's own anatomy and habitat (${spec.habitat}) — do not default to a generic "translucent ghost" effect used for all species. This must NOT be "the calm pose with an effect overlaid" — the body pose/stance itself must change (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever the extreme implies for this creature). ${engagement}`);
   }
 
   parts.push(`No text, no watermark, no UI elements, no ground shadow baked in (a contact shadow will be added separately during compositing).`);

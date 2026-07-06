@@ -78,10 +78,18 @@ const BASE_STYLE = `GRAPHIC ANIME/MANGA-INFLUENCED ILLUSTRATION with heavy black
 // image-to-image edits tend to erode this separation over successive passes.
 const FIGURE_GROUND_SEPARATION = `Achieve figure/ground separation through proper illustration technique: the creature is the sharpest, highest-contrast, most-detailed element in the frame. Push the background back with atmospheric perspective — softer edges, lower contrast, slightly desaturated and hazier the further back it goes. Do not render the background environment (rock, foliage, water, sky) with the same fine detail density as the creature's surface — it should read as a distinct, receding painted layer behind the subject, not competing with it for detail or contrast. The creature's silhouette must be immediately readable against its surroundings at a glance.`;
 
+// The creature must feel like it's engaging the viewer/player, not a flat
+// side-profile reference shot. A plain full-body walk-cycle silhouette in
+// strict profile reads as static/lifeless no matter how dramatic the
+// lighting is — the fix is camera angle + gaze + action directed at camera,
+// not just adding motion blur or effects.
+const TOWARD_VIEWER_ENGAGEMENT = `The creature must be captured mid-action, actively engaging toward the viewer/camera — NOT a flat, static, full-body side-profile silhouette (like a museum reference plate or a walk-cycle sprite). Use a three-quarter angle or a more confrontational/dynamic camera angle (slightly low, looking up at the creature, or an angle that shows depth through the body rather than a flat side elevation). The creature's head/gaze and body language should be oriented toward the viewer/camera, as if reacting to the player's presence — looking directly out of the frame, lunging toward camera, or performing its action (roaring, stalking, recoiling) in the viewer's direction rather than parallel to the picture plane. Show a real sense of weight and motion in the pose, not a posed/idle stance.`;
+
 function buildAnchorPrompt(spec) {
   return [
     BASE_STYLE,
     FIGURE_GROUND_SEPARATION,
+    TOWARD_VIEWER_ENGAGEMENT,
     `Species: ${spec.scientificName} ("${spec.commonName}").`,
     `Emotional core (Fractae): ${spec.fractae.name} (${spec.fractae.latin}) — let the environment's mood/lighting and a subtle accent in the eyes read as this element. Unless the fixed physical traits below explicitly describe crystalline/faceted features, the creature's body must stay natural creature material (skin/scales/hide), not a full-body stylized crystal/glass being.`,
     `Habitat/ecology: ${spec.habitat}.`,
@@ -97,6 +105,7 @@ function buildExcesoPrompt(spec) {
     `Same exact creature as the reference image — same species, same fixed physical traits, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
     `Apply ONLY this phase transformation (exceso): ${PHASE_MODIFIERS.exceso}.`,
     `This must NOT read as "the calm reference pose with the mouth open" — that is a failure state. Change the actual body pose/stance to something genuinely more aggressive and dynamic than the reference: crouched and lunging forward, weight shifted into an attack, claws/limbs raised or striking, a tighter and more dramatic camera angle/framing than the calm reference (closer, lower, or more diagonal — not the same wide standing profile shot). The mouth being open is a minor detail, not the main change.`,
+    TOWARD_VIEWER_ENGAGEMENT,
     `Keep color saturation and contrast controlled and readable — this is a moderate intensification over the reference, not a blown-out, oversaturated, or overexposed image. Any glow accent should stay confined to the eyes and a few natural highlights (not a fictional crystal/crack pattern), not flood the entire frame or background in solid intense color. But the overall energy/danger must still be clearly, unmistakably higher than the calm reference — someone flipping between the two images should immediately feel escalation, not need to hunt for the difference.`,
     FIGURE_GROUND_SEPARATION,
     `Do not change the species identity, proportions, or palette family — only intensity/texture per the phase description.`,
@@ -116,6 +125,7 @@ function buildEcoPrompt(spec) {
     `This must NOT read as "the calm reference pose with an effect overlaid on top" — that is a failure state, same as it would be for Exceso. This is the single most dramatic, extreme emotional moment this creature ever experiences: the body pose/stance must change accordingly (collapsing, recoiling, convulsing, frozen mid-motion, reaching/straining — whatever this specific extreme archetype implies for this creature) and the camera framing should be more dramatic/intimate than the calm reference, not the same static standing profile shot. The energy/lighting must read as clearly more intense or, where the archetype calls for it, deliberately darker/dimmer than both Calma and Exceso (e.g. a fear-extreme swallowed by darkness should get DARKER, not brighter) — pick whichever direction fits the specific Fractae archetype, don't default to "brighter and more glowing" for every case.`,
     `Reason about what mechanism this particular creature and environment would realistically produce, staying within the graphic illustration style (do not turn the whole body to crystal/glass unless that is already one of its fixed physical traits): an aquatic or semi-aquatic species should express it through water/steam/pressure/bioluminescence rather than dry fire or ash; a burrowing or heavily armored species might express it through earth, mud, or collapsing terrain; a flying or feathered species might express it through air, wind-scatter, or storm; a large land predator might express it through fire, ember, or scorched ground — pick whatever fits this species, not a template.`,
     `Keep the composition clean and restrained, not overloaded: the creature's silhouette must stay the clear, legible focal point. Use a moderate, controlled amount of environmental effect/particles concentrated where it matters rather than filling the whole frame with scattered debris or chaotic noise. Less is more — one or two clear focal details communicating the extreme beat a busy, cluttered image.`,
+    TOWARD_VIEWER_ENGAGEMENT,
     FIGURE_GROUND_SEPARATION,
     `The result should read as the climactic, most extreme possible state of this exact creature's emotion — dramatic and singular to it, not interchangeable with any other species' Eco.`,
   ].join(' ');

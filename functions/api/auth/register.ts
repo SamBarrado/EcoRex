@@ -11,6 +11,12 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
+
+function isValidUsername(name: string): boolean {
+  return USERNAME_PATTERN.test(name);
+}
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
@@ -48,12 +54,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   }
+  if (!isValidUsername(displayName)) {
+    return new Response(
+      JSON.stringify({ error: "El nombre de usuario debe tener 3-20 caracteres (letras, números o _)" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
   const existing = await env.DB.prepare("SELECT id FROM users WHERE email = ?")
     .bind(email)
     .first();
   if (existing) {
     return new Response(JSON.stringify({ error: "Email already registered" }), {
+      status: 409,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const existingUsername = await env.DB.prepare("SELECT id FROM users WHERE display_name = ?")
+    .bind(displayName)
+    .first();
+  if (existingUsername) {
+    return new Response(JSON.stringify({ error: "Ese nombre de usuario ya está en uso" }), {
       status: 409,
       headers: { "Content-Type": "application/json" },
     });

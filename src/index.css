@@ -10,12 +10,14 @@ body {
 
 html {
   min-height: 100%;
+  background: linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(160deg, #1c3624 0%, #142a1b 55%, #0f2115 100%);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(63, 174, 90, 0.35), transparent 60%),
+    linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
   background-attachment: fixed;
   color: #f2f6f3;
   -webkit-tap-highlight-color: transparent;
@@ -79,11 +81,13 @@ a {
 }
 
 .card {
-  background: #142218;
-  border: 1px solid #22331f;
-  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(20, 34, 24, 0.92), rgba(15, 26, 18, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
   padding: 1rem;
   margin-bottom: 1rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 .card-clickable {
@@ -139,7 +143,7 @@ a {
 }
 
 button {
-  background: #3fae5a;
+  background: linear-gradient(90deg, #3fae5a, #4fa9e0);
   color: #06120a;
   border: none;
   border-radius: 999px;
@@ -147,6 +151,7 @@ button {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 6px 20px rgba(79, 169, 224, 0.4);
 }
 
 button:disabled {
@@ -172,6 +177,140 @@ button:disabled {
   height: auto;
   margin: 0 auto 1rem;
   object-fit: contain;
+}
+
+.auth-page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: clamp(1rem, 4vh, 2rem) 1.25rem calc(clamp(1rem, 4vh, 2rem) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(63, 174, 90, 0.35), transparent 60%),
+    linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
+}
+
+@supports (height: 100dvh) {
+  .auth-page {
+    min-height: 100dvh;
+  }
+}
+
+.auth-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -36px;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-badge {
+  width: clamp(90px, 20vh, 140px);
+  height: clamp(90px, 20vh, 140px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f2fbf5, #d7ecdd 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(63, 174, 90, 0.25);
+}
+
+.auth-badge img {
+  width: clamp(155px, 34vh, 240px);
+  height: clamp(155px, 34vh, 240px);
+  object-fit: contain;
+}
+
+.auth-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(20, 34, 24, 0.92), rgba(15, 26, 18, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 2.75rem 1.5rem 1.75rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.auth-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  color: #f2f6f3;
+}
+
+.auth-field {
+  position: relative;
+  margin-bottom: 0.9rem;
+}
+
+.auth-field .auth-field-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #7fc891;
+  pointer-events: none;
+}
+
+.auth-field input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 0.85rem 1.1rem 0.85rem 2.75rem;
+  color: #f2f6f3;
+  font-size: 1rem;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: #3fae5a;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-field input::placeholder {
+  color: rgba(242, 246, 243, 0.45);
+}
+
+.auth-submit {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.2rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #06120a;
+  background: linear-gradient(90deg, #3fae5a, #4fa9e0);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 6px 24px rgba(79, 169, 224, 0.45);
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.25rem;
+  color: rgba(242, 246, 243, 0.75);
+  font-size: 0.9rem;
+}
+
+.auth-switch a {
+  color: #7fc891;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .home-logo {

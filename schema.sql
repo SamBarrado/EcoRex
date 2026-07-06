@@ -62,10 +62,12 @@ CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT,
-  display_name TEXT NOT NULL DEFAULT '',
+  display_name TEXT NOT NULL DEFAULT '',  -- username/handle, required & unique (see idx_users_display_name)
+  needs_username_setup INTEGER NOT NULL DEFAULT 0,  -- 1 for pre-migration users backfilled with a placeholder
   explorer_rank TEXT NOT NULL DEFAULT 'novato',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE UNIQUE INDEX idx_users_display_name ON users(display_name);
 
 -- 7. Discoveries: user-owned card instances (Album level, duplicates included)
 CREATE TABLE discoveries (

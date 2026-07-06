@@ -1,6 +1,8 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login, ApiError } from "../lib/api";
+import { MailIcon, LockIcon } from "../components/AuthIcons";
+import { version } from "../../package.json";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -14,8 +16,8 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await login({ email, password });
-      navigate("/inicio");
+      const { user } = await login({ email, password });
+      navigate(user.needs_username_setup ? "/elegir-usuario" : "/inicio");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Error al iniciar sesión");
     } finally {
@@ -24,32 +26,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="page">
-      <img src="/logo/logo-ecorex.png" alt="Ecorex" className="auth-logo" />
-      <h1>Iniciar sesión</h1>
-      <form onSubmit={handleSubmit} className="card">
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+    <div className="auth-page">
+      <div className="auth-badge-wrap">
+        <div className="auth-badge">
+          <img src="/logo/logo-ecorex.png" alt="Ecorex" />
         </div>
-        <div className="field">
-          <label htmlFor="password">Contraseña</label>
+      </div>
+      <form onSubmit={handleSubmit} className="auth-card">
+        <h1 className="auth-title">Iniciar sesión</h1>
+
+        <div className="auth-field">
+          <MailIcon />
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="auth-field">
+          <LockIcon />
           <input
             id="password"
             type="password"
+            placeholder="Contraseña"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
         {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={loading}>
+
+        <button type="submit" className="auth-submit" disabled={loading}>
           {loading ? "Entrando..." : "Entrar"}
         </button>
+
+        <p className="auth-switch">
+          ¿No tienes cuenta? <Link to="/registro">Crear cuenta</Link>
+        </p>
       </form>
-      <p>
-        ¿No tienes cuenta? <Link to="/registro">Crear cuenta</Link>
-      </p>
+      <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>
     </div>
   );
 }

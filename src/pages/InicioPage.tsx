@@ -37,7 +37,7 @@ export default function InicioPage() {
           onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && navigate("/coleccion")}
         >
           <img className="card-icon" src="/icons/mi-coleccion.png" alt="" />
-          <strong>Mi Colección</strong>
+          <strong>EcoDex</strong>
         </div>
         <div
           className={fusionUnlocked ? "card card-clickable card-compact" : "card card-compact"}
