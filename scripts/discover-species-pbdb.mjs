@@ -11,16 +11,31 @@
 //
 // This is dev tooling only — never deployed, no build step, vanilla JS.
 //
-// Usage: npm run species:discover  (opens http://localhost:4790 automatically)
+// Usage: npm run species:discover  (opens http://localhost:4790 automatically;
+// auto-kills any stale instance already on that port first, see below)
 
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
-import { exec } from 'node:child_process';
+import { exec, execSync } from 'node:child_process';
 import { searchPbdbTaxa, fetchPbdbTaxon, autocompleteDinosaurGenus } from './lib/pbdb.mjs';
 import { generateSpec, resolveFractae, loadDevVarsApiKey, FRACTAE } from './generate-species-spec.mjs';
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4790;
+
+// Node doesn't hot-reload: if a previous `npm run species:discover` is still
+// running from before you edited this file, your browser keeps silently
+// talking to that OLD process and it looks like your changes "didn't work".
+// So free the port proactively before starting, instead of just failing
+// with a nice error message (which is still kept below as a safety net).
+function killStaleServerOnPort(port) {
+  try {
+    execSync(`lsof -ti:${port} | xargs kill -9`, { stdio: 'ignore' });
+  } catch {
+    // lsof exits non-zero when nothing is listening — nothing to clean up.
+  }
+}
+killStaleServerOnPort(PORT);
 const LOTE_PATH = 'scripts/lote.json';
 
 // Curated Spanish label -> real PBDB term, so the user never has to know
@@ -92,6 +107,14 @@ function annotateExisting(candidates, existing) {
   return candidates.map((c) => ({ ...c, existingUses: existing.get(c.genus) ?? [] }));
 }
 
+// Distinct non-empty edition values already in lote.json (e.g. "Wave 1"),
+// used to populate the "filtrar por edición" dropdown in the frontend.
+function getDistinctEditions() {
+  if (!existsSync(LOTE_PATH)) return [];
+  const list = JSON.parse(readFileSync(LOTE_PATH, 'utf8'));
+  return [...new Set(list.map((e) => e.edition).filter(Boolean))].sort();
+}
+
 async function handleSearch(url) {
   const baseName = url.searchParams.get('baseName') || undefined;
   const interval = url.searchParams.get('interval') || undefined;
@@ -103,9 +126,18 @@ async function handleSearch(url) {
   }
 
   const existing = loadExistingGenera();
-  const candidates = await searchPbdbTaxa({ baseName, interval, country, minOccurrences });
+  // Fetch unfiltered (minOccurrences: 1) and apply the user's threshold
+  // AFTER annotating — a species already in the project (e.g. Huayangosaurus,
+  // which only has 1 PBDB occurrence) must never be hidden by a fossil-count
+  // filter just because PBDB itself has little data on it.
+  const candidates = await searchPbdbTaxa({ baseName, interval, country, minOccurrences: 1 });
+  const annotated = annotateExisting(candidates, existing);
+  const filtered = annotated.filter((c) => c.nOccurrences >= minOccurrences || c.existingUses.length > 0);
 
-  return { status: 200, body: { candidates: annotateExisting(candidates, existing), fractae: Object.values(FRACTAE) } };
+  return {
+    status: 200,
+    body: { candidates: filtered, fractae: Object.values(FRACTAE), editions: getDistinctEditions() },
+  };
 }
 
 async function handleAutocomplete(prefix) {
@@ -118,7 +150,7 @@ async function handleSearchByName(genus) {
   const existing = loadExistingGenera();
   const taxon = await fetchPbdbTaxon(genus);
   if (!taxon) {
-    return { status: 200, body: { candidates: [], fractae: Object.values(FRACTAE) } };
+    return { status: 200, body: { candidates: [], fractae: Object.values(FRACTAE), editions: getDistinctEditions() } };
   }
   const candidate = {
     genus: taxon.taxonName,
@@ -129,7 +161,10 @@ async function handleSearchByName(genus) {
     countries: taxon.countries,
   };
 
-  return { status: 200, body: { candidates: annotateExisting([candidate], existing), fractae: Object.values(FRACTAE) } };
+  return {
+    status: 200,
+    body: { candidates: annotateExisting([candidate], existing), fractae: Object.values(FRACTAE), editions: getDistinctEditions() },
+  };
 }
 
 // Wikipedia has no coverage guarantee, but for named dinosaur genera it
@@ -243,6 +278,12 @@ const PAGE = `<!doctype html>
     <option value="age-asc">Antigüedad (más reciente primero)</option>
   </select>
 </label>
+<label id="editionFilterLabel" style="display:none; margin-bottom: 0.5rem; margin-left: 1.5rem;">Filtrar por edición
+  <select id="editionFilterSelect">
+    <option value="">Cualquiera</option>
+    <option value="__unassigned__">Sin asignar (nada planificado)</option>
+  </select>
+</label>
 <table id="resultsTable" style="display:none">
   <thead><tr><th>Foto</th><th>Género</th><th>Familia</th><th>Rango temporal (Ma)</th><th>Ocurrencias</th><th>Países</th><th>En proyecto</th><th>Fractae</th><th>Wave/edición</th><th></th></tr></thead>
   <tbody></tbody>
@@ -257,6 +298,8 @@ const tbody = table.querySelector('tbody');
 const resultEl = document.getElementById('result');
 const sortLabel = document.getElementById('sortLabel');
 const sortSelect = document.getElementById('sortSelect');
+const editionFilterLabel = document.getElementById('editionFilterLabel');
+const editionFilterSelect = document.getElementById('editionFilterSelect');
 let fractaeOptions = [];
 let currentCandidates = [];
 const thumbnailCache = new Map();
@@ -274,6 +317,7 @@ async function runSearch(url) {
   statusEl.textContent = 'Buscando en PBDB...';
   table.style.display = 'none';
   sortLabel.style.display = 'none';
+  editionFilterLabel.style.display = 'none';
   tbody.innerHTML = '';
   resultEl.style.display = 'none';
   thumbnailCache.clear();
@@ -289,7 +333,12 @@ async function runSearch(url) {
   statusEl.textContent = currentCandidates.length + ' candidato(s) encontrados.';
   if (!currentCandidates.length) return;
 
+  const extraOptions = data.editions.map((e) => '<option value="' + e + '">' + e + '</option>').join('');
+  editionFilterSelect.innerHTML =
+    '<option value="">Cualquiera</option><option value="__unassigned__">Sin asignar (nada planificado)</option>' + extraOptions;
+
   sortLabel.style.display = '';
+  editionFilterLabel.style.display = '';
   renderTable();
 }
 
@@ -312,6 +361,8 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   currentCandidates = [];
   table.style.display = 'none';
   sortLabel.style.display = 'none';
+  editionFilterLabel.style.display = 'none';
+  editionFilterSelect.value = '';
   tbody.innerHTML = '';
   resultEl.style.display = 'none';
   statusEl.textContent = '';
@@ -332,11 +383,21 @@ nameInput.addEventListener('input', () => {
 });
 
 sortSelect.addEventListener('change', renderTable);
+editionFilterSelect.addEventListener('change', renderTable);
+
+function matchesEditionFilter(c) {
+  const filter = editionFilterSelect.value;
+  if (!filter) return true;
+  if (filter === '__unassigned__') return !c.existingUses.some((u) => u.edition);
+  return c.existingUses.some((u) => u.edition === filter);
+}
 
 function renderTable() {
   table.style.display = '';
   tbody.innerHTML = '';
-  const sorted = [...currentCandidates].sort(SORTERS[sortSelect.value]);
+  const filtered = currentCandidates.filter(matchesEditionFilter);
+  const sorted = filtered.sort(SORTERS[sortSelect.value]);
+  statusEl.textContent = filtered.length + ' de ' + currentCandidates.length + ' candidato(s) mostrados.';
   for (const c of sorted) {
     const tr = document.createElement('tr');
     const range = (c.earlyMa ?? '?') + '–' + (c.lateMa ?? '?');
@@ -492,6 +553,21 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(500, { 'content-type': 'application/json' });
     res.end(JSON.stringify({ error: err.message }));
   }
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    // Node doesn't hot-reload: if a previous `npm run species:discover` is
+    // still running, the browser silently keeps talking to that OLD code
+    // after you edit this file, which looks like your changes "didn't work".
+    console.error(
+      `\nEl puerto ${PORT} ya está en uso — seguramente hay otro "npm run species:discover" corriendo de antes.\n` +
+        `Mátalo primero: pkill -f discover-species-pbdb.mjs\n` +
+        `(o arranca este en otro puerto: PORT=4791 npm run species:discover)\n`
+    );
+    process.exit(1);
+  }
+  throw err;
 });
 
 server.listen(PORT, () => {
