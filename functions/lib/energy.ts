@@ -1,4 +1,4 @@
-export const MAX_ENERGY = 2;
+export const MAX_ENERGY = 3;
 const WINDOW_MS = 12 * 60 * 60 * 1000;
 
 export interface EnergyState {
