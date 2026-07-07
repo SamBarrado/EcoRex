@@ -897,7 +897,7 @@
     "habitatSlug": "volcanico",
     "closestFamousRelative": "Tyrannosaurus rex",
     "distinguishingFromRelative": "El Rex de Fuego difiere del T-Rex en: (1) presenta dientes incandescentes y vetas de energía roja en sus escamas, ausentes en el fósil base; (2) tiene una cresta dorsal de púas erguidas que emiten vapor, rasgo no documentado en T-Rex; (3) su entorno es volcánico con erupción permanente, frente al ecosistema de North America del Cretácico tardío; (4) mantiene una postura de tensión constante con mandíbula perpetuamente entreabierta, comportamiento no inferible del registro fósil.",
-    "edition": ""
+    "edition": "Wave 1"
   },
   {
     "scientificName": "Telmatosaurus mirus",
@@ -915,7 +915,7 @@
     "habitatSlug": "pantano-dorado",
     "closestFamousRelative": "Parasaurolophus",
     "distinguishingFromRelative": "Parasaurolophus tenía una cresta craneal tubular prominente y curvada hacia atrás; Telmatosaurus mirus carece de esta cresta distintiva y posee una cresta dorsal baja de escamas doradas en el cuerpo. Parasaurolophus era más robusto y de mayor tamaño; Telmatosaurus mirus es más esbelto y de menor envergadura.",
-    "edition": ""
+    "edition": "Wave 1"
   },
   {
     "scientificName": "Triceratops umbra",
@@ -933,7 +933,7 @@
     "habitatSlug": "valle-helado-cristal",
     "closestFamousRelative": "Triceratops",
     "distinguishingFromRelative": "Como es la misma especie base, no hay diferencias a excluir. Los rasgos icónicos del Triceratops real (tres cuernos óseos, gorguera protectora, boca de loro, escamas pebbled) se mantienen pero se reinterpretan en cristal/luz azul en esta variante de ECOREX.",
-    "edition": ""
+    "edition": "Wave 1"
   },
   {
     "scientificName": "Stegosaurus pavor",
