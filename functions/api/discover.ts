@@ -2,6 +2,7 @@ import { getSessionCookie, verifySession } from "../lib/auth";
 import { consumeEnergy } from "../lib/energy";
 import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
 import { addXp, levelFromXp, RARITY_XP, SPECIES_COMPLETE_XP_BONUS } from "../lib/xp";
+import { incrementMission, checkAndAwardDailyBonus, todayUTC, MISSION_DEFS, DAILY_BONUS_XP } from "../lib/missions";
 
 interface Env {
   DB: D1Database;
@@ -176,7 +177,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
-  const xpAmount = (isNewSlot ? (RARITY_XP[rarityTier.slug] ?? 0) : 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  let xpAmount = (isNewSlot ? (RARITY_XP[rarityTier.slug] ?? 0) : 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+
+  const missionsCompleted: string[] = [];
+  const day = todayUTC();
+
+  const percibirMission = await incrementMission(env.DB, user.id, 'percibir', day);
+  if (percibirMission.completedNow) {
+    xpAmount += MISSION_DEFS.percibir.xp;
+    missionsCompleted.push('percibir');
+  }
+
+  if (isNewSlot) {
+    const coleccionistaMission = await incrementMission(env.DB, user.id, 'coleccionista', day);
+    if (coleccionistaMission.completedNow) {
+      xpAmount += MISSION_DEFS.coleccionista.xp;
+      missionsCompleted.push('coleccionista');
+    }
+  }
+
+  const dailyBonusAwarded = await checkAndAwardDailyBonus(env.DB, user.id, day);
+  if (dailyBonusAwarded) {
+    xpAmount += DAILY_BONUS_XP;
+    missionsCompleted.push('bonus');
+  }
+
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {
@@ -205,6 +230,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         previousLevel: xpResult.previousLevel,
         leveledUp: xpResult.leveledUp,
       },
+      missionsCompleted,
+      dailyBonusAwarded,
     },
     { status: 201 }
   );

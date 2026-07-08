@@ -14,6 +14,7 @@ function makeDb(opts: {
   existingSlotCount?: number;
   /** IDs returned by the "active species" draw. Defaults to [7], matching speciesRow's species_id. */
   activeSpeciesIds?: number[];
+  missionProgress?: Record<string, { progress_count: number; completed_at: string | null }>;
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000, xp: opts.xp ?? 0 };
@@ -46,6 +47,11 @@ function makeDb(opts: {
           if (sql.includes('COUNT(*) as count FROM discoveries')) return { count: opts.existingSlotCount ?? 0 } as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return { xp: currentXp } as unknown as T;
           if (sql.includes('energy_count')) return { energy_count: 2, energy_window_start: null, unlimited_energy: 0 } as unknown as T;
+          if (sql.includes('SELECT progress_count, completed_at FROM daily_missions')) {
+            const lastCall = calls[calls.length - 1];
+            const slug = lastCall.args[1] as string;
+            return ((opts.missionProgress ?? {})[slug] as unknown as T) ?? ({ progress_count: 0, completed_at: null } as unknown as T);
+          }
           return null;
         },
         async all<T>() {
@@ -59,6 +65,14 @@ function makeDb(opts: {
           if (sql.includes('FROM species WHERE is_active')) {
             const ids = opts.activeSpeciesIds ?? [7];
             return { results: ids.map((id) => ({ id })) as T[] };
+          }
+          if (sql.includes('SELECT mission_slug, completed_at FROM daily_missions')) {
+            const progress = opts.missionProgress ?? {};
+            return {
+              results: Object.entries(progress)
+                .filter(([slug]) => slug !== 'bonus')
+                .map(([mission_slug, row]) => ({ mission_slug, completed_at: row.completed_at })) as T[],
+            };
           }
           return { results: [] as T[] };
         },
@@ -188,6 +202,30 @@ describe('POST /api/discover', () => {
     expect(body.xp.xpGained).toBe(10); // registrada is the only rarity tier in the fixture
     expect(body.xp.totalXp).toBe(10);
     expect(body.xp.leveledUp).toBe(false);
+  });
+
+  it('awards the percibir mission xp when this discovery completes it', async () => {
+    const db = makeDb({
+      balanceCountAfterInsert: 1,
+      xp: 0,
+      existingSlotCount: 1, // duplicate, so rarity xp itself is 0 — isolates the mission xp
+      missionProgress: { percibir: { progress_count: 2, completed_at: null } },
+    });
+    const request = new Request('https://ecorex.app/api/discover', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ phase: 'balance' }),
+    });
+    const env = {
+      DB: db as unknown as D1Database,
+      RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
+      DINO_IMAGES: {} as unknown as R2Bucket,
+      OPENAI_API_KEY: 'test-key',
+    };
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number }; missionsCompleted: string[] };
+    expect(body.xp.xpGained).toBe(15); // 0 rarity xp (duplicate) + 15 percibir mission xp
+    expect(body.missionsCompleted).toContain('percibir');
   });
 
   it('gives 0 xp for a duplicate discovery (isNewSlot false)', async () => {
