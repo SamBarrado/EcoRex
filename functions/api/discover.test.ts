@@ -14,7 +14,7 @@ function makeDb(opts: {
   existingSlotCount?: number;
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
-  const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
+  const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000, xp: opts.xp ?? 0 };
   const speciesRow = {
     species_id: 7,
     scientific_name: 'Tyrannosaurus imperator',
@@ -165,6 +165,24 @@ describe('POST /api/discover', () => {
     expect(body.xp.xpGained).toBe(10); // registrada is the only rarity tier in the fixture
     expect(body.xp.totalXp).toBe(10);
     expect(body.xp.leveledUp).toBe(false);
+  });
+
+  it('gives 0 xp for a duplicate discovery (isNewSlot false)', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 1, xp: 0, existingSlotCount: 1 });
+    const request = new Request('https://ecorex.app/api/discover', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+    });
+    const env = {
+      DB: db as unknown as D1Database,
+      RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
+      DINO_IMAGES: {} as unknown as R2Bucket,
+      OPENAI_API_KEY: 'test-key',
+    };
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number } };
+    expect(body.xp.xpGained).toBe(0);
   });
 
   it('adds the species-complete bonus when this discovery finishes the set', async () => {

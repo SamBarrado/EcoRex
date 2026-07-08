@@ -167,7 +167,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
-  const xpAmount = (RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  const xpAmount = (isNewSlot ? (RARITY_XP[rarityTier.slug] ?? 0) : 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {
