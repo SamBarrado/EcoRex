@@ -110,6 +110,54 @@ describe('GET /api/fuse/eligible', () => {
       },
     ]);
   });
+
+  it('includes a species with exactly 4 non-consumed duplicates for a level 15+ user', async () => {
+    const { env, db } = makeEnv({
+      xp: { xp: 2619 },
+      eligibleRows: [
+        {
+          species_id: 7,
+          common_name: 'Rex de Fuego',
+          scientific_name: 'Tyrannosaurus imperator',
+          balance_anchor_url: '/species-art/rex/balance.png',
+          balance_count: 4,
+        },
+      ],
+    });
+    const request = new Request('https://ecorex.app/api/fuse/eligible', {
+      headers: { Cookie: 'ecorex_session=abc' },
+    });
+    const response = await onRequestGet({ request, env } as never);
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { eligible: unknown[] };
+    expect(body.eligible).toEqual([
+      {
+        speciesId: 7,
+        commonName: 'Rex de Fuego',
+        scientificName: 'Tyrannosaurus imperator',
+        balanceAnchorUrl: '/species-art/rex/balance.png',
+        balanceCount: 4,
+      },
+    ]);
+    const eligibleQueryCall = db.calls.find((c) => c.sql.includes('GROUP BY species.id'));
+    expect(eligibleQueryCall?.args).toEqual([1, 4]);
+  });
+
+  it('excludes a species with only 4 non-consumed duplicates for a level 1 user', async () => {
+    const { env, db } = makeEnv({
+      xp: { xp: 0 },
+      eligibleRows: [],
+    });
+    const request = new Request('https://ecorex.app/api/fuse/eligible', {
+      headers: { Cookie: 'ecorex_session=abc' },
+    });
+    const response = await onRequestGet({ request, env } as never);
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { eligible: unknown[] };
+    expect(body.eligible).toEqual([]);
+    const eligibleQueryCall = db.calls.find((c) => c.sql.includes('GROUP BY species.id'));
+    expect(eligibleQueryCall?.args).toEqual([1, 5]);
+  });
 });
 
 describe('POST /api/fuse', () => {

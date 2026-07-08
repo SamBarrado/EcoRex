@@ -10,10 +10,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const userRow = await env.DB.prepare("SELECT xp FROM users WHERE id = ?")
-    .bind(user.id)
-    .first<{ xp: number }>();
-
   const waveRow = await env.DB.prepare(
     "SELECT COALESCE(MAX(launch_wave), 0) as wave FROM species WHERE is_active = 1"
   ).first<{ wave: number }>();
@@ -52,11 +48,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const totalDiscoveries = totalDiscoveriesRow?.count ?? 0;
   const duplicateCount = Math.max(0, totalDiscoveries - speciesDiscoveredCount);
 
-  const progress = xpProgress(userRow?.xp ?? 0);
+  const progress = xpProgress(user.xp);
 
   return Response.json({
     user,
-    xp: userRow?.xp ?? 0,
+    xp: user.xp,
     level: progress.level,
     xpIntoLevel: progress.xpIntoLevel,
     xpForNextLevel: progress.xpForNextLevel,

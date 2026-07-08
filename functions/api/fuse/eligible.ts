@@ -1,8 +1,11 @@
 import { getSessionCookie, verifySession } from "../../lib/auth";
+import { levelFromXp, fusionThresholdReductionForLevel } from "../../lib/xp";
 
 interface Env {
   DB: D1Database;
 }
+
+const BASE_FUSE_THRESHOLD = 5;
 
 interface EligibleRow {
   species_id: number;
@@ -21,6 +24,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const level = levelFromXp(user.xp);
+  const fuseThreshold = BASE_FUSE_THRESHOLD - fusionThresholdReductionForLevel(level);
+
   const { results } = await env.DB.prepare(
     `SELECT
        species.id as species_id,
@@ -33,9 +39,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
      JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id AND species_phase_anchors.phase = 'balance'
      WHERE discoveries.user_id = ? AND discoveries.phase = 'balance' AND discoveries.consumed_at IS NULL
      GROUP BY species.id
-     HAVING COUNT(*) >= 5`
+     HAVING COUNT(*) >= ?`
   )
-    .bind(user.id)
+    .bind(user.id, fuseThreshold)
     .all<EligibleRow>();
 
   return Response.json({

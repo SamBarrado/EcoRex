@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { onRequestGet } from './profile';
 
 function makeDb(opts: { xp: number }) {
-  const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
+  const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000, xp: opts.xp };
   return {
     prepare(sql: string) {
       return {
