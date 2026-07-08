@@ -131,6 +131,27 @@ describe("PercibirRitual", () => {
     expect(screen.getByText("Test Dino")).toBeInTheDocument();
   });
 
+  it("does not show the XP toast when the discovery grants 0 xp (a duplicate)", async () => {
+    vi.useFakeTimers();
+    const discoverFn = vi.fn().mockResolvedValue({
+      ...discoverResult,
+      isNewSlot: false,
+      xp: { xpGained: 0, totalXp: 100, level: 2, leveledUp: false },
+    });
+    renderRitual({ discoverFn });
+    openPeek();
+
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
   it("shows an error overlay with retry when discoverFn rejects", async () => {
     vi.useFakeTimers();
     const discoverFn = vi.fn().mockRejectedValue(new ApiError(500, "boom"));

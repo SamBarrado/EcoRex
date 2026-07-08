@@ -204,7 +204,7 @@ export default function FusionPage() {
           ))}
         </div>
       )}
-      {showXpToast && result && (
+      {showXpToast && result && result.xp.xpGained > 0 && (
         <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
       )}
       {levelUpInfo && (
