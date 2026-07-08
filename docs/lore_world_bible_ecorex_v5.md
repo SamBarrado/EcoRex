@@ -517,11 +517,11 @@ Tabla de referencia (ajustable, ya sembrada como `anchor_probability` en `rarity
 
 | Tier | Slug | Prob. de servir ancla | Prob. de generar variante única |
 |---|---|---|---|
-| Especie Registrada (común) | `registrada` | ~90% | ~10% |
-| Especie Notable | `notable` | ~70% | ~30% |
-| Especie Singular | `singular` | ~40% | ~60% |
+| Especie Común | `registrada` | ~90% | ~10% |
+| Especie Poco Común | `notable` | ~70% | ~30% |
+| Especie Rara | `singular` | ~40% | ~60% |
 | Especie Épica | `epica` | ~15% | ~85% |
-| Especie Primordial (legendaria) | `primordial` | ~0% | 100% |
+| Especie Legendaria | `primordial` | ~0% | 100% |
 
 **Justificación doble:** económica (el ahorro de coste se concentra en tiers comunes de alto volumen) y narrativa (lo legendario es garantizadamente único, como un "shiny").
 
