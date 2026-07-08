@@ -7,6 +7,7 @@ export interface SessionUser {
   id: number;
   email: string;
   display_name: string;
+  xp: number;
 }
 
 const PBKDF2_ITERATIONS = 100_000;
@@ -79,13 +80,13 @@ export async function createSession(db: D1Database, userId: number): Promise<str
 export async function verifySession(db: D1Database, sessionId: string): Promise<SessionUser | null> {
   const row = await db
     .prepare(
-      `SELECT users.id as id, users.email as email, users.display_name as display_name, sessions.expires_at as expires_at
+      `SELECT users.id as id, users.email as email, users.display_name as display_name, users.xp as xp, sessions.expires_at as expires_at
        FROM sessions
        JOIN users ON users.id = sessions.user_id
        WHERE sessions.id = ?`
     )
     .bind(sessionId)
-    .first<{ id: number; email: string; display_name: string; expires_at: number }>();
+    .first<{ id: number; email: string; display_name: string; xp: number; expires_at: number }>();
 
   if (!row) return null;
   if (row.expires_at < Date.now()) {
@@ -93,7 +94,7 @@ export async function verifySession(db: D1Database, sessionId: string): Promise<
     return null;
   }
 
-  return { id: row.id, email: row.email, display_name: row.display_name };
+  return { id: row.id, email: row.email, display_name: row.display_name, xp: row.xp };
 }
 
 export async function deleteSession(db: D1Database, sessionId: string): Promise<void> {

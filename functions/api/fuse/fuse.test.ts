@@ -3,7 +3,13 @@ import { onRequestGet } from './eligible';
 import { onRequestPost } from './index';
 
 function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
-  const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
+  const sessionRow = {
+    id: 1,
+    email: 'a@a.com',
+    display_name: 'A',
+    expires_at: Date.now() + 100000,
+    xp: (overrides.xp as { xp: number } | undefined)?.xp ?? 0,
+  };
   const calls: { sql: string; args: unknown[] }[] = [];
   let insertDone = false;
   const legacyOwned = (overrides.ownedPhases as string[] | undefined) ?? [];
