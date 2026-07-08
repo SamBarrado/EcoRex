@@ -75,7 +75,7 @@ type RitualPhase = "sealed" | "opening" | "revealed";
 
 export interface PercibirRitualProps {
   species: Species[];
-  discoverFn: (body: { speciesId: number; phase: string }, signal?: AbortSignal) => Promise<DiscoverResult>;
+  discoverFn: (body: { phase: string }, signal?: AbortSignal) => Promise<DiscoverResult>;
   onUnauthorized: () => void;
   /** When set, energy is depleted (0 remaining) and the pack can't be opened until this timestamp. */
   energyResetAt?: number | null;
@@ -184,19 +184,13 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     playOnce(SFX_TEAR);
     playOnce(SFX_WHOOSH);
 
-    const picked = species[Math.floor(Math.random() * species.length)];
-    const audio = new Audio(speciesSoundUrl(picked.scientific_name));
-    safePlay(audio)
-      .then(() => audio.pause())
-      .catch(() => {});
-    speciesAudioRef.current = audio;
-
     const controller = new AbortController();
     abortRef.current = controller;
 
-    Promise.all([discoverFn({ speciesId: picked.id, phase: PHASE }, controller.signal), delay(RITUAL_ANIM_MS)])
+    Promise.all([discoverFn({ phase: PHASE }, controller.signal), delay(RITUAL_ANIM_MS)])
       .then(([data]) => {
-        setResult({ ...data, fractaeChildName: picked.fractae_child_name });
+        const matchedSpecies = species.find((s) => s.id === data.speciesId);
+        setResult({ ...data, fractaeChildName: matchedSpecies?.fractae_child_name });
         setPhase("revealed");
         setShowXpToast(true);
         refetchNotifications();
@@ -204,12 +198,10 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         // the card reveal the instant it appears, competing for attention.
         // It's deferred until the user finishes with the reveal (swipe up,
         // see handleCommitUp) so the two never show at once.
-        const finalAudio = speciesAudioRef.current;
-        if (finalAudio) {
-          finalAudio.currentTime = 0;
-          safePlay(finalAudio).catch(() => {});
-          soundTimeoutRef.current = setTimeout(stopSpeciesSound, MAX_SOUND_MS);
-        }
+        const audio = new Audio(speciesSoundUrl(data.scientificName));
+        speciesAudioRef.current = audio;
+        safePlay(audio).catch(() => {});
+        soundTimeoutRef.current = setTimeout(stopSpeciesSound, MAX_SOUND_MS);
       })
       .catch((err) => {
         if (controller.signal.aborted) return;

@@ -102,7 +102,7 @@ describe("PercibirRitual", () => {
     expect(discoverFn).not.toHaveBeenCalled();
   });
 
-  it("calls discoverFn with the picked species once the drag passes the tear threshold", () => {
+  it("calls discoverFn with the phase once the drag passes the tear threshold", () => {
     const discoverFn = vi.fn().mockReturnValue(new Promise(() => {}));
     renderRitual({ discoverFn });
     openPeek();
@@ -111,7 +111,7 @@ describe("PercibirRitual", () => {
     fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
     fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
 
-    expect(discoverFn).toHaveBeenCalledWith({ speciesId: 1, phase: "balance" }, expect.anything());
+    expect(discoverFn).toHaveBeenCalledWith({ phase: "balance" }, expect.anything());
   });
 
   it("reveals the card once discoverFn resolves and the ritual animation finishes", async () => {
