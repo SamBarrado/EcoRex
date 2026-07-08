@@ -2,7 +2,7 @@
 
 Juego de descubrimiento y colección de dinosaurios con carga emocional (Fractae). React + Vite en el frontend, Cloudflare Pages Functions en el backend, D1 como base de datos.
 
-Lore completo del universo: [docs/lore_world_bible_ecorex_v4.md](docs/lore_world_bible_ecorex_v4.md).
+Lore completo del universo: [docs/lore_world_bible_ecorex_v5.md](docs/lore_world_bible_ecorex_v5.md).
 
 ## Stack
 
@@ -29,7 +29,7 @@ npm run typecheck      # tsc sobre app y functions
 ```
 src/pages/          Pantallas: Inicio, Percibir (descubrir), Colección, Perfil, Fusión, Login/Registro
 src/components/     Componentes compartidos (NotificationBell, etc.)
-functions/api/       Endpoints: auth, discover, collection, fuse, notifications, species, profile
+functions/api/       Endpoints: auth, discover, collection, fuse, notifications, species, profile, missions
 functions/lib/       Lógica compartida: auth, discovery, cache, rate limit, R2, proveedores de imagen (Anthropic/OpenAI)
 schema.sql           Esquema D1, fuente de verdad de la base de datos
 scripts/             Seed de datos, sync de especies, generación de arte/specs, comparador de esquema remoto
@@ -47,3 +47,7 @@ npx wrangler pages deploy dist --project-name=ecorex-project
 ```
 
 Detalles del proceso de release y de la base de datos remota en [CLAUDE.md](CLAUDE.md).
+
+## Backlog
+
+Ideas y mejoras futuras sin priorizar todavía: [docs/backlog.md](docs/backlog.md).
