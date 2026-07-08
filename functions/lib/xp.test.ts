@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { D1Database } from '@cloudflare/workers-types';
-import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, addXp, energyBonusForLevel, fusionThresholdReductionForLevel } from './xp';
+import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, addXp, energyBonusForLevel, fusionThresholdReductionForLevel, titleForLevel } from './xp';
 
 describe('xpForLevel', () => {
   it('returns 0 for level 1', () => {
@@ -150,5 +150,27 @@ describe('fusionThresholdReductionForLevel', () => {
   it('returns 1 from level 15 onward', () => {
     expect(fusionThresholdReductionForLevel(15)).toBe(1);
     expect(fusionThresholdReductionForLevel(50)).toBe(1);
+  });
+});
+
+describe('titleForLevel', () => {
+  it('returns the level-1 title for a brand new player', () => {
+    expect(titleForLevel(1)).toBe('Explorador Novato');
+  });
+
+  it('returns the highest tier reached, not an exact match, for levels between tiers', () => {
+    expect(titleForLevel(4)).toBe('Explorador Novato');
+    expect(titleForLevel(23)).toBe('Intérprete de lo Oculto');
+    expect(titleForLevel(49)).toBe('Guardián Primordial');
+  });
+
+  it('returns the exact title at each defined tier level', () => {
+    expect(titleForLevel(5)).toBe('Perceptor Iniciado');
+    expect(titleForLevel(10)).toBe('Guía de la Fractura');
+    expect(titleForLevel(15)).toBe('Custodio de Fractae');
+    expect(titleForLevel(20)).toBe('Intérprete de lo Oculto');
+    expect(titleForLevel(30)).toBe('Vidente Épico');
+    expect(titleForLevel(40)).toBe('Guardián Primordial');
+    expect(titleForLevel(50)).toBe('Voz de la Fractura');
   });
 });

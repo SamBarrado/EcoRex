@@ -49,6 +49,26 @@ export function fusionThresholdReductionForLevel(level: number): number {
   return level >= FUSION_THRESHOLD_REDUCTION_LEVEL ? 1 : 0;
 }
 
+const LEVEL_TITLES: Array<{ level: number; title: string }> = [
+  { level: 1, title: 'Explorador Novato' },
+  { level: 5, title: 'Perceptor Iniciado' },
+  { level: 10, title: 'Guía de la Fractura' },
+  { level: 15, title: 'Custodio de Fractae' },
+  { level: 20, title: 'Intérprete de lo Oculto' },
+  { level: 30, title: 'Vidente Épico' },
+  { level: 40, title: 'Guardián Primordial' },
+  { level: 50, title: 'Voz de la Fractura' },
+];
+
+export function titleForLevel(level: number): string {
+  let current = LEVEL_TITLES[0].title;
+  for (const tier of LEVEL_TITLES) {
+    if (level < tier.level) break;
+    current = tier.title;
+  }
+  return current;
+}
+
 // Cumulative XP required to reach `level`. Curve: round(50 * (level-1)^1.5).
 // The (level-1) shift is required so level 1 sits at exactly 0 xp — a brand
 // new player (xp=0) must show a 0-progress bar, not a negative one.
