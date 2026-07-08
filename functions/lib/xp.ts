@@ -4,25 +4,57 @@ import { D1Database } from '@cloudflare/workers-types';
 // derived level never exceeds it.
 export const MAX_LEVEL = 50;
 
+// XP for the first time a discovery lands in a new species+phase slot
+// (isNewSlot === true). Duplicates (isNewSlot === false) get 0 xp — only
+// fresh collection progress counts, not repeat pulls.
 export const RARITY_XP: Record<string, number> = {
   registrada: 10,
   notable: 20,
-  singular: 40,
-  epica: 80,
+  singular: 35,
+  epica: 60,
+  primordial: 100,
+};
+
+// XP for a fusion's resulting `exceso` discovery ("evolución de fase").
+// Replaces the old RARITY_XP[tier] + flat FUSION_XP_BONUS model — a flat
+// bonus distorted low tiers far more than high ones.
+export const FUSION_RARITY_XP: Record<string, number> = {
+  registrada: 15,
+  notable: 30,
+  singular: 50,
+  epica: 90,
   primordial: 150,
 };
 
-export const FUSION_XP_BONUS = 50;
 export const SPECIES_COMPLETE_XP_BONUS = 200;
 
 // Not wired up anywhere yet — functions/api/gifts/* doesn't exist. Documented
 // here so the gifting feature can award XP without redesigning this module.
 export const GIFT_REDEEMED_XP_BONUS = 25;
 
-// Cumulative XP required to reach `level`. Triangular curve: level 2 = 100,
-// level 5 = 1000, level 50 = 122500.
+// Level-derived functional rewards. Never persisted — recomputed from the
+// user's level every time, same reasoning as the level itself.
+const ENERGY_BONUS_LEVEL_1 = 5;
+const ENERGY_BONUS_LEVEL_2 = 30;
+const FUSION_THRESHOLD_REDUCTION_LEVEL = 15;
+
+export function energyBonusForLevel(level: number): number {
+  let bonus = 0;
+  if (level >= ENERGY_BONUS_LEVEL_1) bonus += 1;
+  if (level >= ENERGY_BONUS_LEVEL_2) bonus += 1;
+  return bonus;
+}
+
+export function fusionThresholdReductionForLevel(level: number): number {
+  return level >= FUSION_THRESHOLD_REDUCTION_LEVEL ? 1 : 0;
+}
+
+// Cumulative XP required to reach `level`. Curve: round(50 * (level-1)^1.5).
+// The (level-1) shift is required so level 1 sits at exactly 0 xp — a brand
+// new player (xp=0) must show a 0-progress bar, not a negative one.
+// level 2 = 50, level 5 = 400, level 50 = 17150.
 export function xpForLevel(level: number): number {
-  return (100 * (level - 1) * level) / 2;
+  return Math.round(50 * Math.pow(level - 1, 1.5));
 }
 
 export function levelFromXp(xp: number): number {

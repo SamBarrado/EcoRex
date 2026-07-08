@@ -35,9 +35,9 @@ describe('GET /api/profile', () => {
     const response = await onRequestGet({ request, env } as never);
     const body = (await response.json()) as Record<string, unknown>;
     expect(body.xp).toBe(150);
-    expect(body.level).toBe(2);
-    expect(body.xpIntoLevel).toBe(50);
-    expect(body.xpForNextLevel).toBe(200);
+    expect(body.level).toBe(3);
+    expect(body.xpIntoLevel).toBe(9);
+    expect(body.xpForNextLevel).toBe(119);
     expect(body.explorerRank).toBeUndefined();
   });
 });

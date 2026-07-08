@@ -1,22 +1,22 @@
 import { describe, it, expect } from 'vitest';
 import { D1Database } from '@cloudflare/workers-types';
-import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_XP_BONUS, SPECIES_COMPLETE_XP_BONUS, addXp } from './xp';
+import { xpForLevel, levelFromXp, xpProgress, MAX_LEVEL, RARITY_XP, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, addXp, energyBonusForLevel, fusionThresholdReductionForLevel } from './xp';
 
 describe('xpForLevel', () => {
   it('returns 0 for level 1', () => {
     expect(xpForLevel(1)).toBe(0);
   });
 
-  it('returns 100 for level 2', () => {
-    expect(xpForLevel(2)).toBe(100);
+  it('returns 50 for level 2', () => {
+    expect(xpForLevel(2)).toBe(50);
   });
 
-  it('returns 1000 for level 5', () => {
-    expect(xpForLevel(5)).toBe(1000);
+  it('returns 400 for level 5', () => {
+    expect(xpForLevel(5)).toBe(400);
   });
 
-  it('returns 122500 for level 50', () => {
-    expect(xpForLevel(50)).toBe(122500);
+  it('returns 17150 for level 50', () => {
+    expect(xpForLevel(50)).toBe(17150);
   });
 });
 
@@ -25,12 +25,12 @@ describe('levelFromXp', () => {
     expect(levelFromXp(0)).toBe(1);
   });
 
-  it('returns level 1 for 99 xp (just under level 2 threshold)', () => {
-    expect(levelFromXp(99)).toBe(1);
+  it('returns level 1 for 49 xp (just under level 2 threshold)', () => {
+    expect(levelFromXp(49)).toBe(1);
   });
 
-  it('returns level 2 for exactly 100 xp', () => {
-    expect(levelFromXp(100)).toBe(2);
+  it('returns level 2 for exactly 50 xp', () => {
+    expect(levelFromXp(50)).toBe(2);
   });
 
   it('clamps to level 50 for xp far beyond the level-50 threshold', () => {
@@ -40,8 +40,8 @@ describe('levelFromXp', () => {
 
 describe('xpProgress', () => {
   it('reports progress into the current level', () => {
-    // level 2 starts at 100 xp, level 3 starts at 300 xp
-    expect(xpProgress(150)).toEqual({ level: 2, xpIntoLevel: 50, xpForNextLevel: 200 });
+    // level 2 starts at 50 xp, level 3 starts at 141 xp
+    expect(xpProgress(150)).toEqual({ level: 3, xpIntoLevel: 9, xpForNextLevel: 119 });
   });
 
   it('returns null xpForNextLevel at the level cap', () => {
@@ -52,18 +52,27 @@ describe('xpProgress', () => {
 });
 
 describe('constants', () => {
-  it('defines xp values for every rarity tier', () => {
+  it('defines new-entry xp values for every rarity tier', () => {
     expect(RARITY_XP).toEqual({
       registrada: 10,
       notable: 20,
-      singular: 40,
-      epica: 80,
+      singular: 35,
+      epica: 60,
+      primordial: 100,
+    });
+  });
+
+  it('defines fusion (evolution) xp values for every rarity tier', () => {
+    expect(FUSION_RARITY_XP).toEqual({
+      registrada: 15,
+      notable: 30,
+      singular: 50,
+      epica: 90,
       primordial: 150,
     });
   });
 
-  it('defines the fusion and species-complete bonuses', () => {
-    expect(FUSION_XP_BONUS).toBe(50);
+  it('defines the species-complete bonus', () => {
     expect(SPECIES_COMPLETE_XP_BONUS).toBe(200);
   });
 });
@@ -106,11 +115,40 @@ describe('addXp', () => {
   });
 
   it('reports leveledUp true when crossing a level threshold', async () => {
-    const db = makeDb(90);
+    const db = makeDb(40);
     const result = await addXp(db as unknown as D1Database, 1, 20);
-    expect(result.totalXp).toBe(110);
+    expect(result.totalXp).toBe(60);
     expect(result.previousLevel).toBe(1);
     expect(result.level).toBe(2);
     expect(result.leveledUp).toBe(true);
+  });
+});
+
+describe('energyBonusForLevel', () => {
+  it('returns 0 below level 5', () => {
+    expect(energyBonusForLevel(1)).toBe(0);
+    expect(energyBonusForLevel(4)).toBe(0);
+  });
+
+  it('returns 1 from level 5 up to (but not including) level 30', () => {
+    expect(energyBonusForLevel(5)).toBe(1);
+    expect(energyBonusForLevel(29)).toBe(1);
+  });
+
+  it('returns 2 from level 30 onward', () => {
+    expect(energyBonusForLevel(30)).toBe(2);
+    expect(energyBonusForLevel(50)).toBe(2);
+  });
+});
+
+describe('fusionThresholdReductionForLevel', () => {
+  it('returns 0 below level 15', () => {
+    expect(fusionThresholdReductionForLevel(1)).toBe(0);
+    expect(fusionThresholdReductionForLevel(14)).toBe(0);
+  });
+
+  it('returns 1 from level 15 onward', () => {
+    expect(fusionThresholdReductionForLevel(15)).toBe(1);
+    expect(fusionThresholdReductionForLevel(50)).toBe(1);
   });
 });
