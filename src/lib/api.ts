@@ -111,6 +111,16 @@ export function getEnergy() {
   return request<EnergyState>("/api/energy");
 }
 
+export interface MissionsState {
+  day: string;
+  missions: Array<{ slug: string; label: string; progress: number; target: number; completed: boolean }>;
+  bonus: { completed: boolean; xp: number };
+}
+
+export function getMissions() {
+  return request<MissionsState>("/api/missions");
+}
+
 export interface Species {
   id: number;
   scientific_name: string;
@@ -138,6 +148,8 @@ export interface DiscoverResult {
   isNewSlot: boolean;
   discoveredAt: string;
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
+  missionsCompleted: string[];
+  dailyBonusAwarded: boolean;
 }
 
 export function discover(body: { phase: string }, signal?: AbortSignal) {

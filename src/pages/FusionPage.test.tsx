@@ -39,6 +39,8 @@ const fuseResult: DiscoverResult = {
   isNewSlot: true,
   discoveredAt: "2026-01-01",
   xp: { xpGained: 15, totalXp: 100, previousLevel: 1, level: 2, leveledUp: true },
+  missionsCompleted: [],
+  dailyBonusAwarded: false,
 };
 
 beforeEach(() => {

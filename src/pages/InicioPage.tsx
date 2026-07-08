@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFuseEligible, getMyProfile, getEnergy, ProfileStats, EnergyState, ApiError } from "../lib/api";
+import { getFuseEligible, getMyProfile, getEnergy, getMissions, ProfileStats, EnergyState, MissionsState, ApiError } from "../lib/api";
 import { formatEnergyCountdown } from "../lib/energy";
 import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
+import { MissionsCard } from "../components/MissionsCard";
 import { version } from "../../package.json";
 
 const FUSION_UNLOCK_SEEN_KEY = "ecorex_unlock_seen_fusion";
@@ -12,6 +13,7 @@ export default function InicioPage() {
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [energy, setEnergy] = useState<EnergyState | null>(null);
+  const [missions, setMissions] = useState<MissionsState | null>(null);
   const [showFusionUnlockModal, setShowFusionUnlockModal] = useState(false);
 
   useEffect(() => {
@@ -34,6 +36,11 @@ export default function InicioPage() {
       });
     getEnergy()
       .then(setEnergy)
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) navigate("/login");
+      });
+    getMissions()
+      .then(setMissions)
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
@@ -93,6 +100,8 @@ export default function InicioPage() {
           )}
         </div>
       )}
+
+      <MissionsCard missions={missions} />
 
       <div className="grid grid-compact">
         <div
