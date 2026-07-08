@@ -15,6 +15,12 @@ export default function InicioPage() {
   const [energy, setEnergy] = useState<EnergyState | null>(null);
   const [missions, setMissions] = useState<MissionsState | null>(null);
   const [showFusionUnlockModal, setShowFusionUnlockModal] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     getFuseEligible()
@@ -86,6 +92,9 @@ export default function InicioPage() {
               {profile.speciesDiscoveredCount}/{profile.speciesTotalCount} ({progressPct}%)
             </span>
           </div>
+          <div className="level-progress-bar">
+            <div className="species-progress-fill" style={{ width: `${progressPct}%` }} />
+          </div>
           {energy && (
             <div className="stat">
               <span>⚡ Energía</span>
@@ -94,7 +103,7 @@ export default function InicioPage() {
                 {!energy.unlimited &&
                   energy.remaining === 0 &&
                   energy.resetAt !== null &&
-                  ` · próxima en ${formatEnergyCountdown(energy.resetAt)}`}
+                  ` · próxima en ${formatEnergyCountdown(energy.resetAt, now)}`}
               </span>
             </div>
           )}
