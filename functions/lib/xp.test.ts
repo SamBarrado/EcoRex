@@ -173,4 +173,12 @@ describe('titleForLevel', () => {
     expect(titleForLevel(40)).toBe('Guardián Primordial');
     expect(titleForLevel(50)).toBe('Voz de la Fractura');
   });
+
+  it('returns the level-1 title for a level below the first tier', () => {
+    expect(titleForLevel(0)).toBe('Explorador Novato');
+  });
+
+  it('returns the last tier title for a level past the max level', () => {
+    expect(titleForLevel(60)).toBe('Voz de la Fractura');
+  });
 });
