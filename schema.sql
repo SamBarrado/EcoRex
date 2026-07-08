@@ -142,3 +142,18 @@ CREATE INDEX idx_discoveries_user ON discoveries(user_id);
 CREATE INDEX idx_discoveries_species ON discoveries(species_id);
 CREATE INDEX idx_species_operation ON species(operation_id);
 CREATE INDEX idx_gifts_discovery ON gifts(discovery_id);
+
+-- 12. Daily missions: per-user, per-day progress toward the 3 fixed daily
+-- missions plus the "all 3 completed" bonus. Targets and xp rewards live in
+-- code (functions/lib/missions.ts), not here — only real progress is stored.
+-- A day with no rows means "not started yet", so there's no reset job.
+CREATE TABLE daily_missions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  mission_slug TEXT NOT NULL CHECK (mission_slug IN ('percibir', 'coleccionista', 'fusion', 'bonus')),
+  day TEXT NOT NULL,              -- 'YYYY-MM-DD', UTC
+  progress_count INTEGER NOT NULL DEFAULT 0,
+  completed_at TEXT,
+  UNIQUE (user_id, mission_slug, day)
+);
+CREATE INDEX idx_daily_missions_user_day ON daily_missions(user_id, day);
