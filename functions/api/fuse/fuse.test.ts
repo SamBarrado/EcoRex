@@ -26,6 +26,12 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
         async first<T>() {
           if (sql.includes('FROM sessions')) return sessionRow as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return ((overrides.xp as { xp: number } | undefined) ?? { xp: 0 }) as unknown as T;
+          if (sql.includes('SELECT progress_count, completed_at FROM daily_missions')) {
+            const progress = (overrides.missionProgress as Record<string, { progress_count: number; completed_at: string | null }> | undefined) ?? {};
+            const lastCall = calls[calls.length - 1];
+            const slug = lastCall.args[1] as string;
+            return (progress[slug] as unknown as T) ?? ({ progress_count: 0, completed_at: null } as unknown as T);
+          }
           return (overrides.first as T) ?? null;
         },
         async all<T>() {
@@ -45,6 +51,14 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
           if (sql.includes('DISTINCT phase')) {
             const phases = insertDone ? phasesAfter : phasesBefore;
             return { results: phases.map((phase) => ({ phase })) as T[] };
+          }
+          if (sql.includes('SELECT mission_slug, completed_at FROM daily_missions')) {
+            const progress = (overrides.missionProgress as Record<string, { progress_count: number; completed_at: string | null }> | undefined) ?? {};
+            return {
+              results: Object.entries(progress)
+                .filter(([slug]) => slug !== 'bonus')
+                .map(([mission_slug, row]) => ({ mission_slug, completed_at: row.completed_at })) as T[],
+            };
           }
           return { results: [] as T[] };
         },
@@ -259,6 +273,34 @@ describe('POST /api/fuse', () => {
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
     expect(body.xp.xpGained).toBe(15); // registrada fusion (evolution) xp
+  });
+
+  it('awards the fusion mission xp when this fusion completes it', async () => {
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+      xp: { xp: 0 },
+      ownedPhases: [],
+      missionProgress: { fusion: { progress_count: 1, completed_at: null } },
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    const body = (await response.json()) as { xp: { xpGained: number }; missionsCompleted: string[] };
+    expect(body.xp.xpGained).toBe(15 + 20); // fusion (evolution) xp + fusion mission xp
+    expect(body.missionsCompleted).toContain('fusion');
   });
 
   it('adds the species-complete bonus when this fusion finishes the set', async () => {

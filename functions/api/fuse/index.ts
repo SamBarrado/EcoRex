@@ -2,6 +2,7 @@ import { getSessionCookie, verifySession } from "../../lib/auth";
 import { rateLimit, getClientIp } from "../../lib/rateLimit";
 import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../../lib/discovery";
 import { addXp, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, levelFromXp, fusionThresholdReductionForLevel } from "../../lib/xp";
+import { incrementMission, checkAndAwardDailyBonus, todayUTC, MISSION_DEFS, DAILY_BONUS_XP } from "../../lib/missions";
 
 interface Env {
   DB: D1Database;
@@ -159,7 +160,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
-  const xpAmount = (FUSION_RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  let xpAmount = (FUSION_RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+
+  const missionsCompleted: string[] = [];
+  const day = todayUTC();
+
+  const fusionMission = await incrementMission(env.DB, user.id, 'fusion', day);
+  if (fusionMission.completedNow) {
+    xpAmount += MISSION_DEFS.fusion.xp;
+    missionsCompleted.push('fusion');
+  }
+
+  const dailyBonusAwarded = await checkAndAwardDailyBonus(env.DB, user.id, day);
+  if (dailyBonusAwarded) {
+    xpAmount += DAILY_BONUS_XP;
+    missionsCompleted.push('bonus');
+  }
+
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {
@@ -187,6 +204,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         previousLevel: xpResult.previousLevel,
         leveledUp: xpResult.leveledUp,
       },
+      missionsCompleted,
+      dailyBonusAwarded,
     },
     { status: 201 }
   );
