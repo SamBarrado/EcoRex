@@ -39,5 +39,6 @@ describe('GET /api/profile', () => {
     expect(body.xpIntoLevel).toBe(9);
     expect(body.xpForNextLevel).toBe(119);
     expect(body.explorerRank).toBeUndefined();
+    expect(body.title).toBe('Explorador Novato');
   });
 });

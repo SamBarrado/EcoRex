@@ -1,5 +1,5 @@
 import { getSessionCookie, verifySession, type Env } from "../lib/auth";
-import { xpProgress } from "../lib/xp";
+import { xpProgress, titleForLevel } from "../lib/xp";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -56,6 +56,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     level: progress.level,
     xpIntoLevel: progress.xpIntoLevel,
     xpForNextLevel: progress.xpForNextLevel,
+    title: titleForLevel(progress.level),
     speciesDiscoveredCount,
     speciesTotalCount: speciesTotalRow?.count ?? 0,
     totalDiscoveries,
