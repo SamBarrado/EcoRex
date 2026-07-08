@@ -1,7 +1,7 @@
 import { getSessionCookie, verifySession } from "../../lib/auth";
 import { rateLimit, getClientIp } from "../../lib/rateLimit";
 import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../../lib/discovery";
-import { addXp, RARITY_XP, FUSION_XP_BONUS, SPECIES_COMPLETE_XP_BONUS } from "../../lib/xp";
+import { addXp, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, levelFromXp, fusionThresholdReductionForLevel } from "../../lib/xp";
 
 interface Env {
   DB: D1Database;
@@ -14,7 +14,7 @@ interface FuseBody {
   speciesId?: number;
 }
 
-const FUSE_THRESHOLD = 5;
+const BASE_FUSE_THRESHOLD = 5;
 const DEFAULT_FUSE_RATE_LIMIT = 10;
 
 function generateDiscoveryCode(): string {
@@ -34,6 +34,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!user) {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  const level = levelFromXp(user.xp);
+  const fuseThreshold = BASE_FUSE_THRESHOLD - fusionThresholdReductionForLevel(level);
 
   const ip = getClientIp(request);
   const allowed = await rateLimit(env.RATE_LIMIT_KV, `fuse:${user.id}:${ip}`, DEFAULT_FUSE_RATE_LIMIT);
@@ -62,10 +65,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
      ORDER BY discovered_at ASC
      LIMIT ?`
   )
-    .bind(user.id, speciesId, FUSE_THRESHOLD)
+    .bind(user.id, speciesId, fuseThreshold)
     .all<{ id: number }>();
 
-  if (oldestRows.length < FUSE_THRESHOLD) {
+  if (oldestRows.length < fuseThreshold) {
     return Response.json(
       { error: "No tienes suficientes duplicados de Balance para esta especie" },
       { status: 409 }
@@ -156,8 +159,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
   const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
-  const xpAmount =
-    (RARITY_XP[rarityTier.slug] ?? 0) + FUSION_XP_BONUS + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
+  const xpAmount = (FUSION_RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
   const xpResult = await addXp(env.DB, user.id, xpAmount);
 
   if (xpResult.leveledUp) {

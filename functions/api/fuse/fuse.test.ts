@@ -134,6 +134,31 @@ describe('POST /api/fuse', () => {
     expect(response.status).toBe(409);
   });
 
+  it('only needs 4 duplicates for a user at level 15+', async () => {
+    // xp: 400 = level 5 threshold... use a value at/above the level-15 threshold (2619).
+    const { env } = makeEnv({
+      oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+      xp: { xp: 2619 },
+      first: {
+        species_id: 7,
+        scientific_name: 'Tyrannosaurus imperator',
+        common_name: 'Rex de Fuego',
+        physical_traits: null,
+        base_palette: null,
+        silhouette: null,
+        fractae_child_name: 'Furia',
+        anchor_image_url: '/species-art/rex/exceso.png',
+      },
+    });
+    const request = new Request('https://ecorex.app/api/fuse', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ speciesId: 7 }),
+    });
+    const response = await onRequestPost({ request, env } as never);
+    expect(response.status).toBe(201);
+  });
+
   it('fuses 5 oldest duplicates and returns a new exceso discovery', async () => {
     const { env, db } = makeEnv({
       oldestRows: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
@@ -185,7 +210,7 @@ describe('POST /api/fuse', () => {
     });
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
-    expect(body.xp.xpGained).toBe(10 + 50); // registrada rarity xp + fusion bonus
+    expect(body.xp.xpGained).toBe(15); // registrada fusion (evolution) xp
   });
 
   it('adds the species-complete bonus when this fusion finishes the set', async () => {
@@ -215,7 +240,7 @@ describe('POST /api/fuse', () => {
     });
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
-    expect(body.xp.xpGained).toBe(10 + 50 + 200); // rarity + fusion bonus + species-complete bonus
+    expect(body.xp.xpGained).toBe(15 + 200); // fusion xp + species-complete bonus
   });
 
   it('does NOT re-award the species-complete bonus when the species was already complete before this fusion', async () => {
@@ -245,6 +270,6 @@ describe('POST /api/fuse', () => {
     });
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
-    expect(body.xp.xpGained).toBe(10 + 50); // rarity + fusion bonus only, no species-complete bonus
+    expect(body.xp.xpGained).toBe(15); // fusion xp only, no species-complete bonus
   });
 });
