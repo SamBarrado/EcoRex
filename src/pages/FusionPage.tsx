@@ -117,9 +117,10 @@ export default function FusionPage() {
       setResult(data);
       setShowXpToast(true);
       refetchNotifications();
-      if (data.xp.leveledUp) {
-        setLevelUpInfo({ previousLevel: data.xp.previousLevel, level: data.xp.level });
-      }
+      // Level-up is deliberately NOT shown here: it would mount on top of
+      // the fusion result the instant it appears, competing for attention.
+      // It's deferred until the user dismisses the result (see handleReset)
+      // so the two never show at once.
       playSound();
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -135,7 +136,7 @@ export default function FusionPage() {
     }
   }
 
-  function handleReset() {
+  function finishReset() {
     stopSound();
     setResult(null);
     setShowXpToast(false);
@@ -143,6 +144,17 @@ export default function FusionPage() {
     setGlowSlug(null);
     showNav();
     load();
+  }
+
+  function handleReset() {
+    // First click on "Volver al altar": if this fusion leveled the player
+    // up, show that now instead of resetting — never at the same time as
+    // the fusion result. Dismissing the level-up screen finishes the reset.
+    if (result?.xp.leveledUp && !levelUpInfo) {
+      setLevelUpInfo({ previousLevel: result.xp.previousLevel, level: result.xp.level });
+      return;
+    }
+    finishReset();
   }
 
   return (
@@ -211,7 +223,7 @@ export default function FusionPage() {
         <LevelUpScreen
           previousLevel={levelUpInfo.previousLevel}
           level={levelUpInfo.level}
-          onClose={() => setLevelUpInfo(null)}
+          onClose={finishReset}
         />
       )}
     </div>

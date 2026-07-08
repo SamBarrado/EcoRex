@@ -200,9 +200,10 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         setPhase("revealed");
         setShowXpToast(true);
         refetchNotifications();
-        if (data.xp.leveledUp) {
-          setLevelUpInfo({ previousLevel: data.xp.previousLevel, level: data.xp.level });
-        }
+        // Level-up is deliberately NOT shown here: it would mount on top of
+        // the card reveal the instant it appears, competing for attention.
+        // It's deferred until the user finishes with the reveal (swipe up,
+        // see handleCommitUp) so the two never show at once.
         const finalAudio = speciesAudioRef.current;
         if (finalAudio) {
           finalAudio.currentTime = 0;
@@ -289,7 +290,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     showNav();
   }
 
-  function handleCommitUp() {
+  function proceedAfterCommit() {
     if (!result) return;
     if (result.isNewSlot) {
       setShowNewSlotOverlay(true);
@@ -302,6 +303,18 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
       pulseTab("/coleccion");
       handleReset();
     }
+  }
+
+  function handleCommitUp() {
+    if (!result) return;
+    // First swipe-up: if this discovery leveled the player up, show that
+    // now instead of proceeding — never at the same time as the reveal.
+    // Dismissing the level-up screen (below) runs the deferred proceed step.
+    if (result.xp.leveledUp && !levelUpInfo) {
+      setLevelUpInfo({ previousLevel: result.xp.previousLevel, level: result.xp.level });
+      return;
+    }
+    proceedAfterCommit();
   }
 
   function handleRetry() {
@@ -320,7 +333,10 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         <LevelUpScreen
           previousLevel={levelUpInfo.previousLevel}
           level={levelUpInfo.level}
-          onClose={() => setLevelUpInfo(null)}
+          onClose={() => {
+            setLevelUpInfo(null);
+            proceedAfterCommit();
+          }}
         />
       )}
       {error && (

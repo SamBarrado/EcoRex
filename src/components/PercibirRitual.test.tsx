@@ -205,4 +205,92 @@ describe("PercibirRitual", () => {
     expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
     expect(screen.queryByTestId("envelope-drag-line")).not.toBeInTheDocument();
   });
+
+  it("defers the level-up screen until the reveal is dismissed via swipe-up (duplicate)", async () => {
+    vi.useFakeTimers();
+    const discoverFn = vi.fn().mockResolvedValue({
+      ...discoverResult,
+      isNewSlot: false,
+      xp: { xpGained: 10, totalXp: 100, previousLevel: 1, level: 2, leveledUp: true },
+    });
+    renderRitual({ discoverFn });
+    openPeek();
+
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    // Card is revealed, but the level-up screen must not appear yet — it
+    // would otherwise mount on top of the reveal at the same instant.
+    expect(screen.getByText("Test Dino")).toBeInTheDocument();
+    expect(screen.queryByText(/subiste de nivel/i)).not.toBeInTheDocument();
+
+    const cardPerspective = screen.getByTestId("card-perspective");
+    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
+    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
+    fireEvent.touchEnd(cardPerspective);
+
+    // onCommitUp fires after RevealCard's own fly-away animation timer.
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    // Swiping up surfaces the level-up screen instead of resetting the pack.
+    expect(screen.getByText(/subiste de nivel/i)).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-pack")).not.toBeInTheDocument();
+
+    // Dismissing it is what finally resets to the sealed pack.
+    fireEvent.click(screen.getByText(/subiste de nivel/i));
+
+    expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
+    expect(screen.queryByText(/subiste de nivel/i)).not.toBeInTheDocument();
+  });
+
+  it("defers the level-up screen until the reveal is dismissed via swipe-up (new species)", async () => {
+    vi.useFakeTimers();
+    const discoverFn = vi.fn().mockResolvedValue({
+      ...discoverResult,
+      isNewSlot: true,
+      xp: { xpGained: 60, totalXp: 100, previousLevel: 1, level: 2, leveledUp: true },
+    });
+    renderRitual({ discoverFn });
+    openPeek();
+
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    const cardPerspective = screen.getByTestId("card-perspective");
+    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
+    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
+    fireEvent.touchEnd(cardPerspective);
+
+    // onCommitUp fires after RevealCard's own fly-away animation timer.
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    // Level-up screen shows; the "new species" toast must not appear yet.
+    expect(screen.getByText(/subiste de nivel/i)).toBeInTheDocument();
+    expect(screen.queryByText(/nueva especie registrada/i)).not.toBeInTheDocument();
+
+    // Dismissing it is what finally proceeds to the new-species toast.
+    fireEvent.click(screen.getByText(/subiste de nivel/i));
+
+    expect(screen.getByText(/nueva especie registrada/i)).toBeInTheDocument();
+  });
 });
