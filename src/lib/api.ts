@@ -139,7 +139,7 @@ export interface DiscoverResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
 }
 
-export function discover(body: { speciesId: number; phase: string }, signal?: AbortSignal) {
+export function discover(body: { phase: string }, signal?: AbortSignal) {
   return request<DiscoverResult>("/api/discover", {
     method: "POST",
     body: JSON.stringify(body),
