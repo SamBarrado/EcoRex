@@ -88,6 +88,7 @@ export interface ProfileStats {
   level: number;
   xpIntoLevel: number;
   xpForNextLevel: number | null;
+  title: string;
   speciesDiscoveredCount: number;
   speciesTotalCount: number;
   totalDiscoveries: number;

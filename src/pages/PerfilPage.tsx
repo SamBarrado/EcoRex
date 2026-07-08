@@ -65,6 +65,7 @@ export default function PerfilPage() {
           <strong>{profile.user.display_name || profile.user.email}</strong>
           <div>{profile.user.email}</div>
           <div>Nivel {profile.level}</div>
+          <div>{profile.title}</div>
         </div>
       </div>
 
