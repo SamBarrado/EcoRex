@@ -1,5 +1,6 @@
 import { getSessionCookie, verifySession, type Env } from "../lib/auth";
-import { getEnergyState, MAX_ENERGY } from "../lib/energy";
+import { getEnergyState } from "../lib/energy";
+import { levelFromXp } from "../lib/xp";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -10,11 +11,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const state = await getEnergyState(env.DB, user.id);
+  const state = await getEnergyState(env.DB, user.id, levelFromXp(user.xp));
 
   return Response.json({
     remaining: state.remaining,
-    max: MAX_ENERGY,
+    max: state.max,
     resetAt: state.resetAt,
     unlimited: state.unlimited ?? false,
   });

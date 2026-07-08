@@ -1,7 +1,7 @@
 import { getSessionCookie, verifySession } from "../lib/auth";
 import { consumeEnergy } from "../lib/energy";
 import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
-import { addXp, RARITY_XP, SPECIES_COMPLETE_XP_BONUS } from "../lib/xp";
+import { addXp, levelFromXp, RARITY_XP, SPECIES_COMPLETE_XP_BONUS } from "../lib/xp";
 
 interface Env {
   DB: D1Database;
@@ -35,7 +35,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const energy = await consumeEnergy(env.DB, user.id);
+  const energy = await consumeEnergy(env.DB, user.id, levelFromXp(user.xp));
   if (!energy.success) {
     return Response.json(
       { error: "No te queda energía para percibir. Vuelve más tarde.", resetAt: energy.resetAt },
