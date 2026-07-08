@@ -12,6 +12,8 @@ function makeDb(opts: {
   ownedPhasesAfter?: string[];
   /** Prior discoveries for this exact species+phase, consumed or not. */
   existingSlotCount?: number;
+  /** IDs returned by the "active species" draw. Defaults to [7], matching speciesRow's species_id. */
+  activeSpeciesIds?: number[];
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000, xp: opts.xp ?? 0 };
@@ -54,6 +56,10 @@ function makeDb(opts: {
             const phases = insertDone ? phasesAfter : phasesBefore;
             return { results: phases.map((phase) => ({ phase })) as T[] };
           }
+          if (sql.includes('FROM species WHERE is_active')) {
+            const ids = opts.activeSpeciesIds ?? [7];
+            return { results: ids.map((id) => ({ id })) as T[] };
+          }
           return { results: [] as T[] };
         },
         async run() {
@@ -78,7 +84,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'exceso' }),
+      body: JSON.stringify({ phase: 'exceso' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -90,12 +96,29 @@ describe('POST /api/discover', () => {
     expect(response.status).toBe(400);
   });
 
+  it('returns 500 when there are no active species to draw from', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 1, activeSpeciesIds: [] });
+    const request = new Request('https://ecorex.app/api/discover', {
+      method: 'POST',
+      headers: { Cookie: 'ecorex_session=abc' },
+      body: JSON.stringify({ phase: 'balance' }),
+    });
+    const env = {
+      DB: db as unknown as D1Database,
+      RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
+      DINO_IMAGES: {} as unknown as R2Bucket,
+      OPENAI_API_KEY: 'test-key',
+    };
+    const response = await onRequestPost({ request, env } as never);
+    expect(response.status).toBe(500);
+  });
+
   it('inserts a fusion_ready notification when balance count reaches exactly 5', async () => {
     const db = makeDb({ balanceCountAfterInsert: 5 });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -115,7 +138,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -134,7 +157,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -152,7 +175,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -172,7 +195,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'balance' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -197,7 +220,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'eco' }),
+      body: JSON.stringify({ phase: 'eco' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -223,7 +246,7 @@ describe('POST /api/discover', () => {
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ speciesId: 7, phase: 'eco' }),
+      body: JSON.stringify({ phase: 'eco' }),
     });
     const env = {
       DB: db as unknown as D1Database,

@@ -11,7 +11,6 @@ interface Env {
 }
 
 interface DiscoverBody {
-  speciesId?: number;
   phase?: string;
 }
 
@@ -50,18 +49,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const speciesId = body.speciesId;
   const phase = body.phase;
 
-  if (typeof speciesId !== "number" || !phase || !VALID_PHASES.includes(phase)) {
+  if (!phase || !VALID_PHASES.includes(phase)) {
     if (phase === "exceso") {
       return Response.json(
         { error: "Exceso solo se obtiene fusionando duplicados de Balance" },
         { status: 400 }
       );
     }
-    return Response.json({ error: "speciesId and a valid phase are required" }, { status: 400 });
+    return Response.json({ error: "A valid phase is required" }, { status: 400 });
   }
+
+  const { results: activeSpeciesIds } = await env.DB.prepare(
+    "SELECT id FROM species WHERE is_active = 1"
+  ).all<{ id: number }>();
+
+  if (activeSpeciesIds.length === 0) {
+    return Response.json({ error: "No hay especies activas para descubrir" }, { status: 500 });
+  }
+
+  const randomIndex = crypto.getRandomValues(new Uint32Array(1))[0] % activeSpeciesIds.length;
+  const speciesId = activeSpeciesIds[randomIndex].id;
 
   const speciesRow = await env.DB.prepare(
     `SELECT
