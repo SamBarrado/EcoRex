@@ -1,6 +1,6 @@
-# LORE / WORLD BIBLE v4 — ECOREX
+# LORE / WORLD BIBLE v5 — ECOREX
 
-> Esta versión sustituye a `lore_world_bible_ecorex_v3.md` (archivada en `docs/archive/`) como documento de referencia. Mantiene íntegro todo lo válido de v2/v3 (mito fundacional, sistema de Fractae, fases, rareza, operaciones, grietas, trading, cartas de resonancia, arquitectura de app, modelo de producción del bestiario) y añade las decisiones tomadas en la sesión de arranque técnico: cuentas de usuario reales, stack elegido, alcance real del MVP y el mapeo entre el lore y el schema de datos ya implementado. Donde haya conflicto entre v3 y v4, v4 tiene prioridad.
+> Esta versión sustituye a `lore_world_bible_ecorex_v4.md` (archivada en `docs/archive/`) como documento de referencia. Mantiene íntegro todo lo válido de v4 (mito fundacional, sistema de Fractae, fases, rareza, operaciones, grietas, trading, cartas de resonancia, arquitectura de app, modelo de producción del bestiario, alcance del MVP) y añade una mecánica implementada tras el cierre de v4 que no estaba documentada: el **Altar de Fusión** (sección 5.1), que es la forma real —no la vaga "acumulación" descrita en v4— de obtener la fase Exceso. También actualiza el estado del proyecto (sección 19) con el resto de sistemas ya construidos desde v4 (energía, EcoDex con progreso, notificaciones, ritual de subida de nivel, herramienta de discovery vía PBDB). Donde haya conflicto entre v4 y v5, v5 tiene prioridad.
 
 ---
 
@@ -125,8 +125,23 @@ Discovery ID:        DX-VOL-F7K
 ### Cómo se obtiene cada fase
 
 1. **Balance** → flujo principal de descubrimiento (elección de especie del catálogo, ver sección 12). Siempre disponible.
-2. **Exceso** → se desbloquea por acumulación: rachas de uso, duplicados de la misma especie, o completar una Operación entera.
+2. **Exceso** → se obtiene fusionando duplicados de Balance de la misma especie en el **Altar de Fusión** (ver sección 5.1). La formulación de v4 ("rachas de uso, duplicados, o completar una Operación entera") queda sustituida por este mecanismo concreto ya implementado — duplicados es la parte que sobrevivió, rachas/Operación no se llegaron a construir.
 3. **Eco** → exclusiva del minijuego de grietas. No es una especie nueva — es el eco de una especie ya descubierta.
+
+### 5.1 Altar de Fusión (NUEVO EN v5)
+
+Mecanismo real por el que un usuario consigue la fase Exceso de una especie: fusionar **5 copias de esa especie en fase Balance** (duplicados que ya tenía en su Álbum) en una única carta de fase Exceso.
+
+- **Umbral fijo:** 5 duplicados de Balance sin fusionar previamente (`FUSE_THRESHOLD = 5`, `functions/api/fuse/index.ts`). El altar muestra qué especies han alcanzado ese umbral (`GET /api/fuse/eligible`).
+- **Coste:** ninguno en energía — la Fusión es independiente del sistema de energía de la sección 5.2 (Percibir sí consume energía; fusionar no). El único "coste" es haber acumulado los 5 duplicados por el camino normal de descubrimiento.
+- **Resultado:** se sortea una rareza para la nueva carta Exceso (igual que en un descubrimiento normal, sección 6), se resuelve/genera su imagen, y se inserta como una fila nueva en `discoveries` con `phase = 'exceso'`. Las 5 filas de Balance usadas no se borran — quedan marcadas como **consumidas** (`consumed_at`), de forma que el historial de esa captura se conserva pero deja de contar como duplicado activo. Otorga XP (bonus de fusión + bonus de "Fractae completo" si con esa fusión el usuario reúne las 3 fases de la especie).
+- **Primera vez:** la primera especie que alcanza el umbral dispara un modal de desbloqueo de la función ("Altar de Fusión") una única vez por usuario.
+- **Consecuencia narrativa:** fusionar consume literalmente la forma estable de la criatura para producir su versión desbordada — coherente con que Exceso (sección 5, antes "Furia") es la forma intensificada, no una especie distinta.
+- **Nota técnica (para no repetir el bug ya corregido):** el EcoDex y el reveal de "especie nueva" deben basarse en la existencia histórica de cualquier descubrimiento de esa especie+fase, no solo en las filas no consumidas — de lo contrario, fusionar todos los duplicados de una fase hace que esa fase "desaparezca" del EcoDex o que se repita la animación de descubrimiento al volver a conseguirla.
+
+### 5.2 Energía (reemplaza el rate-limit silencioso de v4)
+
+El flujo de Percibir (descubrimiento, sección 12) ya no está limitado por un rate-limit invisible de infraestructura, sino por un sistema de **energía visible al jugador**: 2 usos cada 12 horas, mostrado como recurso en la barra de navegación. Forma parte del juego (recurso a gestionar), no solo protección técnica — aunque también cumple esa función.
 
 ---
 
@@ -181,6 +196,8 @@ Modelo unidireccional descrito originalmente: generar código/enlace de una cart
 
 **Intención a futuro confirmada en v4 (no implementada aún):** el regalo debería evolucionar a **bidireccional**, con intercambio de cartas sobrantes (con o sin negociación explícita), y el sistema social debería crecer hacia leaderboards y lista de amigos. Se confirma explícitamente que **es pronto para esto** — queda fuera de alcance hasta después de cerrar cuentas + colección + perfil/stats (ver sección 17). La tabla `gifts` ya existe en el schema (modelo unidireccional, `redeemed_by_user_id` nullable) como base de partida, pero el diseño bidireccional/social queda **pendiente**.
 
+**Precisión de v5 (más atrás de lo que sugería v4):** a día de hoy ni siquiera existe el endpoint unidireccional. `functions/lib/xp.ts` marca explícitamente `GIFT_REDEEMED_XP_BONUS` como "not wired up anywhere yet — functions/api/gifts/* doesn't exist". La tabla `gifts` está en el schema pero no hay ninguna ruta que la use todavía — Regalo sigue siendo diseño de datos sin backend, no una función "casi lista" a la espera del giro bidireccional.
+
 ---
 
 ## 10. CARTAS DE RESONANCIA
@@ -201,31 +218,34 @@ Serie especial de 8 cartas, una por Fractae, sin dinosaurio — solo la energía
 
 ---
 
-## 12. ARQUITECTURA DE APP
+## 12. ARQUITECTURA DE APP (ACTUALIZADO EN v5 — la tab bar real ya no coincide con v3/v4)
 
-*(heredado de v3, con actualización de v4 en la sección "Explorar")*
+**Corrección de v5:** la tab bar descrita en v3/v4 ("Explorar / EcoDex / Grietas / Yo") no es la que existe hoy en el código. El layout de 4 tabs se mantiene, pero **"Explorar" ya no existe** como nombre ni como pantalla — se dividió en dos tabs separadas (Inicio y Percibir) con roles distintos, y aparecieron dos piezas nuevas (Fusión, Notificaciones) que viven **fuera** de la tab bar. Mapeo real (`src/components/BottomNav.tsx`, `src/App.tsx`):
 
-Navegación por tab bar inferior de 4 secciones:
+**1. Inicio** (`/inicio`, `src/pages/InicioPage.tsx`)
+- Dashboard de progreso, no un selector de especie: perfil, energía disponible, recordatorio de progreso de colección.
+- Detecta elegibilidad de Fusión (sección 5.1) y dispara el modal de desbloqueo la primera vez.
+- Badge numérico en la tab (`inicioCount`).
 
-**1. Explorar (home)**
-- Banner de la Operación activa (cuando exista una).
-- Selección de especie del catálogo activo ("Descubre") — **ya no es un flujo de atributos libres**: el usuario elige entre las especies activas del bestiario reducido (ver sección 15.5) y el sistema resuelve fase/rareza/ancla-vs-variante (ver sección 18.3).
-- Recordatorio de progreso ("Llevas 3 especies. Te faltan 2 de esta tanda").
-- Al descubrir: animación de revelación a pantalla completa → momento de compartir. **Ya no hay email-gate post-reveal** — el email se captura en el registro de cuenta, no en el momento de la descarga (ver sección 17.2).
+**2. Percibir** (`/percibir`, `src/pages/PercibirPage.tsx`)
+- Es el flujo real de descubrimiento que v3/v4 llamaba "Explorar" — selección de especie del catálogo activo y resolución de fase/rareza/ancla-vs-variante (sección 18.3), a través del gesto de swipe-up (`PercibirRitual`, ver sección 5.2 para el coste en energía).
+- Al descubrir: animación de revelación a pantalla completa. **Sigue sin email-gate post-reveal** (sección 17.2, sin cambios).
+- Badge booleano en la tab (`percibirActive`) cuando hay energía disponible.
 
-**2. EcoDex (el Pokédex)**
-- Grid de especies activas del bestiario.
-- No descubiertas → silueta misteriosa.
-- Descubiertas → imagen ancla canónica + indicador de fases obtenidas (Balance/Exceso/Eco).
-- Al tocar una especie descubierta → entra al **álbum de esa especie** (ver sección 13).
+**3. EcoDex** (`/coleccion`, `src/pages/ColeccionPage.tsx`)
+- Grid de especies activas del bestiario, sin cambios de concepto respecto a v4.
+- No descubiertas → silueta misteriosa; descubiertas → imagen ancla + fases obtenidas (Balance/Exceso/Eco), con la corrección de la sección 5.1 (una fase fusionada del todo sigue contando como descubierta).
+- Badge booleano en la tab (`ecodexActive`).
 
-**3. Grietas** *(fuera de alcance del MVP actual, ver sección 17)*
-- Overlay pseudo-AR, solo activo si hay al menos una especie en Balance.
-- Acceso a fase Eco de especies ya descubiertas.
+**4. Yo** (`/perfil`, `src/pages/PerfilPage.tsx`)
+- Ya no es "parte pendiente del MVP" (así lo describía v4, sección 17.3) — está implementado y en uso: rango de explorador, progreso de colección (`progressPct`, `speciesTotalCount`), logout.
+- Regalos pendientes siguen sin implementar (ver sección 9 / 17.4, sin cambios: ni siquiera existe el endpoint todavía).
 
-**4. Yo (perfil)** — **parte del MVP actual (confirmado en v4)**
-- Rango de explorador, progreso, estadísticas de colección.
-- Regalos pendientes y gestión de cuenta/email quedan para después (ver sección 17).
+### Piezas fuera de la tab bar (nuevo en v5)
+
+- **Altar de Fusión** (`/fusion`, `src/pages/FusionPage.tsx`) — no es una tab; se entra desde el modal de desbloqueo en Inicio o desde una notificación `fusion_ready`. Ver sección 5.1.
+- **Notificaciones** — no es una pantalla ni ruta propia, es un dropdown flotante dentro de un FAB (`src/components/ActionFab.tsx`, `src/lib/NotificationsContext.tsx`). Al pulsar una notificación navega a `/fusion` (`fusion_ready`) o dispara la pantalla de subida de nivel (`level_up`, `LevelUpScreen`).
+- **Grietas** — sigue sin ningún archivo/ruta/tabla en el código. Confirmado fuera de alcance, sin cambios respecto a v4.
 
 ### Decisión sobre capas de audiencia
 
@@ -252,6 +272,8 @@ Navegación por tab bar inferior de 4 secciones:
 - Uso principal: vista "presumir", valor real del coleccionismo (duplicados no son ruido, son moneda social).
 
 **Mapeo técnico (v4):** Pokédex = `species` + `species_phase_anchors`; Álbum = `discoveries` (una fila por captura, con `user_id`, `rarity_tier_id`, `image_url` propio e `is_unique_variant`).
+
+**Estado real de implementación (aclarado en v5):** el schema soporta el modelo completo, pero el frontend/API todavía no exponen la vista "álbum de una especie" (entrar a una especie descubierta y ver todas sus copias/variantes individuales) tal como la describe esta sección. `functions/api/collection/dex.ts` agrupa por `species_id + phase` y solo devuelve un `representative` (la copia más reciente) + `count`; `src/pages/ColeccionPage.tsx` abre un modal de preview de esa carta representativa, no una lista multi-variante. Es decir: el concepto de "duplicados como moneda social visible" está en los datos pero aún no en la UI.
 
 ---
 
@@ -449,6 +471,8 @@ Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBR
 
 **Pendiente de decidir/documentar en el futuro:** cómo se resuelve exactamente la compra en la app (¿la especie referencia un `habitatSlug` en el schema para saber qué fondo usar, o cada `species_phase_anchors` guarda dos URLs — una de recorte y otra de fondo?) — de momento el schema (`species_phase_anchors.image_url`, campo único) sigue pensado para el flujo de escena plana; adaptar el schema a dos capas queda fuera del alcance de esta sesión.
 
+**Confirmado en v5: este pendiente sigue sin resolverse, y en la práctica el pipeline de dos capas no es el que está en uso.** `species_phase_anchors` sigue con un único `image_url`, sin columnas de fondo/recorte separadas. El script que se sigue tocando activamente es el de escena plana (`scripts/generate-species-art.mjs`, con `IMAGE_SIZE='1536x1024'`, modificado más recientemente que el de dos capas); `scripts/generate-species-art-layered.mjs` existe pero no es el pipeline de producción vigente, y `scripts/composite-species-art.mjs` sigue siendo solo herramienta de QA. Esta sección (15.4.3) describe una decisión de arquitectura que se tomó pero que a día de hoy no gobierna la generación real de arte — tratarla como diseño de referencia/futuro, no como el pipeline activo.
+
 #### 15.4.4 Catálogo fijo de hábitats canónicos (`habitatSlug`, validado en esta sesión)
 
 El texto libre del campo `habitat` de cada ficha-spec (redactado por Claude, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
@@ -474,9 +498,11 @@ El texto libre del campo `habitat` de cada ficha-spec (redactado por Claude, dis
 
 `habitatSlug` ya está rellenado en las 54 fichas de `scripts/lote.json` (y sincronizado en `scripts/species.wave1.json`). Al añadir especies nuevas, hay que asignarles uno de estos 12 slugs existentes (reutilizar, no crear uno nuevo salvo que el hábitat **y** el mood narrativo sean genuinamente distintos a los ya cubiertos).
 
-### 15.5 Estrategia de lanzamiento: estado real (corregido en v4)
+### 15.5 Estrategia de lanzamiento: estado real (DESACTUALIZADO EN v4, corregido en v5 — contradecía a la propia sección 15.4.4 del documento)
 
-**Estado real a fecha de esta versión:** solo **3 especies** tienen ficha-spec y anclas diseñadas (con sus 3 fases cada una). El plan de lanzamiento con 10-15 especies queda pospuesto — **se arranca con un subconjunto de validación de ~5 especies** (las 3 ya diseñadas + 2 nuevas por definir) para validar el ciclo completo de cuentas + colección + descubrimiento antes de invertir en más contenido curado. Esto implica **5 × 3 = 15 imágenes ancla** necesarias para tener el subconjunto de validación completo (aún pendientes de generar/curar en su totalidad — hoy solo hay una ancla de prueba/placeholder sembrada en local).
+~~Estado real a fecha de esta versión: solo 3 especies tienen ficha-spec y anclas diseñadas... se arranca con un subconjunto de validación de ~5 especies... 5 × 3 = 15 imágenes ancla pendientes de generar/curar~~. Esto ya estaba obsoleto en v4: la sección 15.4.4 del mismo documento habla de "las 54 fichas de `scripts/lote.json`", cifra que confirma la auditoría de v5 — `scripts/lote.json` contiene realmente **54 especies con ficha-spec**, no 3. `scripts/species.wave1.json` está vacío de entradas.
+
+**Estado real confirmado en v5:** el diseño de ficha-spec del bestiario (texto/spec, sección 15.2) ya cubre 54 especies. Lo que sigue siendo limitado es el **arte curado y activo en producción**: solo hay **6 carpetas en `public/species-art/`** (ceratosaurus-pavonius, euoplocephalus-nauseabundus, huayangosaurus-inquisitus, telmatosaurus-mirus, triceratops-umbra, tyrannosaurus-imperator), que coinciden con las 6 especies marcadas `is_active=1` en `scripts/seed.sql`. Es decir: el cuello de botella ya no es "diseñar fichas-spec" (resuelto, 54 fichas) sino generar/curar las anclas de arte de las 48 especies restantes.
 
 El resto del bestiario (hasta 40-60 especies) se sigue planteando en oleadas mensuales alineadas a Operaciones, tal como en v3 — pero eso es horizonte post-validación, no parte del MVP actual.
 
@@ -501,6 +527,8 @@ Tabla de referencia (ajustable, ya sembrada como `anchor_probability` en `rarity
 
 **Nota:** que dos usuarios reciban exactamente la misma imagen ancla en tiers bajos es una consecuencia aceptada y coherente del sistema, no un bug a corregir.
 
+**DESACTUALIZADO EN v5 — la tabla no refleja el seed real:** `scripts/seed.sql` siembra `anchor_probability = 1` (100%) para los 5 tiers por igual, sin la escala 90/70/40/15/0 descrita arriba. Hoy, en la práctica, siempre se sirve la imagen ancla curada y nunca se genera variante única en el momento del descubrimiento (`drop_weight` sí coincide con el diseño: 0.55/0.27/0.12/0.05/0.01). La tabla de esta sección sigue siendo el diseño objetivo, pero el dato sembrado en producción todavía no lo aplica — probablemente porque generar variantes únicas de las 48 especies pendientes de arte (sección 15.5) no tiene sentido antes de tener sus anclas base.
+
 ---
 
 ## 16. CARTAS DE RESONANCIA, GRIETAS Y REGALO — RECORDATORIO DE ALCANCE
@@ -524,9 +552,11 @@ Bloque cerrado en la sesión de arranque técnico, para que quede registrado qu�
 
 Al haber cuentas reales, el email se captura **en el registro**, no en un gate post-descubrimiento como en el prototipo `DinoDiscovery`. Desde la base de datos se puede exportar a Kit (u otra herramienta de email marketing) cuando se decida activar comunicaciones — pendiente definir si hace falta un checkbox de consentimiento explícito en el registro antes de usar esos emails para marketing (no bloqueante para el MVP funcional, sí relevante antes de mandar el primer email real).
 
-### 17.3 Siguiente bloque a construir
+### 17.3 Siguiente bloque a construir (DESACTUALIZADO EN v4, cerrado en v5)
 
-**Perfil/stats de usuario** — confirmado como el mínimo de MVP que falta antes de considerar la base "cerrada": rango de explorador, progreso de colección, estadísticas básicas (especies descubiertas, duplicados, rarezas obtenidas). Después de esto: Grietas, Regalo bidireccional, Cartas de Resonancia, leaderboards/amigos — en ese orden aproximado, sin fecha cerrada.
+~~Perfil/stats de usuario — confirmado como el mínimo de MVP que falta antes de considerar la base "cerrada"~~. **Ya implementado:** `src/pages/PerfilPage.tsx` + `getMyProfile()` sirven rango de explorador y progreso de colección (`progressPct`, `speciesTotalCount`). También se construyó, sin haber quedado registrado en v4, el **sistema de energía** (sección 5.2), el **Altar de Fusión** (sección 5.1) y un **sistema de niveles/XP** (`functions/lib/xp.ts`): curva triangular `xpForLevel`/`levelFromXp`, `MAX_LEVEL = 50`, XP por rareza (`RARITY_XP`: 10/20/40/80/150 según tier), bonus de fusión (`FUSION_XP_BONUS = 50`) y de completar las 3 fases de una especie (`SPECIES_COMPLETE_XP_BONUS = 200`). Existe también `GIFT_REDEEMED_XP_BONUS = 25` ya definido en código pero sin efecto real, a la espera de que exista el endpoint de Regalo (sección 9).
+
+**Siguiente bloque real a construir (v5):** Grietas, Regalo (que ni siquiera tiene endpoint todavía, sección 9), Cartas de Resonancia, leaderboards/amigos — en ese orden aproximado, sin fecha cerrada.
 
 ### 17.4 Fuera de alcance por ahora (explícito)
 
@@ -559,16 +589,41 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 | Tier de rareza + su probabilidad ancla-vs-variante (sección 15.6) | `rarity_tiers.anchor_probability` |
 | **Probabilidad de que salga cada tier en una captura** (sorteo independiente, sección 6) | `rarity_tiers.drop_weight` — **columna añadida en esta sesión**, no existía en v3 |
 | Álbum / captura individual (sección 13) | `discoveries` (`user_id`, `species_id`, `phase`, `rarity_tier_id`, `image_url`, `is_unique_variant`, `discovery_code`) |
-| Regalo (sección 9, futuro) | `gifts` (modelo unidireccional ya en schema; bidireccional pendiente de diseño) |
+| Regalo (sección 9, futuro) | `gifts` (modelo unidireccional ya en schema, endpoint aún sin implementar) |
 | Cartas de Resonancia (sección 10, futuro) | `resonance_cards` / `user_resonance_cards` |
+| Notificaciones (sección 12, nuevo en v5) | `notifications` — inbox genérico (`type` texto libre, ej. `fusion_ready`/`level_up`, `payload` JSON, `read_at`) |
+| Energía / nivel / rango de explorador (secciones 5.2 y 17.3, nuevo en v5) | `users` (`energy_count`, `energy_window_start`, `unlimited_energy`, `xp`, `explorer_rank`) |
+
+**Faltaba en el mapeo de v4:** las dos filas anteriores (`notifications`, columnas de energía/XP en `users`) ya existían en el schema pero no estaban recogidas aquí.
 
 **Aclaración importante confirmada en v4:** ni `species` ni `species_phase_anchors` tienen (ni deben tener) una columna de rareza fija — la rareza se sortea por captura, independientemente de qué especie/fase sea, tal como exige el eje ortogonal de la sección 6. `rarity_tiers.drop_weight` guarda esa distribución para el modo base (sin Operación activa); cuando exista una Operación con distribución propia, su mecanismo de override queda pendiente de diseño (sección 17.4).
 
 ---
 
-## 19. ESTADO DEL PROYECTO (actualizado a v4)
+## 19. ESTADO DEL PROYECTO (actualizado a v5)
 
-### Completado hasta esta sesión
+### Completado desde v4 (nuevo en v5)
+
+- **Altar de Fusión** (sección 5.1): mecanismo real de obtención de fase Exceso, sustituye la descripción vaga de v4.
+- **Sistema de energía visible** (sección 5.2): 2 usos/12h para Percibir, sustituye el rate-limit silencioso de v4.
+- **EcoDex con progreso real**: contador de especies registradas, badge de duplicados por fase, silueta/desbloqueo corregidos para no perder fases al fusionar.
+- **Nav bar inferior persistente** con badges de notificaciones, energía y especies nuevas (evoluciona la sección 12).
+- **Ritual de subida de nivel** a pantalla completa y sincronización de notificaciones en tiempo real.
+- **Herramienta local de discovery de especies vía PBDB** (`npm run species:discover`, ver README/CLAUDE.md) — no es lore de producto, es tooling de producción de contenido, pero cierra el hueco de grounding paleontológico mencionado en la sección 15.
+
+### Correcciones de secciones desactualizadas (auditoría completa v4→v5)
+
+- **Sección 12** (arquitectura): reescrita, "Explorar" no existe, tabs reales son Inicio/Percibir/EcoDex/Yo + Fusión/Notificaciones fuera de la nav.
+- **Sección 17.3**: Perfil/stats ya no es "pendiente", está implementado.
+- **Sección 9**: el endpoint de Regalo ni siquiera existe todavía (más atrás de lo que sugería v4).
+- **Sección 13**: la vista "álbum de una especie" (multi-variante) sigue sin existir en frontend/API, aunque el schema la soporta.
+- **Sección 15.4.3** (dos capas fondo+recorte): sigue sin implementarse en schema; el pipeline de arte activo hoy es el de escena plana (`generate-species-art.mjs`), no el de dos capas.
+- **Sección 15.5**: contradecía a la propia sección 15.4.4 del documento — no son 3-5 especies, son **54 fichas-spec** ya diseñadas; el cuello de botella real es el arte curado (solo 6 especies activas con arte en `public/species-art/`).
+- **Sección 15.6**: la tabla de `anchor_probability` por tier es el diseño objetivo, pero el seed real siembra 100% en los 5 tiers — hoy nunca se genera variante única en descubrimiento normal.
+- **Sección 18**: añadidas `notifications` y las columnas de energía/XP/rango de `users` al mapeo, que faltaban.
+- **Secciones 6, 7, 8, 14**: verificadas, siguen coincidiendo con el código sin cambios.
+
+### Completado hasta v4
 
 - Nombre final del universo/marca: **Ecorex** (sección 0).
 - Arquitectura de app: 4 tabs, layout único adaptativo (sección 12).
