@@ -7,6 +7,7 @@ import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 import { formatEnergyCountdown } from "../lib/energy";
+import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
@@ -37,14 +38,6 @@ function vibrate(pattern: number | number[]) {
     navigator.vibrate(pattern);
   }
 }
-
-const RARITY_GLOW: Record<string, string> = {
-  registrada: "#bfe6c9",
-  notable: "#4fa9e0",
-  singular: "#a35fe0",
-  epica: "#e0a02f",
-  primordial: "#ffd54a",
-};
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

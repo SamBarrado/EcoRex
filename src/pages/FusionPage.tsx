@@ -5,17 +5,10 @@ import { XpToast } from "../components/XpToast";
 import { LevelUpScreen } from "../components/LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
+import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
-
-const RARITY_GLOW: Record<string, string> = {
-  registrada: "#bfe6c9",
-  notable: "#4fa9e0",
-  singular: "#a35fe0",
-  epica: "#e0a02f",
-  primordial: "#ffd54a",
-};
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
