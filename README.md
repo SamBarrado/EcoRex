@@ -29,12 +29,14 @@ npm run typecheck      # tsc sobre app y functions
 ```
 src/pages/          Pantallas: Inicio, Percibir (descubrir), Colección, Perfil, Fusión, Login/Registro
 src/components/     Componentes compartidos (NotificationBell, etc.)
+src/components/card/ Carta de especie por capas: Card.tsx (presentacional) + CardScene.tsx (gestos: flip, drag/inercia, swipe-up)
 functions/api/       Endpoints: auth, discover, collection, fuse, notifications, species, profile, missions
 functions/lib/       Lógica compartida: auth, discovery, cache, rate limit, R2, proveedores de imagen (Anthropic/OpenAI)
 schema.sql           Esquema D1, fuente de verdad de la base de datos
 scripts/             Seed de datos, sync de especies, generación de arte/specs, comparador de esquema remoto
 especies_design/     Material de trabajo/borrador para el arte de cada especie (NO producción)
 public/species-art/  Arte final en producción, servido por la app
+public/icons/fractae/ Badges de Fractae servidos por la app (copia de design/fractae/, uno por fractae.slug)
 ```
 
 ## Despliegue
