@@ -70,6 +70,7 @@ export interface DexSlotRevealed {
   common_name: string;
   fractae_child_name: string;
   rarity_name: string;
+  rarity_slug: string;
   image_url: string;
   discovery_code: string;
   discovered_at: string;
