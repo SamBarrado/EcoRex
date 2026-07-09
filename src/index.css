@@ -669,39 +669,268 @@ button:disabled {
 }
 
 .card-perspective {
-  perspective: 1000px;
+  perspective: 1200px;
   touch-action: pan-y;
   cursor: grab;
+}
+
+/* The card must behave as a single object on mobile: only .card-perspective
+   (the gesture surface in CardScene) is interactive. Every layer/image below
+   is pointer-events:none so a long-press or drag always resolves against the
+   card as a whole instead of the browser's native "save image"/"share"
+   callout or a drag on an individual layer. */
+.card-perspective,
+.card-perspective * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .card-flipper {
   position: relative;
   width: 100%;
+  aspect-ratio: 1024 / 1536;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 .card-face {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1024 / 1536;
-  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
   border-radius: 16px;
-  border: 3px solid #3fae5a;
-  padding: 0.75rem;
-  background: #142218;
+  overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  background: #142218;
+}
+
+.card-face-front {
+  transform-style: preserve-3d;
+}
+
+.card-face-back {
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-layer-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 22%, #3a4a3a, #141a12 75%);
+  transform: translateZ(-60px) scale(1.3);
+}
+
+.card-layer-aura {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(-40px);
+  mix-blend-mode: screen;
+  transition: opacity 120ms ease-out;
+}
+
+.card-art-window {
+  position: absolute;
+  top: 22.6%;
+  left: 3.3%;
+  right: 3.3%;
+  height: 49.7%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgba(184, 134, 62, 0.7), inset 0 0 24px rgba(0, 0, 0, 0.5);
+  transform: translateZ(44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-art-image {
+  width: 92%;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.6));
+  transform: translateY(-22px);
+}
+
+.card-fractae-badge {
+  position: absolute;
+  top: 13.8%;
+  left: 4%;
+  width: 15.3%;
+  aspect-ratio: 1 / 1;
+  transform: translateZ(90px);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7));
+}
+
+.card-fractae-badge img {
+  width: 100%;
+  height: 100%;
+}
+
+.card-nameplate {
+  position: absolute;
+  top: 2.2%;
+  left: 3.3%;
+  right: 3.3%;
+  height: 11.6%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 2px;
+  padding: 0 12px 0 14px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(30, 22, 10, 0.92), rgba(15, 11, 5, 0.92));
+  box-shadow: inset 0 0 0 1px rgba(217, 176, 74, 0.5), 0 3px 6px rgba(0, 0, 0, 0.5);
+  transform: translateZ(58px);
+}
+
+.card-nameplate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #f4e4bc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-scientific-name {
+  font-size: 0.68rem;
+  font-style: italic;
+  color: #9fae9f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-rarity-pill {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: #2a0d3d;
+  background: linear-gradient(135deg, #e2c1ff, #a855f7);
+  margin-left: 8px;
+}
+
+.card-textbox {
+  position: absolute;
+  left: 3.3%;
+  right: 3.3%;
+  bottom: 2.2%;
+  height: 25.8%;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(18, 14, 8, 0.94), rgba(8, 6, 3, 0.97));
+  box-shadow: inset 0 0 0 1px rgba(184, 134, 62, 0.55);
+  transform: translateZ(52px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
   overflow: hidden;
 }
 
-.reveal-card-sheen {
+.card-fractae-row {
+  font-size: 0.72rem;
+  color: #cbb98a;
+}
+
+.card-lore-phrase {
+  font-style: italic;
+  color: #d8cfae;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.card-border {
   position: absolute;
   inset: 0;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 2px #3a2a12,
+    inset 0 0 0 6px #b8863e,
+    inset 0 0 0 8px #2a1c0a;
+  transform: translateZ(70px);
+}
+
+.card-corner-stud {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, #f0d38a, #a8742e);
+  transform: rotate(45deg) translateZ(72px);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+}
+
+.card-corner-stud-tl {
+  top: 2px;
+  left: 2px;
+}
+.card-corner-stud-tr {
+  top: 2px;
+  right: 2px;
+}
+.card-corner-stud-bl {
+  bottom: 2px;
+  left: 2px;
+}
+.card-corner-stud-br {
+  bottom: 2px;
+  right: 2px;
+}
+
+/* Card edge/thickness: two thin strips folded 90deg around the Y axis,
+   textured with the back cover's stone border plus a repeating light/dark
+   band (like stacked cardstock) so the "canto" reads as a real edge with
+   relief, not a flat painted color. Standard CSS-cube-face trick: each strip
+   sits half its own width outside the card boundary, then rotates to become
+   edge-on. Subtle at the small rest/drag tilt angles, visible at wider ones. */
+.card-edge {
+  position: absolute;
+  top: 0;
+  width: 6%;
+  height: 100%;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.35) 0px,
+      rgba(0, 0, 0, 0.35) 1px,
+      rgba(255, 255, 255, 0.06) 1px,
+      rgba(255, 255, 255, 0.06) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    url("/card-back.png");
+  background-size: 100% 100%, auto 100%;
+  box-shadow: inset 4px 0 6px -4px rgba(0, 0, 0, 0.8), inset -4px 0 6px -4px rgba(0, 0, 0, 0.8);
+  filter: brightness(0.6) contrast(1.15);
   pointer-events: none;
-  mix-blend-mode: overlay;
+}
+
+.card-edge-right {
+  right: -3%;
+  transform: rotateY(90deg);
+  background-position: 0 0, right center;
+}
+
+.card-edge-left {
+  left: -3%;
+  transform: rotateY(-90deg);
+  background-position: 0 0, left center;
 }
 
 .reveal-card-commit-hint {
@@ -752,29 +981,6 @@ button:disabled {
   .reveal-card-commit-hint span {
     animation: none;
   }
-}
-
-.card-face-back {
-  position: absolute;
-  inset: 0;
-  transform: rotateY(180deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.card-back-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.reveal-card-body {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
 }
 
 .percibir-ritual {

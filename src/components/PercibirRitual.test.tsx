@@ -11,6 +11,7 @@ const species: Species[] = [
     id: 1,
     scientific_name: "Testus dinus",
     common_name: "Test Dino",
+    lore_phrase: "A test dino's tale.",
     fractae_child_name: "Testa",
     fractae_id: 1,
     fractae_slug: "t",
