@@ -82,7 +82,7 @@ describe("InicioPage", () => {
       await vi.runOnlyPendingTimersAsync();
     });
 
-    const initialMatch = screen.getByText(/próxima en \d+m/).textContent;
+    const initialMatch = screen.getByText(/\+1 en \d+m/).textContent;
     const initialMinutes = Number(initialMatch?.match(/(\d+)m/)?.[1]);
 
     await act(async () => {
@@ -90,7 +90,7 @@ describe("InicioPage", () => {
       await vi.runOnlyPendingTimersAsync();
     });
 
-    const laterMatch = screen.getByText(/próxima en \d+m/).textContent;
+    const laterMatch = screen.getByText(/\+1 en \d+m/).textContent;
     const laterMinutes = Number(laterMatch?.match(/(\d+)m/)?.[1]);
 
     expect(laterMinutes).toBeLessThanOrEqual(initialMinutes - 2);

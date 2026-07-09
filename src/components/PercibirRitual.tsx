@@ -399,7 +399,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
                 {!species.length
                   ? "Cargando..."
                   : energyDepleted
-                    ? `Sin energía · próxima en ${formatEnergyCountdown(energyResetAt!)}`
+                    ? `Sin energía · +1 en ${formatEnergyCountdown(energyResetAt!)}`
                     : !peeking
                       ? "Toca el sobre para abrirlo"
                       : phase === "opening"

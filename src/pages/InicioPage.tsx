@@ -103,7 +103,7 @@ export default function InicioPage() {
                 {!energy.unlimited &&
                   energy.remaining === 0 &&
                   energy.resetAt !== null &&
-                  ` · próxima en ${formatEnergyCountdown(energy.resetAt, now)}`}
+                  ` · +1 en ${formatEnergyCountdown(energy.resetAt, now)}`}
               </span>
             </div>
           )}
