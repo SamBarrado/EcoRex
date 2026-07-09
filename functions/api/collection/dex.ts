@@ -14,6 +14,7 @@ interface DiscoveryRow {
   common_name: string;
   fractae_child_name: string;
   rarity_name: string;
+  rarity_slug: string;
 }
 
 interface SpeciesRow {
@@ -63,7 +64,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        species.scientific_name as scientific_name,
        species.common_name as common_name,
        fractae.child_name as fractae_child_name,
-       rarity_tiers.name as rarity_name
+       rarity_tiers.name as rarity_name,
+       rarity_tiers.slug as rarity_slug
      FROM discoveries
      JOIN species ON species.id = discoveries.species_id
      JOIN fractae ON fractae.id = species.fractae_id
@@ -106,6 +108,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         common_name: representative.common_name,
         fractae_child_name: representative.fractae_child_name,
         rarity_name: representative.rarity_name,
+        rarity_slug: representative.rarity_slug,
         image_url: representative.image_url,
         discovery_code: representative.discovery_code,
         discovered_at: representative.discovered_at,
