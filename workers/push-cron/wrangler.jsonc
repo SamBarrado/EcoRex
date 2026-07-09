@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "ecorex-push-cron",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-04",
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ecorex-db",
+      "database_id": "5214a55d-98c7-450b-bd36-ef33d8fb6b2d"
+    }
+  ]
+}
