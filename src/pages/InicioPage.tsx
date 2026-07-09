@@ -4,6 +4,7 @@ import { getFuseEligible, getMyProfile, getEnergy, getMissions, ProfileStats, En
 import { formatEnergyCountdown } from "../lib/energy";
 import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
 import { MissionsCard } from "../components/MissionsCard";
+import PushOnboardingTile from "../components/PushOnboardingTile";
 import { version } from "../../package.json";
 
 const FUSION_UNLOCK_SEEN_KEY = "ecorex_unlock_seen_fusion";
@@ -59,6 +60,7 @@ export default function InicioPage() {
 
   return (
     <div className="page">
+      <PushOnboardingTile />
       {showFusionUnlockModal && (
         <FeatureUnlockModal
           icon="/icons/altar-fusion.png"

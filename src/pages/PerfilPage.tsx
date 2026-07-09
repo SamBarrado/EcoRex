@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyProfile, logout, ProfileStats, ApiError } from "../lib/api";
+import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush } from "../lib/push";
 
 export default function PerfilPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [pushEnabled, setPushEnabled] = useState(isPushSupported() && getNotificationPermission() === "granted");
+  const pushDenied = isPushSupported() && getNotificationPermission() === "denied";
+
+  async function handleTogglePush() {
+    if (pushEnabled) {
+      await unsubscribeFromPush();
+      setPushEnabled(false);
+    } else {
+      await subscribeToPush();
+      setPushEnabled(getNotificationPermission() === "granted");
+    }
+  }
 
   useEffect(() => {
     setError(null);
@@ -114,6 +127,18 @@ export default function PerfilPage() {
               <span>{tier.count}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {isPushSupported() && (
+        <div className="card">
+          <div className="stat">
+            <span>Notificaciones de energía</span>
+            <input type="checkbox" checked={pushEnabled} disabled={pushDenied} onChange={handleTogglePush} />
+          </div>
+          {pushDenied && (
+            <p>Bloqueaste los permisos de notificación en el navegador. Actívalos desde los ajustes del navegador para este sitio.</p>
+          )}
         </div>
       )}
 
