@@ -2,7 +2,16 @@ import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@block65/webcrypto-web-push', () => ({
   buildPushPayload: vi.fn(async () => ({
-    headers: { TTL: '60', Authorization: 'vapid t=x, k=y', 'Content-Encoding': 'aes128gcm' },
+    headers: {
+      'content-encoding': 'aes128gcm',
+      'content-length': '3',
+      'content-type': 'application/octet-stream',
+      'crypto-key': 'dh=x',
+      encryption: 'salt=y',
+      ttl: '60',
+      authorization: 'vapid t=x, k=y',
+    },
+    method: 'post',
     body: new Uint8Array([1, 2, 3]),
   })),
 }));

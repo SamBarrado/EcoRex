@@ -27,6 +27,7 @@ export async function sendWebPush(
     { data: JSON.stringify(payload), options: { ttl: 60 } },
     {
       endpoint: subscription.endpoint,
+      expirationTime: null,
       keys: { p256dh: subscription.p256dh, auth: subscription.auth },
     },
     { subject: vapid.subject, publicKey: vapid.publicKey, privateKey: vapid.privateKey }
