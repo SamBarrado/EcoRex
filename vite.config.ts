@@ -8,6 +8,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
+      injectManifest: {
+        injectionPoint: "self.__WB_MANIFEST",
+      },
       manifest: {
         name: "Ecorex",
         short_name: "Ecorex",
