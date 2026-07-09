@@ -17,6 +17,7 @@ export default function ColeccionPage() {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [previewSlot, setPreviewSlot] = useState<DexSlot | null>(null);
+  const [shakeKey, setShakeKey] = useState<string | null>(null);
   const [phaseFilter, setPhaseFilter] = useState<string | null>(null);
   const [revealPending, setRevealPending] = useState(() => !!justUnlockedKey);
   const unlockedSlotRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +67,11 @@ export default function ColeccionPage() {
     const timeout = setTimeout(() => setRevealPending(false), REVEAL_DELAY_MS);
     return () => clearTimeout(timeout);
   }, [justUnlockedKey]);
+
+  function triggerLockedShake(key: string) {
+    setShakeKey(key);
+    setTimeout(() => setShakeKey((current) => (current === key ? null : current)), 320);
+  }
 
   return (
     <div className="page">
@@ -145,14 +151,18 @@ export default function ColeccionPage() {
             const showAsLocked = slot.locked || (isJustUnlocked && revealPending);
             return (
               <div
-                className={`card card-clickable${isJustUnlocked && !revealPending ? " slot-just-unlocked" : ""}`}
+                className={`card card-clickable${isJustUnlocked && !revealPending ? " slot-just-unlocked" : ""}${shakeKey === slotKey(slot) ? " slot-locked-shake" : ""}`}
                 key={slotKey(slot)}
                 ref={isJustUnlocked ? unlockedSlotRef : undefined}
                 style={{ position: "relative", padding: "0.5rem" }}
                 role="button"
                 tabIndex={0}
-                onClick={() => setPreviewSlot(slot)}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setPreviewSlot(slot)}
+                onClick={() => (slot.locked ? triggerLockedShake(slotKey(slot)) : setPreviewSlot(slot))}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter" && e.key !== " ") return;
+                  if (slot.locked) triggerLockedShake(slotKey(slot));
+                  else setPreviewSlot(slot);
+                }}
               >
                 {!showAsLocked && slot.count > 1 && (
                   <span
