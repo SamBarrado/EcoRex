@@ -46,7 +46,7 @@ describe("ColeccionPage", () => {
     });
   });
 
-  it("opens the preview when a revealed slot is clicked", async () => {
+  it("opens a full-screen card viewer when a revealed slot is clicked", async () => {
     render(
       <MemoryRouter>
         <ColeccionPage />
@@ -55,7 +55,8 @@ describe("ColeccionPage", () => {
     const revealedTile = await screen.findByText("Rex de Fuego");
     fireEvent.click(revealedTile.closest(".card")!);
     await waitFor(() => {
-      expect(screen.getByText("Tyrannosaurus imperator")).toBeInTheDocument();
+      expect(screen.getAllByText("Rex de Fuego").length).toBeGreaterThan(1);
     });
+    expect(screen.queryByText("Código:", { exact: false })).not.toBeInTheDocument();
   });
 });

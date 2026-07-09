@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDex, DexSlot, ApiError } from "../lib/api";
+import { CardScene } from "../components/card/CardScene";
+import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const REVEAL_DELAY_MS = 500;
 
@@ -220,7 +222,7 @@ export default function ColeccionPage() {
         </div>
       )}
 
-      {previewSlot && (
+      {previewSlot && !previewSlot.locked && (
         <div
           onClick={() => setPreviewSlot(null)}
           style={{
@@ -234,34 +236,26 @@ export default function ColeccionPage() {
             zIndex: 100,
           }}
         >
-          <div className="card" style={{ maxWidth: 420, width: "100%" }} onClick={(e) => e.stopPropagation()}>
-            {previewSlot.locked ? (
-              <>
-                <img
-                  src="/icons/carta-bloqueada.png"
-                  alt="Carta bloqueada"
-                  className="species-image"
-                  style={{ filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 }}
-                />
-                <strong>???</strong>
-                <p>Carta aún no descubierta. Juega en Percibir para desbloquearla.</p>
-              </>
-            ) : (
-              <>
-                <img src={previewSlot.image_url} alt={previewSlot.common_name} className="species-image" />
-                <strong>{previewSlot.common_name}</strong>
-                <div>{previewSlot.scientific_name}</div>
-                <div>Fractae: {previewSlot.fractae_child_name}</div>
-                <div>Rareza: {previewSlot.rarity_name}</div>
-                <div>Fase: {previewSlot.phase}</div>
-                <div>Código: {previewSlot.discovery_code}</div>
-                {previewSlot.count > 1 && <div>Cartas de esta especie y fase: {previewSlot.count}</div>}
-              </>
-            )}
-            <button onClick={() => setPreviewSlot(null)} style={{ marginTop: "0.75rem" }}>
-              Cerrar
-            </button>
+          <div
+            style={{ maxWidth: 320, width: "100%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CardScene
+              imageUrl={previewSlot.image_url}
+              commonName={previewSlot.common_name}
+              scientificName={previewSlot.scientific_name}
+              rarityTier={{ slug: previewSlot.rarity_slug, name: previewSlot.rarity_name }}
+              fractaeChildName={previewSlot.fractae_child_name}
+              glowColor={RARITY_GLOW[previewSlot.rarity_slug] ?? RARITY_GLOW.registrada}
+            />
           </div>
+          <button
+            onClick={() => setPreviewSlot(null)}
+            style={{ position: "fixed", top: "1rem", right: "1rem", zIndex: 101 }}
+            aria-label="Cerrar"
+          >
+            Cerrar
+          </button>
         </div>
       )}
     </div>
