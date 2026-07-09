@@ -91,7 +91,7 @@ export async function consumeEnergy(
     newWindowStart = row.energy_window_start + ticks * REGEN_INTERVAL_MS;
   }
   await db
-    .prepare("UPDATE users SET energy_count = ?, energy_window_start = ? WHERE id = ?")
+    .prepare("UPDATE users SET energy_count = ?, energy_window_start = ?, energy_full_notified_at = NULL WHERE id = ?")
     .bind(newRemaining, newWindowStart, userId)
     .run();
 

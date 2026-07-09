@@ -97,4 +97,29 @@ describe('consumeEnergy', () => {
     const [, persistedWindowStart] = updateArgs;
     expect(persistedWindowStart).toBe(anchor + REGEN_INTERVAL_MS);
   });
+
+  it('clears energy_full_notified_at when spending energy', async () => {
+    const calls: { sql: string; args: unknown[] }[] = [];
+    const db = {
+      prepare(sql: string) {
+        return {
+          bind(...args: unknown[]) {
+            calls.push({ sql, args });
+            return this;
+          },
+          async first<T>() {
+            return { energy_count: 3, energy_window_start: null, unlimited_energy: 0 } as unknown as T;
+          },
+          async run() {
+            return {};
+          },
+        };
+      },
+    } as unknown as D1Database;
+
+    await consumeEnergy(db, 1, 1);
+
+    const update = calls.find((c) => c.sql.includes('UPDATE users SET energy_count'));
+    expect(update?.sql).toContain('energy_full_notified_at = NULL');
+  });
 });
