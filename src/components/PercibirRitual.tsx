@@ -92,7 +92,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
   const [result, setResult] = useState<
-    (DiscoverResult & { fractaeChildName?: string; fractaeIconUrl?: string; lorePhrase?: string }) | null
+    (DiscoverResult & { fractaeChildName?: string; fractaeIconUrl?: string }) | null
   >(null);
   const [showXpToast, setShowXpToast] = useState(false);
   const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
@@ -196,7 +196,6 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
           ...data,
           fractaeChildName: matchedSpecies?.fractae_child_name,
           fractaeIconUrl: matchedSpecies ? `/icons/fractae/${matchedSpecies.fractae_slug}.png` : undefined,
-          lorePhrase: matchedSpecies?.lore_phrase ?? undefined,
         });
         setPhase("revealed");
         setShowXpToast(true);
@@ -355,7 +354,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
             rarityTier={result.rarityTier}
             fractaeChildName={result.fractaeChildName}
             fractaeIconUrl={result.fractaeIconUrl}
-            lorePhrase={result.lorePhrase}
+            lorePhrase={result.lorePhrase ?? undefined}
             glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
             spins={prefersReducedMotion() ? 0 : CARD_SPINS}
             onCommitUp={handleCommitUp}

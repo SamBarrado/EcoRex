@@ -10,6 +10,7 @@ export interface SpeciesPhaseRow {
   base_palette: string | null;
   silhouette: string | null;
   anchor_image_url: string;
+  lore_phrase: string | null;
 }
 
 export interface RarityTierRow {

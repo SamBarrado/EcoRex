@@ -35,6 +35,7 @@ const fuseResult: DiscoverResult = {
   phase: "exceso",
   rarityTier: { slug: "registrada", name: "Registrada" },
   imageUrl: "/img.png",
+  lorePhrase: "A test dino's tale.",
   isUniqueVariant: false,
   isNewSlot: true,
   discoveredAt: "2026-01-01",

@@ -82,7 +82,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
        species.base_palette as base_palette,
        species.silhouette as silhouette,
        fractae.child_name as fractae_child_name,
-       species_phase_anchors.image_url as anchor_image_url
+       species_phase_anchors.image_url as anchor_image_url,
+       species_phase_anchors.lore_phrase as lore_phrase
      FROM species
      JOIN fractae ON fractae.id = species.fractae_id
      JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id
@@ -220,6 +221,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       phase,
       rarityTier: { slug: rarityTier.slug, name: rarityTier.name },
       imageUrl,
+      lorePhrase: speciesRow.lore_phrase,
       isUniqueVariant,
       isNewSlot,
       discoveredAt: discoveredAtRow?.discovered_at ?? null,

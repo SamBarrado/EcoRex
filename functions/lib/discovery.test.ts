@@ -31,6 +31,7 @@ describe('buildVariantPrompt', () => {
       base_palette: 'rojo y negro',
       silhouette: 'bípedo robusto',
       anchor_image_url: '/species-art/rex/balance.png',
+      lore_phrase: 'Donde pisa, la tierra arde.',
     };
     const prompt = buildVariantPrompt(species, 'exceso');
     expect(prompt).toContain('Rex de Fuego');
