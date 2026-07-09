@@ -71,6 +71,7 @@ export interface DexSlotRevealed {
   fractae_child_name: string;
   rarity_name: string;
   rarity_slug: string;
+  lore_phrase: string | null;
   image_url: string;
   discovery_code: string;
   discovered_at: string;

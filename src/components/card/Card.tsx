@@ -48,8 +48,6 @@ export function Card({
             className="card-art-image"
             draggable={false}
             loading="lazy"
-            width={1536}
-            height={1024}
           />
         </div>
         {fractaeIconUrl && (

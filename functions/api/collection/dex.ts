@@ -15,6 +15,7 @@ interface DiscoveryRow {
   fractae_child_name: string;
   rarity_name: string;
   rarity_slug: string;
+  lore_phrase: string | null;
 }
 
 interface SpeciesRow {
@@ -65,11 +66,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        species.common_name as common_name,
        fractae.child_name as fractae_child_name,
        rarity_tiers.name as rarity_name,
-       rarity_tiers.slug as rarity_slug
+       rarity_tiers.slug as rarity_slug,
+       species_phase_anchors.lore_phrase as lore_phrase
      FROM discoveries
      JOIN species ON species.id = discoveries.species_id
      JOIN fractae ON fractae.id = species.fractae_id
      JOIN rarity_tiers ON rarity_tiers.id = discoveries.rarity_tier_id
+     LEFT JOIN species_phase_anchors
+       ON species_phase_anchors.species_id = discoveries.species_id
+       AND species_phase_anchors.phase = discoveries.phase
      WHERE discoveries.user_id = ?
      ORDER BY discoveries.discovered_at DESC`
   )
@@ -109,6 +114,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         fractae_child_name: representative.fractae_child_name,
         rarity_name: representative.rarity_name,
         rarity_slug: representative.rarity_slug,
+        lore_phrase: representative.lore_phrase,
         image_url: representative.image_url,
         discovery_code: representative.discovery_code,
         discovered_at: representative.discovered_at,

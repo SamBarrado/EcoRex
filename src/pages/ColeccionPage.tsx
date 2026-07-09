@@ -254,6 +254,7 @@ export default function ColeccionPage() {
               scientificName={previewSlot.scientific_name}
               rarityTier={{ slug: previewSlot.rarity_slug, name: previewSlot.rarity_name }}
               fractaeChildName={previewSlot.fractae_child_name}
+              lorePhrase={previewSlot.lore_phrase ?? undefined}
               glowColor={RARITY_GLOW[previewSlot.rarity_slug] ?? RARITY_GLOW.registrada}
             />
           </div>
