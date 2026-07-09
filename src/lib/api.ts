@@ -16,7 +16,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new ApiError(response.status, data?.error ?? "Error inesperado");
+    throw new ApiError(response.status, data?.error ?? "Ha ocurrido un problema en el servidor. Inténtalo de nuevo en unos segundos.");
   }
 
   return data as T;
