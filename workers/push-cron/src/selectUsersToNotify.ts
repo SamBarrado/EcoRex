@@ -5,18 +5,35 @@ export interface EnergyRow {
   energy_count: number;
   energy_window_start: number | null;
   unlimited_energy: number;
-  energy_full_notified_at: number | null;
+  energy_last_notified_count: number;
   max_energy: number;
 }
 
-function isAtMax(row: EnergyRow, now: number): boolean {
-  if (row.unlimited_energy) return false;
-  if (row.energy_window_start === null) return true;
-  const elapsed = now - row.energy_window_start;
-  const ticks = Math.floor(elapsed / REGEN_INTERVAL_MS);
-  return Math.min(row.max_energy, row.energy_count + ticks) >= row.max_energy;
+export interface UserToNotify {
+  id: number;
+  remaining: number;
+  max: number;
 }
 
-export function selectUsersToNotify(rows: EnergyRow[], now: number): number[] {
-  return rows.filter((row) => row.energy_full_notified_at === null && isAtMax(row, now)).map((row) => row.id);
+function currentRemaining(row: EnergyRow, now: number): number {
+  if (row.energy_window_start === null) return row.max_energy;
+  const elapsed = now - row.energy_window_start;
+  const ticks = Math.floor(elapsed / REGEN_INTERVAL_MS);
+  return Math.min(row.max_energy, row.energy_count + ticks);
+}
+
+// Notifies once per energy point gained (not just once at max): a user is
+// selected whenever their currently-computed energy is higher than the last
+// value they were pushed about, so a single day of drip regen can produce
+// several pushes as each point comes in.
+export function selectUsersToNotify(rows: EnergyRow[], now: number): UserToNotify[] {
+  const result: UserToNotify[] = [];
+  for (const row of rows) {
+    if (row.unlimited_energy) continue;
+    const remaining = currentRemaining(row, now);
+    if (remaining > row.energy_last_notified_count) {
+      result.push({ id: row.id, remaining, max: row.max_energy });
+    }
+  }
+  return result;
 }

@@ -90,9 +90,14 @@ export async function consumeEnergy(
     const ticks = Math.floor(elapsed / REGEN_INTERVAL_MS);
     newWindowStart = row.energy_window_start + ticks * REGEN_INTERVAL_MS;
   }
+  // Resetting energy_last_notified_count to the post-spend value (rather than
+  // to 0) means the next regen tick above *this* count re-arms a push, without
+  // re-notifying for energy the user already knew about before spending.
   await db
-    .prepare("UPDATE users SET energy_count = ?, energy_window_start = ?, energy_full_notified_at = NULL WHERE id = ?")
-    .bind(newRemaining, newWindowStart, userId)
+    .prepare(
+      "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?"
+    )
+    .bind(newRemaining, newWindowStart, newRemaining, userId)
     .run();
 
   const resetAt = newRemaining < max ? newWindowStart + REGEN_INTERVAL_MS : null;

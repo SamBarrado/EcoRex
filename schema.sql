@@ -170,4 +170,4 @@ CREATE TABLE push_subscriptions (
 );
 CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);
 
-ALTER TABLE users ADD COLUMN energy_full_notified_at INTEGER;  -- ms timestamp; NULL = not yet notified since last spend
+ALTER TABLE users ADD COLUMN energy_last_notified_count INTEGER NOT NULL DEFAULT 0;  -- highest energy_count value already pushed since last spend; lets the push-cron worker notify once per point gained, not just at max

@@ -98,7 +98,7 @@ describe('consumeEnergy', () => {
     expect(persistedWindowStart).toBe(anchor + REGEN_INTERVAL_MS);
   });
 
-  it('clears energy_full_notified_at when spending energy', async () => {
+  it('resets energy_last_notified_count to the post-spend remaining when spending energy', async () => {
     const calls: { sql: string; args: unknown[] }[] = [];
     const db = {
       prepare(sql: string) {
@@ -120,6 +120,9 @@ describe('consumeEnergy', () => {
     await consumeEnergy(db, 1, 1);
 
     const update = calls.find((c) => c.sql.includes('UPDATE users SET energy_count'));
-    expect(update?.sql).toContain('energy_full_notified_at = NULL');
+    expect(update?.sql).toContain('energy_last_notified_count = ?');
+    // energy_count=3 - 1 spent = 2 remaining; both the persisted energy_count
+    // and energy_last_notified_count should be reset to that same value.
+    expect(update?.args).toEqual([2, expect.any(Number), 2, 1]);
   });
 });

@@ -30,6 +30,9 @@ export default function ActionFab() {
       }
       return;
     }
+    if (notification.type === "energy_available") {
+      navigate("/percibir");
+    }
   }
 
   return (
@@ -53,7 +56,14 @@ export default function ActionFab() {
                   ? `¡Ya puedes fusionar ${(n.payload as { commonName?: string }).commonName ?? "una especie"}!`
                   : n.type === "level_up"
                     ? `¡Subiste a nivel ${(n.payload as { newLevel?: number }).newLevel ?? "?"}!`
-                    : n.type}
+                    : n.type === "energy_available"
+                      ? (() => {
+                          const { remaining, max } = n.payload as { remaining?: number; max?: number };
+                          return remaining && max
+                            ? `Tienes ${remaining}/${max} energía — ya puedes percibir.`
+                            : "Tienes nueva energía disponible.";
+                        })()
+                      : n.type}
               </div>
             ))}
           </div>
