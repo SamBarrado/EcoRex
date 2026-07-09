@@ -33,6 +33,7 @@ CREATE TABLE species (
   physical_traits TEXT,               -- spec sheet notes (fixed traits)
   base_palette TEXT,
   silhouette TEXT,
+  lore_phrase TEXT,                   -- flavor text shown on the card (lote.json's lorePhrase)
   launch_wave INTEGER NOT NULL DEFAULT 1,  -- monthly wave the species released in
   is_active INTEGER NOT NULL DEFAULT 0     -- gated until curated art is ready
 );

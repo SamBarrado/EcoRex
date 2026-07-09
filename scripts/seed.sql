@@ -26,13 +26,13 @@ INSERT OR IGNORE INTO rarity_tiers (id, slug, name, anchor_probability, drop_wei
   (4, 'epica', 'Especie Épica', 1, 0.05, 4),
   (5, 'primordial', 'Especie Legendaria', 1, 0.01, 5);
 
-INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, operation_id, physical_traits, base_palette, silhouette, launch_wave, is_active) VALUES
-  (1, 'Tyrannosaurus imperator', 'Rex de Fuego', 1, NULL, NULL, NULL, NULL, 1, 1),
-  (2, 'Telmatosaurus mirus', 'Destello del Pantano', 2, NULL, NULL, NULL, NULL, 1, 1),
-  (3, 'Triceratops umbra', 'Tricera de las Lágrimas', 3, NULL, NULL, NULL, NULL, 1, 1),
-  (4, 'Ceratosaurus pavonius', 'Colmillo del Abismo', 4, NULL, NULL, NULL, NULL, 1, 1),
-  (5, 'Euoplocephalus nauseabundus', 'Coraza Pútrida', 5, NULL, NULL, NULL, NULL, 1, 1),
-  (6, 'Huayangosaurus inquisitus', 'Hustor de Umbra', 6, NULL, NULL, NULL, NULL, 1, 1);
+INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, operation_id, physical_traits, base_palette, silhouette, lore_phrase, launch_wave, is_active) VALUES
+  (1, 'Tyrannosaurus imperator', 'Rex de Fuego', 1, NULL, NULL, NULL, NULL, 'Donde pisa el Rex de Fuego, la tierra misma arde de una rabia que nunca se apaga.', 1, 1),
+  (2, 'Telmatosaurus mirus', 'Destello del Pantano', 2, NULL, NULL, NULL, NULL, 'Nadie ve venir al Destello del Pantano; solo el reflejo dorado en el agua delata que el asombro ya está sobre ti.', 1, 1),
+  (3, 'Triceratops umbra', 'Tricera de las Lágrimas', 3, NULL, NULL, NULL, NULL, 'Cada lágrima que cae de su gorguera es un recuerdo que el mundo se niega a soltar.', 1, 1),
+  (4, 'Ceratosaurus pavonius', 'Colmillo del Abismo', 4, NULL, NULL, NULL, NULL, 'En las grietas más oscuras del Mundo Primario, donde ni la luz llega, el Colmillo del Abismo acecha: la encarnación viva del miedo que paraliza, del terror que hiela la sangre antes de que las fauces cierren.', 1, 1),
+  (5, 'Euoplocephalus nauseabundus', 'Coraza Pútrida', 5, NULL, NULL, NULL, NULL, 'Donde el Asco se encarnó, ni la piedra escapa a la corrupción: el Euoplocephalus nauseabundus purifica por descomposición, convirtiendo la fortaleza en festidio.', 1, 1),
+  (6, 'Huayangosaurus inquisitus', 'Hustor de Umbra', 6, NULL, NULL, NULL, NULL, 'En los confines del olvido, donde la verdad aguarda sin ser nombrada, el Hustor camina—sus cristales lila cantan preguntas que las piedras nunca responderán.', 1, 1);
 
 -- Placeholder species: not designed yet, is_active=0 keeps them out of the
 -- discover/fuse pools (see functions/api/discover.ts, fuse/index.ts) but they
