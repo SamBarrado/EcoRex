@@ -158,3 +158,16 @@ CREATE TABLE daily_missions (
   UNIQUE (user_id, mission_slug, day)
 );
 CREATE INDEX idx_daily_missions_user_day ON daily_missions(user_id, day);
+
+-- 13. Push subscriptions: Web Push endpoints registered per user/device
+CREATE TABLE push_subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX idx_push_subscriptions_user ON push_subscriptions(user_id);
+
+ALTER TABLE users ADD COLUMN energy_full_notified_at INTEGER;  -- ms timestamp; NULL = not yet notified since last spend
