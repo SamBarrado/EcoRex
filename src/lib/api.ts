@@ -125,6 +125,7 @@ export interface Species {
   id: number;
   scientific_name: string;
   common_name: string;
+  lore_phrase: string | null;
   fractae_child_name: string;
   fractae_id: number;
   fractae_slug: string;
