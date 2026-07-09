@@ -185,7 +185,7 @@ describe("PercibirRitual", () => {
     await act(async () => {
       await vi.runAllTimersAsync();
     });
-    // The reveal mounts RevealCard, which schedules its own flip-in timer
+    // The reveal mounts CardScene, which schedules its own flip-in timer
     // from a useEffect that only runs once React commits — after the timer
     // flush above already returned. A second flush picks it up.
     await act(async () => {
@@ -238,7 +238,7 @@ describe("PercibirRitual", () => {
     fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
     fireEvent.touchEnd(cardPerspective);
 
-    // onCommitUp fires after RevealCard's own fly-away animation timer.
+    // onCommitUp fires after CardScene's own fly-away animation timer.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
@@ -280,7 +280,7 @@ describe("PercibirRitual", () => {
     fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
     fireEvent.touchEnd(cardPerspective);
 
-    // onCommitUp fires after RevealCard's own fly-away animation timer.
+    // onCommitUp fires after CardScene's own fly-away animation timer.
     await act(async () => {
       await vi.runAllTimersAsync();
     });

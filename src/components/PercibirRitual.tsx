@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RevealCard } from "./RevealCard";
+import { CardScene } from "./card/CardScene";
 import { XpToast } from "./XpToast";
 import { LevelUpScreen } from "./LevelUpScreen";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
@@ -20,7 +20,7 @@ const SFX_WHOOSH = "/sounds/sfx-whoosh.mp3";
 
 // sobre.png is a 1024x1536 pack; the seal crease sits where the crimped top
 // flap widens into the pack body, roughly 9% down from the top edge.
-// Sized to match RevealCard's fixed 300px design width (see RevealCard.tsx
+// Sized to match CardScene's fixed 300px design width (see CardScene.tsx
 // CARD_NATURAL_WIDTH) so the pack and the revealed card read as the same
 // physical object at the same screen size, minus the .page's 1rem side gutters.
 const PACK_ASPECT = 1536 / 1024;
@@ -91,7 +91,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const [phase, setPhase] = useState<RitualPhase>("sealed");
   const [peeking, setPeeking] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
-  const [result, setResult] = useState<(DiscoverResult & { fractaeChildName?: string }) | null>(null);
+  const [result, setResult] = useState<
+    (DiscoverResult & { fractaeChildName?: string; fractaeIconUrl?: string; lorePhrase?: string }) | null
+  >(null);
   const [showXpToast, setShowXpToast] = useState(false);
   const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -190,7 +192,12 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     Promise.all([discoverFn({ phase: PHASE }, controller.signal), delay(RITUAL_ANIM_MS)])
       .then(([data]) => {
         const matchedSpecies = species.find((s) => s.id === data.speciesId);
-        setResult({ ...data, fractaeChildName: matchedSpecies?.fractae_child_name });
+        setResult({
+          ...data,
+          fractaeChildName: matchedSpecies?.fractae_child_name,
+          fractaeIconUrl: matchedSpecies ? `/icons/fractae/${matchedSpecies.fractae_slug}.png` : undefined,
+          lorePhrase: matchedSpecies?.lore_phrase ?? undefined,
+        });
         setPhase("revealed");
         setShowXpToast(true);
         refetchNotifications();
@@ -341,14 +348,14 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
       {!error && phase === "revealed" && result && !showNewSlotOverlay && (
         <div className="percibir-overlay">
           {showRevealTitle && <strong className="reveal-title-fade">¡Percibiste una Fractura!</strong>}
-          <RevealCard
+          <CardScene
             imageUrl={result.imageUrl}
             commonName={result.commonName}
             scientificName={result.scientificName}
-            phase={result.phase}
             rarityTier={result.rarityTier}
-            discoveryCode={result.discoveryCode}
             fractaeChildName={result.fractaeChildName}
+            fractaeIconUrl={result.fractaeIconUrl}
+            lorePhrase={result.lorePhrase}
             glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
             spins={prefersReducedMotion() ? 0 : CARD_SPINS}
             onCommitUp={handleCommitUp}
