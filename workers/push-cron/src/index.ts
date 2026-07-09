@@ -35,14 +35,23 @@ export default {
         .all<SubscriptionRow>();
 
       for (const subscription of subscriptions) {
-        const result = await sendWebPush(
-          subscription,
-          { title: 'Energía lista', body: 'Ya puedes descubrir una nueva especie.', url: '/' },
-          { publicKey: env.VAPID_PUBLIC_KEY, privateKey: env.VAPID_PRIVATE_KEY, subject: 'mailto:hola@ecorex.app' }
-        );
+        try {
+          const result = await sendWebPush(
+            subscription,
+            { title: 'Energía lista', body: 'Ya puedes descubrir una nueva especie.', url: '/' },
+            { publicKey: env.VAPID_PUBLIC_KEY, privateKey: env.VAPID_PRIVATE_KEY, subject: 'mailto:hola@ecorex.app' }
+          );
 
-        if (result.statusCode === 404 || result.statusCode === 410) {
-          await env.DB.prepare(`DELETE FROM push_subscriptions WHERE endpoint = ?`).bind(subscription.endpoint).run();
+          if (result.statusCode === 404 || result.statusCode === 410) {
+            await env.DB.prepare(`DELETE FROM push_subscriptions WHERE endpoint = ?`).bind(subscription.endpoint).run();
+          }
+        } catch (err) {
+          // A single bad subscription (malformed key, network error, etc.) must not
+          // abort the loop: that would silently skip remaining subscriptions for this
+          // user, the energy_full_notified_at UPDATE below, and every subsequent user
+          // in userIds. Skip it (no delete — an exception isn't a confirmed 404/410)
+          // and keep going.
+          console.error('sendWebPush failed for subscription', subscription.endpoint, err);
         }
       }
 

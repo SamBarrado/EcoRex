@@ -72,4 +72,41 @@ describe('scheduled handler', () => {
 
     expect(calls.some((c) => c.sql.includes('DELETE FROM push_subscriptions'))).toBe(true);
   });
+
+  it('continues processing remaining subscriptions and users when sendWebPush throws for one subscription', async () => {
+    vi.mocked(sendWebPush).mockClear();
+    vi.mocked(sendWebPush).mockRejectedValueOnce(new Error('boom'));
+    const { db, calls } = makeDb({
+      energyRows: [
+        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
+        { id: 2, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
+      ],
+      subscriptionsByUser: {
+        1: [
+          { endpoint: 'https://push.example/bad', p256dh: 'p', auth: 'a' },
+          { endpoint: 'https://push.example/good', p256dh: 'p', auth: 'a' },
+        ],
+        2: [{ endpoint: 'https://push.example/user2', p256dh: 'p', auth: 'a' }],
+      },
+    });
+
+    const env = { DB: db, VAPID_PUBLIC_KEY: 'pub', VAPID_PRIVATE_KEY: 'priv' };
+    await expect(
+      worker.scheduled({} as ScheduledController, env as never, {} as ExecutionContext)
+    ).resolves.toBeUndefined();
+
+    expect(sendWebPush).toHaveBeenCalledTimes(3);
+    expect(sendWebPush).toHaveBeenCalledWith(
+      expect.objectContaining({ endpoint: 'https://push.example/good' }),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(sendWebPush).toHaveBeenCalledWith(
+      expect.objectContaining({ endpoint: 'https://push.example/user2' }),
+      expect.anything(),
+      expect.anything()
+    );
+    const updateCalls = calls.filter((c) => c.sql.includes('UPDATE users SET energy_full_notified_at'));
+    expect(updateCalls.map((c) => c.args[1])).toEqual([1, 2]);
+  });
 });
