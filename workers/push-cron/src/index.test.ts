@@ -8,7 +8,7 @@ import { sendWebPush } from '../../../functions/lib/webPush';
 import worker from './index';
 
 function makeDb(opts: {
-  energyRows: Array<{ id: number; energy_count: number; energy_window_start: number | null; unlimited_energy: number; energy_full_notified_at: number | null; max_energy: number }>;
+  energyRows: Array<{ id: number; energy_count: number; energy_window_start: number | null; unlimited_energy: number; energy_full_notified_at: number | null; xp: number }>;
   subscriptionsByUser: Record<number, Array<{ endpoint: string; p256dh: string; auth: string }>>;
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
@@ -42,7 +42,7 @@ describe('scheduled handler', () => {
   it('sends a push to each subscription of a fully-charged user and marks them notified', async () => {
     const { db, calls } = makeDb({
       energyRows: [
-        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
+        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, xp: 0 },
       ],
       subscriptionsByUser: { 1: [{ endpoint: 'https://push.example/a', p256dh: 'p', auth: 'a' }] },
     });
@@ -62,7 +62,7 @@ describe('scheduled handler', () => {
     vi.mocked(sendWebPush).mockResolvedValueOnce({ ok: false, statusCode: 410 });
     const { db, calls } = makeDb({
       energyRows: [
-        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
+        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, xp: 0 },
       ],
       subscriptionsByUser: { 1: [{ endpoint: 'https://push.example/gone', p256dh: 'p', auth: 'a' }] },
     });
@@ -78,8 +78,8 @@ describe('scheduled handler', () => {
     vi.mocked(sendWebPush).mockRejectedValueOnce(new Error('boom'));
     const { db, calls } = makeDb({
       energyRows: [
-        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
-        { id: 2, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, max_energy: 3 },
+        { id: 1, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, xp: 0 },
+        { id: 2, energy_count: 3, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, xp: 0 },
       ],
       subscriptionsByUser: {
         1: [
@@ -108,5 +108,39 @@ describe('scheduled handler', () => {
     );
     const updateCalls = calls.filter((c) => c.sql.includes('UPDATE users SET energy_full_notified_at'));
     expect(updateCalls.map((c) => c.args[1])).toEqual([1, 2]);
+  });
+
+  it('does not notify a level>=5 user at the base cap of 3 energy (their real max is 4)', async () => {
+    vi.mocked(sendWebPush).mockClear();
+    const { db, calls } = makeDb({
+      // xp: 400 === xpForLevel(5), so this user is level 5 -> real max_energy is 4, not 3.
+      // energy_window_start ~ now so ticks elapsed is ~0 and energy_count reflects the stored value.
+      energyRows: [
+        { id: 1, energy_count: 3, energy_window_start: Date.now(), unlimited_energy: 0, energy_full_notified_at: null, xp: 400 },
+      ],
+      subscriptionsByUser: { 1: [{ endpoint: 'https://push.example/level5', p256dh: 'p', auth: 'a' }] },
+    });
+
+    const env = { DB: db, VAPID_PUBLIC_KEY: 'pub', VAPID_PRIVATE_KEY: 'priv' };
+    await worker.scheduled({} as ScheduledController, env as never, {} as ExecutionContext);
+
+    expect(sendWebPush).not.toHaveBeenCalled();
+    expect(calls.some((c) => c.sql.includes('UPDATE users SET energy_full_notified_at'))).toBe(false);
+  });
+
+  it('notifies a level>=5 user only once they truly reach their real max of 4 energy', async () => {
+    vi.mocked(sendWebPush).mockClear();
+    const { db, calls } = makeDb({
+      energyRows: [
+        { id: 1, energy_count: 4, energy_window_start: null, unlimited_energy: 0, energy_full_notified_at: null, xp: 400 },
+      ],
+      subscriptionsByUser: { 1: [{ endpoint: 'https://push.example/level5-full', p256dh: 'p', auth: 'a' }] },
+    });
+
+    const env = { DB: db, VAPID_PUBLIC_KEY: 'pub', VAPID_PRIVATE_KEY: 'priv' };
+    await worker.scheduled({} as ScheduledController, env as never, {} as ExecutionContext);
+
+    expect(sendWebPush).toHaveBeenCalledTimes(1);
+    expect(calls.some((c) => c.sql.includes('UPDATE users SET energy_full_notified_at'))).toBe(true);
   });
 });

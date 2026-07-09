@@ -15,16 +15,32 @@ interface SubscriptionRow {
 
 const BASE_MAX_ENERGY = 3;
 
+// Mirrors functions/lib/xp.ts's levelFromXp/energyBonusForLevel — keep in sync,
+// no shared package between these two Wrangler projects.
+const ENERGY_BONUS_LEVEL_1 = 5;
+const ENERGY_BONUS_LEVEL_2 = 30;
+
+function xpForLevel(level: number): number {
+  return Math.round(50 * Math.pow(level - 1, 1.5));
+}
+
+function maxEnergyForXp(xp: number): number {
+  let bonus = 0;
+  if (xp >= xpForLevel(ENERGY_BONUS_LEVEL_1)) bonus += 1;
+  if (xp >= xpForLevel(ENERGY_BONUS_LEVEL_2)) bonus += 1;
+  return BASE_MAX_ENERGY + bonus;
+}
+
 export default {
   async scheduled(_controller: ScheduledController, env: Env, _ctx: ExecutionContext): Promise<void> {
     const now = Date.now();
 
     const { results } = await env.DB.prepare(
-      `SELECT id, energy_count, energy_window_start, unlimited_energy, energy_full_notified_at
+      `SELECT id, energy_count, energy_window_start, unlimited_energy, energy_full_notified_at, xp
        FROM users WHERE unlimited_energy = 0 AND energy_full_notified_at IS NULL`
-    ).all<Omit<EnergyRow, 'max_energy'>>();
+    ).all<Omit<EnergyRow, 'max_energy'> & { xp: number }>();
 
-    const rows: EnergyRow[] = results.map((row) => ({ ...row, max_energy: BASE_MAX_ENERGY }));
+    const rows: EnergyRow[] = results.map((row) => ({ ...row, max_energy: maxEnergyForXp(row.xp) }));
     const userIds = selectUsersToNotify(rows, now);
 
     for (const userId of userIds) {
