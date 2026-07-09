@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDex, DexSlot, ApiError } from "../lib/api";
 import { CardScene } from "../components/card/CardScene";
+import { CardThumb } from "../components/card/CardThumb";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const REVEAL_DELAY_MS = 500;
@@ -203,19 +204,24 @@ export default function ColeccionPage() {
                       className={`species-image slot-reveal-real-img${revealPending ? "" : " slot-reveal-visible"}`}
                     />
                   </div>
-                ) : (
+                ) : slot.locked ? (
                   <img
-                    src={slot.locked ? "/icons/carta-bloqueada.png" : slot.image_url}
-                    alt={slot.locked ? "Carta bloqueada" : slot.common_name}
+                    src="/icons/carta-bloqueada.png"
+                    alt="Carta bloqueada"
                     className="species-image"
                     loading="lazy"
-                    style={slot.locked ? { filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 } : undefined}
+                    style={{ filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 }}
+                  />
+                ) : (
+                  <CardThumb
+                    imageUrl={slot.image_url}
+                    commonName={slot.common_name}
+                    scientificName={slot.scientific_name}
+                    rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
+                    fractaeChildName={slot.fractae_child_name}
+                    glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
                   />
                 )}
-                <strong className="truncate" style={{ display: "block" }}>
-                  {showAsLocked ? "???" : slot.common_name}
-                </strong>
-                <div>Fase: {slot.phase}</div>
               </div>
             );
           })}

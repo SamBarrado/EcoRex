@@ -213,6 +213,20 @@ button:disabled {
   aspect-ratio: 2 / 3;
 }
 
+.card-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0d1a0f;
+  pointer-events: none;
+}
+
+.card-thumb-inner {
+  transform-origin: top left;
+}
+
 @keyframes slot-locked-shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-4px); }

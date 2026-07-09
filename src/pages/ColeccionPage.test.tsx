@@ -39,7 +39,7 @@ describe("ColeccionPage", () => {
         <ColeccionPage />
       </MemoryRouter>
     );
-    const lockedTile = await screen.findByText("???");
+    const lockedTile = await screen.findByAltText("Carta bloqueada");
     fireEvent.click(lockedTile.closest(".card")!);
     await waitFor(() => {
       expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
