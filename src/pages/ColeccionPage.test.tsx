@@ -42,7 +42,7 @@ describe("ColeccionPage", () => {
     const lockedTile = await screen.findByText("???");
     fireEvent.click(lockedTile.closest(".card")!);
     await waitFor(() => {
-      expect(screen.queryByText("Carta aún no descubierta. Juega en Percibir para desbloquearla.")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
     });
   });
 

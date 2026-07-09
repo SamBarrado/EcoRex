@@ -147,7 +147,7 @@ export default function ColeccionPage() {
         </div>
       )}
       {visibleSlots && visibleSlots.length > 0 && (
-        <div className="grid">
+        <div className="grid ecodex-grid">
           {visibleSlots.map((slot) => {
             const isJustUnlocked = slotKey(slot) === justUnlockedKey;
             const showAsLocked = slot.locked || (isJustUnlocked && revealPending);
