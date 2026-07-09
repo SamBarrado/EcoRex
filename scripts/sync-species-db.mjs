@@ -146,8 +146,10 @@ async function main() {
     );
 
     for (const phase of PHASES) {
+      // .webp: run `node scripts/convert-species-art-to-webp.mjs` after generating
+      // art and before this sync, so the .webp sibling exists alongside the .png.
       newAnchorRows.push(
-        `  (${nextAnchorId++}, ${speciesId}, ${sqlEscape(phase)}, ${sqlEscape(`/species-art/${slug}/${phase}.png`)}, NULL)`
+        `  (${nextAnchorId++}, ${speciesId}, ${sqlEscape(phase)}, ${sqlEscape(`/species-art/${slug}/${phase}.webp`)}, NULL)`
       );
     }
 

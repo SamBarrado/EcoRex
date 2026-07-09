@@ -42,7 +42,15 @@ export function Card({
           }}
         />
         <div className="card-art-window">
-          <img src={imageUrl} alt={commonName} className="card-art-image" draggable={false} />
+          <img
+            src={imageUrl}
+            alt={commonName}
+            className="card-art-image"
+            draggable={false}
+            loading="lazy"
+            width={1536}
+            height={1024}
+          />
         </div>
         {fractaeIconUrl && (
           <div className="card-fractae-badge">
