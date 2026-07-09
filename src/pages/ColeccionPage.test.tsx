@@ -21,7 +21,7 @@ const revealedSlot = {
 };
 
 beforeEach(() => {
-  vi.spyOn(global, "fetch").mockResolvedValue({
+  vi.spyOn(globalThis, "fetch").mockResolvedValue({
     ok: true,
     json: async () => ({ currentWave: 1, slots: [lockedSlot, revealedSlot] }),
   } as Response);
