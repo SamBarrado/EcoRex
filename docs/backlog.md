@@ -1,6 +1,6 @@
 # Backlog de futuras funcionalidades
 
-Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin orden de prioridad implícito salvo que se indique lo contrario — revisar y mover a un plan (`docs/superpowers/plans/`) cuando toque abordarlas.
+Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin orden de prioridad implícito salvo que se indique lo contrario — revisar y mover a un plan cuando toque abordarlas.
 
 ## Performance y contenido
 
@@ -24,3 +24,12 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 
 - **Pulir el layout definitivo de la carta por capas**: `Card.tsx`/`CardScene.tsx` (v0.7.0) implementan una primera composición funcional — nameplate, ventana de arte, medallón de Fractae, pill de rareza, caja de lore, borde ornamentado y canto con relieve — pero es un punto de partida, no el diseño final. Pendiente de iterar layout una vez haya diseños definitivos: en concreto, el nombre común se trunca con ellipsis en especies con nombres largos (ver `.card-name` en `src/index.css`), y conviene revisar tamaños relativos de cada capa con más nombres reales.
 - **Quitar el ID de carta**: fuera de alcance del MVP inicial, revisar más adelante si el `discovery_code` (`DX-HAB-DSC`) sigue aportando algo de cara al usuario o se puede retirar de la UI. La carta de Percibir (`Card.tsx`) ya no lo muestra desde v0.7.0, pero `FusionPage.tsx` sigue mostrándolo en su propia carta sin capas.
+
+
+## Por ordenar y determinar alcance y elementos afectados
+
+- **3 imagenes de perfil por defecto para el usuario que no sea su inicial.
+- **pulir grid ecodex (sigue sin verse el lore antes de ampliar carta)
+- **habilitar modo album con ilusttraciones (lo que era al principio el ecodex. en lugar de mostrar carta, se muestra ficha del dino y ilustracion más grande y al natural, posiblemente ilustracion alternativa.)
+- **decidir que se hace con modo eco y si las fusiones aplican más allá de fase balance.
+- **definir scope de modo amigos. QR con codigo, regalos? etc.
