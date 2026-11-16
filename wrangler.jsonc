@@ -7,7 +7,8 @@
     {
       "binding": "DB",
       "database_name": "ecorex-db",
-      "database_id": "5214a55d-98c7-450b-bd36-ef33d8fb6b2d"
+      "database_id": "5214a55d-98c7-450b-bd36-ef33d8fb6b2d",
+      "migrations_dir": "migrations"
     }
   ],
   "kv_namespaces": [

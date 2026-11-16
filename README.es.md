@@ -36,7 +36,7 @@ git clone https://github.com/SamBarrado/EcoRex.git
 cd EcoRex
 npm install
 cp .dev.vars.example .dev.vars   # y rellena tus propias claves (no van en el repo)
-npx wrangler d1 execute DB --local --file=schema.sql   # crea las tablas en la D1 local
+npm run db:migrate                                     # crea las tablas en la D1 local (aplica migrations/)
 npm run db:seed                                        # siembra rarezas, Fractae y especies
 npm run dev                      # build + wrangler pages dev: frontend + Functions + D1/KV locales
 ```
@@ -95,7 +95,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 | **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Ciclo de desarrollo rápido y tipos compartidos con el backend |
 | **PWA** | `vite-plugin-pwa` (`injectManifest`) + service worker propio | Instalable en móvil sin pasar por tienda; el SW propio gestiona los eventos push. Si algún día hace falta tienda, la vía es envolver la misma build con Capacitor |
 | **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Se despliega junto al frontend, sin otro host de API que mantener |
-| **Base de datos** | Cloudflare D1 (SQLite) — esquema en [schema.sql](schema.sql) | Datos relacionales (usuarios, colección, misiones, notificaciones) sin servidor de BD que operar |
+| **Base de datos** | Cloudflare D1 (SQLite) — esquema como [migraciones](migrations/) numeradas | Datos relacionales (usuarios, colección, misiones, notificaciones) sin servidor de BD que operar |
 | **Storage / caché** | Assets estáticos de Pages (arte de especies) + KV (rate limit) | Serverless y gratuito al volumen actual |
 | **Push** | Web Push (VAPID) con `@block65/webcrypto-web-push` + un **Worker independiente con Cron Trigger** (`workers/push-cron`) | Las Pages Functions no soportan Cron Triggers |
 | **Generación de contenido** | APIs de Anthropic y OpenAI (fichas-spec de especies; arte y fases) | Pipeline de producción de contenido, ver «Pipeline de arte» |
@@ -108,7 +108,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 
 No es una lista de funcionalidades, sino de «qué fue mal de verdad y cómo se arregló»:
 
-- **Un dato de producción se quedó atrás del esquema.** La D1 remota no tenía la columna `consumed_at` ni la tabla `notifications` que `schema.sql` sí definía, y solo salió a la luz al migrar una cuenta a producción. Como `schema.sql` no puede re-ejecutarse contra una base con datos, se escribió `npm run db:check-remote-schema`: parsea el esquema, consulta `PRAGMA table_info` en remoto y lista cualquier tabla o columna que falte.
+- **Un dato de producción se quedó atrás del esquema.** La D1 remota no tenía la columna `consumed_at` ni la tabla `notifications` que `schema.sql` sí definía, y solo salió a la luz al migrar una cuenta a producción. Eso llevó primero a un script comprobador y después a migraciones numeradas de D1 (`migrations/`, aplicadas con `wrangler d1 migrations`): la base de datos registra cuáles tiene ya, así que `npm run db:migrate:status` muestra lo pendiente y nada puede quedarse atrás sin que se note.
 - **Un nombre de fase chocaba con un Fractae.** La fase intermedia se llamaba «Furia», igual que el Fractae Furia (Ira): una criatura de Miedo en fase «Furia» sonaba a criatura de Furia. Se renombró a **Exceso**, lo que obligó a tocar el `CHECK` del esquema, el código, los nombres de archivo y, con un script de migración dedicado, las filas ya existentes en la D1 de producción.
 - **Fusionar hacía desaparecer cartas del EcoDex.** Como la fusión *consume* los duplicados de Balance, un EcoDex basado en las filas activas perdía esa fase o repetía la animación de «especie nueva» al volver a conseguirla. La regla correcta es basarse en la existencia **histórica** de cualquier descubrimiento de esa especie+fase.
 - **Un campo guardaba una foto, no una referencia.** `discoveries.image_url` es una copia por usuario fijada en el momento del descubrimiento, no un enlace vivo a la tabla de anclas. Al migrar el arte de PNG a WebP hubo que migrar también las filas de usuarios (local y remoto); además, el seed usa `INSERT OR IGNORE`, que no propaga cambios a filas ya sembradas.
@@ -184,7 +184,7 @@ Lo que **no** cubren los tests automáticos y cómo se gestiona:
 
 - **No hay tests E2E ni de regresión visual.** Los gestos y animaciones de la carta (`CardScene`) se prueban a nivel de comportamiento (por ejemplo, la reactividad del aura), no de píxeles.
 - **Los problemas específicos de iOS** (menú contextual, autoplay, safe areas) quedan fuera de la suite: jsdom no los reproduce.
-- **El estado de la base de datos remota** no lo cubre ninguna suite: lo vigila el comprobador de esquema (`npm run db:check-remote-schema`), que conviene ejecutar antes de cada despliegue que toque `schema.sql`.
+- **El estado de la base de datos remota** no lo cubre ninguna suite: `npm run db:migrate:status` lista las migraciones pendientes en local y remoto, y conviene ejecutarlo antes de cada despliegue que añada una.
 
 ---
 
@@ -200,7 +200,7 @@ Lo que **no** cubren los tests automáticos y cómo se gestiona:
 
 **Sin email-gate.** El prototipo pedía el correo tras el descubrimiento. Con cuentas reales, el correo se captura en el registro y no hace falta bloquear nada detrás de él.
 
-**El esquema es la fuente de verdad, y remoto no se actualiza solo.** `schema.sql` define la base de datos; la D1 de producción solo tiene lo que se le haya aplicado a mano. Por eso hay un comprobador, y por eso nunca se re-ejecuta el esquema completo contra una base con datos: se aplica solo el delta.
+**Las migraciones numeradas son la fuente de verdad, y remoto no se actualiza solo.** `migrations/0001_baseline.sql` es una foto de producción (verificada columna a columna contra la base real antes de marcarla como aplicada allí); cada cambio posterior es un fichero numerado nuevo. Aplicar es siempre explícito (`npm run db:migrate` en local, `npm run db:migrate:remote` para producción) y cada base registra lo que ya tiene, así que una migración nunca se ejecuta dos veces.
 
 **El arte final y los borradores no se mezclan.** Viven en carpetas distintas (`public/species-art/` frente a `especies_design/`, que no se versiona), de modo que un borrador no pueda llegar a producción por accidente.
 
@@ -219,8 +219,8 @@ EcoRex/
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
-├── schema.sql                   # Esquema D1, fuente de verdad de la base de datos
-├── scripts/                     # Operaciones de BD: seed.sql, comprobador de esquema remoto, migraciones puntuales
+├── migrations/                  # Migraciones numeradas de D1 (0001_baseline = foto de producción): fuente de verdad de la base de datos
+├── scripts/                     # Datos semilla de la BD (seed.sql)
 ├── tools/                       # Pipeline de contenido solo local (no se despliega): generación de fichas y arte de especies, discovery PBDB, sync de especies, avatares — ver tools/species/README.md
 ├── public/                      # Estáticos servidos: species-art, icons, logo, sonidos
 ├── design/                      # Material de diseño: badges de Fractae y fases, botones, cartas
@@ -282,18 +282,18 @@ npm run typecheck      # solo tsc
 npm run db:seed        # siembra rarezas, Fractae y especies en la D1 local
 ```
 
-Antes del primer `db:seed`, crea las tablas con `npx wrangler d1 execute DB --local --file=schema.sql` (el seed por sí solo falla con `no such table`). Para empezar de cero en local basta con borrar `.wrangler/state/v3/d1` y repetir esos dos pasos; nunca hagas el equivalente contra la D1 remota.
+Antes del primer `db:seed`, crea las tablas con `npm run db:migrate` (el seed por sí solo falla con `no such table`). Para empezar de cero en local basta con borrar `.wrangler/state/v3/d1` y repetir esos dos pasos. Para cambiar el esquema: `npm run db:migrate:new -- <nombre>`, escribe el SQL en el fichero nuevo, `npm run db:migrate` y, después, `npm run db:migrate:remote`.
 
 Copia `.dev.vars.example` a `.dev.vars` y rellena `ANTHROPIC_API_KEY` y `OPENAI_API_KEY`: son las claves de los proveedores de IA que usa solo el pipeline de contenido local (`tools/`) — los endpoints de la app no llaman a ningún proveedor de IA en runtime — y no se incluyen en el repo. `DISCOVER_RATE_LIMIT` es opcional y solo para pruebas locales.
 
-> **Local y producción son bases de datos distintas.** `wrangler pages dev` usa una copia local de D1 y KV bajo `.wrangler/state/`, aislada de los recursos reales. Los usuarios y el progreso creados en local no existen en producción, y un cambio en `schema.sql` no llega solo a la D1 remota. Antes de desplegar si tocaste el esquema, ejecuta `npm run db:check-remote-schema`.
+> **Local y producción son bases de datos distintas.** `wrangler pages dev` usa una copia local de D1 y KV bajo `.wrangler/state/`, aislada de los recursos reales. Los usuarios y el progreso creados en local no existen en producción, y una migración aplicada en local no llega sola a la D1 remota. Antes de desplegar si añadiste una, ejecuta `npm run db:migrate:status` y después `npm run db:migrate:remote`.
 
 **Worker de push.** `workers/push-cron` es un proyecto Wrangler independiente (con su propio `npm install`, su propio estado local de D1 y sus propios secrets), y **no se despliega con el push a `main`**: se despliega aparte con `npm run deploy` dentro de su carpeta.
 
 ### Desplegar tu propia copia
 
 1. Crea los recursos: `npx wrangler d1 create ecorex-db`, y `npx wrangler kv namespace create RATE_LIMIT_KV`; copia los IDs resultantes a `wrangler.jsonc` (y el `database_id` a `workers/push-cron/wrangler.jsonc`).
-2. Aplica el esquema a la D1 remota una sola vez: `npx wrangler d1 execute DB --remote --file=schema.sql`, y siembra con `npm run db:seed:remote`.
+2. Aplica las migraciones a la D1 remota: `npm run db:migrate:remote`, y siembra con `npm run db:seed:remote`.
 3. Crea el proyecto de Pages y conecta el repositorio (rama `main`): cada push construye y despliega.
 4. Genera un par de claves VAPID y guárdalas como secrets, tanto del proyecto Pages (`wrangler pages secret put`) como del Worker (`wrangler secret put`, dentro de `workers/push-cron/`): `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`. Añade también `ANTHROPIC_API_KEY` y `OPENAI_API_KEY` al proyecto Pages.
 5. Despliega el Worker de push: `cd workers/push-cron && npm install && npm run deploy`.

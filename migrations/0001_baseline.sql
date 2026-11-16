@@ -1,3 +1,9 @@
+-- 0001_baseline: snapshot of the production schema as of 2026-11-17, the starting
+-- point of the numbered migrations. Production (ecorex-db) already has all of this,
+-- so it is marked as applied there WITHOUT running it; it only runs on fresh
+-- databases (e.g. a new local D1). Every later schema change goes in a new
+-- numbered file created with `npm run db:migrate:new -- <name>`.
+--
 -- Ecorex D1 schema
 -- Domain reference: docs/lore_world_bible_ecorex_v3.md
 
@@ -34,7 +40,8 @@ CREATE TABLE species (
   base_palette TEXT,
   silhouette TEXT,
   launch_wave INTEGER NOT NULL DEFAULT 1,  -- monthly wave the species released in
-  is_active INTEGER NOT NULL DEFAULT 0     -- gated until curated art is ready
+  is_active INTEGER NOT NULL DEFAULT 0,    -- gated until curated art is ready
+  lore_phrase TEXT                         -- LEGACY, unused: lore moved to species_phase_anchors.lore_phrase. Kept only so this baseline matches production exactly; slated for removal.
 );
 
 -- 4. Species anchor images: curated canonical image per species+phase

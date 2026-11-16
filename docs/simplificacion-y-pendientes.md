@@ -65,12 +65,15 @@ Ordenadas de menor a mayor esfuerzo/riesgo. "Qué ganas" es una valoración hone
 | 4 | Hook `useSound` (audio duplicado entre `PercibirRitual` y `FusionPage`) | ⏳ | medio (trucos de iOS Safari; los tests mockean `play()` y no detectarían regresión: probar en iPhone) | Un solo sitio para sonidos; solo compensa si vas a tocar el sonido |
 | 5 | Extraer tile y filtro de fases de `ColeccionPage` (279 → 122 líneas; 14 estilos inline → 1 dinámico) | ✅ | bajo | Es la pantalla donde se va a seguir iterando (lore, modo álbum) |
 | 6 | Unificar `discover` y `fuse` en una función común | ⏳ | medio-alto (núcleo de la economía: XP, misiones, rareza) | Reglas de XP/misiones en un solo sitio. Ya es más pequeño: ambos perdieron la resolución de imagen, pero siguen duplicando `generateDiscoveryCode` y el flujo rareza→insert→XP→misiones→bonus |
-| 7 | Migraciones numeradas de D1 (`wrangler d1 migrations`) | ⏳ | medio (hay que declarar el estado actual como línea base en una BD remota con datos) | Se acaba el "remoto desfasado". Buen momento para eliminar las columnas sin uso `rarity_tiers.anchor_probability` y `discoveries.is_unique_variant`. Base: `scripts/migrations/2026-07-06-username-unique.sql` |
+| 7 | Migraciones numeradas de D1 (`wrangler d1 migrations`) | ✅ | Hecho: `migrations/0001_baseline.sql` verificada columna a columna contra producción y marcada como aplicada en remoto y en local (sin ejecutarla); `schema.sql` y `check-remote-schema` retirados. Flujo: `npm run db:migrate:new/db:migrate/db:migrate:status/db:migrate:remote` (ver CLAUDE.md) |
+| 7b | **Migración 0002 de limpieza de columnas sin uso** | ⏳ | medio (borrado irreversible de datos que ya no usa nadie). Candidatas: `species.lore_phrase` (heredada, 6 textos antiguos en producción; lore real en `species_phase_anchors`), `discoveries.is_unique_variant` (siempre 0; ya nada la lee ni escribe), `rarity_tiers.anchor_probability` (siempre 1; **antes hay que quitarla de `discover.ts`, `fuse/index.ts`, `RarityTierRow`, `seed.sql` y los tests, desplegar, y solo entonces la migración**). Probar el `DROP COLUMN` en una BD de prueba antes (SQLite no deja borrar columnas con índices/constraints). Ganas: esquema sin restos de la mecánica de variantes |
 | 8 | Partir `index.css` (1.394 líneas) por componente | ⏳ | medio (orden/especificidad del CSS; los tests no ven lo visual: hacer capturas antes y después) | Encontrar estilos rápido |
 | 9 | Separar lógica y presentación en `PercibirRitual` (437 líneas) | ⏳ | alto (flujo central, animaciones, audio) | Solo si lo vas a tocar de todos modos |
 | 10 | Sacar los PNG originales de git | ⛔ | alto: quitarlos del tracking **no** reduce el `.git` (209 MB); haría falta reescribir historial + force push | No recomendado salvo que el peso moleste. No se comprobó que estén trackeados |
 
-**Orden recomendado:** ~~3~~ → ~~5~~ → 7 → 6; el resto según se vaya tocando cada zona.
+**Orden recomendado:** ~~3~~ → ~~5~~ → ~~7~~ → 6; el resto según se vaya tocando cada zona.
+
+**Hallazgo del #7:** el comprobador antiguo no detectaba columnas *de más*. Al comparar el baseline con producción apareció `species.lore_phrase`, que `schema.sql` ya no definía. Y la D1 *local* estaba desfasada (le faltaban `push_subscriptions`, `energy_last_notified_count` y `avatar`); se alineó a mano, con copia de seguridad, conservando los datos de prueba.
 
 ---
 

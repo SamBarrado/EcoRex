@@ -16,7 +16,10 @@
     "db:sync-species": "node tools/species/sync-species-db.mjs",
     "db:seed": "wrangler d1 execute DB --local --file=scripts/seed.sql",
     "db:seed:remote": "wrangler d1 execute DB --remote --file=scripts/seed.sql",
-    "db:check-remote-schema": "node scripts/check-remote-schema.mjs"
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:migrate:status": "wrangler d1 migrations list DB --local && wrangler d1 migrations list DB --remote",
+    "db:migrate:new": "wrangler d1 migrations create DB"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250704.0",

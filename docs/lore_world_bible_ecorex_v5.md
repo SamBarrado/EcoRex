@@ -582,7 +582,9 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 
 **Retirado después (2026-11-16) por no tener ningún uso en Ecorex:** `cache.ts`, `hash.ts`, `r2.ts`, `images/[key].ts`, `openai.ts`, `anthropic.ts` y `shared/types.ts` (tipos del wizard de atributos del prototipo).
 
-### 18.3 Mapeo schema.sql ↔ conceptos de lore
+### 18.3 Mapeo esquema (`migrations/`) ↔ conceptos de lore
+
+> Desde 2026-11-17 el esquema vive en migraciones numeradas (`migrations/0001_baseline.sql` = foto de producción); el antiguo `schema.sql` se retiró.
 
 | Concepto de lore | Tabla / columna |
 |---|---|

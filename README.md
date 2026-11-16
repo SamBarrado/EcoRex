@@ -36,7 +36,7 @@ git clone https://github.com/SamBarrado/EcoRex.git
 cd EcoRex
 npm install
 cp .dev.vars.example .dev.vars   # and fill in your own keys (they are not in the repo)
-npx wrangler d1 execute DB --local --file=schema.sql   # create the tables in the local D1
+npm run db:migrate                                     # create the tables in the local D1 (applies migrations/)
 npm run db:seed                                        # seed rarities, Fractae and species
 npm run dev                      # build + wrangler pages dev: frontend + Functions + local D1/KV
 ```
@@ -95,7 +95,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 | **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Fast dev loop |
 | **PWA** | `vite-plugin-pwa` (`injectManifest`) + custom service worker | Installable on mobile without an app store; the custom SW handles push events. If a store ever becomes necessary, the path is wrapping the same build with Capacitor |
 | **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Deploys alongside the frontend, no separate API host to maintain |
-| **Database** | Cloudflare D1 (SQLite) — schema in [schema.sql](schema.sql) | Relational data (users, collection, missions, notifications) with no database server to operate |
+| **Database** | Cloudflare D1 (SQLite) — schema as numbered [migrations](migrations/) | Relational data (users, collection, missions, notifications) with no database server to operate |
 | **Storage / cache** | Pages static assets (species art) + KV (rate limiting) | Serverless and free at current volume |
 | **Push** | Web Push (VAPID) with `@block65/webcrypto-web-push` + a **standalone Worker with a Cron Trigger** (`workers/push-cron`) | Pages Functions don't support Cron Triggers |
 | **Content generation** | Anthropic and OpenAI APIs (species spec sheets; art and phases) | Content production pipeline, see "Art pipeline" |
@@ -108,7 +108,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 
 Not a feature list, but a "what actually went wrong and how it got fixed" list:
 
-- **Production data fell behind the schema.** The remote D1 lacked the `consumed_at` column and the `notifications` table that `schema.sql` did define, and it only surfaced while migrating an account to production. Since `schema.sql` can't be re-run against a database with data, `npm run db:check-remote-schema` was written: it parses the schema, queries `PRAGMA table_info` on the remote and lists any missing table or column.
+- **Production data fell behind the schema.** The remote D1 lacked the `consumed_at` column and the `notifications` table that `schema.sql` did define, and it only surfaced while migrating an account to production. That led first to a checker script and then to numbered D1 migrations (`migrations/`, applied with `wrangler d1 migrations`): the database records which ones it already has, so `npm run db:migrate:status` shows what is pending and nothing can silently fall behind.
 - **A phase name collided with a Fractae.** The middle phase was called "Furia" (Fury), the same as the Fractae Furia (Ira): a Fear creature in the "Furia" phase sounded like a Fury creature. It was renamed **Exceso** (Excess), which meant touching the schema `CHECK`, the code, the file names and — with a dedicated migration script — the rows already in the production D1.
 - **Fusing made cards vanish from the EcoDex.** Because fusion *consumes* the Balance duplicates, an EcoDex based on active rows lost that phase or replayed the "new species" animation when it was obtained again. The correct rule is to rely on the **historical** existence of any discovery of that species+phase.
 - **A field stored a snapshot, not a reference.** `discoveries.image_url` is a per-user copy fixed at discovery time, not a live link to the anchors table. Migrating the art from PNG to WebP meant migrating user rows too (local and remote); on top of that, the seed uses `INSERT OR IGNORE`, which doesn't propagate changes to already-seeded rows.
@@ -184,7 +184,7 @@ What the automated tests **don't** cover, and how that's handled:
 
 - **There are no E2E or visual-regression tests.** The card's gestures and animations (`CardScene`) are tested at the behavior level (for example, aura reactivity), not at the pixel level.
 - **iOS-specific problems** (context menu, autoplay, safe areas) fall outside the suite: jsdom doesn't reproduce them.
-- **The remote database state** isn't covered by any suite: the schema checker (`npm run db:check-remote-schema`) watches it, and it's worth running before any deploy that touches `schema.sql`.
+- **The remote database state** isn't covered by any suite: `npm run db:migrate:status` lists the pending migrations on local and remote, and it's worth running before any deploy that adds one.
 
 ---
 
@@ -200,7 +200,7 @@ What the automated tests **don't** cover, and how that's handled:
 
 **No email gate.** The prototype asked for the email after the discovery. With real accounts, the email is captured at sign-up and nothing needs to be blocked behind it.
 
-**The schema is the source of truth, and remote doesn't update itself.** `schema.sql` defines the database; the production D1 only has what has been applied to it by hand. That's why there's a checker, and why the full schema is never re-run against a database with data: only the delta is applied.
+**Numbered migrations are the source of truth, and remote doesn't update itself.** `migrations/0001_baseline.sql` is a snapshot of production (verified column by column against the live database before being marked as applied there); every later change is a new numbered file. Applying is always explicit (`npm run db:migrate` locally, `npm run db:migrate:remote` for production) and each database records what it already has, so a migration never runs twice.
 
 **Final art and drafts don't mix.** They live in different folders (`public/species-art/` versus `especies_design/`, which isn't versioned), so a draft can't reach production by accident.
 
@@ -219,8 +219,8 @@ EcoRex/
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
-├── schema.sql                   # D1 schema, the database's source of truth
-├── scripts/                     # DB operations: seed.sql, remote schema checker, one-off migrations
+├── migrations/                  # Numbered D1 migrations (0001_baseline = production snapshot): the database's source of truth
+├── scripts/                     # DB seed data (seed.sql)
 ├── tools/                       # Local-only content pipeline (never deployed): species spec/art generation, PBDB discovery, species sync, avatars — see tools/species/README.md
 ├── public/                      # Served statics: species-art, icons, logo, sounds
 ├── design/                      # Design material: Fractae and phase badges, buttons, cards
@@ -283,18 +283,18 @@ npm run typecheck      # tsc only
 npm run db:seed        # seeds rarities, Fractae and species into the local D1
 ```
 
-Before the first `db:seed`, create the tables with `npx wrangler d1 execute DB --local --file=schema.sql` (the seed alone fails with `no such table`). To start from scratch locally, just delete `.wrangler/state/v3/d1` and repeat those two steps; never do the equivalent against the remote D1.
+Before the first `db:seed`, create the tables with `npm run db:migrate` (the seed alone fails with `no such table`). To start from scratch locally, just delete `.wrangler/state/v3/d1` and repeat those two steps. To change the schema: `npm run db:migrate:new -- <name>`, write the SQL in the new file, `npm run db:migrate`, and later `npm run db:migrate:remote`.
 
 Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the local content pipeline (`tools/`) only — the app's endpoints do not call any AI provider at runtime — and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
 
-> **Local and production are different databases.** `wrangler pages dev` uses a local copy of D1 and KV under `.wrangler/state/`, isolated from the real resources. Users and progress created locally don't exist in production, and a change to `schema.sql` doesn't reach the remote D1 on its own. Before deploying if you touched the schema, run `npm run db:check-remote-schema`.
+> **Local and production are different databases.** `wrangler pages dev` uses a local copy of D1 and KV under `.wrangler/state/`, isolated from the real resources. Users and progress created locally don't exist in production, and a migration applied locally doesn't reach the remote D1 on its own. Before deploying if you added one, run `npm run db:migrate:status`, then `npm run db:migrate:remote`.
 
 **Push Worker.** `workers/push-cron` is a standalone Wrangler project (with its own `npm install`, its own local D1 state and its own secrets), and it is **not deployed by pushing to `main`**: it's deployed separately with `npm run deploy` inside its folder.
 
 ### Deploying your own copy
 
 1. Create the resources: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV`; copy the resulting IDs into `wrangler.jsonc` (and the `database_id` into `workers/push-cron/wrangler.jsonc`).
-2. Apply the schema to the remote D1 exactly once: `npx wrangler d1 execute DB --remote --file=schema.sql`, and seed with `npm run db:seed:remote`.
+2. Apply the migrations to the remote D1: `npm run db:migrate:remote`, and seed with `npm run db:seed:remote`.
 3. Create the Pages project and connect the repository (branch `main`): every push builds and deploys.
 4. Generate a VAPID key pair and store it as secrets, both for the Pages project (`wrangler pages secret put`) and for the Worker (`wrangler secret put`, inside `workers/push-cron/`): `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. Also add `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` to the Pages project.
 5. Deploy the push Worker: `cd workers/push-cron && npm install && npm run deploy`.
