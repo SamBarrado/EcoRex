@@ -4,8 +4,8 @@
 // feed into generate-species-art.mjs.
 //
 // Usage:
-//   node scripts/generate-species-spec.mjs "Stegosaurus" "Miedo"
-//   node scripts/generate-species-spec.mjs "Velociraptor" "Sorpresa" --out scripts/lote.json --append
+//   node tools/species/generate-species-spec.mjs "Stegosaurus" "Miedo"
+//   node tools/species/generate-species-spec.mjs "Velociraptor" "Sorpresa" --out tools/species/lote.json --append
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
@@ -150,7 +150,7 @@ function parseArgs(argv) {
 }
 
 // Core logic, reusable from the CLI (main() below) and from
-// scripts/discover-species-pbdb.mjs's web UI. Looks up real data from all
+// tools/species/discover-species-pbdb.mjs's web UI. Looks up real data from all
 // three sources, calls the Anthropic API, and returns the ficha-spec —
 // does NOT write to disk (callers decide what to do with the result).
 export async function generateSpec(especie, fractaeInput, { apiKey, edition = '', onProgress = () => {} } = {}) {
@@ -192,7 +192,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const [especie, fractaeInput] = args._;
   if (!especie || !fractaeInput) {
-    console.error('Uso: node scripts/generate-species-spec.mjs "<especie>" "<Fractae>" [--out file.json] [--append] [--edition "Wave 2"]');
+    console.error('Uso: node tools/species/generate-species-spec.mjs "<especie>" "<Fractae>" [--out file.json] [--append] [--edition "Wave 2"]');
     console.error(`Fractae disponibles: ${Object.values(FRACTAE).map((f) => f.name).join(', ')}`);
     process.exit(1);
   }
@@ -225,7 +225,7 @@ async function main() {
   console.log(`Wave/edición: ${spec.edition || '(sin asignar)'}`);
   console.log('-------------\n');
 
-  const outPath = args.out ?? 'scripts/species.generated.json';
+  const outPath = args.out ?? 'tools/species/species.generated.json';
   let list = [];
   if (args.append && existsSync(outPath)) {
     list = JSON.parse(await readFile(outPath, 'utf8'));

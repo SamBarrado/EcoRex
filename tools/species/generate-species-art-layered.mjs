@@ -7,8 +7,8 @@
 // mood, meant to be composited together at render time (see docs/lore_world_bible_ecorex_v4.md §15.4.3).
 //
 // Usage:
-//   node scripts/generate-species-art-layered.mjs species.json --only "Rex de Fuego"
-//   node scripts/generate-species-art-layered.mjs species.json --phases balance,exceso,eco
+//   node tools/species/generate-species-art-layered.mjs species.json --only "Rex de Fuego"
+//   node tools/species/generate-species-art-layered.mjs species.json --phases balance,exceso,eco
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
@@ -154,7 +154,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const specFile = args._[0];
   if (!specFile) {
-    console.error('Uso: node scripts/generate-species-art-layered.mjs <species.json> [--only "Nombre niño"] [--phases balance,exceso,eco]');
+    console.error('Uso: node tools/species/generate-species-art-layered.mjs <species.json> [--only "Nombre niño"] [--phases balance,exceso,eco]');
     process.exit(1);
   }
 
@@ -195,7 +195,7 @@ async function main() {
     }
   }
 
-  console.log('\nListo. Revisa fondo + recorte por separado antes de decidir si este flujo sustituye al de escena plana (scripts/generate-species-art.mjs).');
+  console.log('\nListo. Revisa fondo + recorte por separado antes de decidir si este flujo sustituye al de escena plana (tools/species/generate-species-art.mjs).');
 }
 
 main().catch((err) => {

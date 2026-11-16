@@ -220,7 +220,8 @@ EcoRex/
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
 ├── schema.sql                   # D1 schema, the database's source of truth
-├── scripts/                     # Seed, species sync, art/spec generation, PBDB discovery, remote schema checker
+├── scripts/                     # DB operations: seed.sql, remote schema checker, one-off migrations
+├── tools/                       # Local-only content pipeline (never deployed): species spec/art generation, PBDB discovery, species sync, avatars — see tools/species/README.md
 ├── public/                      # Served statics: species-art, icons, logo, sounds
 ├── design/                      # Design material: Fractae and phase badges, buttons, cards
 └── docs/
@@ -284,7 +285,7 @@ npm run db:seed        # seeds rarities, Fractae and species into the local D1
 
 Before the first `db:seed`, create the tables with `npx wrangler d1 execute DB --local --file=schema.sql` (the seed alone fails with `no such table`). To start from scratch locally, just delete `.wrangler/state/v3/d1` and repeat those two steps; never do the equivalent against the remote D1.
 
-Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the local content pipeline (`scripts/`) only — the app's endpoints do not call any AI provider at runtime — and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
+Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the local content pipeline (`tools/`) only — the app's endpoints do not call any AI provider at runtime — and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
 
 > **Local and production are different databases.** `wrangler pages dev` uses a local copy of D1 and KV under `.wrangler/state/`, isolated from the real resources. Users and progress created locally don't exist in production, and a change to `schema.sql` doesn't reach the remote D1 on its own. Before deploying if you touched the schema, run `npm run db:check-remote-schema`.
 

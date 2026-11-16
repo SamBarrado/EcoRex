@@ -7,7 +7,7 @@
 // pre-composited flat images.
 //
 // Usage:
-//   node scripts/composite-species-art.mjs <cutout.png> <background.png> <out.png> [--scale 0.62] [--x 0.06] [--y-margin 0.03]
+//   node tools/species/composite-species-art.mjs <cutout.png> <background.png> <out.png> [--scale 0.62] [--x 0.06] [--y-margin 0.03]
 
 import sharp from 'sharp';
 import { writeFile } from 'node:fs/promises';
@@ -54,7 +54,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const [cutoutPath, backgroundPath, outPath] = args._;
   if (!cutoutPath || !backgroundPath || !outPath) {
-    console.error('Uso: node scripts/composite-species-art.mjs <cutout.png> <background.png> <out.png> [--scale 0.62] [--x 0.06] [--y-margin 0.03]');
+    console.error('Uso: node tools/species/composite-species-art.mjs <cutout.png> <background.png> <out.png> [--scale 0.62] [--x 0.06] [--y-margin 0.03]');
     process.exit(1);
   }
 

@@ -9,7 +9,7 @@
 // here; dinosaurpictures.org's are AI-generated per their own disclaimer) —
 // this is for factual grounding only.
 //
-// Usage: node scripts/lookup-species.mjs Telmatosaurus
+// Usage: node tools/species/lookup-species.mjs Telmatosaurus
 
 import { fetchDinoDirectory, formatForPrompt as formatNhm } from './lib/dino-directory.mjs';
 import { fetchDinosaurPicturesOrg, formatForPrompt as formatDpo } from './lib/dinosaur-pictures-org.mjs';
@@ -18,7 +18,7 @@ import { fetchPbdbTaxon, formatForPrompt as formatPbdb } from './lib/pbdb.mjs';
 async function main() {
   const genus = process.argv[2];
   if (!genus) {
-    console.error('Uso: node scripts/lookup-species.mjs <Genero>');
+    console.error('Uso: node tools/species/lookup-species.mjs <Genero>');
     process.exit(1);
   }
 

@@ -2,12 +2,12 @@
 // Local-only web UI for discovering candidate dinosaur genera from the
 // Paleobiology Database — filter by clado (base_name), intervalo temporal,
 // país y volumen mínimo de registros, or search by exact scientific name.
-// Genera already used in scripts/lote.json/species.wave1.json are NOT
+// Genera already used in tools/species/lote.json/species.wave1.json are NOT
 // excluded (a genus can legitimately be reused for a different Fractae or
 // a special edition) — instead each candidate is annotated with which
 // Fractae it's already been used for, if any. Picking a candidate + a
 // Fractae calls generate-species-spec.mjs (via direct import, not
-// shell-out) and appends the result to scripts/lote.json.
+// shell-out) and appends the result to tools/species/lote.json.
 //
 // This is dev tooling only — never deployed, no build step, vanilla JS.
 //
@@ -36,7 +36,7 @@ function killStaleServerOnPort(port) {
   }
 }
 killStaleServerOnPort(PORT);
-const LOTE_PATH = 'scripts/lote.json';
+const LOTE_PATH = 'tools/species/lote.json';
 
 // Curated Spanish label -> real PBDB term, so the user never has to know
 // taxonomic/geological English nomenclature to use the discovery tool.

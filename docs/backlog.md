@@ -10,7 +10,7 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 ## Sistemas de juego
 
 - **Sistema de sonidos**: revisión completa — qué suena en fusión, edición de los propios sonidos, y reorganizar la lógica de audio en componentes reutilizables en vez de estar repartida/duplicada como está ahora (ver nota histórica en `PercibirRitual.tsx` sobre `safePlay` vs llamadas directas a `.play()` en `FusionPage.tsx`).
-- **Ediciones**: añadir "edición" como concepto de producto para futuras colecciones tipo sobre (el campo `edition` ya existe en las fichas-spec de `scripts/lote.json`/`species.wave1.json`, pero falta la mecánica de cara al usuario — sobres, desbloqueo, etc.).
+- **Ediciones**: añadir "edición" como concepto de producto para futuras colecciones tipo sobre (el campo `edition` ya existe en las fichas-spec de `tools/species/lote.json`/`species.wave1.json`, pero falta la mecánica de cara al usuario — sobres, desbloqueo, etc.).
 - **Operaciones/eventos especiales con freshness automática**: una especie es "rara" porque es nueva y se normaliza sola con el tiempo, sin necesidad de tocar `drop_weight` a mano. Encaja con el modelo de Operaciones ya esbozado en el world bible (sección 7/18.3), donde el mecanismo de distribución de rareza por Operación queda pendiente de diseño.
 - **Bucles de contenido/misiones**: expandir más allá de las 3 misiones diarias fijas actuales (`functions/lib/missions.ts`) — es la pieza que más se relaciona con retención/"engancharse", así que merece bloque propio de diseño (misiones semanales, rachas, rotación de objetivos, etc.).
 

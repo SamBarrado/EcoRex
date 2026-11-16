@@ -29,7 +29,7 @@ Todo lo publicado funcionaba: typecheck OK, tests OK, esquema de D1 remota sincr
 |---|---|---|
 | ✅ | **Lore visible en el grid del Ecodex** | Línea de lore propia bajo cada tile (10,5 px, recortada a 3 líneas con «…»; las frases miden 81-208 caracteres, así que en el grid es un adelanto y la frase completa está en el visor y en el `title`). Quitado el lore de la miniatura escalada, donde era ilegible. |
 | ✅ | **Quitar `discovery_code` de la carta de Fusión** | `8a5586e`. Sigue existiendo en API/BD, solo desaparece de la UI. Si se quiere conservar (p. ej. para el modo amigos), revertir ese commit. |
-| ✅ (local, sin desplegar) | **3 imágenes de perfil por defecto** | Avatares generados con `scripts/generate-avatars.mjs` (fuentes 1024 px en `design/avatares/`, WebP 256 px en `public/avatars/`). El usuario los elige tocando su avatar en Perfil (o vuelve a la inicial); columna nueva `users.avatar` + `PATCH /api/auth/avatar`. **Antes de hacer push hay que aplicar en remoto:** `npx wrangler d1 execute DB --remote --command="ALTER TABLE users ADD COLUMN avatar TEXT;"` (si no, `/api/profile` y la sesión fallan con `no such column`). |
+| ✅ (local, sin desplegar) | **3 imágenes de perfil por defecto** | Avatares generados con `tools/generate-avatars.mjs` (fuentes 1024 px en `design/avatares/`, WebP 256 px en `public/avatars/`). El usuario los elige tocando su avatar en Perfil (o vuelve a la inicial); columna nueva `users.avatar` + `PATCH /api/auth/avatar`. **Antes de hacer push hay que aplicar en remoto:** `npx wrangler d1 execute DB --remote --command="ALTER TABLE users ADD COLUMN avatar TEXT;"` (si no, `/api/profile` y la sesión fallan con `no such column`). |
 | ⏳ | **Nombre truncado en la carta** (`.card-name`, nombres largos) | Esperar a los diseños definitivos de la carta. |
 | ❓ | **"Especies" vs "variantes"** en la UI | Falta decidir terminología y en qué pantallas cambia. |
 
@@ -61,7 +61,7 @@ Ordenadas de menor a mayor esfuerzo/riesgo. "Qué ganas" es una valoración hone
 |---|---|---|---|---|
 | 1 | Limpiar scripts puntuales y backlog | ✅ `382c241` | casi nulo | Menos ruido al volver |
 | 2 | Quitar `CACHE_KV` y `lib/cache.ts` | ✅ `c321769` | bajo | Un recurso menos que entender |
-| 3 | Sacar el pipeline de especies a `tools/species/` | ⏳ | bajo-medio (rutas relativas, `package.json`, guard de `main()`) | La app deja de compartir repo con ~3.700 líneas de herramientas locales |
+| 3 | Sacar el pipeline de especies a `tools/species/` | ✅ | bajo-medio (rutas relativas, `package.json`, guard de `main()`) | La app deja de compartir repo con ~3.700 líneas de herramientas locales |
 | 4 | Hook `useSound` (audio duplicado entre `PercibirRitual` y `FusionPage`) | ⏳ | medio (trucos de iOS Safari; los tests mockean `play()` y no detectarían regresión: probar en iPhone) | Un solo sitio para sonidos; solo compensa si vas a tocar el sonido |
 | 5 | Extraer tile y filtro de fases de `ColeccionPage` (273 líneas, 14 estilos inline) | ⏳ | bajo | Es la pantalla donde se va a seguir iterando (lore, modo álbum) |
 | 6 | Unificar `discover` y `fuse` en una función común | ⏳ | medio-alto (núcleo de la economía: XP, misiones, rareza) | Reglas de XP/misiones en un solo sitio. Ya es más pequeño: ambos perdieron la resolución de imagen, pero siguen duplicando `generateDiscoveryCode` y el flujo rareza→insert→XP→misiones→bonus |
@@ -70,7 +70,7 @@ Ordenadas de menor a mayor esfuerzo/riesgo. "Qué ganas" es una valoración hone
 | 9 | Separar lógica y presentación en `PercibirRitual` (437 líneas) | ⏳ | alto (flujo central, animaciones, audio) | Solo si lo vas a tocar de todos modos |
 | 10 | Sacar los PNG originales de git | ⛔ | alto: quitarlos del tracking **no** reduce el `.git` (209 MB); haría falta reescribir historial + force push | No recomendado salvo que el peso moleste. No se comprobó que estén trackeados |
 
-**Orden recomendado:** 3 → 5 → 7 → 6; el resto según se vaya tocando cada zona.
+**Orden recomendado:** ~~3~~ → 5 → 7 → 6; el resto según se vaya tocando cada zona.
 
 ---
 

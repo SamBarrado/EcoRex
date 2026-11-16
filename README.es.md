@@ -220,7 +220,8 @@ EcoRex/
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
 ├── schema.sql                   # Esquema D1, fuente de verdad de la base de datos
-├── scripts/                     # Seed, sync de especies, generación de arte/specs, discovery PBDB, comprobador de esquema remoto
+├── scripts/                     # Operaciones de BD: seed.sql, comprobador de esquema remoto, migraciones puntuales
+├── tools/                       # Pipeline de contenido solo local (no se despliega): generación de fichas y arte de especies, discovery PBDB, sync de especies, avatares — ver tools/species/README.md
 ├── public/                      # Estáticos servidos: species-art, icons, logo, sonidos
 ├── design/                      # Material de diseño: badges de Fractae y fases, botones, cartas
 └── docs/
@@ -283,7 +284,7 @@ npm run db:seed        # siembra rarezas, Fractae y especies en la D1 local
 
 Antes del primer `db:seed`, crea las tablas con `npx wrangler d1 execute DB --local --file=schema.sql` (el seed por sí solo falla con `no such table`). Para empezar de cero en local basta con borrar `.wrangler/state/v3/d1` y repetir esos dos pasos; nunca hagas el equivalente contra la D1 remota.
 
-Copia `.dev.vars.example` a `.dev.vars` y rellena `ANTHROPIC_API_KEY` y `OPENAI_API_KEY`: son las claves de los proveedores de IA que usa solo el pipeline de contenido local (`scripts/`) — los endpoints de la app no llaman a ningún proveedor de IA en runtime — y no se incluyen en el repo. `DISCOVER_RATE_LIMIT` es opcional y solo para pruebas locales.
+Copia `.dev.vars.example` a `.dev.vars` y rellena `ANTHROPIC_API_KEY` y `OPENAI_API_KEY`: son las claves de los proveedores de IA que usa solo el pipeline de contenido local (`tools/`) — los endpoints de la app no llaman a ningún proveedor de IA en runtime — y no se incluyen en el repo. `DISCOVER_RATE_LIMIT` es opcional y solo para pruebas locales.
 
 > **Local y producción son bases de datos distintas.** `wrangler pages dev` usa una copia local de D1 y KV bajo `.wrangler/state/`, aislada de los recursos reales. Los usuarios y el progreso creados en local no existen en producción, y un cambio en `schema.sql` no llega solo a la D1 remota. Antes de desplegar si tocaste el esquema, ejecuta `npm run db:check-remote-schema`.
 

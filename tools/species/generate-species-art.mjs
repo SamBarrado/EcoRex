@@ -5,8 +5,8 @@
 // as described in docs/lore_world_bible_ecorex_v4.md §15.2-15.4.
 //
 // Usage:
-//   OPENAI_API_KEY=sk-... node scripts/generate-species-art.mjs species.json
-//   node scripts/generate-species-art.mjs species.json --out especies_design/generated --only "Rex de Fuego"
+//   OPENAI_API_KEY=sk-... node tools/species/generate-species-art.mjs species.json
+//   node tools/species/generate-species-art.mjs species.json --out especies_design/generated --only "Rex de Fuego"
 //
 // species.json is an array of ficha-spec objects, see species.example.json.
 
@@ -290,7 +290,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const specFile = args._[0];
   if (!specFile) {
-    console.error('Uso: node scripts/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases balance,exceso,eco]');
+    console.error('Uso: node tools/species/generate-species-art.mjs <species.json> [--out dir] [--only "Nombre niño"] [--phases balance,exceso,eco]');
     process.exit(1);
   }
 
@@ -351,7 +351,7 @@ async function main() {
 }
 
 // Guard against side effects on import: this file is also imported as a
-// module (e.g. scripts/print-species-prompt.mjs) to reuse the prompt
+// module (e.g. tools/species/print-species-prompt.mjs) to reuse the prompt
 // builders without triggering a real, paid OpenAI generation run.
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((err) => {

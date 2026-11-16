@@ -1,7 +1,7 @@
 // Fetches real paleontological data from the Paleobiology Database
 // (https://paleobiodb.org/data1.2/), a public API covering thousands of
 // taxa — used to ground ficha-spec generation the same way
-// scripts/lib/dino-directory.mjs and scripts/lib/dinosaur-pictures-org.mjs
+// tools/species/lib/dino-directory.mjs and tools/species/lib/dinosaur-pictures-org.mjs
 // do, but with much wider coverage (NHM Dino Directory only covers ~300
 // famous genera; PBDB covers most named dinosaur genera).
 //
@@ -11,7 +11,7 @@
 //   lookup-species.mjs and generate-species-spec.mjs.
 // - searchPbdbTaxa(criteria): discovery of candidate genera matching a
 //   clade/interval/country, aggregated from occurrence records — used by
-//   scripts/discover-species-pbdb.mjs.
+//   tools/species/discover-species-pbdb.mjs.
 
 const BASE_URL = 'https://paleobiodb.org/data1.2';
 

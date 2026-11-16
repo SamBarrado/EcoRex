@@ -9,7 +9,7 @@ import { existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const ART_DIR = path.join(import.meta.dirname, '..', 'public', 'species-art');
+const ART_DIR = path.join(import.meta.dirname, '..', '..', 'public', 'species-art');
 const PHASES = ['balance', 'exceso', 'eco'];
 
 const slugs = (await readdir(ART_DIR, { withFileTypes: true }))

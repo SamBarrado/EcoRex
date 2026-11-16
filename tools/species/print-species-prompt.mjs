@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 // Prints the exact image-gen prompt for a given species + phase from a
-// ficha-spec JSON file (scripts/lote.json, scripts/species.wave1.json, ...),
+// ficha-spec JSON file (tools/species/lote.json, tools/species/species.wave1.json, ...),
 // reusing the same prompt builders as generate-species-art.mjs. Balance is
 // generated manually in ChatGPT (see CLAUDE.md), so this is how you get its
 // prompt without running the OpenAI pipeline.
 //
 // Usage:
-//   node scripts/print-species-prompt.mjs scripts/lote.json "Trompeta del Alba" balance
-//   node scripts/print-species-prompt.mjs scripts/species.wave1.json "Trompeta del Alba" exceso
-//   node scripts/print-species-prompt.mjs scripts/lote.json "Trompeta del Alba" eco
+//   node tools/species/print-species-prompt.mjs tools/species/lote.json "Trompeta del Alba" balance
+//   node tools/species/print-species-prompt.mjs tools/species/species.wave1.json "Trompeta del Alba" exceso
+//   node tools/species/print-species-prompt.mjs tools/species/lote.json "Trompeta del Alba" eco
 
 import { readFile } from 'node:fs/promises';
 import {
@@ -22,7 +22,7 @@ import {
 async function main() {
   const [specFile, commonName, phase] = process.argv.slice(2);
   if (!specFile || !commonName || !phase) {
-    console.error('Uso: node scripts/print-species-prompt.mjs <ficha-spec.json> "<Nombre común>" <balance|exceso|eco>');
+    console.error('Uso: node tools/species/print-species-prompt.mjs <ficha-spec.json> "<Nombre común>" <balance|exceso|eco>');
     process.exit(1);
   }
   if (!['balance', 'exceso', 'eco'].includes(phase)) {

@@ -4,7 +4,7 @@
 // converts them to 256x256 WebP in public/avatars/ (what the app serves).
 // Costs a real OpenAI call per avatar — run deliberately, not from other scripts.
 //
-// Usage: node scripts/generate-avatars.mjs [1|2|3 ...]   (default: all three)
+// Usage: node tools/generate-avatars.mjs [1|2|3 ...]   (default: all three)
 
 import { readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';

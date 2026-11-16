@@ -1,6 +1,6 @@
 // Fetches and parses a species page from dinosaurpictures.org (plain
 // server-rendered HTML, no JS framework) — used as a second, independent
-// source to cross-check scripts/lib/dino-directory.mjs (NHM). Its images are
+// source to cross-check tools/species/lib/dino-directory.mjs (NHM). Its images are
 // AI-generated (site says so itself) so they are NOT used as visual
 // reference, only the textual facts (diet, period, real habitat phrasing,
 // countries, reproduction).
