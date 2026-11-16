@@ -22,7 +22,6 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 ## Cartas
 
 - **Pulir el layout definitivo de la carta por capas**: `Card.tsx`/`CardScene.tsx` (v0.7.0) implementan una primera composición funcional — nameplate, ventana de arte, medallón de Fractae, pill de rareza, caja de lore, borde ornamentado y canto con relieve — pero es un punto de partida, no el diseño final. Pendiente de iterar layout una vez haya diseños definitivos: en concreto, el nombre común se trunca con ellipsis en especies con nombres largos (ver `.card-name` en `src/index.css`), y conviene revisar tamaños relativos de cada capa con más nombres reales.
-- **Quitar el ID de carta**: fuera de alcance del MVP inicial, revisar más adelante si el `discovery_code` (`DX-HAB-DSC`) sigue aportando algo de cara al usuario o se puede retirar de la UI. La carta de Percibir (`Card.tsx`) ya no lo muestra desde v0.7.0, pero `FusionPage.tsx` sigue mostrándolo en su propia carta sin capas.
 
 ## Seguridad
 
