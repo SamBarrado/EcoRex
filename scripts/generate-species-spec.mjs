@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Turns just "especie + Fractae" into a full ficha-spec via the Anthropic API
-// (cheap/fast — same pattern the DinoDiscovery prototype used in
-// functions/lib/anthropic.ts), ready to feed into generate-species-art.mjs.
+// (cheap/fast — same pattern the DinoDiscovery prototype used), ready to
+// feed into generate-species-art.mjs.
 //
 // Usage:
 //   node scripts/generate-species-spec.mjs "Stegosaurus" "Miedo"
