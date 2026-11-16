@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNavBadges } from "../lib/useNavBadges";
+import { useAvatar } from "../lib/AvatarContext";
+import { avatarUrl } from "../lib/avatars";
 
 const HIDDEN_ON = ["/login", "/registro", "/elegir-usuario"];
 
@@ -24,6 +26,7 @@ export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { visible, pulsedPath } = useNavVisibility();
+  const { avatar } = useAvatar();
   const { inicioCount, percibirActive, ecodexActive, ecodexNewestSlotKey } = useNavBadges();
 
   if (HIDDEN_ON.includes(location.pathname)) return null;
@@ -57,7 +60,13 @@ export default function BottomNav() {
             aria-current={active ? "page" : undefined}
           >
             <span className="bottom-nav-icon">
-              {tab.icon ? <img src={tab.icon} alt="" /> : <HomeIcon />}
+              {tab.path === "/perfil" && avatar ? (
+                <img src={avatarUrl(avatar)} alt="" className="bottom-nav-avatar" />
+              ) : tab.icon ? (
+                <img src={tab.icon} alt="" />
+              ) : (
+                <HomeIcon />
+              )}
               {badge !== null && (
                 <span className="bottom-nav-badge">{typeof badge === "number" ? badge : ""}</span>
               )}

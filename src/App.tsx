@@ -12,40 +12,43 @@ import ActionFab from "./components/ActionFab";
 import BottomNav from "./components/BottomNav";
 import { NavVisibilityProvider } from "./lib/NavVisibilityContext";
 import { NotificationsProvider } from "./lib/NotificationsContext";
+import { AvatarProvider } from "./lib/AvatarContext";
 
 export default function App() {
   return (
     <BrowserRouter>
       <NavVisibilityProvider>
         <NotificationsProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registro" element={<RegisterPage />} />
-            <Route path="/elegir-usuario" element={<UsernameSetupPage />} />
-            <Route
-              path="/inicio"
-              element={
-                <>
-                  <InicioPage />
-                  <ActionFab />
-                </>
-              }
-            />
-            <Route path="/percibir" element={<PercibirPage />} />
-            <Route path="/coleccion" element={<ColeccionPage />} />
-            <Route path="/perfil" element={<PerfilPage />} />
-            <Route
-              path="/fusion"
-              element={
-                <>
-                  <PageHeader />
-                  <FusionPage />
-                </>
-              }
-            />
-            <Route path="/" element={<Navigate to="/inicio" replace />} />
-          </Routes>
-          <BottomNav />
+          <AvatarProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/registro" element={<RegisterPage />} />
+              <Route path="/elegir-usuario" element={<UsernameSetupPage />} />
+              <Route
+                path="/inicio"
+                element={
+                  <>
+                    <InicioPage />
+                    <ActionFab />
+                  </>
+                }
+              />
+              <Route path="/percibir" element={<PercibirPage />} />
+              <Route path="/coleccion" element={<ColeccionPage />} />
+              <Route path="/perfil" element={<PerfilPage />} />
+              <Route
+                path="/fusion"
+                element={
+                  <>
+                    <PageHeader />
+                    <FusionPage />
+                  </>
+                }
+              />
+              <Route path="/" element={<Navigate to="/inicio" replace />} />
+            </Routes>
+            <BottomNav />
+          </AvatarProvider>
         </NotificationsProvider>
       </NavVisibilityProvider>
     </BrowserRouter>

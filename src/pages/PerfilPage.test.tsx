@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import PerfilPage from "./PerfilPage";
+import { AvatarProvider } from "../lib/AvatarContext";
 import type { ProfileStats } from "../lib/api";
 
 const getMyProfileMock = vi.fn();
@@ -33,7 +34,9 @@ const baseProfile: ProfileStats = {
 function renderPage() {
   return render(
     <MemoryRouter>
-      <PerfilPage />
+      <AvatarProvider>
+        <PerfilPage />
+      </AvatarProvider>
     </MemoryRouter>
   );
 }

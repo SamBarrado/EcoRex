@@ -718,6 +718,17 @@ button:disabled {
   object-fit: contain;
 }
 
+.bottom-nav-icon img.bottom-nav-avatar {
+  border-radius: 999px;
+  object-fit: cover;
+  box-sizing: border-box;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+.bottom-nav-tab-active .bottom-nav-avatar {
+  border-color: #7fc891;
+}
+
 .bottom-nav-badge {
   position: absolute;
   top: -4px;

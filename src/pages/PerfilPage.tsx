@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyProfile, logout, setAvatar, ProfileStats, ApiError } from "../lib/api";
 import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
+import { useAvatar } from "../lib/AvatarContext";
 import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush } from "../lib/push";
 
 export default function PerfilPage() {
@@ -9,6 +10,7 @@ export default function PerfilPage() {
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const { setCurrentAvatar, clearAvatar } = useAvatar();
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [pushEnabled, setPushEnabled] = useState(isPushSupported() && getNotificationPermission() === "granted");
@@ -45,6 +47,7 @@ export default function PerfilPage() {
     try {
       const result = await setAvatar(avatar);
       setProfile((current) => (current ? { ...current, user: { ...current.user, avatar: result.avatar } } : current));
+      setCurrentAvatar(result.avatar);
       setAvatarPickerOpen(false);
     } catch {
       setAvatarError("No se pudo guardar el avatar. Inténtalo de nuevo.");
@@ -53,6 +56,7 @@ export default function PerfilPage() {
 
   async function handleLogout() {
     await logout();
+    clearAvatar();
     navigate("/login");
   }
 
