@@ -1,288 +1,310 @@
-# Ecorex — Colecciona emociones con forma de dinosaurio
-### Juego PWA de descubrimiento y colección | React · TypeScript · Cloudflare Pages/D1 · Web Push
+**EN** | [ES](README.es.md)
+
+# Ecorex — Collect Emotions in Dinosaur Form
+### Discovery & collection PWA game | React · TypeScript · Cloudflare Pages/D1 · Web Push
 
 [![Live site](https://img.shields.io/website?url=https%3A%2F%2Fecorex-project.pages.dev&label=live%20demo)](https://ecorex-project.pages.dev)
 [![Release](https://img.shields.io/github/v/release/SamBarrado/EcoRex)](https://github.com/SamBarrado/EcoRex/releases)
 [![Last commit](https://img.shields.io/github/last-commit/SamBarrado/EcoRex)](https://github.com/SamBarrado/EcoRex/commits/main)
 
 <p align="center">
-  <img src="public/logo/logo-ecorex.png" alt="Logo de Ecorex" width="420">
+  <img src="public/logo/logo-ecorex.png" alt="Ecorex logo" width="420">
 </p>
 
-Ecorex es un juego web instalable (PWA) donde el jugador **percibe** dinosaurios que son, en realidad, el cuerpo que toman ocho emociones primarias atrapadas desde la extinción. Cada descubrimiento es una **carta coleccionable** con su especie, su emoción (*Fractae*), su rareza y su fase; las cartas repetidas se **fusionan** en el Altar para obtener la versión desbordada de la criatura, y todo suma XP, niveles y misiones diarias.
+Ecorex is an installable web game (PWA) where the player **perceives** dinosaurs that are really the bodies taken by eight primal emotions, trapped since the extinction. Every discovery is a **collectible card** with its species, its emotion (a *Fractae*), its rarity and its phase. Duplicate cards are **fused** at the Altar into the overflowing version of the creature, and everything feeds XP, levels and daily missions.
 
 <table>
   <tr>
-    <td align="center"><img src="public/species-art/triceratops-umbra/balance.webp" alt="Triceratops umbra, fase Balance" width="290"><br><b>Balance</b> — forma estable</td>
-    <td align="center"><img src="public/species-art/triceratops-umbra/exceso.webp" alt="Triceratops umbra, fase Exceso" width="290"><br><b>Exceso</b> — forma desbordada</td>
-    <td align="center"><img src="public/species-art/triceratops-umbra/eco.webp" alt="Triceratops umbra, fase Eco" width="290"><br><b>Eco</b> — versión tenue</td>
+    <td align="center"><img src="public/species-art/triceratops-umbra/balance.webp" alt="Triceratops umbra, Balance phase" width="290"><br><b>Balance</b> — stable form</td>
+    <td align="center"><img src="public/species-art/triceratops-umbra/exceso.webp" alt="Triceratops umbra, Exceso phase" width="290"><br><b>Exceso</b> (Excess) — overflowing form</td>
+    <td align="center"><img src="public/species-art/triceratops-umbra/eco.webp" alt="Triceratops umbra, Eco phase" width="290"><br><b>Eco</b> (Echo) — faded version</td>
   </tr>
 </table>
 
-*Las tres fases de una misma especie: **Triceratops umbra**, «Tricera de las Lágrimas» (Fractae Tristeza).*
+*The three phases of one species: **Triceratops umbra**, "Tricera de las Lágrimas" (Tricera of Tears), Fractae Sadness.*
 
-**Jugar:** [ecorex-project.pages.dev](https://ecorex-project.pages.dev)
+**Play:** [ecorex-project.pages.dev](https://ecorex-project.pages.dev) *(the app's interface is in Spanish)*
 
-Este README documenta el proyecto como un **caso de estudio de producto e ingeniería**: qué se ha construido, qué problemas reales han aparecido por el camino y por qué se tomó cada decisión de diseño, con el nivel de detalle que le dejaría a alguien que coge este código en frío.
+This README documents the project as a **product and engineering case study**: what was built, which real problems showed up along the way, and why each design decision was made — at the level of detail someone picking up this code cold would need.
 
 ---
 
-## 🚀 Inicio rápido
+## 🚀 Quick start
 
 ```bash
 git clone https://github.com/SamBarrado/EcoRex.git
 cd EcoRex
 npm install
-cp .dev.vars.example .dev.vars   # y rellena tus propias claves (no van en el repo)
-npx wrangler d1 execute DB --local --file=schema.sql   # crea las tablas en la D1 local
-npm run db:seed                                        # siembra rarezas, Fractae y especies
-npm run dev                      # build + wrangler pages dev: frontend + Functions + D1/KV locales
+cp .dev.vars.example .dev.vars   # and fill in your own keys (they are not in the repo)
+npx wrangler d1 execute DB --local --file=schema.sql   # create the tables in the local D1
+npm run db:seed                                        # seed rarities, Fractae and species
+npm run dev                      # build + wrangler pages dev: frontend + Functions + local D1/KV
 ```
 
-`npm run vite:dev` levanta solo el frontend: las pantallas funcionan, pero cualquier cosa que toque cuentas, colección o energía necesita las Functions y la D1 local. Para la guía completa (y para desplegar tu propia copia) ve a «⚙️ Ejecutarlo en local» más abajo.
+`npm run vite:dev` starts the frontend alone: screens render, but anything touching accounts, the collection or energy needs the Functions and the local D1. For the full guide (and to deploy your own copy) see "⚙️ Running it locally" below.
 
 ---
 
-## 💡 De dónde viene la idea
+## 💡 Where the idea came from
 
-Ecorex nace de un prototipo anterior, [Dino Discovery](https://github.com/SamBarrado/DinoDiscovery): una app donde un niño inventa su dinosaurio eligiendo atributos y recibe una carta generada por IA. De ahí salió la idea de que lo valioso no era «generar una imagen», sino **encontrar un objeto coleccionable**. Ecorex lleva esa idea a un juego persistente, con cuentas, catálogo fijo de especies y progresión, y reutiliza de aquel prototipo la capa de infraestructura ya probada (rate limiting, caché, R2, validación de origen).
+Ecorex grew out of an earlier prototype, [Dino Discovery](https://github.com/SamBarrado/DinoDiscovery): an app where a kid invents their own dinosaur by picking attributes and gets back an AI-generated card. What came out of it was the realization that the valuable part wasn't "generating an image" but **finding a collectible object**. Ecorex takes that idea to a persistent game with accounts, a fixed species catalog and progression, and reuses the prototype's battle-tested infrastructure layer (rate limiting, cache, R2, origin validation).
 
-La premisa narrativa es lo que distingue a Ecorex:
+The narrative premise is what sets Ecorex apart:
 
-> Hace 66 millones de años, el impacto que extinguió a los dinosaurios generó la mayor descarga de trauma emocional colectivo de la historia del planeta. Esa emoción no se disipó: quedó atrapada, fragmentada, dormida — como fósiles, pero emocionales. Algo reciente ha vuelto a agrietar esa barrera.
+> 66 million years ago, the impact that wiped out the dinosaurs produced the largest discharge of collective emotional trauma in the planet's history. That emotion didn't dissipate: it stayed trapped, fragmented, dormant — like fossils, but emotional. Something recent has cracked that barrier open again.
 
-Los **Fractae** son esas emociones puras. No son criaturas por sí mismos: necesitan un portador, y el único portador es el dinosaurio. El jugador no es un científico, sino alguien con la sensibilidad de **percibir** lo que los demás no ven.
+The **Fractae** are those pure emotions. They aren't creatures on their own: they need a carrier, and the only carrier is the dinosaur. The player isn't a scientist but someone sensitive enough to **perceive** what others can't see.
 
 <p align="center">
-  <img src="design/fractae/8fractae-tipos-badge.png" alt="Los ocho Fractae: Alegría, Tristeza, Furia, Miedo, Confianza, Asco, Sorpresa y Curiosidad" width="560">
+  <img src="design/fractae/8fractae-tipos-badge.png" alt="The eight Fractae: Joy, Sadness, Fury, Fear, Trust, Disgust, Surprise and Curiosity" width="560">
 </p>
 
-Ocho Fractae (Alegría, Tristeza, Furia, Miedo, Confianza, Asco, Sorpresa, Curiosidad), organizados en cuatro oposiciones. El diseño completo del universo está en [docs/lore_world_bible_ecorex_v5.md](docs/lore_world_bible_ecorex_v5.md).
+Eight Fractae (Joy, Sadness, Fury, Fear, Trust, Disgust, Surprise, Curiosity), arranged in four oppositions. The full universe design lives in [docs/lore_world_bible_ecorex_v5.md](docs/lore_world_bible_ecorex_v5.md) *(in Spanish)*.
 
 ---
 
-## 🧒 Para quién es
+## 🧒 Who it's for
 
-Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokémon. Una decisión de diseño cerrada pronto: **el usuario de la cuenta es el propio niño**, no un tutor que la gestiona en su nombre (registro directo, sin capa de perfil «padre/hijo»), y el mito fundacional está escrito para que funcione tal cual desde los 5 años, sin suavizarlo. El tono es el de coleccionar y descubrir, no el de generar.
+Kids who like dinosaurs and Pokémon-style collectible games. One early design decision: **the account holder is the kid themselves**, not a guardian managing the account on their behalf (direct sign-up, no "parent/child" profile layer), and the founding myth is written to work as-is from age 5, without softening it. The tone is about collecting and discovering, not generating.
 
 ---
 
-## 🎮 Cómo se juega
+## 🎮 How it plays
 
-| Sistema | Qué hace |
+| System | What it does |
 |---|---|
-| **Percibir** | El ritual de descubrimiento: un sobre a pantalla completa que se rasga arrastrando por la costura, con vibración háptica donde el dispositivo lo permite. Sortea la rareza de la carta de forma independiente de la especie y de la fase. |
-| **Energía** | Percibir consume energía, visible en la navegación. Base de 3, se regenera **+1 cada 4 h**, y sube con el nivel (+1 en el 5 y +1 en el 30). Sustituyó a un rate-limit silencioso por IP. |
-| **EcoDex** | La colección: cada especie tiene 3 fases (Balance, Exceso, Eco) y las fases ya descubiertas se muestran como cartas completas a escala reducida, con visor a pantalla completa. |
-| **Altar de Fusión** | 5 cartas repetidas de una especie en fase Balance se consumen para obtener su carta en fase **Exceso** (4 a partir del nivel 15). No cuesta energía. |
-| **Rareza** | Cinco niveles — Común, Poco común, Rara, Épica, Legendaria — con pesos de sorteo 55 / 27 / 12 / 5 / 1 %. Es un eje independiente de la fase. |
-| **XP y niveles** | Niveles 1–50 por XP acumulado. Solo da XP lo nuevo (especie+fase vista por primera vez, fusiones, completar las 3 fases de una especie): repetir no da nada. Ocho títulos cosméticos, de «Explorador Novato» a «Voz de la Fractura». |
-| **Misiones diarias** | Tres misiones fijas (Percibir ×2, Coleccionista, Fusión) más un bonus por completarlas todas el mismo día. |
-| **Notificaciones** | Bandeja in-app con badges en la navegación, y **Web Push** (funciona con la PWA cerrada) cada vez que se regenera un punto de energía. |
+| **Percibir** (Perceive) | The discovery ritual: a full-screen pack you tear open by dragging along its seam, with haptic feedback where the device supports it. Rolls the card's rarity independently from species and phase. |
+| **Energy** | Perceiving costs energy, shown in the navigation. Base of 3, regenerating **+1 every 4 h**, and raised by level (+1 at level 5, +1 at level 30). It replaced a silent per-IP rate limit. |
+| **EcoDex** | The collection: every species has 3 phases (Balance, Exceso, Eco), and discovered phases render as full cards scaled down, with a full-screen viewer. |
+| **Altar de Fusión** (Fusion Altar) | 5 duplicate Balance cards of a species are consumed to obtain its **Exceso** card (4 from level 15). It costs no energy. |
+| **Rarity** | Five tiers — Common, Uncommon, Rare, Epic, Legendary — with drop weights of 55 / 27 / 12 / 5 / 1 %. An axis independent from phase. |
+| **XP and levels** | Levels 1–50 from accumulated XP. Only what's new gives XP (a species+phase seen for the first time, fusions, completing a species' 3 phases): repeating gives nothing. Eight cosmetic titles, from "Explorador Novato" (Novice Explorer) to "Voz de la Fractura" (Voice of the Fracture). |
+| **Daily missions** | Three fixed missions (Percibir ×2, Collector, Fusion) plus a bonus for completing all of them on the same day. |
+| **Notifications** | An in-app inbox with navigation badges, and **Web Push** (works with the PWA closed) every time a point of energy regenerates. |
 
 <p align="center">
-  <img src="design/fases/3fases-badge.png" alt="Insignias de las tres fases: Balance, Exceso y Eco" width="460">
+  <img src="design/fases/3fases-badge.png" alt="Badges of the three phases: Balance, Exceso and Eco" width="460">
 </p>
 
 ---
 
-## 🛠️ Herramientas y tecnologías
+## 🛠️ Tools and technologies
 
-| Capa | Elección | Por qué |
+| Layer | Choice | Why |
 |---|---|---|
-| **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Ciclo de desarrollo rápido y tipos compartidos con el backend |
-| **PWA** | `vite-plugin-pwa` (`injectManifest`) + service worker propio | Instalable en móvil sin pasar por tienda; el SW propio gestiona los eventos push. Si algún día hace falta tienda, la vía es envolver la misma build con Capacitor |
-| **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Se despliega junto al frontend, sin otro host de API que mantener |
-| **Base de datos** | Cloudflare D1 (SQLite) — esquema en [schema.sql](schema.sql) | Datos relacionales (usuarios, colección, misiones, notificaciones) sin servidor de BD que operar |
-| **Storage / caché** | R2 (imágenes de especies) + KV (rate limit y caché) | Serverless y gratuito al volumen actual |
-| **Push** | Web Push (VAPID) con `@block65/webcrypto-web-push` + un **Worker independiente con Cron Trigger** (`workers/push-cron`) | Las Pages Functions no soportan Cron Triggers |
-| **Generación de contenido** | APIs de Anthropic y OpenAI (fichas-spec de especies; variantes y fases de arte) | Pipeline de producción de contenido, ver «Pipeline de arte» |
-| **Tests** | Vitest + Testing Library + jsdom | Misma herramienta para componentes, funciones de la API y el Worker |
-| **Despliegue** | Cloudflare Pages conectado a GitHub | Cada push a `main` construye y despliega a producción |
+| **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Fast dev loop and types shared with the backend |
+| **PWA** | `vite-plugin-pwa` (`injectManifest`) + custom service worker | Installable on mobile without an app store; the custom SW handles push events. If a store ever becomes necessary, the path is wrapping the same build with Capacitor |
+| **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Deploys alongside the frontend, no separate API host to maintain |
+| **Database** | Cloudflare D1 (SQLite) — schema in [schema.sql](schema.sql) | Relational data (users, collection, missions, notifications) with no database server to operate |
+| **Storage / cache** | R2 (species images) + KV (rate limiting and cache) | Serverless and free at current volume |
+| **Push** | Web Push (VAPID) with `@block65/webcrypto-web-push` + a **standalone Worker with a Cron Trigger** (`workers/push-cron`) | Pages Functions don't support Cron Triggers |
+| **Content generation** | Anthropic and OpenAI APIs (species spec sheets; art variants and phases) | Content production pipeline, see "Art pipeline" |
+| **Testing** | Vitest + Testing Library + jsdom | One tool for components, API functions and the Worker |
+| **Deploy** | Cloudflare Pages connected to GitHub | Every push to `main` builds and deploys to production |
 
 ---
 
-## 🐛 Problemas técnicos resueltos
+## 🐛 Technical problems solved
 
-No es una lista de funcionalidades, sino de «qué fue mal de verdad y cómo se arregló»:
+Not a feature list, but a "what actually went wrong and how it got fixed" list:
 
-- **Un dato de producción se quedó atrás del esquema.** La D1 remota no tenía la columna `consumed_at` ni la tabla `notifications` que `schema.sql` sí definía, y solo salió a la luz al migrar una cuenta a producción. Como `schema.sql` no puede re-ejecutarse contra una base con datos, se escribió `npm run db:check-remote-schema`: parsea el esquema, consulta `PRAGMA table_info` en remoto y lista cualquier tabla o columna que falte.
-- **Un nombre de fase chocaba con un Fractae.** La fase intermedia se llamaba «Furia», igual que el Fractae Furia (Ira): una criatura de Miedo en fase «Furia» sonaba a criatura de Furia. Se renombró a **Exceso**, lo que obligó a tocar el `CHECK` del esquema, el código, los nombres de archivo y, con un script de migración dedicado, las filas ya existentes en la D1 de producción.
-- **Fusionar hacía desaparecer cartas del EcoDex.** Como la fusión *consume* los duplicados de Balance, un EcoDex basado en las filas activas perdía esa fase o repetía la animación de «especie nueva» al volver a conseguirla. La regla correcta es basarse en la existencia **histórica** de cualquier descubrimiento de esa especie+fase.
-- **Un campo guardaba una foto, no una referencia.** `discoveries.image_url` es una copia por usuario fijada en el momento del descubrimiento, no un enlace vivo a la tabla de anclas. Al migrar el arte de PNG a WebP hubo que migrar también las filas de usuarios (local y remoto); además, el seed usa `INSERT OR IGNORE`, que no propaga cambios a filas ya sembradas.
-- **El arte pesaba 2,5 MB por imagen.** Se pasó a WebP (~90 % menos, ~0,2 MB), con cabeceras `immutable` de un año y carga diferida de las cartas fuera de pantalla. La contrapartida está documentada: sin hash en el nombre, regenerar arte con el mismo nombre no se recargaría en los navegadores durante un año.
-- **iOS Safari rompía el ritual en móvil.** El menú contextual de pulsación larga interrumpía el gesto de «mantener para descubrir»; la política de autoplay bloqueaba en silencio los sonidos de especie; la barra inferior tapaba contenido en dispositivos con notch; y el pull-to-refresh interfería con los gestos.
-- **Las notificaciones push no podían vivir en las Pages Functions.** Hizo falta un Worker aparte con Cron Trigger cada 15 minutos. Por el camino: una suscripción inválida abortaba el bucle entero para el resto de usuarios; `webcrypto-web-push` necesita `nodejs_compat` por su import de `node:crypto`; y la energía máxima del Worker tuvo que calcularse **por usuario según su nivel**, porque el tope no es el mismo para todos.
-- **La curva de XP premiaba farmear y hacía el nivel máximo inalcanzable.** Los duplicados daban XP, y la curva triangular inicial situaba el nivel 50 en ~2,6 años de juego. Se reequilibró: lo repetido da 0 XP, la curva es más plana y el nivel máximo se alcanza en ~4–5 meses de juego activo.
-- **Importar un script lo ejecutaba entero.** `generate-species-art.mjs` lanzó una generación real, con coste de API, sobre especies que nadie había pedido al importarlo desde otro script. Ahora el `main()` está protegido con un guard de `import.meta.url`.
-
----
-
-## 🏗️ Cómo se ha construido
-
-### Fase 1 — El bucle central (v0.1)
-
-Cuentas (email + contraseña con PBKDF2, sesiones por cookie `HttpOnly`), **Percibir** para conseguir cartas Balance, **Fusión** de duplicados hacia Exceso y notificaciones. Con el primer lote de correcciones móviles para iOS.
-
-### Fase 2 — Móvil e inmersión (v0.2)
-
-Rediseño móvil: logo, modos de juego, un botón flotante para perfil y notificaciones, un fondo de partículas solo con CSS y el sobre a pantalla completa de Percibir. Es también la versión del renombrado Furia → Exceso y de su migración de datos en producción.
-
-### Fase 3 — Progresión (v0.3 – v0.6)
-
-XP y niveles 1–50, nombres de usuario únicos y obligatorios, navegación inferior persistente con badges, **energía visible** (que reemplazó al rate-limit silencioso), gesto de deslizar hacia arriba para mandar la carta al EcoDex, pantalla de subida de nivel, rebalanceo de la curva con recompensas por nivel, misiones diarias, títulos de nivel y nombres de rareza estándar.
-
-### Fase 4 — La carta como objeto (v0.7 – v0.8)
-
-La carta de Percibir pasó de una imagen con texto a una composición por capas: fondo, aura de rareza, ventana de arte, medallón del Fractae, placa con nombre común y científico, caja de lore, borde ornamentado y un canto con relieve. Se separó en `Card.tsx` (presentación) y `CardScene.tsx` (gestos: giro con inercia, volteo, deslizar hacia arriba), con frases de lore reales por especie y por fase. El EcoDex se rehízo con cartas a escala en lugar de miniaturas, y la energía pasó de un reinicio plano cada 12 h a un goteo de +1 cada 4 h.
-
-### Fase 5 — Notificaciones push (v0.9)
-
-Suscripción Web Push con opt-in (tile de onboarding y conmutador en el perfil), un Worker con Cron Trigger que avisa **por cada punto de energía regenerado** — no solo al llegar al máximo — y el mismo aviso reflejado en la bandeja in-app.
+- **Production data fell behind the schema.** The remote D1 lacked the `consumed_at` column and the `notifications` table that `schema.sql` did define, and it only surfaced while migrating an account to production. Since `schema.sql` can't be re-run against a database with data, `npm run db:check-remote-schema` was written: it parses the schema, queries `PRAGMA table_info` on the remote and lists any missing table or column.
+- **A phase name collided with a Fractae.** The middle phase was called "Furia" (Fury), the same as the Fractae Furia (Ira): a Fear creature in the "Furia" phase sounded like a Fury creature. It was renamed **Exceso** (Excess), which meant touching the schema `CHECK`, the code, the file names and — with a dedicated migration script — the rows already in the production D1.
+- **Fusing made cards vanish from the EcoDex.** Because fusion *consumes* the Balance duplicates, an EcoDex based on active rows lost that phase or replayed the "new species" animation when it was obtained again. The correct rule is to rely on the **historical** existence of any discovery of that species+phase.
+- **A field stored a snapshot, not a reference.** `discoveries.image_url` is a per-user copy fixed at discovery time, not a live link to the anchors table. Migrating the art from PNG to WebP meant migrating user rows too (local and remote); on top of that, the seed uses `INSERT OR IGNORE`, which doesn't propagate changes to already-seeded rows.
+- **Art weighed 2.5 MB per image.** Switched to WebP (~90 % smaller, ~0.2 MB), with one-year `immutable` cache headers and lazy loading for off-screen cards. The trade-off is documented: without a hash in the file name, regenerating art under the same name wouldn't reload in browsers for a year.
+- **iOS Safari broke the ritual on mobile.** The long-press context menu interrupted the "hold to discover" gesture; the autoplay policy silently blocked species sounds; the bottom bar covered content on notched devices; and pull-to-refresh interfered with gestures.
+- **Push notifications couldn't live in Pages Functions.** A separate Worker with a 15-minute Cron Trigger was needed. Along the way: one invalid subscription aborted the whole loop for every other user; `webcrypto-web-push` needs `nodejs_compat` because of its `node:crypto` import; and the Worker's max energy had to be computed **per user from their level**, since the cap isn't the same for everyone.
+- **The XP curve rewarded farming and made the max level unreachable.** Duplicates gave XP, and the initial triangular curve put level 50 at ~2.6 years of play. It was rebalanced: repeats give 0 XP, the curve is flatter, and the max level is reachable in ~4–5 months of active play.
+- **Importing a script ran it in full.** `generate-species-art.mjs` launched a real generation, with API cost, on species nobody had asked for when imported from another script. Its `main()` is now protected by an `import.meta.url` guard.
 
 ---
 
-## 🦖 Pipeline de arte
+## 🏗️ How it was built
 
-El cuello de botella real del proyecto no es el código, es el **arte curado**: hay **54 fichas-spec** diseñadas y **6 especies** con arte final en producción.
+### Phase 1 — The core loop (v0.1)
 
-1. **Ficha-spec de la especie**, generada con un LLM pero **contrastada con datos paleontológicos reales** para que no invente anatomía ni hábitat: el catálogo NHM Dino Directory, dinosaurpictures.org y la Paleobiology Database (taxonomía, rango temporal, países con yacimientos, validez/sinonimias).
-2. **Imagen ancla de la fase Balance**, curada a mano.
-3. **Exceso y Eco**, generadas por API (image-to-image) a partir de la ancla. Lo que más costó afinar fueron la relación figura/fondo y la diferenciación de pose entre fases, y por eso el prompt lleva un «anclaje anatómico» explícito.
-4. **Conversión a WebP** y alta en la base de datos con `db:sync-species`.
+Accounts (email + password with PBKDF2, `HttpOnly` cookie sessions), **Percibir** to get Balance cards, **Fusion** of duplicates towards Exceso, and notifications. Plus the first batch of mobile fixes for iOS.
 
-Para explorar candidatos hay una herramienta local, `npm run species:discover`, que consulta PBDB con filtros por clado, época, país y número de ocurrencias, y muestra una recreación de referencia antes de decidir. Los borradores de diseño nunca se sirven en la app: solo `public/species-art/{slug}/{balance|exceso|eco}` llega a producción.
+### Phase 2 — Mobile and immersion (v0.2)
 
----
+Mobile redesign: logo, game modes, a floating button for profile and notifications, a CSS-only particle background and Percibir's full-screen pack. It is also the version of the Furia → Exceso rename and its production data migration.
 
-## 🧪 Cómo se prueba
+### Phase 3 — Progression (v0.3 – v0.6)
 
-**172 tests automáticos** (Vitest + Testing Library, en 32 ficheros) que cubren componentes de React, funciones de la API y la lógica del Worker de push (`selectUsersToNotify`). `npm run build` ejecuta además el typecheck de la app y de las Functions antes de empaquetar.
+XP and levels 1–50, unique required usernames, a persistent bottom navigation with badges, **visible energy** (which replaced the silent rate limit), a swipe-up gesture to send the card to the EcoDex, a level-up screen, a curve rebalance with level-based rewards, daily missions, level titles and standard rarity names.
 
-Lo que **no** cubren los tests automáticos y cómo se gestiona:
+### Phase 4 — The card as an object (v0.7 – v0.8)
 
-- **No hay tests E2E ni de regresión visual.** Los gestos y animaciones de la carta (`CardScene`) se prueban a nivel de comportamiento (por ejemplo, la reactividad del aura), no de píxeles.
-- **Los problemas específicos de iOS** (menú contextual, autoplay, safe areas) quedan fuera de la suite: jsdom no los reproduce.
-- **El estado de la base de datos remota** no lo cubre ninguna suite: lo vigila el comprobador de esquema (`npm run db:check-remote-schema`), que conviene ejecutar antes de cada despliegue que toque `schema.sql`.
+The Percibir card went from an image with text to a layered composition: background, rarity aura, art window, Fractae medallion, name plate with common and scientific name, lore box, ornamented border and a textured edge. It was split into `Card.tsx` (presentation) and `CardScene.tsx` (gestures: inertial spin, flip, swipe up), with real lore phrases per species and per phase. The EcoDex was rebuilt with scaled cards instead of thumbnails, and energy went from a flat reset every 12 h to a +1-every-4-h drip.
 
----
+### Phase 5 — Push notifications (v0.9)
 
-## 🎯 Decisiones de diseño
-
-**La energía es parte del juego, no solo una protección.** El rate-limit silencioso por IP se sustituyó por un recurso visible, con cuenta atrás y avisos. Sigue protegiendo el gasto de API, pero ahora es algo que el jugador gestiona.
-
-**Rareza y fase son ejes independientes.** Una especie no tiene una rareza fija: se sortea en cada captura. La matriz de 5 rarezas × 3 fases da 15 estados por especie, y por eso las columnas de rareza no existen en `species` ni en `species_phase_anchors`.
-
-**Fusionar consume, no borra.** Las 5 cartas Balance usadas quedan marcadas como consumidas (`consumed_at`): se conserva el historial de esa captura pero dejan de contar como duplicado activo. La fusión no cuesta energía; su único coste es haber acumulado los duplicados.
-
-**Solo lo nuevo da XP.** Recompensar lo repetido incentiva farmear en lugar de explorar, así que los duplicados dan 0.
-
-**Sin email-gate.** El prototipo pedía el correo tras el descubrimiento. Con cuentas reales, el correo se captura en el registro y no hace falta bloquear nada detrás de él.
-
-**El esquema es la fuente de verdad, y remoto no se actualiza solo.** `schema.sql` define la base de datos; la D1 de producción solo tiene lo que se le haya aplicado a mano. Por eso hay un comprobador, y por eso nunca se re-ejecuta el esquema completo contra una base con datos: se aplica solo el delta.
-
-**El arte final y los borradores no se mezclan.** Viven en carpetas distintas (`public/species-art/` frente a `especies_design/`, que no se versiona), de modo que un borrador no pueda llegar a producción por accidente.
+Web Push subscription with opt-in (an onboarding tile and a toggle in the profile), a Worker with a Cron Trigger that notifies **for every point of energy regenerated** — not just on reaching the max — and the same notice mirrored in the in-app inbox.
 
 ---
 
-## 📁 Estructura del repositorio
+## 📸 Screenshots
+
+Real screenshots of the app in production (v0.9.6), taken with a test account.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/login.png" alt="Login screen" width="250"><br><b>Sign in</b></td>
+    <td align="center"><img src="docs/screenshots/inicio.png" alt="Home: level, energy and daily missions" width="250"><br><b>Home</b> — level, energy and missions</td>
+    <td align="center"><img src="docs/screenshots/percibir.png" alt="Percibir: the pack, ready to open" width="250"><br><b>Percibir</b> — the pack</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ecodex.png" alt="EcoDex: revealed cards and locked slots" width="250"><br><b>EcoDex</b> — the collection</td>
+    <td align="center"><img src="docs/screenshots/carta.png" alt="Card viewer: Tricera de las Lágrimas" width="250"><br><b>The card</b> — layered, with lore</td>
+    <td align="center"><img src="docs/screenshots/perfil.png" alt="Profile: level, collection and rarities" width="250"><br><b>Profile</b> — progress and rarities</td>
+  </tr>
+</table>
+
+---
+
+## 🦖 Art pipeline
+
+The project's real bottleneck isn't code, it's **curated art**: there are **54 spec sheets** designed and **6 species** with final art in production.
+
+1. **Species spec sheet**, generated with an LLM but **cross-checked against real paleontological data** so it doesn't invent anatomy or habitat: the NHM Dino Directory catalog, dinosaurpictures.org and the Paleobiology Database (taxonomy, time range, countries with fossil sites, validity/synonymy).
+2. **Balance-phase anchor image**, hand-curated.
+3. **Exceso and Eco**, generated via API (image-to-image) from the anchor. The hardest things to tune were the figure/ground relationship and pose differentiation between phases, which is why the prompt carries an explicit "anatomy anchor".
+4. **WebP conversion** and database registration with `db:sync-species`.
+
+For exploring candidates there is a local tool, `npm run species:discover`, which queries PBDB with filters by clade, epoch, country and occurrence count, and shows a reference reconstruction before deciding. Design drafts are never served by the app: only `public/species-art/{slug}/{balance|exceso|eco}` reaches production.
+
+---
+
+## 🧪 How it's tested
+
+**172 automated tests** (Vitest + Testing Library, across 32 files) covering React components, API functions and the push Worker's logic (`selectUsersToNotify`). `npm run build` also runs the app and Functions typecheck before bundling.
+
+What the automated tests **don't** cover, and how that's handled:
+
+- **There are no E2E or visual-regression tests.** The card's gestures and animations (`CardScene`) are tested at the behavior level (for example, aura reactivity), not at the pixel level.
+- **iOS-specific problems** (context menu, autoplay, safe areas) fall outside the suite: jsdom doesn't reproduce them.
+- **The remote database state** isn't covered by any suite: the schema checker (`npm run db:check-remote-schema`) watches it, and it's worth running before any deploy that touches `schema.sql`.
+
+---
+
+## 🎯 Design decisions
+
+**Energy is part of the game, not just a safeguard.** The silent per-IP rate limit was replaced by a visible resource, with a countdown and notifications. It still protects API spend, but now it's something the player manages.
+
+**Rarity and phase are independent axes.** A species has no fixed rarity: it's rolled on every capture. The 5 rarities × 3 phases matrix gives 15 states per species, which is why rarity columns don't exist in `species` or `species_phase_anchors`.
+
+**Fusing consumes, it doesn't delete.** The 5 Balance cards used are marked as consumed (`consumed_at`): the history of that capture is kept but they no longer count as active duplicates. Fusion costs no energy; its only cost is having accumulated the duplicates.
+
+**Only what's new gives XP.** Rewarding repeats encourages farming over exploring, so duplicates give 0.
+
+**No email gate.** The prototype asked for the email after the discovery. With real accounts, the email is captured at sign-up and nothing needs to be blocked behind it.
+
+**The schema is the source of truth, and remote doesn't update itself.** `schema.sql` defines the database; the production D1 only has what has been applied to it by hand. That's why there's a checker, and why the full schema is never re-run against a database with data: only the delta is applied.
+
+**Final art and drafts don't mix.** They live in different folders (`public/species-art/` versus `especies_design/`, which isn't versioned), so a draft can't reach production by accident.
+
+---
+
+## 📁 Repository structure
 
 ```
 EcoRex/
-├── src/                         # Frontend React
-│   ├── pages/                   # Inicio, Percibir, Colección (EcoDex), Perfil, Fusión, Login/Registro
-│   ├── components/              # Navegación, ritual de Percibir, misiones, subida de nivel, push
-│   │   └── card/                # Card.tsx (capas) + CardScene.tsx (gestos)
-│   └── sw.ts                    # Service worker (precache + eventos push)
+├── src/                         # React frontend
+│   ├── pages/                   # Home, Percibir, Collection (EcoDex), Profile, Fusion, Login/Register
+│   ├── components/              # Navigation, Percibir ritual, missions, level-up, push
+│   │   └── card/                # Card.tsx (layers) + CardScene.tsx (gestures)
+│   └── sw.ts                    # Service worker (precache + push events)
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
-│   └── lib/                     # xp, energy, missions, discovery, rate limit, caché, R2, proveedores de imagen/texto
-├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
-├── shared/                      # Tipos y validaciones compartidas entre frontend y backend
-├── schema.sql                   # Esquema D1, fuente de verdad de la base de datos
-├── scripts/                     # Seed, sync de especies, generación de arte/specs, discovery PBDB, comprobador de esquema remoto
-├── public/                      # Estáticos servidos: species-art, icons, logo, sonidos
-├── design/                      # Material de diseño: badges de Fractae y fases, botones, cartas
+│   └── lib/                     # xp, energy, missions, discovery, rate limit, cache, R2, image/text providers
+├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
+├── shared/                      # Types and validation shared between frontend and backend
+├── schema.sql                   # D1 schema, the database's source of truth
+├── scripts/                     # Seed, species sync, art/spec generation, PBDB discovery, remote schema checker
+├── public/                      # Served statics: species-art, icons, logo, sounds
+├── design/                      # Design material: Fractae and phase badges, buttons, cards
 └── docs/
-    ├── lore_world_bible_ecorex_v5.md   # Biblia del universo y mapeo lore → implementación
-    ├── backlog.md                       # Ideas sin priorizar
-    └── archive/                         # Versiones anteriores del lore
+    ├── lore_world_bible_ecorex_v5.md   # Universe bible and lore → implementation mapping (Spanish)
+    ├── backlog.md                       # Unprioritized ideas (Spanish)
+    ├── screenshots/                     # Images used in this README
+    └── archive/                         # Earlier lore versions
 ```
 
 ---
 
-## 🕓 Historial de versiones
+## 🕓 Version history
 
-| Versión | Novedades |
+| Version | Highlights |
 |---|---|
-| v0.1.0 | Bucle central: Percibir, colección, fusión a Exceso, cuentas, notificaciones; correcciones móviles de iOS |
-| v0.2.0 – v0.2.1 | Rediseño móvil, apertura de sobre inmersiva, PWA con iconos reales; renombrado Furia → Exceso y migración remota |
-| v0.3.0 | XP y niveles 1–50, nombres de usuario únicos y obligatorios, ritual de subida de nivel |
-| v0.4.0 – v0.4.5 | Navegación inferior, energía visible, deslizar hacia arriba para enviar al EcoDex, badges de navegación, pantalla completa de Level Up |
-| v0.5.0 | Rebalanceo de XP y niveles; recompensas por nivel (energía máxima, umbral de fusión) |
-| v0.6.0 | Misiones diarias, títulos de nivel, nombres de rareza estándar |
-| v0.7.0 | Carta por capas (`Card` + `CardScene`) con lore real por especie |
-| v0.8.0 | Rediseño del EcoDex con cartas a escala, arte en WebP (~90 % menos), cabeceras de caché, energía por goteo (+1 cada 4 h), lore por fase |
-| v0.9.0 | Notificaciones Web Push (Worker con Cron Trigger), opt-in en la home y en el perfil |
-| v0.9.5 | Notificación por cada punto de energía regenerado, reflejada también en la bandeja in-app |
-| v0.9.6 | Mensaje de error más claro para fallos no controlados de la API |
+| v0.1.0 | Core loop: Percibir, collection, fusion to Exceso, accounts, notifications; iOS mobile fixes |
+| v0.2.0 – v0.2.1 | Mobile redesign, immersive pack opening, PWA with real icons; Furia → Exceso rename and remote migration |
+| v0.3.0 | XP and levels 1–50, unique required usernames, level-up ritual |
+| v0.4.0 – v0.4.5 | Bottom navigation, visible energy, swipe up to send to the EcoDex, navigation badges, full-screen Level Up |
+| v0.5.0 | XP and level rebalance; level-based rewards (max energy, fusion threshold) |
+| v0.6.0 | Daily missions, level titles, standard rarity names |
+| v0.7.0 | Layered card (`Card` + `CardScene`) with real per-species lore |
+| v0.8.0 | EcoDex redesign with scaled cards, WebP art (~90 % smaller), cache headers, drip energy (+1 every 4 h), per-phase lore |
+| v0.9.0 | Web Push notifications (Worker with a Cron Trigger), opt-in on home and profile |
+| v0.9.5 | A notification for every point of energy regenerated, also mirrored in the in-app inbox |
+| v0.9.6 | Clearer error message for unhandled API failures |
 
-Detalle de cada versión: [GitHub Releases](https://github.com/SamBarrado/EcoRex/releases).
-
----
-
-## 🚫 Ideas pendientes y decisiones descartadas
-
-*Decidir no construir algo es tan decisión de producto como construirlo.*
-
-**Descartado**
-- **Email-gate tras el descubrimiento:** innecesario con cuentas reales (ver «Decisiones de diseño»).
-- **React Native:** descartado; si hace falta tienda de aplicaciones, la vía es envolver la misma build con Capacitor.
-
-**Fuera de alcance por ahora**
-- **Fase Eco:** el dato y el arte existen, pero no hay camino de progresión en la interfaz. Hoy el juego solo llega hasta Exceso (el diseño la reserva a un minijuego de grietas).
-- **Regalo entre usuarios, lista de amigos y leaderboards:** el esquema ya lo contempla (`gifts`), pero no hay endpoint.
-- **Cartas de Resonancia y Operaciones temáticas** con su propia distribución de rareza.
-- **Verificación de email, recuperación de contraseña y login social.**
-
-**Backlog** ([docs/backlog.md](docs/backlog.md)): pesos de aparición por especie, ediciones para colecciones tipo sobre, misiones semanales y rachas, rehacer el sistema de sonido, modo álbum con ilustraciones grandes, y distinguir «especie» de «variante» en la interfaz.
+Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/releases).
 
 ---
 
-## ⚙️ Ejecutarlo en local
+## 🚫 Pending ideas and discarded decisions
+
+*Deciding not to build something is as much a product decision as building it.*
+
+**Discarded**
+- **Email gate after the discovery:** unnecessary with real accounts (see "Design decisions").
+- **React Native:** discarded; if an app store becomes necessary, the path is wrapping the same build with Capacitor.
+
+**Out of scope for now**
+- **Eco phase:** the data and the art exist, but there's no progression path in the interface. Today the game only reaches Exceso (the design reserves it for a cracks minigame).
+- **Gifting between users, friends list and leaderboards:** the schema already allows for it (`gifts`), but there's no endpoint.
+- **Resonance Cards and themed Operations** with their own rarity distribution.
+- **Email verification, password recovery and social login.**
+
+**Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): per-species appearance weights, editions for pack-style collections, weekly missions and streaks, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
+
+---
+
+## ⚙️ Running it locally
 
 ```bash
 npm install
-npm run dev            # typecheck + build + wrangler pages dev (frontend + Functions + D1/KV locales)
-npm run vite:dev       # solo Vite, sin Functions
-npm run build          # typecheck de app y Functions + vite build
+npm run dev            # typecheck + build + wrangler pages dev (frontend + Functions + local D1/KV)
+npm run vite:dev       # Vite only, no Functions
+npm run build          # typecheck of app and Functions + vite build
 npm test               # vitest run
-npm run typecheck      # solo tsc
-npm run db:seed        # siembra rarezas, Fractae y especies en la D1 local
+npm run typecheck      # tsc only
+npm run db:seed        # seeds rarities, Fractae and species into the local D1
 ```
 
-Antes del primer `db:seed`, crea las tablas con `npx wrangler d1 execute DB --local --file=schema.sql` (el seed por sí solo falla con `no such table`). Para empezar de cero en local basta con borrar `.wrangler/state/v3/d1` y repetir esos dos pasos; nunca hagas el equivalente contra la D1 remota.
+Before the first `db:seed`, create the tables with `npx wrangler d1 execute DB --local --file=schema.sql` (the seed alone fails with `no such table`). To start from scratch locally, just delete `.wrangler/state/v3/d1` and repeat those two steps; never do the equivalent against the remote D1.
 
-Copia `.dev.vars.example` a `.dev.vars` y rellena `ANTHROPIC_API_KEY` y `OPENAI_API_KEY`: son las claves de los proveedores de IA que usa el pipeline de contenido y los endpoints que generan imágenes, y no se incluyen en el repo. `DISCOVER_RATE_LIMIT` es opcional y solo para pruebas locales.
+Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the content pipeline and by the endpoints that generate images, and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
 
-> **Local y producción son bases de datos distintas.** `wrangler pages dev` usa una copia local de D1 y KV bajo `.wrangler/state/`, aislada de los recursos reales. Los usuarios y el progreso creados en local no existen en producción, y un cambio en `schema.sql` no llega solo a la D1 remota. Antes de desplegar si tocaste el esquema, ejecuta `npm run db:check-remote-schema`.
+> **Local and production are different databases.** `wrangler pages dev` uses a local copy of D1 and KV under `.wrangler/state/`, isolated from the real resources. Users and progress created locally don't exist in production, and a change to `schema.sql` doesn't reach the remote D1 on its own. Before deploying if you touched the schema, run `npm run db:check-remote-schema`.
 
-**Worker de push.** `workers/push-cron` es un proyecto Wrangler independiente (con su propio `npm install`, su propio estado local de D1 y sus propios secrets), y **no se despliega con el push a `main`**: se despliega aparte con `npm run deploy` dentro de su carpeta.
+**Push Worker.** `workers/push-cron` is a standalone Wrangler project (with its own `npm install`, its own local D1 state and its own secrets), and it is **not deployed by pushing to `main`**: it's deployed separately with `npm run deploy` inside its folder.
 
-### Desplegar tu propia copia
+### Deploying your own copy
 
-1. Crea los recursos: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV` y `CACHE_KV`, y `npx wrangler r2 bucket create ecorex-dino-images`; copia los IDs resultantes a `wrangler.jsonc` (y el `database_id` a `workers/push-cron/wrangler.jsonc`).
-2. Aplica el esquema a la D1 remota una sola vez: `npx wrangler d1 execute DB --remote --file=schema.sql`, y siembra con `npm run db:seed:remote`.
-3. Crea el proyecto de Pages y conecta el repositorio (rama `main`): cada push construye y despliega.
-4. Genera un par de claves VAPID y guárdalas como secrets, tanto del proyecto Pages (`wrangler pages secret put`) como del Worker (`wrangler secret put`, dentro de `workers/push-cron/`): `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`. Añade también `ANTHROPIC_API_KEY` y `OPENAI_API_KEY` al proyecto Pages.
-5. Despliega el Worker de push: `cd workers/push-cron && npm install && npm run deploy`.
-
----
-
-## 🔗 Repositorio
-
-[github.com/SamBarrado/EcoRex](https://github.com/SamBarrado/EcoRex) · Prototipo precursor: [Dino Discovery](https://github.com/SamBarrado/DinoDiscovery)
+1. Create the resources: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV` and `CACHE_KV`, and `npx wrangler r2 bucket create ecorex-dino-images`; copy the resulting IDs into `wrangler.jsonc` (and the `database_id` into `workers/push-cron/wrangler.jsonc`).
+2. Apply the schema to the remote D1 exactly once: `npx wrangler d1 execute DB --remote --file=schema.sql`, and seed with `npm run db:seed:remote`.
+3. Create the Pages project and connect the repository (branch `main`): every push builds and deploys.
+4. Generate a VAPID key pair and store it as secrets, both for the Pages project (`wrangler pages secret put`) and for the Worker (`wrangler secret put`, inside `workers/push-cron/`): `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. Also add `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` to the Pages project.
+5. Deploy the push Worker: `cd workers/push-cron && npm install && npm run deploy`.
 
 ---
 
-¿Has encontrado un bug o tienes una idea? [Abre una issue](https://github.com/SamBarrado/EcoRex/issues).
+## 🔗 Repository
+
+[github.com/SamBarrado/EcoRex](https://github.com/SamBarrado/EcoRex) · Predecessor prototype: [Dino Discovery](https://github.com/SamBarrado/DinoDiscovery)
+
+---
+
+Found a bug or have an idea? [Open an issue](https://github.com/SamBarrado/EcoRex/issues).
