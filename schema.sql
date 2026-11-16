@@ -65,6 +65,7 @@ CREATE TABLE users (
   password_hash TEXT,
   display_name TEXT NOT NULL DEFAULT '',  -- username/handle, required & unique (see idx_users_display_name)
   needs_username_setup INTEGER NOT NULL DEFAULT 0,  -- 1 for pre-migration users backfilled with a placeholder
+  avatar TEXT,  -- chosen default avatar id ('avatar-1'..'avatar-3', see public/avatars/); NULL = show the username initial
   explorer_rank TEXT NOT NULL DEFAULT 'novato',
   xp INTEGER NOT NULL DEFAULT 0,
   energy_count INTEGER NOT NULL DEFAULT 2,  -- Percibir energy: 2 discoveries per 12h window

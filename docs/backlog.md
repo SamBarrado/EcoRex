@@ -31,7 +31,6 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 
 ## Por ordenar y determinar alcance y elementos afectados
 
-- **3 imagenes de perfil por defecto para el usuario que no sea su inicial.
 - **pulir grid ecodex (sigue sin verse el lore antes de ampliar carta)
 - **habilitar modo album con ilusttraciones (lo que era al principio el ecodex. en lugar de mostrar carta, se muestra ficha del dino y ilustracion más grande y al natural, posiblemente ilustracion alternativa.)
 - **decidir que se hace con modo eco y si las fusiones aplican más allá de fase balance.

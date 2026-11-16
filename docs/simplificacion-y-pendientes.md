@@ -29,7 +29,7 @@ Todo lo publicado funcionaba: typecheck OK, tests OK, esquema de D1 remota sincr
 |---|---|---|
 | ✅ | **Lore visible en el grid del Ecodex** | Línea de lore propia bajo cada tile (10,5 px, recortada a 3 líneas con «…»; las frases miden 81-208 caracteres, así que en el grid es un adelanto y la frase completa está en el visor y en el `title`). Quitado el lore de la miniatura escalada, donde era ilegible. |
 | ✅ | **Quitar `discovery_code` de la carta de Fusión** | `8a5586e`. Sigue existiendo en API/BD, solo desaparece de la UI. Si se quiere conservar (p. ej. para el modo amigos), revertir ese commit. |
-| ❓ | **3 imágenes de perfil por defecto** (en vez de la inicial) | Feature pequeña. Falta decidir de dónde salen las imágenes y dónde se elige. |
+| ✅ (local, sin desplegar) | **3 imágenes de perfil por defecto** | Avatares generados con `scripts/generate-avatars.mjs` (fuentes 1024 px en `design/avatares/`, WebP 256 px en `public/avatars/`). El usuario los elige tocando su avatar en Perfil (o vuelve a la inicial); columna nueva `users.avatar` + `PATCH /api/auth/avatar`. **Antes de hacer push hay que aplicar en remoto:** `npx wrangler d1 execute DB --remote --command="ALTER TABLE users ADD COLUMN avatar TEXT;"` (si no, `/api/profile` y la sesión fallan con `no such column`). |
 | ⏳ | **Nombre truncado en la carta** (`.card-name`, nombres largos) | Esperar a los diseños definitivos de la carta. |
 | ❓ | **"Especies" vs "variantes"** en la UI | Falta decidir terminología y en qué pantallas cambia. |
 

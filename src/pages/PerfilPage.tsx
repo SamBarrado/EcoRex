@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyProfile, logout, ProfileStats, ApiError } from "../lib/api";
+import { getMyProfile, logout, setAvatar, ProfileStats, ApiError } from "../lib/api";
+import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
 import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush } from "../lib/push";
 
 export default function PerfilPage() {
@@ -8,6 +9,8 @@ export default function PerfilPage() {
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const [pushEnabled, setPushEnabled] = useState(isPushSupported() && getNotificationPermission() === "granted");
   const pushDenied = isPushSupported() && getNotificationPermission() === "denied";
 
@@ -36,6 +39,17 @@ export default function PerfilPage() {
         setError("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.");
       });
   }, [navigate, retryCount]);
+
+  async function handleChooseAvatar(avatar: string | null) {
+    setAvatarError(null);
+    try {
+      const result = await setAvatar(avatar);
+      setProfile((current) => (current ? { ...current, user: { ...current.user, avatar: result.avatar } } : current));
+      setAvatarPickerOpen(false);
+    } catch {
+      setAvatarError("No se pudo guardar el avatar. Inténtalo de nuevo.");
+    }
+  }
 
   async function handleLogout() {
     await logout();
@@ -66,13 +80,23 @@ export default function PerfilPage() {
 
   const avatarLabel = (profile.user.display_name || profile.user.email).trim();
   const avatarInitial = avatarLabel.charAt(0).toUpperCase();
+  const currentAvatar = profile.user.avatar ?? null;
 
   return (
     <div className="page">
       <h1>Yo</h1>
       <div className="card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <div className="avatar" aria-hidden="true">
-          {avatarInitial}
+        <div
+          className="avatar avatar-clickable"
+          role="button"
+          tabIndex={0}
+          aria-label="Cambiar avatar"
+          onClick={() => setAvatarPickerOpen((open) => !open)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") setAvatarPickerOpen((open) => !open);
+          }}
+        >
+          {currentAvatar ? <img src={avatarUrl(currentAvatar)} alt="" className="avatar-img" /> : avatarInitial}
         </div>
         <div>
           <strong>{profile.user.display_name || profile.user.email}</strong>
@@ -81,6 +105,44 @@ export default function PerfilPage() {
           <div>{profile.title}</div>
         </div>
       </div>
+
+      {avatarPickerOpen && (
+        <div className="card">
+          <strong>Elige tu avatar</strong>
+          <div className="avatar-picker">
+            {AVATAR_IDS.map((id) => (
+              <div
+                key={id}
+                className="avatar avatar-option"
+                role="button"
+                tabIndex={0}
+                aria-label={`Avatar ${id.replace("avatar-", "")}`}
+                aria-pressed={currentAvatar === id}
+                onClick={() => handleChooseAvatar(id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleChooseAvatar(id);
+                }}
+              >
+                <img src={avatarUrl(id)} alt="" className="avatar-img" />
+              </div>
+            ))}
+            <div
+              className="avatar avatar-option"
+              role="button"
+              tabIndex={0}
+              aria-label="Usar mi inicial"
+              aria-pressed={currentAvatar === null}
+              onClick={() => handleChooseAvatar(null)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleChooseAvatar(null);
+              }}
+            >
+              {avatarInitial}
+            </div>
+          </div>
+          {avatarError && <p className="error">{avatarError}</p>}
+        </div>
+      )}
 
       <div className="card">
         <div className="stat">

@@ -27,6 +27,7 @@ export interface AuthUser {
   email: string;
   display_name: string;
   needs_username_setup?: boolean;
+  avatar?: string | null;
 }
 
 export function register(body: { email: string; password: string; display_name: string }) {
@@ -40,6 +41,13 @@ export function login(body: { email: string; password: string }) {
   return request<{ user: AuthUser }>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify(body),
+  });
+}
+
+export function setAvatar(avatar: string | null) {
+  return request<{ avatar: string | null }>("/api/auth/avatar", {
+    method: "PATCH",
+    body: JSON.stringify({ avatar }),
   });
 }
 
