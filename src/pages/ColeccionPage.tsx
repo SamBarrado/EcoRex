@@ -215,15 +215,21 @@ export default function ColeccionPage() {
                     style={{ filter: "grayscale(0.5) brightness(0.75)", opacity: 0.85 }}
                   />
                 ) : (
-                  <CardThumb
-                    imageUrl={slot.image_url}
-                    commonName={slot.common_name}
-                    scientificName={slot.scientific_name}
-                    rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
-                    fractaeChildName={slot.fractae_child_name}
-                    lorePhrase={slot.lore_phrase ?? undefined}
-                    glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
-                  />
+                  <>
+                    <CardThumb
+                      imageUrl={slot.image_url}
+                      commonName={slot.common_name}
+                      scientificName={slot.scientific_name}
+                      rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
+                      fractaeChildName={slot.fractae_child_name}
+                      glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
+                    />
+                    {slot.lore_phrase && (
+                      <p className="ecodex-tile-lore" title={slot.lore_phrase}>
+                        &laquo;{slot.lore_phrase}&raquo;
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             );

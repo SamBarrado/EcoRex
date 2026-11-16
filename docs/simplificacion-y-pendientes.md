@@ -27,7 +27,7 @@ Todo lo publicado funcionaba: typecheck OK, tests OK, esquema de D1 remota sincr
 
 | Estado | Qué | Notas |
 |---|---|---|
-| ❓ | **Lore visible en el grid del Ecodex** | El lore ya se pasa a las tiles (`2927326`) pero se renderiza a ~3,8 px: ilegible. Opciones: (1) grid de 2 columnas, (2) **línea de lore propia de 11-12 px bajo cada tile** (recomendada), (3) dejarlo como está y revertir el commit. |
+| ✅ | **Lore visible en el grid del Ecodex** | Línea de lore propia bajo cada tile (10,5 px, recortada a 3 líneas con «…»; las frases miden 81-208 caracteres, así que en el grid es un adelanto y la frase completa está en el visor y en el `title`). Quitado el lore de la miniatura escalada, donde era ilegible. |
 | ✅ | **Quitar `discovery_code` de la carta de Fusión** | `8a5586e`. Sigue existiendo en API/BD, solo desaparece de la UI. Si se quiere conservar (p. ej. para el modo amigos), revertir ese commit. |
 | ❓ | **3 imágenes de perfil por defecto** (en vez de la inicial) | Feature pequeña. Falta decidir de dónde salen las imágenes y dónde se elige. |
 | ⏳ | **Nombre truncado en la carta** (`.card-name`, nombres largos) | Esperar a los diseños definitivos de la carta. |
