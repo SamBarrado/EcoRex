@@ -127,9 +127,15 @@ a {
   aspect-ratio: 3 / 2;
 }
 
+/* In the Ecodex grid the tile is card-shaped (2/3), same as the locked tile. */
+.ecodex-grid .slot-reveal-stack {
+  aspect-ratio: 2 / 3;
+}
+
 .slot-reveal-stack .species-image {
   position: absolute;
   inset: 0;
+  height: 100%;
   transition: opacity 500ms ease;
 }
 

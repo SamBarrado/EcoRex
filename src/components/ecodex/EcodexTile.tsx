@@ -47,8 +47,6 @@ export function EcodexTile({ slot, isJustUnlocked, revealPending, shaking, tileR
             src={slot.image_url}
             alt={slot.common_name}
             className={`species-image slot-reveal-real-img${revealPending ? "" : " slot-reveal-visible"}`}
-            width={1536}
-            height={1024}
           />
         </div>
       ) : slot.locked ? (
