@@ -546,7 +546,7 @@ Al haber cuentas reales, el email se captura **en el registro**, no en un gate p
 
 ### 18.2 Origen del código base
 
-Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`, `r2.ts`, `origin.ts`, `requestBody.ts`, `adminAuth.ts`, `images/[key].ts`) se portó tal cual desde el prototipo `DinoDiscovery` (github.com/melinDross/DinoDiscovery), ya probado en producción. La capa de negocio (wizard de atributos libres, `speciesHash.ts` de rareza por puntos, email-gate) **no se reutiliza** — el modelo de datos de Ecorex (catálogo fijo de especies + cuentas D1) es incompatible con el modelo de generación libre del prototipo. La capa visual (`Card.tsx`, `CardScene.tsx`, `cardCapture.ts`, `dinoCutout.ts`) está pendiente de portar y recablear a los datos reales de `discoveries`.
+Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`, `r2.ts`, `origin.ts`, `requestBody.ts`, `adminAuth.ts`, `images/[key].ts`) se portó tal cual desde el prototipo `DinoDiscovery` (github.com/SamBarrado/DinoDiscovery), ya probado en producción. La capa de negocio (wizard de atributos libres, `speciesHash.ts` de rareza por puntos, email-gate) **no se reutiliza** — el modelo de datos de Ecorex (catálogo fijo de especies + cuentas D1) es incompatible con el modelo de generación libre del prototipo. La capa visual (`Card.tsx`, `CardScene.tsx`, `cardCapture.ts`, `dinoCutout.ts`) está pendiente de portar y recablear a los datos reales de `discoveries`.
 
 ### 18.3 Mapeo schema.sql ↔ conceptos de lore
 
