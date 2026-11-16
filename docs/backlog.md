@@ -4,7 +4,6 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 
 ## Performance y contenido
 
-- **Optimizar peso de imágenes de especies**: actualmente 2+ MB por foto. Revisar compresión/formato (WebP/AVIF), resoluciones servidas según contexto (thumbnail vs reveal a pantalla completa) y si merece la pena un pipeline de optimización en `scripts/generate-species-art.mjs` o en el propio Worker al servir desde R2.
 - **Pesos por especie**: introducir un % de aparición distinto por especie dentro del pool activo (hoy el sorteo de especie es uniforme entre `species.is_active`), independiente del sorteo de rareza (que ya es un eje ortogonal, sección 6 del world bible).
 - **Fase Eco**: pensar cómo generarla y cómo avanzar hasta ella. Hoy el frontend solo permite llegar a Exceso (vía fusión) — Eco no tiene camino de progresión implementado en la UI aunque el dato/fase existe en el modelo.
 
