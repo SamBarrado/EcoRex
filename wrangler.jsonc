@@ -15,11 +15,6 @@
       "binding": "RATE_LIMIT_KV",
       "id": "caf39c48cb914f728143fb071a586a55",
       "preview_id": "7e5e3d4e785e401aa6e7b975e3b4b180"
-    },
-    {
-      "binding": "CACHE_KV",
-      "id": "6a7919ee47fd4cc8ba23522375327b6a",
-      "preview_id": "f565c5cf8eba441298b53174ffaff35a"
     }
   ],
   "r2_buckets": [

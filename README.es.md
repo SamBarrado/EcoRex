@@ -96,7 +96,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 | **PWA** | `vite-plugin-pwa` (`injectManifest`) + service worker propio | Instalable en móvil sin pasar por tienda; el SW propio gestiona los eventos push. Si algún día hace falta tienda, la vía es envolver la misma build con Capacitor |
 | **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Se despliega junto al frontend, sin otro host de API que mantener |
 | **Base de datos** | Cloudflare D1 (SQLite) — esquema en [schema.sql](schema.sql) | Datos relacionales (usuarios, colección, misiones, notificaciones) sin servidor de BD que operar |
-| **Storage / caché** | R2 (imágenes de especies) + KV (rate limit y caché) | Serverless y gratuito al volumen actual |
+| **Storage / caché** | R2 (imágenes de especies) + KV (rate limit) | Serverless y gratuito al volumen actual |
 | **Push** | Web Push (VAPID) con `@block65/webcrypto-web-push` + un **Worker independiente con Cron Trigger** (`workers/push-cron`) | Las Pages Functions no soportan Cron Triggers |
 | **Generación de contenido** | APIs de Anthropic y OpenAI (fichas-spec de especies; variantes y fases de arte) | Pipeline de producción de contenido, ver «Pipeline de arte» |
 | **Tests** | Vitest + Testing Library + jsdom | Misma herramienta para componentes, funciones de la API y el Worker |
@@ -217,7 +217,7 @@ EcoRex/
 │   └── sw.ts                    # Service worker (precache + eventos push)
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
-│   └── lib/                     # xp, energy, missions, discovery, rate limit, caché, R2, proveedores de imagen/texto
+│   └── lib/                     # xp, energy, missions, discovery, rate limit, R2, proveedores de imagen/texto
 ├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
 ├── shared/                      # Tipos y validaciones compartidas entre frontend y backend
 ├── schema.sql                   # Esquema D1, fuente de verdad de la base de datos
@@ -292,7 +292,7 @@ Copia `.dev.vars.example` a `.dev.vars` y rellena `ANTHROPIC_API_KEY` y `OPENAI_
 
 ### Desplegar tu propia copia
 
-1. Crea los recursos: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV` y `CACHE_KV`, y `npx wrangler r2 bucket create ecorex-dino-images`; copia los IDs resultantes a `wrangler.jsonc` (y el `database_id` a `workers/push-cron/wrangler.jsonc`).
+1. Crea los recursos: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV`, y `npx wrangler r2 bucket create ecorex-dino-images`; copia los IDs resultantes a `wrangler.jsonc` (y el `database_id` a `workers/push-cron/wrangler.jsonc`).
 2. Aplica el esquema a la D1 remota una sola vez: `npx wrangler d1 execute DB --remote --file=schema.sql`, y siembra con `npm run db:seed:remote`.
 3. Crea el proyecto de Pages y conecta el repositorio (rama `main`): cada push construye y despliega.
 4. Genera un par de claves VAPID y guárdalas como secrets, tanto del proyecto Pages (`wrangler pages secret put`) como del Worker (`wrangler secret put`, dentro de `workers/push-cron/`): `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`. Añade también `ANTHROPIC_API_KEY` y `OPENAI_API_KEY` al proyecto Pages.
