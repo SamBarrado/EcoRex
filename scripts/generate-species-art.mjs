@@ -52,7 +52,7 @@ function loadDevVarsApiKey() {
   return line?.slice('OPENAI_API_KEY='.length).trim() || undefined;
 }
 
-function slugify(name) {
+export function slugify(name) {
   return name
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
@@ -90,7 +90,7 @@ function findReferenceBySlug(slug) {
 // Prefer a reference of the actual base species (real anatomy, no
 // approximation needed) over one of its closestFamousRelative (an
 // anatomical stand-in used only when the real species has no reference).
-function findReferenceImage(spec) {
+export function findReferenceImage(spec) {
   const genus = spec.scientificName?.split(' ')[0];
   if (genus) {
     const ownRef = findReferenceBySlug(slugify(genus));
@@ -143,7 +143,7 @@ function relativeAnchorLine(spec) {
   return parts.join(' ');
 }
 
-function buildAnchorPrompt(spec) {
+export function buildAnchorPrompt(spec) {
   return [
     BASE_STYLE,
     FIGURE_GROUND_SEPARATION,
@@ -166,7 +166,7 @@ function buildAnchorPrompt(spec) {
 // prompt asks for a restyle + the SPECIFIC listed additions, rather than
 // describing the whole creature from scratch in text (which is what caused
 // anatomical drift for lesser-known species in the first place).
-function buildRestylePrompt(spec, referenceInfo) {
+export function buildRestylePrompt(spec, referenceInfo) {
   const referenceIntro = referenceInfo.isOwnSpecies
     ? `The attached reference image is an accurate scientific life-restoration of the real base species behind ${spec.scientificName} ("${spec.commonName}") — same body plan, stance and proportions.`
     : `The attached reference image is an accurate scientific life-restoration of ${spec.closestFamousRelative}, this species' closest famous relative — same general body plan, stance and proportions as ${spec.scientificName} ("${spec.commonName}").`;
@@ -194,7 +194,7 @@ function buildRestylePrompt(spec, referenceInfo) {
   ].filter(Boolean).join(' ');
 }
 
-function buildExcesoPrompt(spec) {
+export function buildExcesoPrompt(spec) {
   return [
     `Same exact creature as the reference image — same species, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style and same elemental environment: ${spec.scientificName} ("${spec.commonName}").`,
     `CRITICAL — preserve exact anatomy, do not reinterpret the species: ${spec.traits}. Distinctive silhouette to preserve: ${spec.silhouette}. This means the ENTIRE body plan — head/skull shape, torso/body proportions, limb length and structure, stance (bipedal/quadrupedal/facultative), tail shape and length — must stay recognizably identical to the reference, not just the most distinctive single feature. Especially for less iconic/lesser-known species, the reference image alone is not enough anchor — the model tends to drift the whole body toward a generic "cool dinosaur" shape (often theropod-like) when the pose changes a lot. Explicitly resist that: keep the same overall proportions and body type as the reference even while changing the pose dramatically. If in doubt, favor fidelity to these traits over dramatic reinterpretation.`,
@@ -212,7 +212,7 @@ function buildExcesoPrompt(spec) {
 // THIS species' own anatomy and habitat — not a generic universal effect.
 // Two species sharing a Fractae (e.g. a land apex predator and a marine
 // reptile both under Furia) must NOT converge on the same visual solution.
-function buildEcoPrompt(spec) {
+export function buildEcoPrompt(spec) {
   const extreme = FRACTAE_EXTREME[spec.fractae.name];
   return [
     `Same exact creature as the reference image — same species, same base color palette, same silhouette, same graphic anime-influenced ink-lineart key-art style: ${spec.scientificName} ("${spec.commonName}").`,
@@ -350,7 +350,12 @@ async function main() {
   console.log('\nListo. Revisa y cura manualmente antes de subir a R2 / registrar en species_phase_anchors (docs/lore_world_bible_ecorex_v4.md §15.4).');
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Guard against side effects on import: this file is also imported as a
+// module (e.g. scripts/print-species-prompt.mjs) to reuse the prompt
+// builders without triggering a real, paid OpenAI generation run.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
