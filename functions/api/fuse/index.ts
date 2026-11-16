@@ -1,8 +1,7 @@
 import { getSessionCookie, verifySession } from "../../lib/auth";
 import { rateLimit, getClientIp } from "../../lib/rateLimit";
-import { pickRarityTier, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../../lib/discovery";
-import { addXp, FUSION_RARITY_XP, SPECIES_COMPLETE_XP_BONUS, levelFromXp, fusionThresholdReductionForLevel } from "../../lib/xp";
-import { incrementMission, checkAndAwardDailyBonus, todayUTC, MISSION_DEFS, DAILY_BONUS_XP } from "../../lib/missions";
+import { FUSION_RARITY_XP, levelFromXp, fusionThresholdReductionForLevel } from "../../lib/xp";
+import { loadSpeciesPhase, rollRarityTier, recordDiscovery, discoveryResponseBody } from "../../lib/recordDiscovery";
 
 interface Env {
   DB: D1Database;
@@ -15,15 +14,6 @@ interface FuseBody {
 
 const BASE_FUSE_THRESHOLD = 5;
 const DEFAULT_FUSE_RATE_LIMIT = 10;
-
-function generateDiscoveryCode(): string {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const randomPart = (length: number): string => {
-    const bytes = crypto.getRandomValues(new Uint8Array(length));
-    return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
-  };
-  return `DX-${randomPart(3)}-${randomPart(3)}`;
-}
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -74,119 +64,42 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     );
   }
 
-  const speciesRow = await env.DB.prepare(
-    `SELECT
-       species.id as species_id,
-       species.scientific_name as scientific_name,
-       species.common_name as common_name,
-       fractae.child_name as fractae_child_name,
-       species_phase_anchors.image_url as anchor_image_url,
-       species_phase_anchors.lore_phrase as lore_phrase
-     FROM species
-     JOIN fractae ON fractae.id = species.fractae_id
-     JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id
-     WHERE species.id = ? AND species_phase_anchors.phase = 'exceso' AND species.is_active = 1`
-  )
-    .bind(speciesId)
-    .first<SpeciesPhaseRow>();
+  const speciesRow = await loadSpeciesPhase(env.DB, speciesId, "exceso");
 
   if (!speciesRow) {
     return Response.json({ error: "Species/phase combination not found" }, { status: 404 });
   }
 
-  const { results: rarityTiers } = await env.DB.prepare(
-    "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers"
-  ).all<RarityTierRow>();
+  const rarityTier = await rollRarityTier(env.DB);
 
-  if (rarityTiers.length === 0) {
+  if (!rarityTier) {
     return Response.json({ error: "No rarity tiers configured" }, { status: 500 });
   }
 
-  const rarityTier = pickRarityTier(rarityTiers);
+  const result = await recordDiscovery({
+    db: env.DB,
+    userId: user.id,
+    species: speciesRow,
+    phase: "exceso",
+    rarityTier,
+    rarityXp: FUSION_RARITY_XP[rarityTier.slug] ?? 0,
+    missions: ["fusion"],
+    afterInsert: async () => {
+      for (const { id } of oldestRows) {
+        await env.DB.prepare("UPDATE discoveries SET consumed_at = datetime('now') WHERE id = ?").bind(id).run();
+      }
 
-  const imageUrl = speciesRow.anchor_image_url;
-
-  const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
-
-  const discoveryCode = generateDiscoveryCode();
-  const insertResult = await env.DB.prepare(
-    `INSERT INTO discoveries
-       (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url)
-     VALUES (?, ?, ?, 'exceso', ?, ?)`
-  )
-    .bind(discoveryCode, user.id, speciesId, rarityTier.id, imageUrl)
-    .run();
-
-  const discoveryId = insertResult.meta.last_row_id;
-
-  const idsToConsume = oldestRows.map((row) => row.id);
-  for (const id of idsToConsume) {
-    await env.DB.prepare("UPDATE discoveries SET consumed_at = datetime('now') WHERE id = ?").bind(id).run();
-  }
-
-  // Fusing clears the "you can fuse this" reminder for this species, whether
-  // or not the user got here by tapping that specific notification.
-  await env.DB.prepare(
-    `UPDATE notifications SET read_at = datetime('now')
+      // Fusing clears the "you can fuse this" reminder for this species, whether
+      // or not the user got here by tapping that specific notification.
+      await env.DB.prepare(
+        `UPDATE notifications SET read_at = datetime('now')
      WHERE user_id = ? AND type = 'fusion_ready' AND read_at IS NULL
        AND json_extract(payload, '$.speciesId') = ?`
-  )
-    .bind(user.id, speciesId)
-    .run();
-
-  const discoveredAtRow = await env.DB.prepare("SELECT discovered_at FROM discoveries WHERE id = ?")
-    .bind(discoveryId)
-    .first<{ discovered_at: string }>();
-
-  const isCompleteAfter = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
-  const justCompletedSpecies = !wasCompleteBefore && isCompleteAfter;
-  let xpAmount = (FUSION_RARITY_XP[rarityTier.slug] ?? 0) + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
-
-  const missionsCompleted: string[] = [];
-  const day = todayUTC();
-
-  const fusionMission = await incrementMission(env.DB, user.id, 'fusion', day);
-  if (fusionMission.completedNow) {
-    xpAmount += MISSION_DEFS.fusion.xp;
-    missionsCompleted.push('fusion');
-  }
-
-  const dailyBonusAwarded = await checkAndAwardDailyBonus(env.DB, user.id, day);
-  if (dailyBonusAwarded) {
-    xpAmount += DAILY_BONUS_XP;
-    missionsCompleted.push('bonus');
-  }
-
-  const xpResult = await addXp(env.DB, user.id, xpAmount);
-
-  if (xpResult.leveledUp) {
-    await env.DB.prepare(`INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`)
-      .bind(user.id, "level_up", JSON.stringify({ newLevel: xpResult.level }))
-      .run();
-  }
-
-  return Response.json(
-    {
-      discoveryId,
-      discoveryCode,
-      speciesId,
-      scientificName: speciesRow.scientific_name,
-      commonName: speciesRow.common_name,
-      phase: "exceso",
-      rarityTier: { slug: rarityTier.slug, name: rarityTier.name },
-      imageUrl,
-      lorePhrase: speciesRow.lore_phrase,
-      discoveredAt: discoveredAtRow?.discovered_at ?? null,
-      xp: {
-        xpGained: xpResult.xpGained,
-        totalXp: xpResult.totalXp,
-        level: xpResult.level,
-        previousLevel: xpResult.previousLevel,
-        leveledUp: xpResult.leveledUp,
-      },
-      missionsCompleted,
-      dailyBonusAwarded,
+      )
+        .bind(user.id, speciesId)
+        .run();
     },
-    { status: 201 }
-  );
+  });
+
+  return Response.json(discoveryResponseBody(speciesRow, "exceso", rarityTier, result), { status: 201 });
 };
