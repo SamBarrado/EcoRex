@@ -16,11 +16,5 @@
       "id": "caf39c48cb914f728143fb071a586a55",
       "preview_id": "7e5e3d4e785e401aa6e7b975e3b4b180"
     }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "DINO_IMAGES",
-      "bucket_name": "ecorex-dino-images"
-    }
   ]
 }

@@ -81,8 +81,6 @@ function makeEnv(dbOverrides: Partial<Record<string, unknown>> = {}) {
     env: {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     },
     db,
   };

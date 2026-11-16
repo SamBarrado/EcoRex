@@ -96,9 +96,9 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 | **PWA** | `vite-plugin-pwa` (`injectManifest`) + custom service worker | Installable on mobile without an app store; the custom SW handles push events. If a store ever becomes necessary, the path is wrapping the same build with Capacitor |
 | **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Deploys alongside the frontend, no separate API host to maintain |
 | **Database** | Cloudflare D1 (SQLite) — schema in [schema.sql](schema.sql) | Relational data (users, collection, missions, notifications) with no database server to operate |
-| **Storage / cache** | R2 (species images) + KV (rate limiting) | Serverless and free at current volume |
+| **Storage / cache** | Pages static assets (species art) + KV (rate limiting) | Serverless and free at current volume |
 | **Push** | Web Push (VAPID) with `@block65/webcrypto-web-push` + a **standalone Worker with a Cron Trigger** (`workers/push-cron`) | Pages Functions don't support Cron Triggers |
-| **Content generation** | Anthropic and OpenAI APIs (species spec sheets; art variants and phases) | Content production pipeline, see "Art pipeline" |
+| **Content generation** | Anthropic and OpenAI APIs (species spec sheets; art and phases) | Content production pipeline, see "Art pipeline" |
 | **Testing** | Vitest + Testing Library + jsdom | One tool for components, API functions and the Worker |
 | **Deploy** | Cloudflare Pages connected to GitHub | Every push to `main` builds and deploys to production |
 
@@ -217,7 +217,7 @@ EcoRex/
 │   └── sw.ts                    # Service worker (precache + push events)
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
-│   └── lib/                     # xp, energy, missions, discovery, rate limit, R2, image/text providers
+│   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
 ├── shared/                      # Types and validation shared between frontend and backend
 ├── schema.sql                   # D1 schema, the database's source of truth
@@ -285,7 +285,7 @@ npm run db:seed        # seeds rarities, Fractae and species into the local D1
 
 Before the first `db:seed`, create the tables with `npx wrangler d1 execute DB --local --file=schema.sql` (the seed alone fails with `no such table`). To start from scratch locally, just delete `.wrangler/state/v3/d1` and repeat those two steps; never do the equivalent against the remote D1.
 
-Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the content pipeline and by the endpoints that generate images, and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
+Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`: they are the AI provider keys used by the local content pipeline (`scripts/`) only — the app's endpoints do not call any AI provider at runtime — and they are not included in the repo. `DISCOVER_RATE_LIMIT` is optional and only for local testing.
 
 > **Local and production are different databases.** `wrangler pages dev` uses a local copy of D1 and KV under `.wrangler/state/`, isolated from the real resources. Users and progress created locally don't exist in production, and a change to `schema.sql` doesn't reach the remote D1 on its own. Before deploying if you touched the schema, run `npm run db:check-remote-schema`.
 
@@ -293,7 +293,7 @@ Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPE
 
 ### Deploying your own copy
 
-1. Create the resources: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV`, and `npx wrangler r2 bucket create ecorex-dino-images`; copy the resulting IDs into `wrangler.jsonc` (and the `database_id` into `workers/push-cron/wrangler.jsonc`).
+1. Create the resources: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV`; copy the resulting IDs into `wrangler.jsonc` (and the `database_id` into `workers/push-cron/wrangler.jsonc`).
 2. Apply the schema to the remote D1 exactly once: `npx wrangler d1 execute DB --remote --file=schema.sql`, and seed with `npm run db:seed:remote`.
 3. Create the Pages project and connect the repository (branch `main`): every push builds and deploys.
 4. Generate a VAPID key pair and store it as secrets, both for the Pages project (`wrangler pages secret put`) and for the Worker (`wrangler secret put`, inside `workers/push-cron/`): `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. Also add `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` to the Pages project.

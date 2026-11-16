@@ -508,6 +508,8 @@ El resto del bestiario (hasta 40-60 especies) se sigue planteando en oleadas men
 
 ### 15.6 Generación por usuario: ancla vs. variante única, ligada a rareza
 
+> **RETIRADO DEL CÓDIGO (2026-11-16).** La mecánica se eliminó de `discover.ts`/`fuse` (junto con `generateDinoVariant`, `r2.ts`, `functions/images/[key].ts` y los bindings de R2): estaba apagada desde el inicio (`anchor_probability = 1` en los 5 tiers, 0 variantes únicas en 262 capturas) y no había `OPENAI_API_KEY` en producción. Hoy cada captura sirve siempre la imagen ancla. El texto de abajo se conserva como **referencia de diseño** por si se retoma; la implementación original puede recuperarse del historial de git (commits anteriores a la retirada). Siguen existiendo, sin uso, la columna `rarity_tiers.anchor_probability` y `discoveries.is_unique_variant`.
+
 En el momento del descubrimiento, el sistema decide automáticamente si:
 
 - (a) sirve directamente la **imagen ancla** ya curada (sin coste de generación adicional), o
@@ -545,7 +547,7 @@ Bloque cerrado en la sesión de arranque técnico, para que quede registrado qu�
 
 - **Cuentas de usuario reales** sobre D1 (`users`, `sessions`) — registro con email+contraseña (PBKDF2), login, logout, cookies de sesión `HttpOnly`.
 - **Colección personal** (`GET /api/collection/mine`) — el Álbum completo del usuario (sección 13), join `discoveries` → `species` → `fractae` → `rarity_tiers`.
-- **Descubrimiento** (`POST /api/discover`) — recibe `speciesId` + `phase`, exige sesión activa, sortea rareza por `drop_weight`, decide ancla-vs-variante por `anchor_probability` de esa rareza, genera variante única vía OpenAI image-to-image cuando toca, inserta la captura en `discoveries`.
+- **Descubrimiento** (`POST /api/discover`) — recibe `speciesId` + `phase`, exige sesión activa, sortea rareza por `drop_weight`, sirve siempre la imagen ancla curada de esa especie+fase (la generación de variante única se retiró, ver 15.6), inserta la captura en `discoveries`.
 - **Rate limiting** por KV (hash SHA-256 del identificador, ventana de 1h, TTL igual al tiempo restante de ventana) aplicado a auth y a discover.
 
 ### 17.2 Decisión: ya no hace falta email-gate
@@ -572,7 +574,7 @@ Al haber cuentas reales, el email se captura **en el registro**, no en un gate p
 
 ### 18.1 Stack elegido
 
-**Cloudflare Pages + Pages Functions + D1 (SQL) + KV + R2**, gratuito en el rango de uso actual. Frontend: **React + Vite**, con capa **PWA** (`vite-plugin-pwa`: manifest + service worker) para instalación en móvil/tablet sin pasar por tienda de apps. Si en el futuro se quiere presencia en App Store/Play Store, la vía es envolver la misma build con **Capacitor** (no reescritura) — **React Native quedaría descartado** salvo necesidad real de APIs nativas profundas, que no se prevé para este producto.
+**Cloudflare Pages + Pages Functions + D1 (SQL) + KV** (R2 retirado el 2026-11-16 junto con la mecánica de variantes únicas), gratuito en el rango de uso actual. Frontend: **React + Vite**, con capa **PWA** (`vite-plugin-pwa`: manifest + service worker) para instalación en móvil/tablet sin pasar por tienda de apps. Si en el futuro se quiere presencia en App Store/Play Store, la vía es envolver la misma build con **Capacitor** (no reescritura) — **React Native quedaría descartado** salvo necesidad real de APIs nativas profundas, que no se prevé para este producto.
 
 ### 18.2 Origen del código base
 
@@ -619,7 +621,7 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 - **Sección 13**: la vista "álbum de una especie" (multi-variante) sigue sin existir en frontend/API, aunque el schema la soporta.
 - **Sección 15.4.3** (dos capas fondo+recorte): sigue sin implementarse en schema; el pipeline de arte activo hoy es el de escena plana (`generate-species-art.mjs`), no el de dos capas.
 - **Sección 15.5**: contradecía a la propia sección 15.4.4 del documento — no son 3-5 especies, son **54 fichas-spec** ya diseñadas; el cuello de botella real es el arte curado (solo 6 especies activas con arte en `public/species-art/`).
-- **Sección 15.6**: la tabla de `anchor_probability` por tier es el diseño objetivo, pero el seed real siembra 100% en los 5 tiers — hoy nunca se genera variante única en descubrimiento normal.
+- **Sección 15.6**: mecánica de variante única **retirada del código** (2026-11-16); la tabla de `anchor_probability` queda como referencia de diseño.
 - **Sección 18**: añadidas `notifications` y las columnas de energía/XP/rango de `users` al mapeo, que faltaban.
 - **Secciones 6, 7, 8, 14**: verificadas, siguen coincidiendo con el código sin cambios.
 
@@ -629,8 +631,8 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 - Arquitectura de app: 4 tabs, layout único adaptativo (sección 12).
 - Modelo de datos del bestiario: Pokédex vs. Álbum (sección 13), ya implementado en D1.
 - Modelo de producción del bestiario: fichas-spec, modificadores de fase, anclas curadas manualmente (sección 15).
-- Sistema de probabilidad ancla vs. variante única (sección 15.6), implementado en `discover.ts`.
-- **Stack técnico cerrado y en marcha**: Cloudflare Pages/Functions/D1/KV/R2, React+Vite+PWA para frontend (sección 18).
+- ~~Sistema de probabilidad ancla vs. variante única (sección 15.6)~~ — retirado del código el 2026-11-16 (nunca estuvo activo).
+- **Stack técnico cerrado y en marcha**: Cloudflare Pages/Functions/D1/KV, React+Vite+PWA para frontend (sección 18).
 - **Cuentas de usuario, colección y descubrimiento ya implementados y probados** (sección 17.1).
 - **Sorteo de rareza independiente de especie/fase** formalizado y resuelto técnicamente (`drop_weight`, sección 18.3) — hueco detectado y cerrado en esta sesión.
 

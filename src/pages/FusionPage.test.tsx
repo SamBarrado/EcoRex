@@ -36,7 +36,6 @@ const fuseResult: DiscoverResult = {
   rarityTier: { slug: "registrada", name: "Registrada" },
   imageUrl: "/img.png",
   lorePhrase: "A test dino's tale.",
-  isUniqueVariant: false,
   isNewSlot: true,
   discoveredAt: "2026-01-01",
   xp: { xpGained: 15, totalXp: 100, previousLevel: 1, level: 2, leveledUp: true },

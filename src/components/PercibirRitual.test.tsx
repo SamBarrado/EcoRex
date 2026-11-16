@@ -28,7 +28,6 @@ const discoverResult = {
   rarityTier: { slug: "registrada", name: "Registrada" },
   imageUrl: "/img.png",
   lorePhrase: "A test dino's tale.",
-  isUniqueVariant: false,
   isNewSlot: true,
   discoveredAt: "2026-01-01",
   xp: { xpGained: 10, totalXp: 100, level: 2, leveledUp: false },

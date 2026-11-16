@@ -1,14 +1,12 @@
 import { getSessionCookie, verifySession } from "../lib/auth";
 import { consumeEnergy } from "../lib/energy";
-import { pickRarityTier, resolvePhaseImage, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
+import { pickRarityTier, hasCompletedAllPhases, type RarityTierRow, type SpeciesPhaseRow } from "../lib/discovery";
 import { addXp, levelFromXp, RARITY_XP, SPECIES_COMPLETE_XP_BONUS } from "../lib/xp";
 import { incrementMission, checkAndAwardDailyBonus, todayUTC, MISSION_DEFS, DAILY_BONUS_XP } from "../lib/missions";
 
 interface Env {
   DB: D1Database;
   RATE_LIMIT_KV: KVNamespace;
-  DINO_IMAGES: R2Bucket;
-  OPENAI_API_KEY: string;
 }
 
 interface DiscoverBody {
@@ -78,9 +76,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
        species.id as species_id,
        species.scientific_name as scientific_name,
        species.common_name as common_name,
-       species.physical_traits as physical_traits,
-       species.base_palette as base_palette,
-       species.silhouette as silhouette,
        fractae.child_name as fractae_child_name,
        species_phase_anchors.image_url as anchor_image_url,
        species_phase_anchors.lore_phrase as lore_phrase
@@ -118,23 +113,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .first<{ count: number }>();
   const isNewSlot = (existingSlotCountRow?.count ?? 0) === 0;
 
-  let imageUrl: string;
-  let isUniqueVariant: boolean;
-  try {
-    const resolved = await resolvePhaseImage({
-      species: speciesRow,
-      phase,
-      rarityTier,
-      requestUrl: request.url,
-      openaiApiKey: env.OPENAI_API_KEY,
-      r2Bucket: env.DINO_IMAGES,
-    });
-    imageUrl = resolved.imageUrl;
-    isUniqueVariant = resolved.isUniqueVariant;
-  } catch (err) {
-    console.error("discover variant generation failed:", err instanceof Error ? err.stack : err);
-    return Response.json({ error: "Failed to generate discovery image" }, { status: 502 });
-  }
+  const imageUrl = speciesRow.anchor_image_url;
 
   const wasCompleteBefore = await hasCompletedAllPhases(env.DB, user.id, speciesId, ["balance", "exceso", "eco"]);
 
@@ -142,10 +121,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const insertResult = await env.DB.prepare(
     `INSERT INTO discoveries
-       (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url, is_unique_variant)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
+       (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url)
+     VALUES (?, ?, ?, ?, ?, ?)`
   )
-    .bind(discoveryCode, user.id, speciesId, phase, rarityTier.id, imageUrl, isUniqueVariant ? 1 : 0)
+    .bind(discoveryCode, user.id, speciesId, phase, rarityTier.id, imageUrl)
     .run();
 
   const discoveryId = insertResult.meta.last_row_id;
@@ -222,7 +201,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       rarityTier: { slug: rarityTier.slug, name: rarityTier.name },
       imageUrl,
       lorePhrase: speciesRow.lore_phrase,
-      isUniqueVariant,
       isNewSlot,
       discoveredAt: discoveredAtRow?.discovered_at ?? null,
       xp: {

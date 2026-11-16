@@ -147,7 +147,6 @@ export interface DiscoverResult {
   rarityTier: { slug: string; name: string };
   imageUrl: string;
   lorePhrase: string | null;
-  isUniqueVariant: boolean;
   isNewSlot: boolean;
   discoveredAt: string;
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };

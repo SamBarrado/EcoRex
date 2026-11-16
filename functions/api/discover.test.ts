@@ -103,8 +103,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     expect(response.status).toBe(400);
@@ -120,8 +118,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     expect(response.status).toBe(500);
@@ -137,8 +133,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     expect(response.status).toBe(201);
@@ -157,8 +151,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     expect(response.status).toBe(201);
@@ -176,8 +168,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { isNewSlot: boolean };
@@ -194,8 +184,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number; totalXp: number; level: number; leveledUp: boolean } };
@@ -219,8 +207,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number }; missionsCompleted: string[] };
@@ -238,8 +224,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
@@ -263,8 +247,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
@@ -289,8 +271,6 @@ describe('POST /api/discover', () => {
     const env = {
       DB: db as unknown as D1Database,
       RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
-      DINO_IMAGES: {} as unknown as R2Bucket,
-      OPENAI_API_KEY: 'test-key',
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number } };
