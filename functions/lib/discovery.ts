@@ -11,7 +11,6 @@ export interface RarityTierRow {
   id: number;
   slug: string;
   name: string;
-  anchor_probability: number;
   drop_weight: number;
 }
 

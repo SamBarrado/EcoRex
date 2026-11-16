@@ -49,7 +49,7 @@ export async function loadSpeciesPhase(db: D1Database, speciesId: number, phase:
 /** Rolls a rarity tier by drop weight, or returns null when none are configured. */
 export async function rollRarityTier(db: D1Database): Promise<RarityTierRow | null> {
   const { results } = await db
-    .prepare("SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers")
+    .prepare("SELECT id, slug, name, drop_weight FROM rarity_tiers")
     .all<RarityTierRow>();
   if (results.length === 0) return null;
   return pickRarityTier(results);

@@ -72,7 +72,7 @@ exports[`economy golden master: POST /api/discover > all three missions done -> 
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -311,7 +311,7 @@ exports[`economy golden master: POST /api/discover > balance count reaches 5 -> 
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -522,7 +522,7 @@ exports[`economy golden master: POST /api/discover > coleccionista NOT increment
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -699,7 +699,7 @@ exports[`economy golden master: POST /api/discover > coleccionista mission compl
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -904,7 +904,7 @@ exports[`economy golden master: POST /api/discover > daily bonus already awarded
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -1124,7 +1124,7 @@ exports[`economy golden master: POST /api/discover > duplicate (slot already reg
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -1301,7 +1301,7 @@ exports[`economy golden master: POST /api/discover > eco phase 1`] = `
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -1532,7 +1532,7 @@ exports[`economy golden master: POST /api/discover > level up -> level_up notifi
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -1780,7 +1780,7 @@ exports[`economy golden master: POST /api/discover > new slot, common rarity, no
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -1984,7 +1984,7 @@ exports[`economy golden master: POST /api/discover > new slot, epic rarity 1`] =
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -2239,7 +2239,7 @@ exports[`economy golden master: POST /api/discover > no rarity tiers -> 500 1`] 
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
   ],
   "status": 500,
@@ -2317,7 +2317,7 @@ exports[`economy golden master: POST /api/discover > percibir mission completes 
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -2565,7 +2565,7 @@ exports[`economy golden master: POST /api/discover > species already complete be
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -2769,7 +2769,7 @@ exports[`economy golden master: POST /api/discover > species completed by this d
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -3012,7 +3012,7 @@ exports[`economy golden master: POST /api/discover > unlimited energy 1`] = `
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -3203,7 +3203,7 @@ exports[`economy golden master: POST /api/fuse > all three missions done -> dail
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -3427,7 +3427,7 @@ exports[`economy golden master: POST /api/fuse > epic rarity 1`] = `
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -3634,7 +3634,7 @@ exports[`economy golden master: POST /api/fuse > fuses 5 duplicates, common rari
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -3832,7 +3832,7 @@ exports[`economy golden master: POST /api/fuse > fusion mission completes 1`] = 
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -4048,7 +4048,7 @@ exports[`economy golden master: POST /api/fuse > level 15+ fuses with only 4 dup
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -4239,7 +4239,7 @@ exports[`economy golden master: POST /api/fuse > level up -> level_up notificati
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -4441,7 +4441,7 @@ exports[`economy golden master: POST /api/fuse > no rarity tiers -> 500 1`] = `
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
   ],
   "status": 500,
@@ -4531,7 +4531,7 @@ exports[`economy golden master: POST /api/fuse > species already complete before
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [
@@ -4729,7 +4729,7 @@ exports[`economy golden master: POST /api/fuse > species completed by this fusio
     {
       "args": [],
       "op": "all",
-      "sql": "SELECT id, slug, name, anchor_probability, drop_weight FROM rarity_tiers",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
     },
     {
       "args": [

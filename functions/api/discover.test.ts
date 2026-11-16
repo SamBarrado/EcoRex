@@ -56,7 +56,7 @@ function makeDb(opts: {
         },
         async all<T>() {
           if (sql.includes('rarity_tiers')) {
-            return { results: [{ id: 1, slug: 'registrada', name: 'Registrada', anchor_probability: 1, drop_weight: 100 }] as T[] };
+            return { results: [{ id: 1, slug: 'registrada', name: 'Registrada', drop_weight: 100 }] as T[] };
           }
           if (sql.includes('DISTINCT phase')) {
             const phases = insertDone ? phasesAfter : phasesBefore;

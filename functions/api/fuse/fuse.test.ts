@@ -41,7 +41,7 @@ function makeDb(overrides: Partial<Record<string, unknown>> = {}) {
           if (sql.includes('rarity_tiers')) {
             return {
               results: [
-                { id: 1, slug: 'registrada', name: 'Registrada', anchor_probability: 1, drop_weight: 100 },
+                { id: 1, slug: 'registrada', name: 'Registrada', drop_weight: 100 },
               ] as T[],
             };
           }

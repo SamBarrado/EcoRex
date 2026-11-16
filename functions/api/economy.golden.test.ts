@@ -41,8 +41,8 @@ const SPECIES_BALANCE = {
 const SPECIES_EXCESO = { ...SPECIES_BALANCE, anchor_image_url: '/species-art/rex/exceso.webp' };
 
 const TIERS = [
-  { id: 1, slug: 'registrada', name: 'Registrada', anchor_probability: 1, drop_weight: 55 },
-  { id: 2, slug: 'epica', name: 'Épica', anchor_probability: 1, drop_weight: 45 },
+  { id: 1, slug: 'registrada', name: 'Registrada', drop_weight: 55 },
+  { id: 2, slug: 'epica', name: 'Épica', drop_weight: 45 },
 ];
 
 const norm = (sql: string) => sql.replace(/\s+/g, ' ').trim();

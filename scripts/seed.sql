@@ -19,12 +19,12 @@ INSERT OR IGNORE INTO fractae (id, slug, latin_name, child_name, icon, color, op
   -- Pending: Alegría (Lumen), Confianza (Fides), Curiosidad (Spes) — add when
   -- their first species ships (docs/lore_world_bible_ecorex_v4.md §2).
 
-INSERT OR IGNORE INTO rarity_tiers (id, slug, name, anchor_probability, drop_weight, sort_order) VALUES
-  (1, 'registrada', 'Especie Común', 1, 0.55, 1),
-  (2, 'notable', 'Especie Poco Común', 1, 0.27, 2),
-  (3, 'singular', 'Especie Rara', 1, 0.12, 3),
-  (4, 'epica', 'Especie Épica', 1, 0.05, 4),
-  (5, 'primordial', 'Especie Legendaria', 1, 0.01, 5);
+INSERT OR IGNORE INTO rarity_tiers (id, slug, name, drop_weight, sort_order) VALUES
+  (1, 'registrada', 'Especie Común', 0.55, 1),
+  (2, 'notable', 'Especie Poco Común', 0.27, 2),
+  (3, 'singular', 'Especie Rara', 0.12, 3),
+  (4, 'epica', 'Especie Épica', 0.05, 4),
+  (5, 'primordial', 'Especie Legendaria', 0.01, 5);
 
 INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, operation_id, physical_traits, base_palette, silhouette, launch_wave, is_active) VALUES
   (1, 'Tyrannosaurus imperator', 'Rex de Fuego', 1, NULL, NULL, NULL, NULL, 1, 1),

@@ -271,7 +271,7 @@ Serie especial de 8 cartas, una por Fractae, sin dinosaurio — solo la energía
 - Aquí vive la opción de "Regalar" sobre una carta específica (futuro, ver sección 9).
 - Uso principal: vista "presumir", valor real del coleccionismo (duplicados no son ruido, son moneda social).
 
-**Mapeo técnico (v4):** Pokédex = `species` + `species_phase_anchors`; Álbum = `discoveries` (una fila por captura, con `user_id`, `rarity_tier_id`, `image_url` propio e `is_unique_variant`).
+**Mapeo técnico (v4):** Pokédex = `species` + `species_phase_anchors`; Álbum = `discoveries` (una fila por captura, con `user_id`, `rarity_tier_id` e `image_url` propio; la columna `is_unique_variant` existió hasta la migración 0002, 2026-11-17).
 
 **Estado real de implementación (aclarado en v5):** el schema soporta el modelo completo, pero el frontend/API todavía no exponen la vista "álbum de una especie" (entrar a una especie descubierta y ver todas sus copias/variantes individuales) tal como la describe esta sección. `functions/api/collection/dex.ts` agrupa por `species_id + phase` y solo devuelve un `representative` (la copia más reciente) + `count`; `src/pages/ColeccionPage.tsx` abre un modal de preview de esa carta representativa, no una lista multi-variante. Es decir: el concepto de "duplicados como moneda social visible" está en los datos pero aún no en la UI.
 
@@ -508,14 +508,14 @@ El resto del bestiario (hasta 40-60 especies) se sigue planteando en oleadas men
 
 ### 15.6 Generación por usuario: ancla vs. variante única, ligada a rareza
 
-> **RETIRADO DEL CÓDIGO (2026-11-16).** La mecánica se eliminó de `discover.ts`/`fuse` (junto con `generateDinoVariant`, `r2.ts`, `functions/images/[key].ts` y los bindings de R2): estaba apagada desde el inicio (`anchor_probability = 1` en los 5 tiers, 0 variantes únicas en 262 capturas) y no había `OPENAI_API_KEY` en producción. Hoy cada captura sirve siempre la imagen ancla. El texto de abajo se conserva como **referencia de diseño** por si se retoma; la implementación original puede recuperarse del historial de git (commits anteriores a la retirada). Siguen existiendo, sin uso, la columna `rarity_tiers.anchor_probability` y `discoveries.is_unique_variant`.
+> **RETIRADO DEL CÓDIGO (2026-11-16).** La mecánica se eliminó de `discover.ts`/`fuse` (junto con `generateDinoVariant`, `r2.ts`, `functions/images/[key].ts` y los bindings de R2): estaba apagada desde el inicio (`anchor_probability = 1` en los 5 tiers, 0 variantes únicas en 262 capturas) y no había `OPENAI_API_KEY` en producción. Hoy cada captura sirve siempre la imagen ancla. El texto de abajo se conserva como **referencia de diseño** por si se retoma; la implementación original puede recuperarse del historial de git (commits anteriores a la retirada). Las columnas `rarity_tiers.anchor_probability` y `discoveries.is_unique_variant` se eliminaron en la migración `0002_drop_unused_columns` (2026-11-17); si se retoma la mecánica habrá que recrearlas con una migración nueva.
 
 En el momento del descubrimiento, el sistema decide automáticamente si:
 
 - (a) sirve directamente la **imagen ancla** ya curada (sin coste de generación adicional), o
 - (b) genera una **variante visual única** vía image-to-image sobre el ancla correspondiente (con coste de API).
 
-Tabla de referencia (ajustable, ya sembrada como `anchor_probability` en `rarity_tiers`):
+Tabla de referencia (ajustable; estuvo sembrada como `anchor_probability` en `rarity_tiers`, columna ya eliminada):
 
 | Tier | Slug | Prob. de servir ancla | Prob. de generar variante única |
 |---|---|---|---|
@@ -529,7 +529,7 @@ Tabla de referencia (ajustable, ya sembrada como `anchor_probability` en `rarity
 
 **Nota:** que dos usuarios reciban exactamente la misma imagen ancla en tiers bajos es una consecuencia aceptada y coherente del sistema, no un bug a corregir.
 
-**DESACTUALIZADO EN v5 — la tabla no refleja el seed real:** `scripts/seed.sql` siembra `anchor_probability = 1` (100%) para los 5 tiers por igual, sin la escala 90/70/40/15/0 descrita arriba. Hoy, en la práctica, siempre se sirve la imagen ancla curada y nunca se genera variante única en el momento del descubrimiento (`drop_weight` sí coincide con el diseño: 0.55/0.27/0.12/0.05/0.01). La tabla de esta sección sigue siendo el diseño objetivo, pero el dato sembrado en producción todavía no lo aplica — probablemente porque generar variantes únicas de las 48 especies pendientes de arte (sección 15.5) no tiene sentido antes de tener sus anclas base.
+**HISTÓRICO (la columna `anchor_probability` se eliminó el 2026-11-17) — la tabla no reflejaba el seed real:** `scripts/seed.sql` siembra `anchor_probability = 1` (100%) para los 5 tiers por igual, sin la escala 90/70/40/15/0 descrita arriba. Hoy, en la práctica, siempre se sirve la imagen ancla curada y nunca se genera variante única en el momento del descubrimiento (`drop_weight` sí coincide con el diseño: 0.55/0.27/0.12/0.05/0.01). La tabla de esta sección sigue siendo el diseño objetivo, pero el dato sembrado en producción todavía no lo aplica — probablemente porque generar variantes únicas de las 48 especies pendientes de arte (sección 15.5) no tiene sentido antes de tener sus anclas base.
 
 ---
 
@@ -592,9 +592,9 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 | Operación (sección 7) | `operations` |
 | Especie / ficha-spec (sección 15.2) | `species` (`physical_traits`, `base_palette`, `silhouette`) |
 | Imagen ancla especie+fase (sección 15.4) | `species_phase_anchors` (`species_id`, `phase`, `image_url`) |
-| Tier de rareza + su probabilidad ancla-vs-variante (sección 15.6) | `rarity_tiers.anchor_probability` |
+| Tier de rareza (sección 15.6: la probabilidad ancla-vs-variante está retirada; su columna `anchor_probability` se eliminó en la migración 0002) | `rarity_tiers` (`slug`, `name`, `drop_weight`, `sort_order`) |
 | **Probabilidad de que salga cada tier en una captura** (sorteo independiente, sección 6) | `rarity_tiers.drop_weight` — **columna añadida en esta sesión**, no existía en v3 |
-| Álbum / captura individual (sección 13) | `discoveries` (`user_id`, `species_id`, `phase`, `rarity_tier_id`, `image_url`, `is_unique_variant`, `discovery_code`) |
+| Álbum / captura individual (sección 13) | `discoveries` (`user_id`, `species_id`, `phase`, `rarity_tier_id`, `image_url`, `discovery_code`) |
 | Regalo (sección 9, futuro) | `gifts` (modelo unidireccional ya en schema, endpoint aún sin implementar) |
 | Cartas de Resonancia (sección 10, futuro) | `resonance_cards` / `user_resonance_cards` |
 | Notificaciones (sección 12, nuevo en v5) | `notifications` — inbox genérico (`type` texto libre, ej. `fusion_ready`/`level_up`, `payload` JSON, `read_at`) |
@@ -625,7 +625,7 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 - **Sección 13**: la vista "álbum de una especie" (multi-variante) sigue sin existir en frontend/API, aunque el schema la soporta.
 - **Sección 15.4.3** (dos capas fondo+recorte): sigue sin implementarse en schema; el pipeline de arte activo hoy es el de escena plana (`generate-species-art.mjs`), no el de dos capas.
 - **Sección 15.5**: contradecía a la propia sección 15.4.4 del documento — no son 3-5 especies, son **54 fichas-spec** ya diseñadas; el cuello de botella real es el arte curado (solo 6 especies activas con arte en `public/species-art/`).
-- **Sección 15.6**: mecánica de variante única **retirada del código** (2026-11-16); la tabla de `anchor_probability` queda como referencia de diseño.
+- **Sección 15.6**: mecánica de variante única **retirada del código** (2026-11-16); la tabla de `anchor_probability` queda como referencia de diseño (columna eliminada en la migración 0002).
 - **Sección 18**: añadidas `notifications` y las columnas de energía/XP/rango de `users` al mapeo, que faltaban.
 - **Secciones 6, 7, 8, 14**: verificadas, siguen coincidiendo con el código sin cambios.
 

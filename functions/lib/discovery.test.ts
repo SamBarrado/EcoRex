@@ -2,8 +2,8 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { pickRarityTier, hasCompletedAllPhases, type RarityTierRow } from './discovery';
 
 const tiers: RarityTierRow[] = [
-  { id: 1, slug: 'registrada', name: 'Registrada', anchor_probability: 0.9, drop_weight: 70 },
-  { id: 2, slug: 'epica', name: 'Épica', anchor_probability: 0.15, drop_weight: 5 },
+  { id: 1, slug: 'registrada', name: 'Registrada', drop_weight: 70 },
+  { id: 2, slug: 'epica', name: 'Épica', drop_weight: 5 },
 ];
 
 describe('pickRarityTier', () => {
