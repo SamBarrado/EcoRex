@@ -221,6 +221,7 @@ export default function ColeccionPage() {
                     scientificName={slot.scientific_name}
                     rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
                     fractaeChildName={slot.fractae_child_name}
+                    lorePhrase={slot.lore_phrase ?? undefined}
                     glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
                   />
                 )}

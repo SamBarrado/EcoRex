@@ -17,6 +17,7 @@ const revealedSlot = {
   image_url: "/species-art/rex/balance.png",
   discovery_code: "DX-AAA",
   discovered_at: "2026-07-05T10:00:00Z",
+  lore_phrase: "Ruge donde arde el horizonte.",
   count: 1,
 };
 
@@ -44,6 +45,16 @@ describe("ColeccionPage", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
     });
+  });
+
+  it("shows the lore phrase on the grid tile without opening the viewer", async () => {
+    render(
+      <MemoryRouter>
+        <ColeccionPage />
+      </MemoryRouter>
+    );
+    expect(await screen.findByText("«Ruge donde arde el horizonte.»")).toBeInTheDocument();
+    expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
   });
 
   it("opens a full-screen card viewer when a revealed slot is clicked", async () => {

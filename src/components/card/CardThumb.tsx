@@ -9,6 +9,7 @@ export interface CardThumbProps {
   scientificName: string;
   rarityTier: { slug: string; name: string };
   fractaeChildName?: string;
+  lorePhrase?: string;
   glowColor: string;
 }
 
@@ -18,6 +19,7 @@ export function CardThumb({
   scientificName,
   rarityTier,
   fractaeChildName,
+  lorePhrase,
   glowColor,
 }: CardThumbProps) {
   const outerRef = useRef<HTMLDivElement>(null);
@@ -50,6 +52,7 @@ export function CardThumb({
           scientificName={scientificName}
           rarityTier={rarityTier}
           fractaeChildName={fractaeChildName}
+          lorePhrase={lorePhrase}
           glowColor={glowColor}
           auraOpacity={0.35}
         />
