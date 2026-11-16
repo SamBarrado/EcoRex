@@ -93,6 +93,7 @@ describe("FusionPage", () => {
     // Fusion result is shown, but the level-up screen must not appear yet —
     // it would otherwise mount on top of the result at the same instant.
     expect(screen.getByText("¡Fusión completada!")).toBeInTheDocument();
+    expect(screen.queryByText("Código:", { exact: false })).not.toBeInTheDocument();
     expect(screen.queryByText(/subiste de nivel/i)).not.toBeInTheDocument();
 
     // First click on "Volver al altar" surfaces the level-up screen instead

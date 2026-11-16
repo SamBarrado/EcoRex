@@ -173,7 +173,6 @@ export default function FusionPage() {
           </div>
           <div>Fase: {result.phase}</div>
           <div>Rareza: {result.rarityTier.name}</div>
-          <div>Código: {result.discoveryCode}</div>
           <button onClick={handleReset}>Volver al altar</button>
         </div>
       )}
