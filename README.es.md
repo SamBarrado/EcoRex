@@ -219,7 +219,6 @@ EcoRex/
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
-├── shared/                      # Tipos y validaciones compartidas entre frontend y backend
 ├── schema.sql                   # Esquema D1, fuente de verdad de la base de datos
 ├── scripts/                     # Seed, sync de especies, generación de arte/specs, discovery PBDB, comprobador de esquema remoto
 ├── public/                      # Estáticos servidos: species-art, icons, logo, sonidos

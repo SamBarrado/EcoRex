@@ -92,7 +92,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 
 | Layer | Choice | Why |
 |---|---|---|
-| **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Fast dev loop and types shared with the backend |
+| **Frontend** | React 19 + React Router 7 + TypeScript + Vite | Fast dev loop |
 | **PWA** | `vite-plugin-pwa` (`injectManifest`) + custom service worker | Installable on mobile without an app store; the custom SW handles push events. If a store ever becomes necessary, the path is wrapping the same build with Capacitor |
 | **Backend** | Cloudflare Pages Functions (`functions/api/**`) | Deploys alongside the frontend, no separate API host to maintain |
 | **Database** | Cloudflare D1 (SQLite) — schema in [schema.sql](schema.sql) | Relational data (users, collection, missions, notifications) with no database server to operate |
@@ -219,7 +219,6 @@ EcoRex/
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
 ├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
-├── shared/                      # Types and validation shared between frontend and backend
 ├── schema.sql                   # D1 schema, the database's source of truth
 ├── scripts/                     # Seed, species sync, art/spec generation, PBDB discovery, remote schema checker
 ├── public/                      # Served statics: species-art, icons, logo, sounds
