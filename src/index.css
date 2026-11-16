@@ -135,6 +135,7 @@ a {
 
 .slot-reveal-stack .slot-reveal-locked-img {
   opacity: 1;
+  filter: grayscale(0.5) brightness(0.75);
 }
 
 .slot-reveal-stack .slot-reveal-locked-img.slot-reveal-hidden {
@@ -211,6 +212,89 @@ button:disabled {
 
 .ecodex-grid .species-image {
   aspect-ratio: 2 / 3;
+}
+
+.ecodex-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ecodex-title-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Phase filter chips: the active chip keeps the global button look. */
+.phase-filter {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.phase-filter-btn {
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.phase-filter-btn:not(.is-active) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f6f3;
+  box-shadow: none;
+}
+
+.ecodex-grid .ecodex-tile {
+  position: relative;
+  padding: 0.5rem;
+}
+
+.ecodex-count-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  background: #3fae5a;
+  color: #06120a;
+  border-radius: 999px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ecodex-locked-img {
+  filter: grayscale(0.5) brightness(0.75);
+  opacity: 0.85;
+}
+
+.card-preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 18, 10, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 100;
+}
+
+.card-preview-body {
+  max-width: 320px;
+  width: 100%;
+}
+
+.card-preview-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 101;
 }
 
 .ecodex-tile-lore {

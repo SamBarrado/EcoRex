@@ -71,3 +71,70 @@ describe("ColeccionPage", () => {
     expect(screen.queryByText("Código:", { exact: false })).not.toBeInTheDocument();
   });
 });
+
+describe("ColeccionPage behavior", () => {
+  const excesoSlot = {
+    ...revealedSlot,
+    species_id: 3,
+    phase: "exceso",
+    common_name: "Tricera Umbra",
+    count: 3,
+  };
+
+  function mockSlots(slots: unknown[]) {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({ currentWave: 1, slots }),
+    } as Response);
+  }
+
+  function renderPage() {
+    return render(
+      <MemoryRouter>
+        <ColeccionPage />
+      </MemoryRouter>
+    );
+  }
+
+  it("filters the grid by phase and goes back to all", async () => {
+    mockSlots([revealedSlot, excesoSlot]);
+    renderPage();
+    expect(await screen.findByText("Rex de Fuego")).toBeInTheDocument();
+    expect(screen.getByText("Tricera Umbra")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "exceso" }));
+    expect(screen.queryByText("Rex de Fuego")).not.toBeInTheDocument();
+    expect(screen.getByText("Tricera Umbra")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Todas" }));
+    expect(screen.getByText("Rex de Fuego")).toBeInTheDocument();
+    expect(screen.getByText("Tricera Umbra")).toBeInTheDocument();
+  });
+
+  it("shows the duplicate count badge only when there is more than one copy", async () => {
+    mockSlots([revealedSlot, excesoSlot]);
+    renderPage();
+    await screen.findByText("Rex de Fuego");
+    expect(screen.getByText("×3")).toBeInTheDocument();
+    expect(screen.queryByText("×1")).not.toBeInTheDocument();
+  });
+
+  it("shakes a locked tile when it is clicked", async () => {
+    mockSlots([lockedSlot]);
+    renderPage();
+    const lockedTile = (await screen.findByAltText("Carta bloqueada")).closest(".card")!;
+    expect(lockedTile.className).not.toContain("slot-locked-shake");
+    fireEvent.click(lockedTile);
+    expect(lockedTile.className).toContain("slot-locked-shake");
+  });
+
+  it("locks body scroll while the card viewer is open and restores it on close", async () => {
+    mockSlots([revealedSlot]);
+    renderPage();
+    fireEvent.click((await screen.findByText("Rex de Fuego")).closest(".card")!);
+    await waitFor(() => expect(document.body.style.overflow).toBe("hidden"));
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
+    await waitFor(() => expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument());
+    expect(document.body.style.overflow).not.toBe("hidden");
+  });
+});
