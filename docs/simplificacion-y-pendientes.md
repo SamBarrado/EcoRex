@@ -2,7 +2,7 @@
 
 Resultado de la revisión al retomar el proyecto tras ~3 meses parado. Complementa a [backlog.md](backlog.md) (ideas de producto); este documento recoge **lo que quedó pendiente/a medias**, **las ideas de simplificación** y **el estado de cada una**.
 
-Estado de referencia: versión 0.9.6, producción desplegada con el commit `605bb84`. El commit `e63e1ff` está en local, sin subir (comprobar con `git status`/`git log origin/main..HEAD`).
+Estado de referencia: versión 0.9.6, producción desplegada con el commit `b78113a` y migraciones `0001` y `0002` aplicadas en remoto (comprobar con `git log origin/main..HEAD` y `npm run db:migrate:status`).
 
 Leyenda: ✅ hecho · ⏳ pendiente · ❓ pendiente de tu decisión · ⛔ descartado/no recomendado
 
@@ -66,7 +66,7 @@ Ordenadas de menor a mayor esfuerzo/riesgo. "Qué ganas" es una valoración hone
 | 5 | Extraer tile y filtro de fases de `ColeccionPage` (279 → 122 líneas; 14 estilos inline → 1 dinámico) | ✅ | bajo | Es la pantalla donde se va a seguir iterando (lore, modo álbum) |
 | 6 | Unificar `discover` y `fuse` en una función común | ✅ | Hecho: `functions/lib/recordDiscovery.ts` (`loadSpeciesPhase`, `rollRarityTier`, `recordDiscovery`, `discoveryResponseBody`). `discover.ts` 218 → 115 líneas y `fuse/index.ts` 192 → 105. Las reglas de XP, misiones, bonus diario y notificación de subida de nivel viven ahora en un solo sitio. Red de seguridad permanente: `functions/api/economy.golden.test.ts` |
 | 7 | Migraciones numeradas de D1 (`wrangler d1 migrations`) | ✅ | Hecho: `migrations/0001_baseline.sql` verificada columna a columna contra producción y marcada como aplicada en remoto y en local (sin ejecutarla); `schema.sql` y `check-remote-schema` retirados. Flujo: `npm run db:migrate:new/db:migrate/db:migrate:status/db:migrate:remote` (ver CLAUDE.md) |
-| 7b | Migración 0002 de limpieza de columnas sin uso | ✅ en el repo; **⏳ falta aplicarla en producción** | Hecho: `migrations/0002_drop_unused_columns.sql` borra `species.lore_phrase` (sus 6 textos antiguos quedan como comentario en el propio fichero), `discoveries.is_unique_variant` y `rarity_tiers.anchor_probability`; el código, el seed y los tests ya no la usan. Probada en una BD con datos y en arranque desde cero; aplicada en la D1 local. **Para producción, en este orden: push (deploy) → `npm run db:migrate:remote`.** Hacerlo al revés rompe la versión antigua del código con `no such column` |
+| 7b | Migración 0002 de limpieza de columnas sin uso | ✅ | Hecho y aplicada en producción el 2026-11-17 (tras desplegar el código que ya no usa las columnas): `migrations/0002_drop_unused_columns.sql` borró `species.lore_phrase` (sus 6 textos antiguos quedan como comentario en el propio fichero), `discoveries.is_unique_variant` y `rarity_tiers.anchor_probability`. Recuentos de datos idénticos antes y después (40 especies, 262 descubrimientos, 5 rarezas, 18 anclas, 7 usuarios) |
 | 8 | Partir `index.css` (1.394 líneas) por componente | ⏳ | medio (orden/especificidad del CSS; los tests no ven lo visual: hacer capturas antes y después) | Encontrar estilos rápido |
 | 9 | Separar lógica y presentación en `PercibirRitual` (437 líneas) | ⏳ | alto (flujo central, animaciones, audio) | Solo si lo vas a tocar de todos modos |
 | 10 | Sacar los PNG originales de git | ⛔ | alto: quitarlos del tracking **no** reduce el `.git` (209 MB); haría falta reescribir historial + force push | No recomendado salvo que el peso moleste. No se comprobó que estén trackeados |
