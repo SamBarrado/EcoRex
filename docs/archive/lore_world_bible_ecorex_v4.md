@@ -451,7 +451,7 @@ Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBR
 
 #### 15.4.4 Catálogo fijo de hábitats canónicos (`habitatSlug`, validado en esta sesión)
 
-El texto libre del campo `habitat` de cada ficha-spec (redactado por Claude, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
+El texto libre del campo `habitat` de cada ficha-spec (generado automáticamente, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
 
 | `habitatSlug` | Nº especies (lote actual) | Descripción de diseño |
 |---|---|---|

@@ -475,7 +475,7 @@ Los placeholders (`{{ESPECIE_CIENTIFICA}}`, `{{NOMBRE_NIÑO}}`, `{{FRACTAE_NOMBR
 
 #### 15.4.4 Catálogo fijo de hábitats canónicos (`habitatSlug`, validado en esta sesión)
 
-El texto libre del campo `habitat` de cada ficha-spec (redactado por Claude, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
+El texto libre del campo `habitat` de cada ficha-spec (generado automáticamente, distinto en matiz para cada especie aunque el bioma sea el mismo) **no sirve para agrupar fondos reutilizables** — hace falta un campo aparte, `habitatSlug`, que asigna cada especie a uno de un catálogo fijo y pequeño de hábitats de diseño. Analizadas las 54 fichas de `scripts/lote.json`, el catálogo resultante es:
 
 | `habitatSlug` | Nº especies (lote actual) | Descripción de diseño |
 |---|---|---|
@@ -609,7 +609,7 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 - **EcoDex con progreso real**: contador de especies registradas, badge de duplicados por fase, silueta/desbloqueo corregidos para no perder fases al fusionar.
 - **Nav bar inferior persistente** con badges de notificaciones, energía y especies nuevas (evoluciona la sección 12).
 - **Ritual de subida de nivel** a pantalla completa y sincronización de notificaciones en tiempo real.
-- **Herramienta local de discovery de especies vía PBDB** (`npm run species:discover`, ver README/CLAUDE.md) — no es lore de producto, es tooling de producción de contenido, pero cierra el hueco de grounding paleontológico mencionado en la sección 15.
+- **Herramienta local de discovery de especies vía PBDB** (`npm run species:discover`, ver README) — no es lore de producto, es tooling de producción de contenido, pero cierra el hueco de grounding paleontológico mencionado en la sección 15.
 
 ### Correcciones de secciones desactualizadas (auditoría completa v4→v5)
 

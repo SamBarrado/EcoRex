@@ -1,5 +1,5 @@
 // Defense-in-depth alongside the incidental CORS-preflight protection the
-// JSON content-type already gives POST endpoints (see CLAUDE.md) — if that
+// JSON content-type already gives POST endpoints — if that
 // protection ever silently disappears (e.g. a future endpoint relaxes
 // content-type handling), this explicit check still catches cross-origin
 // POSTs instead of relying purely on browser preflight behavior.

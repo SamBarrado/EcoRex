@@ -22,7 +22,7 @@ npm test              # vitest
 npm run typecheck      # tsc sobre app y functions
 ```
 
-`wrangler pages dev` usa una copia local de D1/KV (bajo `.wrangler/state/`), completamente aislada de los recursos remotos. Ver [CLAUDE.md](CLAUDE.md#base-de-datos-d1-local-vs-remoto) para cómo mantenerlas sincronizadas.
+`wrangler pages dev` usa una copia local de D1/KV (bajo `.wrangler/state/`), completamente aislada de los recursos remotos. Para comprobar si la D1 remota está desfasada respecto a `schema.sql`: `npm run db:check-remote-schema`.
 
 ## Estructura
 
@@ -48,7 +48,7 @@ npm run build
 npx wrangler pages deploy dist --project-name=ecorex-project
 ```
 
-Detalles del proceso de release y de la base de datos remota en [CLAUDE.md](CLAUDE.md).
+Un release es un GitHub Release (títulos y notas en inglés) más el bump de versión, nunca solo un tag.
 
 ## Backlog
 
