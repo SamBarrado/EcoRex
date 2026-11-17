@@ -590,6 +590,42 @@ button:disabled {
   box-shadow: none;
 }
 
+.legal-page {
+  justify-content: flex-start;
+}
+
+.legal-card {
+  padding-top: 1.75rem;
+  color: rgba(242, 246, 243, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.legal-card h2 {
+  font-size: 1.05rem;
+  margin: 1.5rem 0 0.4rem;
+  color: #f2f6f3;
+}
+
+.legal-card ul {
+  padding-left: 1.2rem;
+}
+
+.legal-card li {
+  margin-bottom: 0.6rem;
+}
+
+.legal-card a,
+.legal-link {
+  color: #7fc891;
+}
+
+.legal-updated {
+  text-align: center;
+  color: rgba(242, 246, 243, 0.55);
+  font-size: 0.85rem;
+}
+
 .auth-google {
   display: flex;
   align-items: center;

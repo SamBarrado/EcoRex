@@ -4,7 +4,7 @@ import { useNavBadges } from "../lib/useNavBadges";
 import { useAvatar } from "../lib/AvatarContext";
 import { avatarUrl } from "../lib/avatars";
 
-const HIDDEN_ON = ["/login", "/registro", "/elegir-usuario"];
+const HIDDEN_ON = ["/login", "/registro", "/elegir-usuario", "/privacidad"];
 
 const TABS = [
   { path: "/inicio", label: "Inicio" },

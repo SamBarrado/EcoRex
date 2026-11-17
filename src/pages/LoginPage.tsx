@@ -73,7 +73,9 @@ export default function LoginPage() {
           ¿No tienes cuenta? <Link to="/registro">Crear cuenta</Link>
         </p>
       </form>
-      <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>
+      <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>
+        <Link to="/privacidad" className="legal-link">Política de privacidad</Link> · v{version}
+      </p>
     </div>
   );
 }

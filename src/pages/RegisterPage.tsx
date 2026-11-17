@@ -88,6 +88,9 @@ export default function RegisterPage() {
         <p className="auth-switch">
           ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
         </p>
+        <p className="auth-switch">
+          Al crear tu cuenta aceptas nuestra <Link to="/privacidad">política de privacidad</Link>.
+        </p>
       </form>
     </div>
   );

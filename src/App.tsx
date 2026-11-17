@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UsernameSetupPage from "./pages/UsernameSetupPage";
+import PrivacidadPage from "./pages/PrivacidadPage";
 import InicioPage from "./pages/InicioPage";
 import PercibirPage from "./pages/PercibirPage";
 import ColeccionPage from "./pages/ColeccionPage";
@@ -24,6 +25,7 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/registro" element={<RegisterPage />} />
               <Route path="/elegir-usuario" element={<UsernameSetupPage />} />
+              <Route path="/privacidad" element={<PrivacidadPage />} />
               <Route
                 path="/inicio"
                 element={
