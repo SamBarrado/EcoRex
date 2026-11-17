@@ -250,6 +250,7 @@ EcoRex/
 | v0.9.0 | Web Push notifications (Worker with a Cron Trigger), opt-in on home and profile |
 | v0.9.5 | A notification for every point of energy regenerated, also mirrored in the in-app inbox |
 | v0.9.6 | Clearer error message for unhandled API failures |
+| v0.10.0 | Card redesign (Foil frame by rarity, mystery reveal, spring spin, levitation) and a new EcoDex tile, default profile avatars, numbered D1 migrations, codebase cleanup |
 
 Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/releases).
 
