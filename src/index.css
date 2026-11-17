@@ -120,48 +120,6 @@ a {
   background: #0d1a0f;
 }
 
-.slot-reveal-stack {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-}
-
-/* In the Ecodex grid the tile is card-shaped (2/3), same as the locked tile. */
-.ecodex-grid .slot-reveal-stack {
-  aspect-ratio: 2 / 3;
-}
-
-.slot-reveal-stack .species-image {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  transition: opacity 500ms ease;
-}
-
-.slot-reveal-stack .slot-reveal-locked-img {
-  opacity: 1;
-  filter: grayscale(0.5) brightness(0.75);
-}
-
-.slot-reveal-stack .slot-reveal-locked-img.slot-reveal-hidden {
-  opacity: 0;
-}
-
-.slot-reveal-stack .slot-reveal-real-img {
-  opacity: 0;
-}
-
-.slot-reveal-stack .slot-reveal-real-img.slot-reveal-visible {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slot-reveal-stack .species-image {
-    transition: none;
-  }
-}
-
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -216,10 +174,6 @@ button:disabled {
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 }
 
-.ecodex-grid .species-image {
-  aspect-ratio: 2 / 3;
-}
-
 .ecodex-title {
   display: flex;
   align-items: center;
@@ -252,32 +206,223 @@ button:disabled {
   box-shadow: none;
 }
 
-.ecodex-grid .ecodex-tile {
+/* ---------------------------------------------------------------------
+   EcoDex: la baldosa es la carta en pequeño (marco por rareza, arte, nombre
+   legible, rareza), no la carta entera reducida. Sin panel contenedor.
+   --------------------------------------------------------------------- */
+.ecodex-slot {
   position: relative;
-  padding: 0.5rem;
+  min-width: 0;
+  perspective: 700px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ecodex-slot:focus-visible {
+  outline: 2px solid #3fae5a;
+  outline-offset: 3px;
+}
+
+.ecodex-tile {
+  box-sizing: border-box;
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 4px solid transparent;
+  background: linear-gradient(#0c140f, #0c140f) padding-box, var(--frame, linear-gradient(145deg, #3a463d, #222a24)) border-box;
+}
+
+.ecodex-tile-locked {
+  --frame: linear-gradient(145deg, #3a463d, #222a24);
+}
+
+.ecodex-tile-locked-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.5) brightness(0.7);
+  opacity: 0.9;
+}
+
+.ecodex-tile-art {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 60%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ecodex-tile-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ecodex-tile-medal {
+  position: absolute;
+  left: 6%;
+  top: 5%;
+  width: 21%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(8, 14, 10, 0.72);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 1.5px var(--rc);
+  z-index: 2;
+}
+
+.ecodex-tile-medal img {
+  width: 76%;
 }
 
 .ecodex-count-badge {
   position: absolute;
   top: 6px;
-  left: 6px;
-  z-index: 2;
+  right: 6px;
+  z-index: 3;
   background: #3fae5a;
   color: #06120a;
   border-radius: 999px;
   min-width: 22px;
-  height: 22px;
+  height: 20px;
   padding: 0 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font: 800 12px/20px "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  text-align: center;
 }
 
-.ecodex-locked-img {
-  filter: grayscale(0.5) brightness(0.75);
-  opacity: 0.85;
+.ecodex-tile-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 56%;
+  padding: 0 8% 7%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  z-index: 2;
+}
+
+.ecodex-tile-name {
+  font: 700 clamp(12px, 12.5cqw, 16px) / 1.02 "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  color: #fff;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ecodex-tile-rarity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: 600 10px/1 "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rc);
+}
+
+.ecodex-tile-pips {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.ecodex-tile-pips i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ecodex-tile-pips i.on {
+  background: var(--rc);
+  box-shadow: 0 0 4px var(--rc);
+}
+
+/* Slow glint across Rara and above, staggered per tile so the grid feels
+   alive without every card flashing at once. */
+.ecodex-tile-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.ecodex-tile-fx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.4) 50%, transparent 62%);
+  transform: translateX(-130%);
+  opacity: 0;
+}
+
+.tile-r2 .ecodex-tile-fx::after,
+.tile-r3 .ecodex-tile-fx::after,
+.tile-r4 .ecodex-tile-fx::after {
+  animation: ecodex-glint 4.8s ease-in-out infinite;
+  animation-delay: var(--glint-delay, 0s);
+}
+
+@keyframes ecodex-glint {
+  0%, 70% { transform: translateX(-130%); opacity: 0; }
+  72% { opacity: 1; }
+  100% { transform: translateX(130%); opacity: 1; }
+}
+
+/* A just-unlocked tile turns over once (a quick flip, not the reveal), with a
+   glint and a ring in its rarity colour. */
+@keyframes ecodex-tile-flip-in {
+  0% { transform: rotateY(-90deg); }
+  70% { transform: rotateY(9deg); }
+  100% { transform: rotateY(0); }
+}
+
+@keyframes ecodex-unlock-glint {
+  from { transform: translateX(-130%); opacity: 1; }
+  to { transform: translateX(130%); opacity: 1; }
+}
+
+@keyframes ecodex-unlock-ring {
+  0% { box-shadow: 0 0 0 0 var(--rc); }
+  100% { box-shadow: 0 0 0 16px transparent; }
+}
+
+.slot-just-unlocked {
+  animation: ecodex-unlock-ring 900ms ease-out;
+}
+
+.slot-just-unlocked .ecodex-tile {
+  animation: ecodex-tile-flip-in 480ms ease-out;
+}
+
+.slot-just-unlocked .ecodex-tile-fx::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.7) 50%, transparent 70%);
+  animation: ecodex-unlock-glint 800ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-r2 .ecodex-tile-fx::after,
+  .tile-r3 .ecodex-tile-fx::after,
+  .tile-r4 .ecodex-tile-fx::after,
+  .slot-just-unlocked,
+  .slot-just-unlocked .ecodex-tile,
+  .slot-just-unlocked .ecodex-tile-fx::before {
+    animation: none;
+  }
 }
 
 .card-preview-overlay {
@@ -315,20 +460,6 @@ button:disabled {
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
-}
-
-.card-thumb {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
-  border-radius: 8px;
-  background: #0d1a0f;
-  pointer-events: none;
-}
-
-.card-thumb-inner {
-  transform-origin: top left;
 }
 
 @keyframes slot-locked-shake {
@@ -796,38 +927,91 @@ button:disabled {
   border-bottom: none;
 }
 
-.reveal-card-wrapper {
+/* ---------------------------------------------------------------------
+   Carta (diseño "Foil"). Un solo objeto 3D: cara frontal, dorso y un canto
+   de láminas redondeadas. Todo el tamaño interior va en cqw (la cara es el
+   contenedor), así que escala con el ancho de la carta.
+   --------------------------------------------------------------------- */
+.card-r0, .tile-r0 { --frame: linear-gradient(145deg, #4b5d4d, #2a362c); }
+.card-r1, .tile-r1 { --frame: linear-gradient(145deg, #dbe6f0, #7f93a6 40%, #c9d6e2 60%, #6c7f92); }
+.card-r2, .tile-r2 { --frame: linear-gradient(120deg, #ff7ad9, #7a8bff, #5ff0e6, #b6ff7a, #ff7ad9); }
+.card-r3, .tile-r3 { --frame: linear-gradient(145deg, #ffe29a, #b57b1c 45%, #f6c85a 60%, #8a5a12); }
+.card-r4, .tile-r4 { --frame: conic-gradient(from 0deg, #ffd54a, #ff9ad5, #8ab4ff, #7dffd6, #ffd54a); }
+
+.card-scene {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
 }
 
-.reveal-card-outer {
+/* The card is at most 300px wide (the sealed pack is sized to match); the
+   hint above it is free to be wider. */
+.card-stage {
   position: relative;
   width: 100%;
-  overflow: visible;
-  margin: 0 auto 1rem;
+  max-width: 300px;
+  padding-bottom: 80px;
 }
 
-.reveal-card-inner {
+.card-glow {
   position: absolute;
   left: 50%;
-  top: 0;
-  transform-origin: top center;
+  top: calc((100% - 80px) / 2);
+  width: 560px;
+  height: 560px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--rc), transparent 62%);
+  pointer-events: none;
 }
 
+/* The surface the card floats over and the shadow it casts on it. */
+.card-floor {
+  position: absolute;
+  left: 50%;
+  bottom: -13px;
+  width: 130%;
+  height: 100px;
+  margin-left: -65%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--rc) 50%, rgba(255, 255, 255, 0.25)), transparent);
+  filter: blur(8px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.card-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  width: 86%;
+  height: 30px;
+  margin-left: -43%;
+  border-radius: 50%;
+  background: radial-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.35) 45%, transparent 72%);
+  filter: blur(4px);
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+/* The card is one object: only .card-perspective takes gestures; every image
+   inside ignores the pointer, so the browser can never start a native image
+   drag (the translucent "ghost" copy that follows the cursor). touch-action
+   none lets a vertical swipe reach us instead of being taken as a page pan. */
 .card-perspective {
-  perspective: 1200px;
-  touch-action: pan-y;
+  position: relative;
+  perspective: 1100px;
   cursor: grab;
+  touch-action: none;
+  transition: transform 260ms ease-out, opacity 260ms ease-out;
 }
 
-/* The card must behave as a single object on mobile: only .card-perspective
-   (the gesture surface in CardScene) is interactive. Every layer/image below
-   is pointer-events:none so a long-press or drag always resolves against the
-   card as a whole instead of the browser's native "save image"/"share"
-   callout or a drag on an individual layer. */
+.card-perspective.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
 .card-perspective,
 .card-perspective * {
   -webkit-touch-callout: none;
@@ -835,12 +1019,27 @@ button:disabled {
   user-select: none;
 }
 
+.card-perspective img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.card-tilt,
+.card-lift,
 .card-flipper {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1024 / 1536;
   transform-style: preserve-3d;
-  pointer-events: none;
+}
+
+.card-tilt {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+}
+
+.card-lift,
+.card-flipper {
+  position: absolute;
+  inset: 0;
 }
 
 .card-face {
@@ -850,236 +1049,338 @@ button:disabled {
   overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  background: #142218;
+  container-type: inline-size;
+  background: #101a13;
+}
+
+.card-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--dim, 0);
+  pointer-events: none;
+  z-index: 30;
 }
 
 .card-face-front {
-  transform-style: preserve-3d;
+  transform: translateZ(2.5px);
+  background: #0a110d;
 }
 
 .card-face-back {
-  transform: rotateY(180deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: rotateY(180deg) translateZ(2.5px);
+  background: #1c1b15;
 }
 
 .card-back-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.card-layer-bg {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 22%, #3a4a3a, #141a12 75%);
-  transform: translateZ(-60px) scale(1.3);
-}
-
-.card-layer-aura {
-  position: absolute;
-  inset: 0;
-  transform: translateZ(-40px);
-  mix-blend-mode: screen;
-  transition: opacity 120ms ease-out;
-}
-
-.card-art-window {
-  position: absolute;
-  top: 22.6%;
-  left: 3.3%;
-  right: 3.3%;
-  height: 49.7%;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: inset 0 0 0 2px rgba(184, 134, 62, 0.7), inset 0 0 24px rgba(0, 0, 0, 0.5);
-  transform: translateZ(44px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-art-image {
-  width: 92%;
-  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.6));
-  transform: translateY(-22px);
-}
-
-.card-fractae-badge {
-  position: absolute;
-  top: 13.8%;
-  left: 4%;
-  width: 15.3%;
-  aspect-ratio: 1 / 1;
-  transform: translateZ(90px);
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7));
-}
-
-.card-fractae-badge img {
-  width: 100%;
-  height: 100%;
-}
-
-.card-nameplate {
-  position: absolute;
-  top: 2.2%;
-  left: 3.3%;
-  right: 3.3%;
-  height: 11.6%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  padding: 0 12px 0 14px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(30, 22, 10, 0.92), rgba(15, 11, 5, 0.92));
-  box-shadow: inset 0 0 0 1px rgba(217, 176, 74, 0.5), 0 3px 6px rgba(0, 0, 0, 0.5);
-  transform: translateZ(58px);
-}
-
-.card-nameplate-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-name {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #f4e4bc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-scientific-name {
-  font-size: 0.68rem;
-  font-style: italic;
-  color: #9fae9f;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-rarity-pill {
-  flex-shrink: 0;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 999px;
-  color: #2a0d3d;
-  background: linear-gradient(135deg, #e2c1ff, #a855f7);
-  margin-left: 8px;
-}
-
-.card-textbox {
-  position: absolute;
-  left: 3.3%;
-  right: 3.3%;
-  bottom: 2.2%;
-  height: 25.8%;
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: linear-gradient(180deg, rgba(18, 14, 8, 0.94), rgba(8, 6, 3, 0.97));
-  box-shadow: inset 0 0 0 1px rgba(184, 134, 62, 0.55);
-  transform: translateZ(52px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  overflow: hidden;
-}
-
-.card-fractae-row {
-  font-size: 0.72rem;
-  color: #cbb98a;
-}
-
-.card-lore-phrase {
-  font-style: italic;
-  color: #d8cfae;
-  font-size: 0.76rem;
-  line-height: 1.35;
-}
-
-.card-border {
+.card-slice {
   position: absolute;
   inset: 0;
   border-radius: 16px;
-  box-shadow:
-    inset 0 0 0 2px #3a2a12,
-    inset 0 0 0 6px #b8863e,
-    inset 0 0 0 8px #2a1c0a;
-  transform: translateZ(70px);
-}
-
-.card-corner-stud {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: linear-gradient(135deg, #f0d38a, #a8742e);
-  transform: rotate(45deg) translateZ(72px);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
-}
-
-.card-corner-stud-tl {
-  top: 2px;
-  left: 2px;
-}
-.card-corner-stud-tr {
-  top: 2px;
-  right: 2px;
-}
-.card-corner-stud-bl {
-  bottom: 2px;
-  left: 2px;
-}
-.card-corner-stud-br {
-  bottom: 2px;
-  right: 2px;
-}
-
-/* Card edge/thickness: two thin strips folded 90deg around the Y axis,
-   textured with the back cover's stone border plus a repeating light/dark
-   band (like stacked cardstock) so the "canto" reads as a real edge with
-   relief, not a flat painted color. Standard CSS-cube-face trick: each strip
-   sits half its own width outside the card boundary, then rotates to become
-   edge-on. Subtle at the small rest/drag tilt angles, visible at wider ones. */
-.card-edge {
-  position: absolute;
-  top: 0;
-  width: 6%;
-  height: 100%;
-  background-image:
-    repeating-linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.35) 0px,
-      rgba(0, 0, 0, 0.35) 1px,
-      rgba(255, 255, 255, 0.06) 1px,
-      rgba(255, 255, 255, 0.06) 2px,
-      transparent 2px,
-      transparent 4px
-    ),
-    url("/card-back.png");
-  background-size: 100% 100%, auto 100%;
-  box-shadow: inset 4px 0 6px -4px rgba(0, 0, 0, 0.8), inset -4px 0 6px -4px rgba(0, 0, 0, 0.8);
-  filter: brightness(0.6) contrast(1.15);
+  background: var(--edge);
   pointer-events: none;
 }
 
-.card-edge-right {
-  right: -3%;
-  transform: rotateY(90deg);
-  background-position: 0 0, right center;
+.card-slice:nth-of-type(odd) {
+  filter: brightness(1.18);
 }
 
-.card-edge-left {
-  left: -3%;
-  transform: rotateY(-90deg);
-  background-position: 0 0, left center;
+.card-fc {
+  position: absolute;
+  inset: 0;
+}
+
+.card-frame {
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  padding: 2.6cqw;
+  border-radius: inherit;
+  background: var(--frame);
+  background-size: 300% 300%;
+  background-position: calc(var(--mx, 50) * 1%) 50%;
+}
+
+.card-r4 .card-frame {
+  background: conic-gradient(from calc(var(--mx, 50) * 3.6deg), #ffd54a, #ff9ad5, #8ab4ff, #7dffd6, #ffd54a);
+}
+
+.card-inner {
+  box-sizing: border-box;
+  height: 100%;
+  border-radius: 3.4cqw;
+  background: linear-gradient(180deg, #16241a, #0c140f);
+  padding: 3cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2cqw;
+  overflow: hidden;
+}
+
+.card-nm {
+  display: flex;
+  gap: 2.6cqw;
+  align-items: center;
+  height: 13cqw;
+  flex: none;
+}
+
+.card-titles {
+  min-width: 0;
+}
+
+.card-medal {
+  width: 12cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #0a110d;
+  box-shadow: 0 0 0 0.6cqw var(--rc);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.card-medal img {
+  width: 80%;
+}
+
+.card-name {
+  font: 700 6.8cqw/1 "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.card-scientific-name {
+  font: italic 400 3.3cqw/1.2 "Barlow", system-ui, sans-serif;
+  color: #93a998;
+  margin: 0.6cqw 0 0;
+}
+
+.card-art {
+  flex: none;
+  aspect-ratio: 1.1;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2.2cqw;
+  box-shadow: inset 0 0 0 0.5cqw rgba(255, 255, 255, 0.15);
+}
+
+/* The image is oversized (108%) and slid with object-position for a light
+   parallax. No transforms on it: nothing here becomes its own layer. The
+   global img{max-width:100%} would clamp the 108% back to 100%. */
+.card-art img {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  max-width: none;
+  height: 108%;
+  object-fit: cover;
+  object-position: calc(50% + (var(--mx, 50) - 50) * 0.06%) calc(50% + (var(--my, 50) - 50) * 0.05%);
+}
+
+.card-mid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 600 3.4cqw/1 "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9db3a3;
+  flex: none;
+}
+
+.card-rar {
+  display: flex;
+  gap: 2cqw;
+  align-items: center;
+  color: var(--rc);
+}
+
+.card-pips {
+  display: inline-flex;
+  gap: 0.9cqw;
+}
+
+.card-pips i {
+  width: 1.8cqw;
+  height: 1.8cqw;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.card-pips i.on {
+  background: var(--rc);
+  box-shadow: 0 0 2cqw var(--rc);
+}
+
+.card-lore-phrase {
+  font: 400 3.9cqw/1.4 "Barlow", system-ui, sans-serif;
+  color: #d6d1bc;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-ft {
+  margin-top: auto;
+  font: 600 3.2cqw/1 "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6f867a;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Foil and glare are plain alpha gradients (no mix-blend-mode, which glitches
+   inside 3D-transformed, backface-hidden layers on some GPUs). --mx/--my come
+   from the card's angle, so the light follows the rotation. */
+.card-foil {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(255, 110, 199, 0.9) 0%,
+    rgba(255, 216, 110, 0.9) 8%,
+    rgba(110, 255, 196, 0.9) 16%,
+    rgba(110, 199, 255, 0.9) 24%,
+    rgba(199, 110, 255, 0.9) 32%,
+    rgba(255, 110, 199, 0.9) 40%
+  );
+  background-size: 260% 260%;
+  background-position: calc(var(--mx, 50) * 1%) calc(var(--my, 50) * 1%);
+  filter: saturate(1.1);
+}
+
+.card-r2 .card-foil { opacity: 0.16; }
+.card-r3 .card-foil { opacity: 0.24; }
+.card-r4 .card-foil { opacity: 0.36; }
+
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  background: radial-gradient(circle at calc(var(--mx, 50) * 1%) calc(var(--my, 50) * 1%), rgba(255, 255, 255, 0.5), transparent 48%);
+}
+
+.card-r1 .card-glare, .card-r2 .card-glare { opacity: 0.35; }
+.card-r3 .card-glare, .card-r4 .card-glare { opacity: 0.55; }
+
+.card-spark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 18% 28%, #fff 0 0.5cqw, transparent 0.7cqw),
+    radial-gradient(circle at 82% 22%, #fff 0 0.6cqw, transparent 0.8cqw),
+    radial-gradient(circle at 70% 58%, #fff 0 0.45cqw, transparent 0.65cqw),
+    radial-gradient(circle at 28% 66%, #fff 0 0.55cqw, transparent 0.75cqw),
+    radial-gradient(circle at 52% 40%, #fff 0 0.4cqw, transparent 0.6cqw),
+    radial-gradient(circle at 88% 80%, #fff 0 0.5cqw, transparent 0.7cqw);
+}
+
+.card-r4 .card-spark {
+  opacity: 1;
+  animation: card-twinkle 2.2s ease-in-out infinite;
+}
+
+@keyframes card-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+.card-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 12;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+
+/* Reveal cover: the card's own back, edge to edge, over the front. It is
+   inset by -1px so no antialiased sliver of the front shows at the corners. */
+.card-veil {
+  position: absolute;
+  inset: -1px;
+  z-index: 20;
+  background: url("/card-back.webp") center / cover, #1c1b15;
+}
+
+.card-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 3px;
+  z-index: 22;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 14px 3px var(--rc), 0 0 40px 8px var(--rc);
+}
+
+/* Landing effects are appended to .card-fx by CardScene. */
+.card-fx {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  aspect-ratio: 2 / 3;
+  pointer-events: none;
+}
+
+.card-fx-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  border: 2px solid;
+  box-shadow: 0 0 24px currentColor, inset 0 0 24px currentColor;
+}
+
+.card-fx-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.card-fx-pt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-r4 .card-spark {
+    animation: none;
+    opacity: 0.6;
+  }
 }
 
 .reveal-card-commit-hint {
@@ -1150,32 +1451,8 @@ button:disabled {
   padding: 1.5rem 1rem calc(2rem + env(safe-area-inset-bottom));
   text-align: center;
   box-sizing: border-box;
+  overflow-x: hidden;
   overflow-y: auto;
-}
-
-@keyframes slot-unlock-reveal {
-  0% {
-    transform: scale(0.85);
-    box-shadow: 0 0 0 rgba(127, 200, 145, 0);
-  }
-  45% {
-    transform: scale(1.05);
-    box-shadow: 0 0 28px rgba(127, 200, 145, 0.85);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 rgba(127, 200, 145, 0);
-  }
-}
-
-.slot-just-unlocked {
-  animation: slot-unlock-reveal 900ms ease-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slot-just-unlocked {
-    animation: none;
-  }
 }
 
 .reveal-title-fade {

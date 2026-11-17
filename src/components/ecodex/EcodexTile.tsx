@@ -1,7 +1,6 @@
-import type { Ref } from "react";
+import type { CSSProperties, Ref } from "react";
 import type { DexSlot, DexSlotRevealed } from "../../lib/api";
-import { RARITY_GLOW } from "../../lib/rarityGlow";
-import { CardThumb } from "../card/CardThumb";
+import { RARITY_GLOW, fractaeIconUrlFromName, rarityTierIndex, shortRarityName } from "../../lib/rarityGlow";
 
 export interface EcodexTileProps {
   slot: DexSlot;
@@ -16,6 +15,44 @@ export interface EcodexTileProps {
   onLockedClick: () => void;
 }
 
+function LockedTile() {
+  return (
+    <div className="ecodex-tile ecodex-tile-locked">
+      <img src="/icons/carta-bloqueada.png" alt="Carta bloqueada" className="ecodex-tile-locked-img" loading="lazy" draggable={false} />
+    </div>
+  );
+}
+
+function RevealedTile({ slot }: { slot: DexSlotRevealed }) {
+  const tier = rarityTierIndex(slot.rarity_slug);
+  const iconUrl = fractaeIconUrlFromName(slot.fractae_child_name);
+  return (
+    <div className={`ecodex-tile tile-r${tier}`}>
+      <div className="ecodex-tile-art">
+        <img src={slot.image_url} alt={slot.common_name} loading="lazy" draggable={false} />
+      </div>
+      {iconUrl && (
+        <span className="ecodex-tile-medal">
+          <img src={iconUrl} alt={`Fractae: ${slot.fractae_child_name}`} draggable={false} />
+        </span>
+      )}
+      {slot.count > 1 && <span className="ecodex-count-badge">×{slot.count}</span>}
+      <div className="ecodex-tile-info">
+        <b className="ecodex-tile-name">{slot.common_name}</b>
+        <span className="ecodex-tile-rarity">
+          <span className="ecodex-tile-pips" aria-hidden="true">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <i key={i} className={i <= tier ? "on" : ""} />
+            ))}
+          </span>
+          {shortRarityName(slot.rarity_name)}
+        </span>
+      </div>
+      <div className="ecodex-tile-fx" />
+    </div>
+  );
+}
+
 export function EcodexTile({ slot, isJustUnlocked, revealPending, shaking, tileRef, onOpen, onLockedClick }: EcodexTileProps) {
   const showAsLocked = slot.locked || (isJustUnlocked && revealPending);
 
@@ -24,9 +61,14 @@ export function EcodexTile({ slot, isJustUnlocked, revealPending, shaking, tileR
     else onOpen(slot);
   }
 
+  const color = !slot.locked ? (RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada) : undefined;
+  // Stagger the idle glints so the grid does not flash in unison.
+  const style = (slot.locked ? {} : { "--rc": color, "--glint-delay": `${(slot.species_id * 1.3) % 4.8}s` }) as CSSProperties;
+
   return (
     <div
-      className={`card card-clickable ecodex-tile${isJustUnlocked && !revealPending ? " slot-just-unlocked" : ""}${shaking ? " slot-locked-shake" : ""}`}
+      className={`ecodex-slot card-clickable${isJustUnlocked && !revealPending ? " slot-just-unlocked" : ""}${shaking ? " slot-locked-shake" : ""}`}
+      style={style}
       ref={tileRef}
       role="button"
       tabIndex={0}
@@ -35,38 +77,11 @@ export function EcodexTile({ slot, isJustUnlocked, revealPending, shaking, tileR
         if (e.key === "Enter" || e.key === " ") activate();
       }}
     >
-      {!showAsLocked && slot.count > 1 && <span className="ecodex-count-badge">×{slot.count}</span>}
-      {isJustUnlocked && !slot.locked ? (
-        <div className="slot-reveal-stack">
-          <img
-            src="/icons/carta-bloqueada.png"
-            alt="Carta bloqueada"
-            className={`species-image slot-reveal-locked-img${revealPending ? "" : " slot-reveal-hidden"}`}
-          />
-          <img
-            src={slot.image_url}
-            alt={slot.common_name}
-            className={`species-image slot-reveal-real-img${revealPending ? "" : " slot-reveal-visible"}`}
-          />
-        </div>
-      ) : slot.locked ? (
-        <img src="/icons/carta-bloqueada.png" alt="Carta bloqueada" className="species-image ecodex-locked-img" loading="lazy" />
-      ) : (
-        <>
-          <CardThumb
-            imageUrl={slot.image_url}
-            commonName={slot.common_name}
-            scientificName={slot.scientific_name}
-            rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
-            fractaeChildName={slot.fractae_child_name}
-            glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
-          />
-          {slot.lore_phrase && (
-            <p className="ecodex-tile-lore" title={slot.lore_phrase}>
-              &laquo;{slot.lore_phrase}&raquo;
-            </p>
-          )}
-        </>
+      {showAsLocked || slot.locked ? <LockedTile /> : <RevealedTile slot={slot} />}
+      {!showAsLocked && !slot.locked && slot.lore_phrase && (
+        <p className="ecodex-tile-lore" title={slot.lore_phrase}>
+          &laquo;{slot.lore_phrase}&raquo;
+        </p>
       )}
     </div>
   );

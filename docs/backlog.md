@@ -21,7 +21,8 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 
 ## Cartas
 
-- **Pulir el layout definitivo de la carta por capas**: `Card.tsx`/`CardScene.tsx` (v0.7.0) implementan una primera composición funcional — nameplate, ventana de arte, medallón de Fractae, pill de rareza, caja de lore, borde ornamentado y canto con relieve — pero es un punto de partida, no el diseño final. Pendiente de iterar layout una vez haya diseños definitivos: en concreto, el nombre común se trunca con ellipsis en especies con nombres largos (ver `.card-name` en `src/index.css`), y conviene revisar tamaños relativos de cada capa con más nombres reales.
+- **Alternativas de revelado y giro ya prototipadas** (en `design/cartas/propuesta-cartas-2026-11.html`, abrir en el navegador): además del Barrido que se implementó, existen Rotura (el dorso se parte en dos por una grieta), Iris (un círculo de luz disuelve el dorso) y Giro con vueltas según rareza; y para el giro manual, los modos Libre (dos ejes con inercia) y Toque (volteo de moneda). Idea abierta: usar un revelado distinto por rareza, p. ej. Rotura solo para Épica y Legendaria. También están los diseños de carta A (Lámina) y C (Reliquia).
+- **Regenerar `docs/screenshots/carta.png` y `ecodex.png`**: siguen mostrando el diseño anterior de la carta y del EcoDex.
 
 ## Seguridad
 

@@ -10,105 +10,157 @@ const baseProps = {
   glowColor: "#bfe6c9",
 };
 
+// Long enough for the whole reveal: intro + covered pause + scan.
+const REVEAL_MS = 2500;
+
+function pointer(type: "pointerDown" | "pointerMove" | "pointerUp", el: HTMLElement, x = 0, y = 0) {
+  fireEvent[type](el, { clientX: x, clientY: y, pointerId: 1, pointerType: "touch" });
+}
+
+async function advance(ms: number) {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms);
+  });
+}
+
 afterEach(() => {
   vi.useRealTimers();
   cleanup();
 });
 
-describe("CardScene", () => {
-  it("shows the back face on mount, before flipping to front", () => {
+describe("CardScene reveal", () => {
+  it("starts covered by the card's back, so the front is never seen first", () => {
     vi.useFakeTimers();
     render(<CardScene {...baseProps} />);
 
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "visible" });
+    expect(screen.getByTestId("card-veil")).toBeInTheDocument();
+    expect(screen.getByTestId("card-perspective").closest(".card-scene")).toHaveAttribute("data-revealed", "false");
   });
 
-  it("flips to the front face after the flip-in animation completes", () => {
+  it("stays covered during the intro and the pause before the scan", async () => {
     vi.useFakeTimers();
     render(<CardScene {...baseProps} />);
 
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
+    await advance(500);
 
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
+    expect(screen.getByTestId("card-veil")).toBeInTheDocument();
+  });
+
+  it("uncovers the front once the scan completes", async () => {
+    vi.useFakeTimers();
+    render(<CardScene {...baseProps} />);
+
+    await advance(REVEAL_MS);
+
+    expect(screen.queryByTestId("card-veil")).not.toBeInTheDocument();
     expect(screen.getByText("Test Dino")).toBeInTheDocument();
+    expect(screen.getByTestId("card-perspective").closest(".card-scene")).toHaveAttribute("data-revealed", "true");
   });
 
-  it("rotates to show the back face after dragging past the halfway point", () => {
+  it("skips the reveal entirely with reveal='none'", () => {
+    vi.useFakeTimers();
+    render(<CardScene {...baseProps} reveal="none" />);
+
+    expect(screen.queryByTestId("card-veil")).not.toBeInTheDocument();
+  });
+
+  it("finishes the reveal on the spot when the card is grabbed mid-scan", () => {
     vi.useFakeTimers();
     render(<CardScene {...baseProps} />);
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
 
-    const perspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(perspective, { touches: [{ clientX: 0 }] });
-    fireEvent.touchMove(perspective, { touches: [{ clientX: -300 }] });
+    pointer("pointerDown", screen.getByTestId("card-perspective"));
 
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "visible" });
+    expect(screen.queryByTestId("card-veil")).not.toBeInTheDocument();
   });
+});
 
-  it("snaps back to the front face when released near the starting position", () => {
+describe("CardScene rotation", () => {
+  async function revealed() {
     vi.useFakeTimers();
     render(<CardScene {...baseProps} />);
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
+    await advance(REVEAL_MS);
+    return screen.getByTestId("card-perspective");
+  }
 
-    const perspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(perspective, { touches: [{ clientX: 0 }] });
-    fireEvent.touchMove(perspective, { touches: [{ clientX: -50 }] });
-    fireEvent.touchEnd(perspective);
+  it("springs onto the back face after being dragged past the halfway point", async () => {
+    const perspective = await revealed();
+    const scene = perspective.closest(".card-scene")!;
 
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
+    pointer("pointerDown", perspective, 0, 0);
+    await advance(500); // a slow drag: no flick velocity at release
+    pointer("pointerMove", perspective, -200, 0); // 200px * 0.6 = 120deg
+    pointer("pointerUp", perspective, -200, 0);
+    await advance(1500);
+
+    expect(scene).toHaveAttribute("data-facing", "back");
   });
 
-  it("keeps the back face visible longer during an extended multi-spin flip-in", () => {
-    vi.useFakeTimers();
-    render(<CardScene {...baseProps} spins={2} />);
+  it("springs back to the front face when released near the starting position", async () => {
+    const perspective = await revealed();
+    const scene = perspective.closest(".card-scene")!;
 
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "visible" });
+    pointer("pointerDown", perspective, 0, 0);
+    await advance(500);
+    pointer("pointerMove", perspective, -50, 0); // 30deg
+    pointer("pointerUp", perspective, -50, 0);
+    await advance(1500);
 
-    act(() => {
-      vi.advanceTimersByTime(1400);
-    });
-    expect(screen.getByAltText("Ecorex")).toHaveStyle({ visibility: "hidden" });
+    expect(scene).toHaveAttribute("data-facing", "front");
   });
 
-  it("increases the rarity aura opacity as the card rotates away from flat", () => {
+  it("is a single gesture surface whose images ignore the pointer (no native image drag)", async () => {
+    const perspective = await revealed();
+
+    const dragStart = new Event("dragstart", { bubbles: true, cancelable: true });
+    perspective.dispatchEvent(dragStart);
+
+    expect(dragStart.defaultPrevented).toBe(true);
+    for (const img of perspective.querySelectorAll("img")) {
+      expect(img).toHaveAttribute("draggable", "false");
+    }
+  });
+});
+
+describe("CardScene swipe up", () => {
+  async function revealedWithCommit() {
     vi.useFakeTimers();
-    render(<CardScene {...baseProps} />);
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
+    const onCommitUp = vi.fn();
+    render(<CardScene {...baseProps} onCommitUp={onCommitUp} />);
+    await advance(REVEAL_MS);
+    return { perspective: screen.getByTestId("card-perspective"), onCommitUp };
+  }
 
-    const aura = screen.getByTestId("card-aura");
-    const flatOpacity = Number(getComputedStyle(aura).opacity);
+  it("shows the swipe-up hint only after the card is uncovered", async () => {
+    vi.useFakeTimers();
+    render(<CardScene {...baseProps} onCommitUp={vi.fn()} />);
+    expect(screen.queryByText(/desliza hacia arriba/i)).not.toBeInTheDocument();
 
-    const perspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(perspective, { touches: [{ clientX: 0 }] });
-    fireEvent.touchMove(perspective, { touches: [{ clientX: -75 }] }); // ~45deg of spin
+    await advance(REVEAL_MS);
 
-    const tiltedOpacity = Number(getComputedStyle(aura).opacity);
-    expect(tiltedOpacity).toBeGreaterThan(flatOpacity);
+    expect(screen.getByText(/desliza hacia arriba/i)).toBeInTheDocument();
   });
 
-  it("renders only card-perspective as the gesture surface, with the flipper as a non-interactive child", () => {
-    // jsdom doesn't load src/index.css, so this checks structure (the
-    // .card-flipper class, which index.css pins to pointer-events:none)
-    // rather than computed style.
-    vi.useFakeTimers();
-    render(<CardScene {...baseProps} />);
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
+  it("calls onCommitUp after a long swipe up and the fly-away animation", async () => {
+    const { perspective, onCommitUp } = await revealedWithCommit();
 
-    const perspective = screen.getByTestId("card-perspective");
-    const flipper = perspective.firstChild as HTMLElement;
-    expect(flipper).toHaveClass("card-flipper");
+    pointer("pointerDown", perspective, 0, 0);
+    pointer("pointerMove", perspective, 0, -150);
+    pointer("pointerUp", perspective, 0, -150);
+    expect(onCommitUp).not.toHaveBeenCalled();
+
+    await advance(400);
+
+    expect(onCommitUp).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not commit on a short swipe", async () => {
+    const { perspective, onCommitUp } = await revealedWithCommit();
+
+    pointer("pointerDown", perspective, 0, 0);
+    pointer("pointerMove", perspective, 0, -40);
+    pointer("pointerUp", perspective, 0, -40);
+    await advance(600);
+
+    expect(onCommitUp).not.toHaveBeenCalled();
   });
 });

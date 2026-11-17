@@ -75,7 +75,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 |---|---|
 | **Percibir** | El ritual de descubrimiento: un sobre a pantalla completa que se rasga arrastrando por la costura, con vibración háptica donde el dispositivo lo permite. Sortea la rareza de la carta de forma independiente de la especie y de la fase. |
 | **Energía** | Percibir consume energía, visible en la navegación. Base de 3, se regenera **+1 cada 4 h**, y sube con el nivel (+1 en el 5 y +1 en el 30). Sustituyó a un rate-limit silencioso por IP. |
-| **EcoDex** | La colección: cada especie tiene 3 fases (Balance, Exceso, Eco) y las fases ya descubiertas se muestran como cartas completas a escala reducida, con visor a pantalla completa. |
+| **EcoDex** | La colección: cada especie tiene 3 fases (Balance, Exceso, Eco) y las fases ya descubiertas se muestran como mini cartas (marco del color de la rareza, arte, nombre y rareza legibles), con visor a pantalla completa. |
 | **Altar de Fusión** | 5 cartas repetidas de una especie en fase Balance se consumen para obtener su carta en fase **Exceso** (4 a partir del nivel 15). No cuesta energía. |
 | **Rareza** | Cinco niveles — Común, Poco común, Rara, Épica, Legendaria — con pesos de sorteo 55 / 27 / 12 / 5 / 1 %. Es un eje independiente de la fase. |
 | **XP y niveles** | Niveles 1–50 por XP acumulado. Solo da XP lo nuevo (especie+fase vista por primera vez, fusiones, completar las 3 fases de una especie): repetir no da nada. Ocho títulos cosméticos, de «Explorador Novato» a «Voz de la Fractura». |
@@ -138,6 +138,8 @@ XP y niveles 1–50, nombres de usuario únicos y obligatorios, navegación infe
 
 La carta de Percibir pasó de una imagen con texto a una composición por capas: fondo, aura de rareza, ventana de arte, medallón del Fractae, placa con nombre común y científico, caja de lore, borde ornamentado y un canto con relieve. Se separó en `Card.tsx` (presentación) y `CardScene.tsx` (gestos: giro con inercia, volteo, deslizar hacia arriba), con frases de lore reales por especie y por fase. El EcoDex se rehízo con cartas a escala en lugar de miniaturas, y la energía pasó de un reinicio plano cada 12 h a un goteo de +1 cada 4 h.
 
+Después se rediseñó la carta («Foil»): un marco cuyo material sigue a la rareza (grafito, plata, holográfico, oro, prismático) con foil y reflejo que siguen el ángulo de la carta, un canto sólido y redondeado, un revelado con misterio (el dorso se descubre con una línea de luz, con ondas y partículas que crecen con la rareza) y una carta que levita sobre una superficie, con la sombra marcando la altura. La baldosa del EcoDex pasó a ser una carta pequeña propia en lugar de una copia reducida.
+
 ### Fase 5 — Notificaciones push (v0.9)
 
 Suscripción Web Push con opt-in (tile de onboarding y conmutador en el perfil), un Worker con Cron Trigger que avisa **por cada punto de energía regenerado** — no solo al llegar al máximo — y el mismo aviso reflejado en la bandeja in-app.
@@ -182,7 +184,7 @@ Para explorar candidatos hay una herramienta local, `npm run species:discover`, 
 
 Lo que **no** cubren los tests automáticos y cómo se gestiona:
 
-- **No hay tests E2E ni de regresión visual.** Los gestos y animaciones de la carta (`CardScene`) se prueban a nivel de comportamiento (por ejemplo, la reactividad del aura), no de píxeles.
+- **No hay tests E2E ni de regresión visual.** Los gestos y animaciones de la carta (`CardScene`) se prueban a nivel de comportamiento (por ejemplo, que el revelado empieza cubierto por el dorso y que un arrastre se asienta en la cara más cercana), no de píxeles.
 - **Los problemas específicos de iOS** (menú contextual, autoplay, safe areas) quedan fuera de la suite: jsdom no los reproduce.
 - **El estado de la base de datos remota** no lo cubre ninguna suite: `npm run db:migrate:status` lista las migraciones pendientes en local y remoto, y conviene ejecutarlo antes de cada despliegue que añada una.
 
@@ -213,7 +215,7 @@ EcoRex/
 ├── src/                         # Frontend React
 │   ├── pages/                   # Inicio, Percibir, Colección (EcoDex), Perfil, Fusión, Login/Registro
 │   ├── components/              # Navegación, ritual de Percibir, misiones, subida de nivel, push
-│   │   └── card/                # Card.tsx (capas) + CardScene.tsx (gestos)
+│   │   └── card/                # Card.tsx (el objeto 3D) + CardScene.tsx (revelado, giro, levitación)
 │   └── sw.ts                    # Service worker (precache + eventos push)
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species

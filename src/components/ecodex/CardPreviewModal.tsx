@@ -1,6 +1,6 @@
 import { useLayoutEffect } from "react";
 import type { DexSlotRevealed } from "../../lib/api";
-import { RARITY_GLOW } from "../../lib/rarityGlow";
+import { RARITY_GLOW, fractaeIconUrlFromName } from "../../lib/rarityGlow";
 import { CardScene } from "../card/CardScene";
 
 export interface CardPreviewModalProps {
@@ -27,7 +27,10 @@ export function CardPreviewModal({ slot, onClose }: CardPreviewModalProps) {
           scientificName={slot.scientific_name}
           rarityTier={{ slug: slot.rarity_slug, name: slot.rarity_name }}
           fractaeChildName={slot.fractae_child_name}
+          fractaeIconUrl={fractaeIconUrlFromName(slot.fractae_child_name)}
+          phase={slot.phase}
           lorePhrase={slot.lore_phrase ?? undefined}
+          reveal="none"
           glowColor={RARITY_GLOW[slot.rarity_slug] ?? RARITY_GLOW.registrada}
         />
       </div>

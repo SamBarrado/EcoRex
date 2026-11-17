@@ -75,7 +75,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 |---|---|
 | **Percibir** (Perceive) | The discovery ritual: a full-screen pack you tear open by dragging along its seam, with haptic feedback where the device supports it. Rolls the card's rarity independently from species and phase. |
 | **Energy** | Perceiving costs energy, shown in the navigation. Base of 3, regenerating **+1 every 4 h**, and raised by level (+1 at level 5, +1 at level 30). It replaced a silent per-IP rate limit. |
-| **EcoDex** | The collection: every species has 3 phases (Balance, Exceso, Eco), and discovered phases render as full cards scaled down, with a full-screen viewer. |
+| **EcoDex** | The collection: every species has 3 phases (Balance, Exceso, Eco), and discovered phases render as mini cards (rarity-coloured frame, art, readable name and rarity), with a full-screen viewer. |
 | **Altar de Fusión** (Fusion Altar) | 5 duplicate Balance cards of a species are consumed to obtain its **Exceso** card (4 from level 15). It costs no energy. |
 | **Rarity** | Five tiers — Common, Uncommon, Rare, Epic, Legendary — with drop weights of 55 / 27 / 12 / 5 / 1 %. An axis independent from phase. |
 | **XP and levels** | Levels 1–50 from accumulated XP. Only what's new gives XP (a species+phase seen for the first time, fusions, completing a species' 3 phases): repeating gives nothing. Eight cosmetic titles, from "Explorador Novato" (Novice Explorer) to "Voz de la Fractura" (Voice of the Fracture). |
@@ -138,6 +138,8 @@ XP and levels 1–50, unique required usernames, a persistent bottom navigation 
 
 The Percibir card went from an image with text to a layered composition: background, rarity aura, art window, Fractae medallion, name plate with common and scientific name, lore box, ornamented border and a textured edge. It was split into `Card.tsx` (presentation) and `CardScene.tsx` (gestures: inertial spin, flip, swipe up), with real lore phrases per species and per phase. The EcoDex was rebuilt with scaled cards instead of thumbnails, and energy went from a flat reset every 12 h to a +1-every-4-h drip.
 
+The card was then redesigned ("Foil"): a frame whose material follows the rarity (graphite, silver, holographic, gold, prismatic) with foil and glare that follow the card's angle, a solid rounded edge, a mystery reveal (the back is uncovered by a line of light, with rings and particles that scale with rarity) and a card that levitates over a surface, its shadow marking the height. The EcoDex tile became a small card of its own instead of a shrunken copy.
+
 ### Phase 5 — Push notifications (v0.9)
 
 Web Push subscription with opt-in (an onboarding tile and a toggle in the profile), a Worker with a Cron Trigger that notifies **for every point of energy regenerated** — not just on reaching the max — and the same notice mirrored in the in-app inbox.
@@ -182,7 +184,7 @@ For exploring candidates there is a local tool, `npm run species:discover`, whic
 
 What the automated tests **don't** cover, and how that's handled:
 
-- **There are no E2E or visual-regression tests.** The card's gestures and animations (`CardScene`) are tested at the behavior level (for example, aura reactivity), not at the pixel level.
+- **There are no E2E or visual-regression tests.** The card's gestures and animations (`CardScene`) are tested at the behavior level (for example, that the reveal starts covered by the back and that a drag springs onto the nearest face), not at the pixel level.
 - **iOS-specific problems** (context menu, autoplay, safe areas) fall outside the suite: jsdom doesn't reproduce them.
 - **The remote database state** isn't covered by any suite: `npm run db:migrate:status` lists the pending migrations on local and remote, and it's worth running before any deploy that adds one.
 
@@ -213,7 +215,7 @@ EcoRex/
 ├── src/                         # React frontend
 │   ├── pages/                   # Home, Percibir, Collection (EcoDex), Profile, Fusion, Login/Register
 │   ├── components/              # Navigation, Percibir ritual, missions, level-up, push
-│   │   └── card/                # Card.tsx (layers) + CardScene.tsx (gestures)
+│   │   └── card/                # Card.tsx (the 3D object) + CardScene.tsx (reveal, spin, levitation)
 │   └── sw.ts                    # Service worker (precache + push events)
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species

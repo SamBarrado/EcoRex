@@ -14,7 +14,6 @@ const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
 const NEW_SLOT_OVERLAY_MS = 1300;
 const REVEAL_TITLE_VISIBLE_MS = 2000;
-const CARD_SPINS = 2;
 const MAX_SOUND_MS = 3000;
 const SFX_TEAR = "/sounds/sfx-tear.mp3";
 const SFX_WHOOSH = "/sounds/sfx-whoosh.mp3";
@@ -349,7 +348,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
             fractaeIconUrl={result.fractaeIconUrl}
             lorePhrase={result.lorePhrase ?? undefined}
             glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
-            spins={prefersReducedMotion() ? 0 : CARD_SPINS}
+            phase={result.phase}
             onCommitUp={handleCommitUp}
           />
         </div>

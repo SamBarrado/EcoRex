@@ -13,6 +13,9 @@ export default defineConfig({
       filename: "sw.ts",
       injectManifest: {
         injectionPoint: "self.__WB_MANIFEST",
+        // The card fonts ship as woff2 assets; precache them so the card looks
+        // the same offline.
+        globPatterns: ["**/*.{js,css,html,woff2}"],
       },
       manifest: {
         name: "Ecorex",

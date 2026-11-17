@@ -41,7 +41,7 @@ describe("ColeccionPage", () => {
       </MemoryRouter>
     );
     const lockedTile = await screen.findByAltText("Carta bloqueada");
-    fireEvent.click(lockedTile.closest(".card")!);
+    fireEvent.click(lockedTile.closest(".ecodex-slot")!);
     await waitFor(() => {
       expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
     });
@@ -64,7 +64,7 @@ describe("ColeccionPage", () => {
       </MemoryRouter>
     );
     const revealedTile = await screen.findByText("Rex de Fuego");
-    fireEvent.click(revealedTile.closest(".card")!);
+    fireEvent.click(revealedTile.closest(".ecodex-slot")!);
     await waitFor(() => {
       expect(screen.getAllByText("Rex de Fuego").length).toBeGreaterThan(1);
     });
@@ -122,7 +122,7 @@ describe("ColeccionPage behavior", () => {
   it("shakes a locked tile when it is clicked", async () => {
     mockSlots([lockedSlot]);
     renderPage();
-    const lockedTile = (await screen.findByAltText("Carta bloqueada")).closest(".card")!;
+    const lockedTile = (await screen.findByAltText("Carta bloqueada")).closest(".ecodex-slot")!;
     expect(lockedTile.className).not.toContain("slot-locked-shake");
     fireEvent.click(lockedTile);
     expect(lockedTile.className).toContain("slot-locked-shake");
@@ -131,7 +131,7 @@ describe("ColeccionPage behavior", () => {
   it("locks body scroll while the card viewer is open and restores it on close", async () => {
     mockSlots([revealedSlot]);
     renderPage();
-    fireEvent.click((await screen.findByText("Rex de Fuego")).closest(".card")!);
+    fireEvent.click((await screen.findByText("Rex de Fuego")).closest(".ecodex-slot")!);
     await waitFor(() => expect(document.body.style.overflow).toBe("hidden"));
     fireEvent.click(screen.getByRole("button", { name: "Cerrar" }));
     await waitFor(() => expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument());

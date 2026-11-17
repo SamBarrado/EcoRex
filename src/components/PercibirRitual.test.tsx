@@ -184,22 +184,22 @@ describe("PercibirRitual", () => {
     await act(async () => {
       await vi.runAllTimersAsync();
     });
-    // The reveal mounts CardScene, which schedules its own flip-in timer
-    // from a useEffect that only runs once React commits — after the timer
-    // flush above already returned. A second flush picks it up.
+    // The reveal mounts CardScene, whose motion loop re-schedules itself every
+    // frame forever, so "run all timers" would never end: advance a fixed span
+    // instead, long enough for the whole Barrido reveal (~1.7s).
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(3000);
     });
 
     expect(screen.getByText(/desliza hacia arriba/i)).toBeInTheDocument();
 
     const cardPerspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
-    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
-    fireEvent.touchEnd(cardPerspective);
+    fireEvent.pointerDown(cardPerspective, { clientX: 0, clientY: 0, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerMove(cardPerspective, { clientX: 0, clientY: -150, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerUp(cardPerspective, { pointerId: 1, pointerType: "touch" });
 
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     expect(screen.getByTestId("envelope-pack")).toBeInTheDocument();
@@ -224,7 +224,7 @@ describe("PercibirRitual", () => {
       await vi.runAllTimersAsync();
     });
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(3000);
     });
 
     // Card is revealed, but the level-up screen must not appear yet — it
@@ -233,13 +233,13 @@ describe("PercibirRitual", () => {
     expect(screen.queryByText(/subiste de nivel/i)).not.toBeInTheDocument();
 
     const cardPerspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
-    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
-    fireEvent.touchEnd(cardPerspective);
+    fireEvent.pointerDown(cardPerspective, { clientX: 0, clientY: 0, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerMove(cardPerspective, { clientX: 0, clientY: -150, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerUp(cardPerspective, { pointerId: 1, pointerType: "touch" });
 
-    // onCommitUp fires after CardScene's own fly-away animation timer.
+    // onCommitUp fires after CardScene's own fly-away animation timer (360ms).
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     // Swiping up surfaces the level-up screen instead of resetting the pack.
@@ -271,17 +271,17 @@ describe("PercibirRitual", () => {
       await vi.runAllTimersAsync();
     });
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(3000);
     });
 
     const cardPerspective = screen.getByTestId("card-perspective");
-    fireEvent.touchStart(cardPerspective, { touches: [{ clientX: 0, clientY: 0 }] });
-    fireEvent.touchMove(cardPerspective, { touches: [{ clientX: 0, clientY: -150 }] });
-    fireEvent.touchEnd(cardPerspective);
+    fireEvent.pointerDown(cardPerspective, { clientX: 0, clientY: 0, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerMove(cardPerspective, { clientX: 0, clientY: -150, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerUp(cardPerspective, { pointerId: 1, pointerType: "touch" });
 
-    // onCommitUp fires after CardScene's own fly-away animation timer.
+    // onCommitUp fires after CardScene's own fly-away animation timer (360ms).
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     // Level-up screen shows; the "new species" toast must not appear yet.
