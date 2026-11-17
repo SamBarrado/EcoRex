@@ -22,7 +22,11 @@ Ideas y mejoras identificadas pero no priorizadas para un sprint concreto. Sin o
 ## Cartas
 
 - **Alternativas de revelado y giro ya prototipadas** (en `design/cartas/propuesta-cartas-2026-11.html`, abrir en el navegador): además del Barrido que se implementó, existen Rotura (el dorso se parte en dos por una grieta), Iris (un círculo de luz disuelve el dorso) y Giro con vueltas según rareza; y para el giro manual, los modos Libre (dos ejes con inercia) y Toque (volteo de moneda). Idea abierta: usar un revelado distinto por rareza, p. ej. Rotura solo para Épica y Legendaria. También están los diseños de carta A (Lámina) y C (Reliquia).
-- **Regenerar `docs/screenshots/carta.png` y `ecodex.png`**: siguen mostrando el diseño anterior de la carta y del EcoDex.
+
+## Cuentas y acceso
+
+- **Verificación de email y recuperación de contraseña por email**: el login con Google ya existe (ver CLAUDE.md), pero el registro con email + contraseña sigue sin verificar el email (de ahí que al vincular una cuenta de Google se borre su `password_hash`) y las cuentas antiguas no tienen recuperación (hoy se resetean a mano con `wrangler d1 execute`). Las cuentas de Google no necesitan nada de esto: lo gestiona Google.
+- **Regenerar `docs/screenshots/login.png`**: no muestra aún el botón "Continuar con Google".
 
 ## Seguridad
 
