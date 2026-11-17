@@ -1,15 +1,15 @@
 **EN** | [ES](README.es.md)
 
+<p align="center">
+  <img src="docs/banner.png" alt="Ecorex — collect emotions in dinosaur form" width="100%">
+</p>
+
 # Ecorex — Collect Emotions in Dinosaur Form
 ### Discovery & collection PWA game | React · TypeScript · Cloudflare Pages/D1 · Web Push
 
 [![Live site](https://img.shields.io/website?url=https%3A%2F%2Fecorex-project.pages.dev&label=live%20demo)](https://ecorex-project.pages.dev)
 [![Release](https://img.shields.io/github/v/release/SamBarrado/EcoRex)](https://github.com/SamBarrado/EcoRex/releases)
 [![Last commit](https://img.shields.io/github/last-commit/SamBarrado/EcoRex)](https://github.com/SamBarrado/EcoRex/commits/main)
-
-<p align="center">
-  <img src="public/logo/logo-ecorex.png" alt="Ecorex logo" width="420">
-</p>
 
 Ecorex is an installable web game (PWA) where the player **perceives** dinosaurs that are really the bodies taken by eight primal emotions, trapped since the extinction. Every discovery is a **collectible card** with its species, its emotion (a *Fractae*), its rarity and its phase. Duplicate cards are **fused** at the Altar into the overflowing version of the creature, and everything feeds XP, levels and daily missions.
 
