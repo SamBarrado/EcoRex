@@ -61,10 +61,10 @@ describe("EcodexTile", () => {
     expect(screen.getByText("×3")).toBeInTheDocument();
   });
 
-  it("keeps the lore teaser under a revealed tile", () => {
+  it("does not show the lore phrase under the tile (it lives on the card itself)", () => {
     renderTile();
 
-    expect(screen.getByText(/Una frase de lore/)).toBeInTheDocument();
+    expect(screen.queryByText(/Una frase de lore/)).not.toBeInTheDocument();
   });
 
   it("renders a locked slot as the locked card, and shakes via onLockedClick", () => {

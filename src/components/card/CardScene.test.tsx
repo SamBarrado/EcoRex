@@ -108,6 +108,22 @@ describe("CardScene rotation", () => {
     expect(scene).toHaveAttribute("data-facing", "front");
   });
 
+  it("does not turn over on a sideways drag when allowSpin is off (Percibir)", async () => {
+    vi.useFakeTimers();
+    render(<CardScene {...baseProps} allowSpin={false} />);
+    await advance(REVEAL_MS);
+    const perspective = screen.getByTestId("card-perspective");
+    const scene = perspective.closest(".card-scene")!;
+
+    pointer("pointerDown", perspective, 0, 0);
+    await advance(500);
+    pointer("pointerMove", perspective, -300, 0);
+    pointer("pointerUp", perspective, -300, 0);
+    await advance(1500);
+
+    expect(scene).toHaveAttribute("data-facing", "front");
+  });
+
   it("is a single gesture surface whose images ignore the pointer (no native image drag)", async () => {
     const perspective = await revealed();
 

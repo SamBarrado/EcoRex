@@ -349,6 +349,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
             lorePhrase={result.lorePhrase ?? undefined}
             glowColor={RARITY_GLOW[result.rarityTier.slug] ?? RARITY_GLOW.registrada}
             phase={result.phase}
+            allowSpin={false}
             onCommitUp={handleCommitUp}
           />
         </div>

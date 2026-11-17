@@ -75,6 +75,11 @@ export interface CardSceneProps {
   glowColor: string;
   /** "scan" plays the mystery reveal on mount; "none" shows the card right away. */
   reveal?: "scan" | "none";
+  /**
+   * Whether dragging sideways turns the card over. Off in Percibir (the card
+   * only tilts and levitates there), on in the EcoDex viewer.
+   */
+  allowSpin?: boolean;
   onCommitUp?: () => void;
   commitHint?: string;
 }
@@ -90,6 +95,7 @@ export function CardScene({
   phase,
   glowColor,
   reveal = "scan",
+  allowSpin = true,
   onCommitUp,
   commitHint,
 }: CardSceneProps) {
@@ -403,7 +409,7 @@ export function CardScene({
     m.hovering = e.pointerType === "mouse";
     if (!m.dragging) return;
 
-    m.ry += (e.clientX - m.lastX) * DRAG_DEG_PER_PX;
+    if (allowSpin) m.ry += (e.clientX - m.lastX) * DRAG_DEG_PER_PX;
     m.lastX = e.clientX;
     m.lastY = e.clientY;
     const dy = e.clientY - m.startY;

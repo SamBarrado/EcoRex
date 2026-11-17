@@ -47,14 +47,17 @@ describe("ColeccionPage", () => {
     });
   });
 
-  it("shows the lore phrase on the grid tile without opening the viewer", async () => {
+  it("does not show the lore phrase on the grid tile, only once the card is opened", async () => {
     render(
       <MemoryRouter>
         <ColeccionPage />
       </MemoryRouter>
     );
-    expect(await screen.findByText("«Ruge donde arde el horizonte.»")).toBeInTheDocument();
-    expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument();
+    const tile = await screen.findByText("Rex de Fuego");
+    expect(screen.queryByText(/Ruge donde arde el horizonte/)).not.toBeInTheDocument();
+
+    fireEvent.click(tile.closest(".ecodex-slot")!);
+    expect(await screen.findByText(/Ruge donde arde el horizonte/)).toBeInTheDocument();
   });
 
   it("opens a full-screen card viewer when a revealed slot is clicked", async () => {

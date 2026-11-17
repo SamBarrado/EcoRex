@@ -78,11 +78,6 @@ export function EcodexTile({ slot, isJustUnlocked, revealPending, shaking, tileR
       }}
     >
       {showAsLocked || slot.locked ? <LockedTile /> : <RevealedTile slot={slot} />}
-      {!showAsLocked && !slot.locked && slot.lore_phrase && (
-        <p className="ecodex-tile-lore" title={slot.lore_phrase}>
-          &laquo;{slot.lore_phrase}&raquo;
-        </p>
-      )}
     </div>
   );
 }
