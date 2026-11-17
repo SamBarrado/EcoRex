@@ -268,7 +268,7 @@ Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/
 - **Eco phase:** the data and the art exist, but there's no progression path in the interface. Today the game only reaches Exceso (the design reserves it for a cracks minigame).
 - **Gifting between users, friends list and leaderboards:** the schema already allows for it (`gifts`), but there's no endpoint.
 - **Resonance Cards and themed Operations** with their own rarity distribution.
-- **Email verification, password recovery and social login.**
+- **Email verification and email-based password recovery.** Google sign-in exists instead (see CLAUDE.md); Google-linked accounts have no password, so Google handles their recovery.
 
 **Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): per-species appearance weights, editions for pack-style collections, weekly missions and streaks, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
 

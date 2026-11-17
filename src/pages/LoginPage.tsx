@@ -1,14 +1,16 @@
 import { FormEvent, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { login, ApiError } from "../lib/api";
 import { MailIcon, LockIcon } from "../components/AuthIcons";
+import GoogleButton, { googleErrorMessage } from "../components/GoogleButton";
 import { version } from "../../package.json";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(googleErrorMessage(searchParams.get("error")));
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
@@ -34,6 +36,8 @@ export default function LoginPage() {
       </div>
       <form onSubmit={handleSubmit} className="auth-card">
         <h1 className="auth-title">Iniciar sesión</h1>
+
+        <GoogleButton />
 
         <div className="auth-field">
           <MailIcon />

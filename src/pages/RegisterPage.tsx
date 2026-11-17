@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { register, ApiError } from "../lib/api";
 import { MailIcon, UserIcon, LockIcon } from "../components/AuthIcons";
+import GoogleButton from "../components/GoogleButton";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -34,6 +35,8 @@ export default function RegisterPage() {
       </div>
       <form onSubmit={handleSubmit} className="auth-card">
         <h1 className="auth-title">Crear cuenta</h1>
+
+        <GoogleButton />
 
         <div className="auth-field">
           <MailIcon />

@@ -4,3 +4,7 @@ OPENAI_API_KEY=
 # production default (5/h) so repeated manual testing doesn't get blocked.
 # Leave unset in production.
 DISCOVER_RATE_LIMIT=100
+# Sign in with Google (OAuth client from Google Cloud Console). Without these the
+# "Continuar con Google" button redirects back to /login with an error.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
