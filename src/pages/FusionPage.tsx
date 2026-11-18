@@ -6,6 +6,7 @@ import { XpToast } from "../components/XpToast";
 import { LevelUpScreen } from "../components/LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
+import { usePlayer } from "../lib/PlayerContext";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 import { streakRewardNote } from "../lib/streak";
 
@@ -25,6 +26,7 @@ export default function FusionPage() {
   const navigate = useNavigate();
   const { hideNav, showNav } = useNavVisibility();
   const { refetch: refetchNotifications } = useNotifications();
+  const { refresh: refreshPlayer, pulse: pulseAtmosphere } = usePlayer();
   const [searchParams] = useSearchParams();
   const [eligible, setEligible] = useState<EligibleSpecies[] | null>(null);
   const [progress, setProgress] = useState<EligibleSpecies[]>([]);
@@ -118,6 +120,8 @@ export default function FusionPage() {
       setResult(data);
       setShowXpToast(true);
       refetchNotifications();
+      refreshPlayer();
+      pulseAtmosphere(RARITY_GLOW[data.rarityTier.slug]);
       // Level-up is deliberately NOT shown here: it would mount on top of
       // the fusion result the instant it appears, competing for attention.
       // It's deferred until the user dismisses the result (see handleReset)

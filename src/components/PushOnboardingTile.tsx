@@ -47,7 +47,7 @@ export default function PushOnboardingTile() {
       >
         Activar
       </button>
-      <button onClick={dismiss}>Ahora no</button>
+      <button className="btn-secondary" onClick={dismiss}>Ahora no</button>
     </div>
   );
 }

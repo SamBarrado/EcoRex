@@ -7,6 +7,7 @@ import { streakRewardNote } from "../lib/streak";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
+import { usePlayer } from "../lib/PlayerContext";
 import { formatEnergyCountdown } from "../lib/energy";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 
@@ -79,6 +80,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const navigate = useNavigate();
   const { hideNav, showNav, pulseTab } = useNavVisibility();
   const { refetch: refetchNotifications } = useNotifications();
+  const { refresh: refreshPlayer, pulse: pulseAtmosphere } = usePlayer();
   const [showNewSlotOverlay, setShowNewSlotOverlay] = useState(false);
   const [showRevealTitle, setShowRevealTitle] = useState(false);
   const [phase, setPhase] = useState<RitualPhase>("sealed");
@@ -193,6 +195,10 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         setPhase("revealed");
         setShowXpToast(true);
         refetchNotifications();
+        // Level/XP/energy changed: re-sync the shared snapshot (level ring,
+        // living background) and flash the background in the card's rarity colour.
+        refreshPlayer();
+        pulseAtmosphere(RARITY_GLOW[data.rarityTier.slug]);
         // Level-up is deliberately NOT shown here: it would mount on top of
         // the card reveal the instant it appears, competing for attention.
         // It's deferred until the user finishes with the reveal (swipe up,

@@ -21,9 +21,9 @@ vi.mock("../lib/useNavBadges", () => ({
   useNavBadges: () => ({ inicioCount: 0, percibirActive: false, ecodexActive: false, ecodexNewestSlotKey: null }),
 }));
 
-function renderNav() {
+function renderNav(path = "/inicio") {
   return render(
-    <MemoryRouter initialEntries={["/inicio"]}>
+    <MemoryRouter initialEntries={[path]}>
       <NavVisibilityProvider>
         <AvatarProvider>
           <BottomNav />
@@ -52,5 +52,32 @@ describe("BottomNav avatar", () => {
     await waitFor(() => expect(getMyProfileMock).toHaveBeenCalled());
     const yo = screen.getByText("Yo").closest("button")!;
     expect(yo.querySelector("img")).toHaveAttribute("src", "/icons/perfil.png");
+  });
+});
+
+describe("BottomNav sliding pill", () => {
+  it.each([
+    ["/inicio", "0"],
+    ["/percibir", "1"],
+    ["/coleccion", "2"],
+    ["/perfil", "3"],
+  ])("sits under the active tab on %s", (path, index) => {
+    getMyProfileMock.mockResolvedValue({ user: { avatar: null } });
+    renderNav(path);
+    expect(screen.getByRole("navigation").style.getPropertyValue("--nav-i")).toBe(index);
+    expect(screen.getByTestId("nav-pill")).not.toHaveClass("bottom-nav-pill-off");
+  });
+
+  it("fades out on screens that are not tabs", () => {
+    getMyProfileMock.mockResolvedValue({ user: { avatar: null } });
+    renderNav("/fusion");
+    expect(screen.getByTestId("nav-pill")).toHaveClass("bottom-nav-pill-off");
+  });
+
+  it("marks only the current tab as the current page", () => {
+    getMyProfileMock.mockResolvedValue({ user: { avatar: null } });
+    renderNav("/coleccion");
+    expect(screen.getByText("EcoDex").closest("button")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Inicio").closest("button")).not.toHaveAttribute("aria-current");
   });
 });

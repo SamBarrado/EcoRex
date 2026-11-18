@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "../lib/navigation";
 import {
   getFuseEligible,
   getMyProfile,
@@ -23,7 +23,7 @@ import { version } from "../../package.json";
 const FUSION_UNLOCK_SEEN_KEY = "ecorex_unlock_seen_fusion";
 
 export default function InicioPage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [energy, setEnergy] = useState<EnergyState | null>(null);

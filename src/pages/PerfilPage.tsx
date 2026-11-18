@@ -218,7 +218,7 @@ export default function PerfilPage() {
         </div>
       )}
 
-      <button onClick={handleLogout}>Cerrar sesión</button>
+      <button className="btn-secondary" onClick={handleLogout}>Cerrar sesión</button>
     </div>
   );
 }

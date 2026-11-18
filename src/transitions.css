@@ -1,0 +1,85 @@
+/* =====================================================================
+   Transición deslizante entre pantallas (diseño elegido el 2026-11-18).
+   Usa la View Transitions API: la pantalla nueva entra desde el lado hacia el
+   que avanzas y la antigua sale con un poco de paralaje. `useAppNavigate`
+   (lib/navigation.ts) pone `data-vt-dir` en <html> y activa la transición solo
+   si el navegador la soporta y no se pidió reducir el movimiento; en cualquier
+   otro caso la navegación es instantánea, como siempre.
+   El fondo opaco de la propia página viaja dentro del «snapshot», así que la
+   pantalla que sale nunca se transparenta bajo la que entra.
+   ===================================================================== */
+
+/* Lo fijo se queda quieto: no forma parte del deslizamiento. */
+.bottom-nav {
+  view-transition-name: bottom-nav;
+}
+
+.level-hud {
+  view-transition-name: level-hud;
+}
+
+.action-fab-container {
+  view-transition-name: action-fab;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.22, 0.9, 0.25, 1);
+  animation-fill-mode: both;
+  mix-blend-mode: normal;
+}
+
+html[data-vt-dir="forward"]::view-transition-old(root) {
+  animation-name: vt-out-left;
+}
+html[data-vt-dir="forward"]::view-transition-new(root) {
+  animation-name: vt-in-right;
+}
+html[data-vt-dir="back"]::view-transition-old(root) {
+  animation-name: vt-out-right;
+}
+html[data-vt-dir="back"]::view-transition-new(root) {
+  animation-name: vt-in-left;
+}
+
+::view-transition-new(root) {
+  box-shadow: -14px 0 30px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes vt-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes vt-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes vt-out-left {
+  to {
+    transform: translateX(-26%);
+    opacity: 0.3;
+  }
+}
+@keyframes vt-out-right {
+  to {
+    transform: translateX(26%);
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

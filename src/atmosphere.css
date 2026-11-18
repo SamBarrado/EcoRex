@@ -1,0 +1,212 @@
+/* =====================================================================
+   Atmósfera viva — fondo global (componente <Atmosphere />)
+   Paleta derivada de --h (matiz). 135 = verde Ecorex. --wh = matiz de la
+   «luz» (sol, brillos). Cambiando solo estas dos variables se puede teñir con
+   el color de un Fractae sin tocar nada más.
+   ===================================================================== */
+.atm {
+  --h: 135;
+  --wh: 42;
+  --energy: 1;
+  --deep: hsl(var(--h) 48% 7%);
+  --mid: hsl(var(--h) 42% 14%);
+  --lite: hsl(var(--h) 36% 21%);
+  --glow: hsl(var(--h) 65% 46%);
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* La energía baja apaga el fondo; llena, lo deja vivo. Solo en las capas (no en las partículas). */
+.atm-layers {
+  position: absolute;
+  inset: 0;
+  filter: saturate(calc(0.4 + var(--energy) * 0.7)) brightness(calc(0.68 + var(--energy) * 0.32));
+  transition: filter 900ms ease;
+}
+
+.atm-c {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  transition: opacity 1000ms ease;
+}
+
+.atm[data-ctx="inicio"] .atm-c-inicio,
+.atm[data-ctx="percibir"] .atm-c-percibir,
+.atm[data-ctx="coleccion"] .atm-c-coleccion,
+.atm[data-ctx="perfil"] .atm-c-perfil {
+  opacity: 1;
+}
+
+/* Inicio: amanecer */
+.atm-c-inicio {
+  background: radial-gradient(95% 48% at 50% -4%, hsl(var(--wh) 88% 62% / 0.5), transparent 66%),
+    radial-gradient(120% 70% at 50% 112%, hsl(var(--h) 70% 42% / 0.4), transparent 62%),
+    linear-gradient(180deg, var(--lite), var(--mid) 48%, var(--deep));
+}
+
+/* Percibir: misterio, viñeta oscura que centra la atención en el sobre */
+.atm-c-percibir {
+  background: radial-gradient(130% 95% at 50% 48%, transparent 38%, rgba(0, 0, 0, 0.6)),
+    linear-gradient(180deg, hsl(var(--h) 50% 5%), hsl(var(--h) 46% 9%));
+}
+
+/* EcoDex: museo */
+.atm-c-coleccion {
+  background: radial-gradient(75% 46% at 50% 0%, hsl(var(--wh) 70% 62% / 0.24), transparent 72%),
+    linear-gradient(180deg, hsl(calc(var(--h) - 10) 34% 16%), hsl(calc(var(--h) - 8) 36% 8%));
+}
+
+/* Yo: calma */
+.atm-c-perfil {
+  background: radial-gradient(105% 60% at 50% 0%, hsl(calc(var(--h) + 45) 62% 46% / 0.42), transparent 70%),
+    linear-gradient(180deg, hsl(calc(var(--h) + 30) 40% 17%), hsl(calc(var(--h) + 30) 46% 8%));
+}
+
+.atm-spot {
+  position: absolute;
+  left: -12%;
+  top: 22%;
+  width: 124%;
+  height: 56%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, hsl(calc(var(--h) + 38) 80% 58% / 0.5), hsl(var(--h) 75% 45% / 0.18) 60%, transparent);
+  opacity: 0;
+  transition: opacity 900ms ease;
+  animation: atm-spot 4.5s ease-in-out infinite alternate;
+}
+
+.atm[data-ctx="percibir"] .atm-spot {
+  opacity: 1;
+}
+
+@keyframes atm-spot {
+  to {
+    transform: scale(1.12);
+    filter: brightness(1.15);
+  }
+}
+
+.atm-dust {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.atm[data-ctx="coleccion"] .atm-dust {
+  opacity: 1;
+}
+
+.atm-dust i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: hsl(var(--wh) 70% 80% / 0.7);
+  opacity: 0;
+  animation: atm-wander var(--wd) ease-in-out infinite alternate, atm-blink var(--bd) ease-in-out infinite;
+  animation-delay: var(--dl), var(--dl);
+}
+
+@keyframes atm-wander {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+@keyframes atm-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.25;
+  }
+}
+
+/* Energía llena: un halo cálido respira arriba */
+.atm-shine {
+  position: absolute;
+  left: 50%;
+  top: -8%;
+  width: 130%;
+  height: 40%;
+  margin-left: -65%;
+  background: radial-gradient(closest-side, hsl(var(--wh) 100% 75% / 0.5), transparent);
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.atm[data-energy="full"] .atm-shine {
+  opacity: 1;
+  animation: atm-shine 3.6s ease-in-out infinite alternate;
+}
+
+@keyframes atm-shine {
+  to {
+    opacity: 0.45;
+    transform: scale(1.1);
+  }
+}
+
+/* Sin energía: las partículas se quedan quietas y casi apagadas */
+.atm[data-energy="empty"] .bg-particle {
+  animation-play-state: paused;
+  opacity: 0.15 !important;
+}
+
+/* Las partículas heredan el tono del fondo */
+.atm .bg-particle {
+  background: radial-gradient(circle, hsl(var(--h) 80% 72% / 0.8), hsl(var(--h) 70% 50% / 0));
+}
+
+/* Destello puntual (XP, nivel, logro) */
+.atm-hit {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  background: radial-gradient(60% 45% at 50% 45%, color-mix(in srgb, var(--hit, hsl(160 75% 58%)) 85%, transparent), transparent 70%);
+  animation: atm-hit 1100ms ease-out;
+}
+
+@keyframes atm-hit {
+  0% {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+  22% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atm-spot,
+  .atm-dust i,
+  .atm-shine,
+  .atm-hit {
+    animation: none;
+  }
+  .atm-hit {
+    display: none;
+  }
+  .atm-layers,
+  .atm-c {
+    transition: none;
+  }
+}

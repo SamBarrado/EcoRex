@@ -75,7 +75,8 @@ a {
   z-index: 1;
   max-width: 480px;
   margin: 0 auto;
-  padding: 1.5rem 1rem calc(2rem + 64px + env(safe-area-inset-bottom));
+  /* 3.6rem arriba: deja sitio al indicador de nivel (.level-hud), siempre visible en la esquina */
+  padding: 3.6rem 1rem calc(2rem + 64px + env(safe-area-inset-bottom));
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -142,8 +143,13 @@ a {
   font-size: 1rem;
 }
 
+/* Botones «Foil» (diseño elegido el 2026-11-18): degradado con un brillo que
+   barre el botón al pulsarlo (`.sheen`, lo añade lib/buttonSheen.ts) y que se
+   hunde un poco al apretarlo. El barrido es una segunda capa de `background`:
+   sin pseudo-elementos ni overflow, así que no recorta nada. */
 button {
-  background: linear-gradient(90deg, #3fae5a, #4fa9e0);
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.6) 48%, transparent 62%) no-repeat -170% 0 / 260% 100%,
+    linear-gradient(135deg, #3fae5a 0%, #4fa9e0 100%);
   color: #06120a;
   border: none;
   border-radius: 999px;
@@ -151,12 +157,53 @@ button {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 6px 20px rgba(79, 169, 224, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 0 rgba(0, 0, 0, 0.15), 0 5px 16px rgba(63, 174, 90, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+button:not([class]):active:not(:disabled),
+.auth-submit:active:not(:disabled) {
+  transform: scale(0.96);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(63, 174, 90, 0.3);
+}
+
+button.sheen:not(:disabled) {
+  animation: btn-sheen 650ms ease-out;
+}
+
+@keyframes btn-sheen {
+  from {
+    background-position: -170% 0, 0 0;
+  }
+  to {
+    background-position: 170% 0, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.sheen:not(:disabled) {
+    animation: none;
+  }
 }
 
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Jerarquía: el botón normal es la acción principal; estos dos son las secundarias. */
+.btn-secondary {
+  background: transparent;
+  color: #bfe6c9;
+  box-shadow: inset 0 0 0 1.5px rgba(127, 200, 145, 0.6);
+}
+
+.btn-ghost {
+  background: none;
+  color: #9fd3ac;
+  box-shadow: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .error {
@@ -578,10 +625,15 @@ button:disabled {
   font-weight: 700;
   font-size: 1.05rem;
   color: #06120a;
-  background: linear-gradient(90deg, #3fae5a, #4fa9e0);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 6px 24px rgba(79, 169, 224, 0.45);
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.6) 48%, transparent 62%) no-repeat -170% 0 / 260% 100%,
+    linear-gradient(135deg, #3fae5a 0%, #4fa9e0 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 0 rgba(0, 0, 0, 0.15), 0 5px 18px rgba(63, 174, 90, 0.4);
   cursor: pointer;
   margin-top: 0.5rem;
+}
+
+.auth-submit.sheen:not(:disabled) {
+  animation: btn-sheen 650ms ease-out;
 }
 
 .auth-submit:disabled {
@@ -1968,4 +2020,111 @@ button:disabled {
 
 .welcome-dot-active {
   background: #3fae5a;
+}
+
+/* Barra inferior: píldora que se desliza bajo la pestaña activa (diseño elegido el 2026-11-18) */
+.bottom-nav-tab {
+  position: relative;
+  z-index: 1;
+}
+
+.bottom-nav-pill {
+  position: absolute;
+  z-index: 0;
+  top: 0.35rem;
+  bottom: calc(0.35rem + env(safe-area-inset-bottom));
+  left: 0.5rem;
+  width: calc((100% - 1rem) / 4);
+  border-radius: 15px;
+  background: rgba(127, 200, 145, 0.14);
+  border: 1px solid rgba(127, 200, 145, 0.3);
+  transform: translateX(calc(var(--nav-i, 0) * 100%));
+  transition: transform 420ms cubic-bezier(0.34, 1.45, 0.5, 1), opacity 200ms ease;
+  pointer-events: none;
+}
+
+.bottom-nav-pill-off {
+  opacity: 0;
+}
+
+.bottom-nav-icon {
+  transition: transform 380ms cubic-bezier(0.34, 1.7, 0.5, 1);
+}
+
+.bottom-nav-tab-active .bottom-nav-icon {
+  transform: translateY(-1px) scale(1.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav-pill,
+  .bottom-nav-icon {
+    transition: none;
+  }
+}
+
+/* Indicador de nivel siempre visible (esquina superior derecha, alineado con la columna de 480 px) */
+.level-hud {
+  position: fixed;
+  z-index: 55;
+  top: calc(10px + env(safe-area-inset-top));
+  right: calc(max(0px, (100vw - 480px) / 2) + 12px);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 20, 13, 0.88);
+  color: #f2f6f3;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.level-hud svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.level-hud-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 4;
+}
+
+.level-hud-fill {
+  fill: none;
+  stroke: #7fc891;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dasharray 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: drop-shadow(0 0 3px rgba(127, 200, 145, 0.7));
+}
+
+.level-hud b {
+  position: relative;
+  font: 800 1.1rem "Barlow Condensed", system-ui, sans-serif;
+}
+
+.level-hud-gain {
+  animation: level-hud-pulse 520ms ease-out;
+}
+
+@keyframes level-hud-pulse {
+  40% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px rgba(127, 224, 160, 0.35), 0 0 22px rgba(127, 224, 160, 0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-hud-gain,
+  .level-hud-fill {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Las pantallas con cabecera propia (Fusión) ya tienen sitio para el indicador de nivel a su lado */
+.page-header + .page {
+  padding-top: 1.5rem;
 }

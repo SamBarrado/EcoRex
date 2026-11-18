@@ -1,4 +1,6 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import type { CSSProperties } from "react";
+import { useLocation } from "react-router-dom";
+import { useAppNavigate } from "../lib/navigation";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNavBadges } from "../lib/useNavBadges";
 import { useAvatar } from "../lib/AvatarContext";
@@ -24,7 +26,7 @@ function HomeIcon() {
 
 export default function BottomNav() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { visible, pulsedPath } = useNavVisibility();
   const { avatar } = useAvatar();
   const { inicioCount, percibirActive, ecodexActive, ecodexNewestSlotKey } = useNavBadges();
@@ -46,8 +48,16 @@ export default function BottomNav() {
     navigate(path);
   }
 
+  // The pill glides under the active tab; on screens that are not tabs (e.g. Fusión) it fades out.
+  const activeIndex = TABS.findIndex((tab) => tab.path === location.pathname);
+
   return (
-    <nav className={`bottom-nav${visible ? "" : " bottom-nav-hidden"}`} aria-label="Navegación principal">
+    <nav
+      className={`bottom-nav${visible ? "" : " bottom-nav-hidden"}`}
+      aria-label="Navegación principal"
+      style={{ "--nav-i": Math.max(activeIndex, 0) } as CSSProperties}
+    >
+      <i className={`bottom-nav-pill${activeIndex === -1 ? " bottom-nav-pill-off" : ""}`} aria-hidden="true" data-testid="nav-pill" />
       {TABS.map((tab) => {
         const active = location.pathname === tab.path;
         const pulsing = pulsedPath === tab.path;

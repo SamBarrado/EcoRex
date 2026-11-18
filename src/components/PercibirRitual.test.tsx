@@ -5,6 +5,9 @@ import { PercibirRitual } from "./PercibirRitual";
 import { ApiError, Species } from "../lib/api";
 import { NavVisibilityProvider } from "../lib/NavVisibilityContext";
 import { NotificationsProvider } from "../lib/NotificationsContext";
+import { PlayerProvider } from "../lib/PlayerContext";
+import Atmosphere from "./Atmosphere";
+import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const species: Species[] = [
   {
@@ -150,6 +153,34 @@ describe("PercibirRitual", () => {
     });
 
     expect(screen.getByText(title)).toBeInTheDocument();
+  });
+
+  it("flashes the living background in the card's rarity colour when it is revealed", async () => {
+    vi.useFakeTimers();
+    const discoverFn = vi.fn().mockResolvedValue({ ...discoverResult, rarityTier: { slug: "epica", name: "Épica" } });
+    render(
+      <MemoryRouter>
+        <NavVisibilityProvider>
+          <NotificationsProvider>
+            <PlayerProvider>
+              <Atmosphere />
+              <PercibirRitual species={species} discoverFn={discoverFn} onUnauthorized={vi.fn()} />
+            </PlayerProvider>
+          </NotificationsProvider>
+        </NavVisibilityProvider>
+      </MemoryRouter>
+    );
+    expect(document.querySelector(".atm-hit")).toBeNull();
+    openPeek();
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3000);
+    });
+    const hit = document.querySelector(".atm-hit") as HTMLElement;
+    expect(hit).not.toBeNull();
+    expect(hit.style.getPropertyValue("--hit")).toBe(RARITY_GLOW.epica);
   });
 
   it("does not show the XP toast when the discovery grants 0 xp (a duplicate)", async () => {
