@@ -27,7 +27,9 @@ const baseProfile: ProfileStats = {
   speciesDiscoveredCount: 3,
   speciesTotalCount: 10,
   totalDiscoveries: 5,
-  duplicateCount: 2,
+  registeredCount: 4,
+  registeredTotalCount: 30,
+  repeatedCount: 2,
   rarityBreakdown: [],
 };
 
@@ -93,5 +95,23 @@ describe("PerfilPage avatar", () => {
     fireEvent.click(screen.getByLabelText("Avatar 1"));
     expect(await screen.findByText(/No se pudo guardar el avatar/)).toBeInTheDocument();
     expect(screen.getByText("Elige tu avatar")).toBeInTheDocument();
+  });
+});
+
+describe("PerfilPage collection stats", () => {
+  it("uses one label per unit: species, EcoDex registries, cards and repeated cards", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    renderPage();
+
+    await screen.findByText("Especies descubiertas");
+    expect(screen.getByText("3/10 (30%)")).toBeInTheDocument(); // species
+    expect(screen.getByText("Registros del EcoDex")).toBeInTheDocument();
+    expect(screen.getByText("4/30 (13%)")).toBeInTheDocument(); // registries
+    expect(screen.getByText("Cartas conseguidas")).toBeInTheDocument();
+    expect(screen.getByText("Repetidas")).toBeInTheDocument();
+    // Retired labels that mixed units.
+    expect(screen.queryByText("Duplicados")).not.toBeInTheDocument();
+    expect(screen.queryByText("Capturas totales")).not.toBeInTheDocument();
+    expect(screen.queryByText("Progreso de colección")).not.toBeInTheDocument();
   });
 });

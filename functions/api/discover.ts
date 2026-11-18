@@ -2,6 +2,7 @@ import { getSessionCookie, verifySession } from "../lib/auth";
 import { consumeEnergy } from "../lib/energy";
 import { levelFromXp, RARITY_XP } from "../lib/xp";
 import { loadSpeciesPhase, rollRarityTier, recordDiscovery, discoveryResponseBody } from "../lib/recordDiscovery";
+import { ECO_DROP_CHANCE, loadEcoEligibleSpeciesIds } from "../lib/discovery";
 
 interface Env {
   DB: D1Database;
@@ -12,7 +13,9 @@ interface DiscoverBody {
   phase?: string;
 }
 
-const VALID_PHASES = ["balance", "eco"];
+// The client only ever asks for "balance" (= percibir). Exceso comes from the
+// Altar de Fusión and Eco is a rare drop the server rolls itself (see below).
+const VALID_PHASES = ["balance"];
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -38,14 +41,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const phase = body.phase;
+  const requestedPhase = body.phase;
 
-  if (!phase || !VALID_PHASES.includes(phase)) {
-    if (phase === "exceso") {
+  if (!requestedPhase || !VALID_PHASES.includes(requestedPhase)) {
+    if (requestedPhase === "exceso") {
       return Response.json(
         { error: "Exceso solo se obtiene fusionando duplicados de Balance" },
         { status: 400 }
       );
+    }
+    if (requestedPhase === "eco") {
+      return Response.json({ error: "Eco no se elige: puede aparecer al percibir" }, { status: 400 });
     }
     return Response.json({ error: "A valid phase is required" }, { status: 400 });
   }
@@ -58,8 +64,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "No hay especies activas para descubrir" }, { status: 500 });
   }
 
-  const randomIndex = crypto.getRandomValues(new Uint32Array(1))[0] % activeSpeciesIds.length;
-  const speciesId = activeSpeciesIds[randomIndex].id;
+  const pick = (ids: number[]) => ids[crypto.getRandomValues(new Uint32Array(1))[0] % ids.length];
+
+  let phase = "balance";
+  let speciesId = pick(activeSpeciesIds.map((row) => row.id));
+
+  // Rare Eco drop. Only for a species the player already has the Balance of;
+  // with none eligible (e.g. a brand-new account) the roll simply falls back
+  // to a normal Balance pull.
+  if (Math.random() < ECO_DROP_CHANCE) {
+    const ecoSpeciesIds = await loadEcoEligibleSpeciesIds(env.DB, user.id);
+    if (ecoSpeciesIds.length > 0) {
+      phase = "eco";
+      speciesId = pick(ecoSpeciesIds);
+    }
+  }
 
   const speciesRow = await loadSpeciesPhase(env.DB, speciesId, phase);
 

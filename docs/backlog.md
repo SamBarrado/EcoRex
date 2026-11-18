@@ -11,7 +11,7 @@ Esfuerzo (estimación con tests): **S** < 2 h · **M** medio día · **L** 1–2
 
 Análisis hecho leyendo el código (no la app en el navegador). Datos de uso de referencia: 7 usuarios y 262 descubrimientos a 2026-11-17.
 
-1. **El contenido se agota en 1–2 semanas.** Solo hay 6 especies activas y la fase Eco no se puede conseguir desde la UI: 12 cartas alcanzables. Unas 15 percepciones para ver las 6 de Balance y ~40 para fusionarlas todas; con 3 de energía cada 12 h, el catálogo se completa en 1–2 semanas.
+1. **El contenido se agota en 1–2 semanas.** Solo hay 6 especies activas y la fase Eco no se podía conseguir desde la UI: 12 cartas alcanzables. *(Eco ya es obtenible desde el 2026-11-18, ver #4: son 18 registros.)* Unas 15 percepciones para ver las 6 de Balance y ~40 para fusionarlas todas; con 3 de energía cada 12 h, el catálogo se completa en 1–2 semanas.
 2. **La economía de XP se rompe al acabarse el contenido.** El bonus de especie completa (+200 XP) exige las 3 fases e incluye Eco (inalcanzable). La misión "carta nueva" solo se cumple con una carta nueva en un hueco nuevo, así que casi nunca se completa cuando ya tienes los 6 Balance, y con ella se cae el bonus diario (+30). El XP diario baja de ~85 a ~15–35. Nivel 15 = 2.619 XP; nivel 50 = 17.150.
 3. **Una sesión dura un minuto.** 3 de energía → 3 percepciones y se acaba la app. Sin racha, sin objetivo a medio plazo.
 4. **Promesas vacías y huecos.** Tres tarjetas bloqueadas en Inicio (Eco, Álbum, Amigos) que no llevan a ningún sitio; sin onboarding (el lore solo vive dentro de las cartas); sin compartir; tablas de regalos sin endpoints; sin analítica.
@@ -27,7 +27,7 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 | 1 | **Arreglar la economía de misiones** | "Carta nueva" pasa a "Consigue 1 carta" (cualquiera). Todas las misiones deben ser completables siempre. | S–M | Alto | ✅ 2026-11-18 (variante: ver nota) |
 | 2 | **Racha de días con premio** | Contador de días seguidos en Inicio; premio de XP + energía recargada a los 3 días, a los 7 y cada 7 después. Se deriva de `daily_missions` (sin migración); el cobro es idempotente vía la bandeja de notificaciones. | M | Alto | ✅ 2026-11-18 |
 | 3 | **Subir de nivel rellena la energía** | En `recordDiscovery`, si `leveledUp`, energía al máximo; `LevelUpScreen` lo anuncia. | S | Alto | ✅ 2026-11-18 |
-| 4 | **Eco como drop raro** | ~3–5 % de las percepciones salen en fase Eco (el servidor ya acepta `eco`). Desbloquea 18 cartas y el bonus de +200 XP. | M | Muy alto | ❓ decidir (ver §4); requiere arte Eco |
+| 4 | **Eco como drop raro** | 5 % de las percepciones salen en fase Eco, decidido por el servidor y solo de especies cuyo Balance ya tienes. Desbloquea 18 registros y el bonus de +200 XP. El tile "Eco · Próximamente" de Inicio se retira (Eco ya no es un modo). | M | Muy alto | ✅ 2026-11-18 |
 | 5 | **Onboarding de 3 pantallas** | 3 slides de lore al entrar por primera vez (solo cuentas sin cartas), **sin botón de saltar** (solo "Siguiente"), terminando en "Percibir mi primera carta". La pista del gesto ya existía en el propio ritual. Textos a revisar por ti. | M | Alto | ✅ 2026-11-18 |
 | 6 | **"Próximamente" en vez de candados muertos** | Eco/Álbum/Amigos con etiqueta y, si se puede, "Avísame" por push. | S | Medio | ✅ 2026-11-18 (sin "Avísame": queda para cuando haya algo que avisar) |
 | 7 | **Progreso de fusión visible** | Barra "Próxima fusión: Rex de Fuego 3/5" en Inicio y lista "en progreso" en el Altar. `/api/fuse/eligible` añade `progress` y `threshold`. Falta mostrarlo en las baldosas del EcoDex. | S–M | Alto | ✅ 2026-11-18 (EcoDex pendiente) |
@@ -41,6 +41,11 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 
 **Nota sobre #1 (variante aplicada):** al implementarlo apareció que la misión de **fusión** tampoco se puede cumplir a diario (5 duplicados ≈ 1,7 días de energía) y el bonus la exigía, así que el bonus era inalcanzable incluso al empezar. Resultado: `percibir` = 1 carta (10 XP), `coleccionista` = 3 cartas cualesquiera, nuevas o repetidas, fusión incluida (25 XP), bonus +30 XP por esas dos; `fusion` pasa a **extra opcional** (+20 XP, fuera del bonus). Techo diario sin fusión: 65 XP. Todo ajustable en `MISSION_DEFS`/`BONUS_SLUGS` ([missions.ts](../functions/lib/missions.ts)). Si más adelante se quiere la 4ª misión rotatoria, es una extensión de esto.
 
+**Notas del #4 (Eco) y de la terminología (2026-11-18):**
+- **Eco:** decisiones de producto cerradas: sin minijuego para llegar a Eco, drop raro de Percibir (5 %), solo de especies cuyo Balance ya tienes, rareza sorteada aparte, Eco repetido sin uso. Medido en 1000 percepciones reales en local: 4,2 % de Eco, 0 Eco de una especie sin Balance previo, y el perfil cuadra con el SQL a mano. Un efecto lateral importante: antes el servidor aceptaba `phase: "eco"` del cliente; ahora se rechaza (habría sido una trampa para conseguir Eco garantizado).
+- **Terminología:** vocabulario especie / fase / registro / carta / repetida (ver world bible §11 y CLAUDE.md). Arreglado además que "Duplicados" del Perfil contaba mal (capturas − especies; subía al fusionar) y que el denominador incluía los huecos "???" (Inicio no pasaba del 75 %). Ahora Inicio y Perfil muestran "Especies 6/6" y "Registros 12/18"; el EcoDex, "Registros".
+- **Fusión:** el texto pasa a "cartas Balance de la misma especie" (5), no "duplicados", para no chocar con el nuevo vocabulario.
+
 **Notas de la tanda 2:**
 - **Racha:** cuenta días naturales (hora de Madrid) con cualquier actividad; si ayer jugaste y hoy aún no, sigue viva ("¡Juega hoy para no perderla!"). Premios: día 3 = 20 XP, día 7 = 50 XP, cada 7 días = 50 XP, y en todos la energía se recarga. Rachas y premios son constantes en [streak.ts](../functions/lib/streak.ts). Las rachas de usuarios existentes empiezan a contar desde el historial de `daily_missions`.
 - **Service worker:** al verificar en navegador real apareció que `sw.ts` no hacía `skipWaiting()`, así que tras un deploy los jugadores seguían con el build anterior hasta cerrar todas las pestañas. Corregido (ver CLAUDE.md); sin esto ningún quick win llegaba rápido a producción.
@@ -53,19 +58,20 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 
 ## 3. Contenido
 
+- **Eco de las próximas oleadas:** cada especie nueva necesita sus 3 artes (Balance, Exceso, Eco) y su ancla Eco con lore para que el drop pueda sacarla.
 - **Oleada siguiente de especies.** Solo 6 de 40 en remoto están activas; `tools/species/lote.json` tiene 54 fichas-spec. Pipeline: `species:art` → `convert-species-art-to-webp` → `db:sync-species` → `db:seed:remote`.
 - **Ediciones**: añadir "edición" como concepto de producto para colecciones tipo sobre (el campo `edition` ya existe en las fichas-spec, falta la mecánica de cara al usuario: sobres, desbloqueo, etc.).
 - **Operaciones/eventos con freshness automática**: una especie es "rara" porque es nueva y se normaliza sola con el tiempo, sin tocar `drop_weight` a mano. Encaja con el modelo de Operaciones del world bible (§7/18.3); el reparto de rareza por Operación sigue sin diseñar.
 - **Pesos por especie**: % de aparición distinto por especie dentro del pool activo (hoy el sorteo es uniforme entre `species.is_active`), independiente del sorteo de rareza.
 - **Misiones más allá de las 3 fijas**: semanales, rotación de objetivos, rachas (ver #1, #2). Merece bloque propio de diseño.
 
-## 4. Decisiones abiertas (no construir hasta decidirlas)
+## 4. Decisiones (abiertas y cerradas)
 
-- ❓ **Fase Eco**: qué es y cómo se alcanza. Recomendación: drop raro (#4), por ser lo más simple y lo que más desbloquea. Alternativa: premio de racha o de fusionar Exceso.
-- ❓ **Fusiones más allá de Balance**: si Exceso → Eco, etc.
+- ✅ **Fase Eco** (decidido 2026-11-18): drop raro de Percibir, ver #4. El minijuego de Grietas deja de ser la vía a Eco (el minijuego en sí sigue pospuesto, sin dependencias).
+- ✅ **Fusiones más allá de Balance** (decidido 2026-11-18): no. Eco no se fusiona y un Eco repetido no tiene uso.
 - ❓ **Modo Amigos**: alcance (código QR, regalos, invitación con premio para ambos…). Las tablas `gifts` ya existen; no hay endpoints.
 - ❓ **Modo Álbum** con ilustraciones: lo que era el EcoDex al principio; en vez de carta, ficha del dino con ilustración grande y al natural, posiblemente alternativa.
-- ❓ **Terminología "especies" vs "variantes"**: especie (T-Rex) vs variante (cada fase). Hoy "Especies descubiertas" en perfil/Inicio puede confundirse con el conteo de fases.
+- ✅ **Terminología** (decidido 2026-11-18): especie / fase / registro / carta / repetida; no se usa "variante". Aplicado a Inicio, Perfil y EcoDex.
 
 ## 5. Sistemas y UX
 

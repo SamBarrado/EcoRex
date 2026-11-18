@@ -28,7 +28,7 @@ export function FusionProgressCard({
         <div className="level-progress-fill" style={{ width: `${pct}%` }} />
       </div>
       <div className="streak-hint">
-        Junta {threshold} cartas Balance repetidas para obtener su forma Exceso.
+        Junta {threshold} cartas Balance de esta especie para obtener su forma Exceso.
       </div>
     </div>
   );

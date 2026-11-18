@@ -140,4 +140,30 @@ describe("ColeccionPage behavior", () => {
     await waitFor(() => expect(screen.queryByTestId("card-perspective")).not.toBeInTheDocument());
     expect(document.body.style.overflow).not.toBe("hidden");
   });
+
+  it("counts only playable slots in the 'Registros' progress, so the '???' placeholders don't cap it below 100%", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        currentWave: 1,
+        slots: [
+          { ...revealedSlot, species_id: 1, playable: true },
+          { species_id: 1, phase: "exceso", wave: 1, locked: true as const, playable: true },
+          { species_id: 9, phase: "balance", wave: 1, locked: true as const, playable: false },
+          { species_id: 9, phase: "exceso", wave: 1, locked: true as const, playable: false },
+        ],
+      }),
+    } as Response);
+
+    render(
+      <MemoryRouter>
+        <ColeccionPage />
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("Registros")).toBeInTheDocument();
+    // 1 registered out of 2 playable (not out of 4 slots).
+    expect(screen.getByText("1/2 (50%)")).toBeInTheDocument();
+    expect(screen.queryByText(/Especies registradas/)).not.toBeInTheDocument();
+  });
 });

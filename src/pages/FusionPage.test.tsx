@@ -161,7 +161,7 @@ describe("FusionPage", () => {
 
     renderPage();
 
-    expect(await screen.findByText(/Aún no tienes 5 duplicados/)).toBeInTheDocument();
+    expect(await screen.findByText(/Aún no tienes 5 cartas Balance de la misma especie/)).toBeInTheDocument();
     expect(screen.getByText("Tricera")).toBeInTheDocument();
     expect(screen.getByText("4/5")).toBeInTheDocument();
     expect(screen.getByText("Ceratosaurio")).toBeInTheDocument();

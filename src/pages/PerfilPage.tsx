@@ -81,6 +81,10 @@ export default function PerfilPage() {
     profile.speciesTotalCount > 0
       ? Math.round((profile.speciesDiscoveredCount / profile.speciesTotalCount) * 100)
       : 0;
+  const registeredPct =
+    profile.registeredTotalCount > 0
+      ? Math.round((profile.registeredCount / profile.registeredTotalCount) * 100)
+      : 0;
 
   const avatarLabel = (profile.user.display_name || profile.user.email).trim();
   const avatarInitial = avatarLabel.charAt(0).toUpperCase();
@@ -169,18 +173,24 @@ export default function PerfilPage() {
 
       <div className="card">
         <div className="stat">
-          <span>Progreso de colección</span>
+          <span>Especies descubiertas</span>
           <span>
             {profile.speciesDiscoveredCount}/{profile.speciesTotalCount} ({progressPct}%)
           </span>
         </div>
         <div className="stat">
-          <span>Capturas totales</span>
+          <span>Registros del EcoDex</span>
+          <span>
+            {profile.registeredCount}/{profile.registeredTotalCount} ({registeredPct}%)
+          </span>
+        </div>
+        <div className="stat">
+          <span>Cartas conseguidas</span>
           <span>{profile.totalDiscoveries}</span>
         </div>
         <div className="stat">
-          <span>Duplicados</span>
-          <span>{profile.duplicateCount}</span>
+          <span>Repetidas</span>
+          <span>{profile.repeatedCount}</span>
         </div>
       </div>
 

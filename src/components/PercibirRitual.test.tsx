@@ -131,6 +131,27 @@ describe("PercibirRitual", () => {
     expect(screen.getByText("Test Dino")).toBeInTheDocument();
   });
 
+  it.each([
+    ["balance", "¡Percibiste una Fractura!"],
+    ["eco", "¡Percibiste un Eco!"],
+  ])("titles the reveal by what dropped: %s -> %s", async (phase, title) => {
+    vi.useFakeTimers();
+    const discoverFn = vi.fn().mockResolvedValue({ ...discoverResult, phase });
+    renderRitual({ discoverFn });
+    openPeek();
+
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+
+    // The title only lives for a moment after the reveal: step instead of draining every timer.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3000);
+    });
+
+    expect(screen.getByText(title)).toBeInTheDocument();
+  });
+
   it("does not show the XP toast when the discovery grants 0 xp (a duplicate)", async () => {
     vi.useFakeTimers();
     const discoverFn = vi.fn().mockResolvedValue({

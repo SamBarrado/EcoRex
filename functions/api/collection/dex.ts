@@ -21,6 +21,7 @@ interface DiscoveryRow {
 interface SpeciesRow {
   id: number;
   launch_wave: number;
+  is_active: number;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -48,7 +49,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const currentWave = waveRow?.wave ?? 0;
 
   const { results: speciesRows } = await env.DB.prepare(
-    `SELECT id, launch_wave FROM species WHERE launch_wave <= ? AND launch_wave > 0 ORDER BY launch_wave, id`
+    `SELECT id, launch_wave, is_active FROM species WHERE launch_wave <= ? AND launch_wave > 0 ORDER BY launch_wave, id`
   )
     .bind(currentWave)
     .all<SpeciesRow>();
@@ -101,13 +102,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     PHASES.map((phase) => {
       const found = grouped.get(`${species.id}_${phase}`);
       if (!found) {
-        return { species_id: species.id, phase, wave: species.launch_wave, locked: true as const };
+        return { species_id: species.id, phase, wave: species.launch_wave, playable: species.is_active === 1, locked: true as const };
       }
       const { representative, count } = found;
       return {
         species_id: species.id,
         phase,
         wave: species.launch_wave,
+        playable: species.is_active === 1,
         locked: false as const,
         scientific_name: representative.scientific_name,
         common_name: representative.common_name,

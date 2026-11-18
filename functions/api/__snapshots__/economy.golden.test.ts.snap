@@ -436,6 +436,223 @@ exports[`economy golden master: POST /api/discover > a gap breaks the streak: no
 }
 `;
 
+exports[`economy golden master: POST /api/discover > an Eco duplicate of a complete species pays no species bonus 1`] = `
+{
+  "body": {
+    "commonName": "Rex de Fuego",
+    "dailyBonusAwarded": false,
+    "discoveredAt": "2026-11-17 12:00:00",
+    "discoveryCode": "DX-DLT-DLT",
+    "discoveryId": 99,
+    "energyRefilled": false,
+    "imageUrl": "/species-art/rex/balance.webp",
+    "isNewSlot": true,
+    "lorePhrase": "Donde pisa, la tierra arde.",
+    "missionsCompleted": [
+      "percibir",
+    ],
+    "phase": "eco",
+    "rarityTier": {
+      "name": "Registrada",
+      "slug": "registrada",
+    },
+    "scientificName": "Tyrannosaurus imperator",
+    "speciesId": 7,
+    "streak": {
+      "days": 1,
+      "reward": null,
+    },
+    "xp": {
+      "level": 1,
+      "leveledUp": false,
+      "previousLevel": 1,
+      "totalXp": 20,
+      "xpGained": 20,
+    },
+  },
+  "statements": [
+    {
+      "args": [
+        "abc",
+      ],
+      "op": "first",
+      "sql": "SELECT users.id as id, users.email as email, users.display_name as display_name, users.xp as xp, users.avatar as avatar, sessions.expires_at as expires_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        2,
+        1794916800000,
+        2,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id FROM species WHERE is_active = 1",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT discoveries.species_id as id FROM discoveries JOIN species ON species.id = discoveries.species_id AND species.is_active = 1 JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco' WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'",
+    },
+    {
+      "args": [
+        7,
+        "eco",
+      ],
+      "op": "first",
+      "sql": "SELECT species.id as species_id, species.scientific_name as scientific_name, species.common_name as common_name, fractae.child_name as fractae_child_name, species_phase_anchors.image_url as anchor_image_url, species_phase_anchors.lore_phrase as lore_phrase FROM species JOIN fractae ON fractae.id = species.fractae_id JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id WHERE species.id = ? AND species_phase_anchors.phase = ? AND species.is_active = 1",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
+    },
+    {
+      "args": [
+        1,
+        7,
+        "eco",
+      ],
+      "op": "first",
+      "sql": "SELECT COUNT(*) as count FROM discoveries WHERE user_id = ? AND species_id = ? AND phase = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        "DX-DLT-DLT",
+        1,
+        7,
+        "eco",
+        1,
+        "/species-art/rex/balance.webp",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO discoveries (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url) VALUES (?, ?, ?, ?, ?, ?)",
+    },
+    {
+      "args": [
+        99,
+      ],
+      "op": "first",
+      "sql": "SELECT discovered_at FROM discoveries WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "UPDATE daily_missions SET completed_at = datetime('now') WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+      ],
+      "op": "all",
+      "sql": "SELECT mission_slug, completed_at FROM daily_missions WHERE user_id = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+        120,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT day FROM daily_missions WHERE user_id = ? AND day <= ? ORDER BY day DESC LIMIT ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        20,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET xp = xp + ? WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+  ],
+  "status": 201,
+}
+`;
+
 exports[`economy golden master: POST /api/discover > balance count reaches 5 -> fusion_ready notification 1`] = `
 {
   "body": {
@@ -914,6 +1131,41 @@ exports[`economy golden master: POST /api/discover > both required missions done
     },
   ],
   "status": 201,
+}
+`;
+
+exports[`economy golden master: POST /api/discover > client asking for eco -> 400 (Eco is rolled by the server) 1`] = `
+{
+  "body": {
+    "error": "Eco no se elige: puede aparecer al percibir",
+  },
+  "statements": [
+    {
+      "args": [
+        "abc",
+      ],
+      "op": "first",
+      "sql": "SELECT users.id as id, users.email as email, users.display_name as display_name, users.xp as xp, users.avatar as avatar, sessions.expires_at as expires_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        2,
+        1794916800000,
+        2,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?",
+    },
+  ],
+  "status": 400,
 }
 `;
 
@@ -2337,7 +2589,242 @@ exports[`economy golden master: POST /api/discover > duplicate (slot already reg
 }
 `;
 
-exports[`economy golden master: POST /api/discover > eco phase 1`] = `
+exports[`economy golden master: POST /api/discover > eco drop completes the species (+200 xp) 1`] = `
+{
+  "body": {
+    "commonName": "Rex de Fuego",
+    "dailyBonusAwarded": false,
+    "discoveredAt": "2026-11-17 12:00:00",
+    "discoveryCode": "DX-DLT-DLT",
+    "discoveryId": 99,
+    "energyRefilled": true,
+    "imageUrl": "/species-art/rex/balance.webp",
+    "isNewSlot": true,
+    "lorePhrase": "Donde pisa, la tierra arde.",
+    "missionsCompleted": [
+      "percibir",
+    ],
+    "phase": "eco",
+    "rarityTier": {
+      "name": "Registrada",
+      "slug": "registrada",
+    },
+    "scientificName": "Tyrannosaurus imperator",
+    "speciesId": 7,
+    "streak": {
+      "days": 1,
+      "reward": null,
+    },
+    "xp": {
+      "level": 3,
+      "leveledUp": true,
+      "previousLevel": 1,
+      "totalXp": 220,
+      "xpGained": 220,
+    },
+  },
+  "statements": [
+    {
+      "args": [
+        "abc",
+      ],
+      "op": "first",
+      "sql": "SELECT users.id as id, users.email as email, users.display_name as display_name, users.xp as xp, users.avatar as avatar, sessions.expires_at as expires_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        2,
+        1794916800000,
+        2,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id FROM species WHERE is_active = 1",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT discoveries.species_id as id FROM discoveries JOIN species ON species.id = discoveries.species_id AND species.is_active = 1 JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco' WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'",
+    },
+    {
+      "args": [
+        7,
+        "eco",
+      ],
+      "op": "first",
+      "sql": "SELECT species.id as species_id, species.scientific_name as scientific_name, species.common_name as common_name, fractae.child_name as fractae_child_name, species_phase_anchors.image_url as anchor_image_url, species_phase_anchors.lore_phrase as lore_phrase FROM species JOIN fractae ON fractae.id = species.fractae_id JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id WHERE species.id = ? AND species_phase_anchors.phase = ? AND species.is_active = 1",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
+    },
+    {
+      "args": [
+        1,
+        7,
+        "eco",
+      ],
+      "op": "first",
+      "sql": "SELECT COUNT(*) as count FROM discoveries WHERE user_id = ? AND species_id = ? AND phase = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        "DX-DLT-DLT",
+        1,
+        7,
+        "eco",
+        1,
+        "/species-art/rex/balance.webp",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO discoveries (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url) VALUES (?, ?, ?, ?, ?, ?)",
+    },
+    {
+      "args": [
+        99,
+      ],
+      "op": "first",
+      "sql": "SELECT discovered_at FROM discoveries WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "UPDATE daily_missions SET completed_at = datetime('now') WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+      ],
+      "op": "all",
+      "sql": "SELECT mission_slug, completed_at FROM daily_missions WHERE user_id = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+        120,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT day FROM daily_missions WHERE user_id = ? AND day <= ? ORDER BY day DESC LIMIT ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        220,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET xp = xp + ? WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+        "level_up",
+        "{"newLevel":3}",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)",
+    },
+    {
+      "args": [
+        3,
+        3,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET energy_count = ?, energy_window_start = NULL, energy_last_notified_count = ? WHERE id = ?",
+    },
+  ],
+  "status": 201,
+}
+`;
+
+exports[`economy golden master: POST /api/discover > eco drop: roll hits and the species Balance is already registered 1`] = `
 {
   "body": {
     "commonName": "Rex de Fuego",
@@ -2403,6 +2890,13 @@ exports[`economy golden master: POST /api/discover > eco phase 1`] = `
     },
     {
       "args": [
+        1,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT discoveries.species_id as id FROM discoveries JOIN species ON species.id = discoveries.species_id AND species.is_active = 1 JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco' WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'",
+    },
+    {
+      "args": [
         7,
         "eco",
       ],
@@ -2449,6 +2943,231 @@ exports[`economy golden master: POST /api/discover > eco phase 1`] = `
       ],
       "op": "first",
       "sql": "SELECT discovered_at FROM discoveries WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "percibir",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "UPDATE daily_missions SET completed_at = datetime('now') WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO daily_missions (user_id, mission_slug, day, progress_count) VALUES (?, ?, ?, 1) ON CONFLICT (user_id, mission_slug, day) DO UPDATE SET progress_count = progress_count + 1",
+    },
+    {
+      "args": [
+        1,
+        "coleccionista",
+        "2026-11-17",
+      ],
+      "op": "first",
+      "sql": "SELECT progress_count, completed_at FROM daily_missions WHERE user_id = ? AND mission_slug = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+      ],
+      "op": "all",
+      "sql": "SELECT mission_slug, completed_at FROM daily_missions WHERE user_id = ? AND day = ?",
+    },
+    {
+      "args": [
+        1,
+        "2026-11-17",
+        120,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT day FROM daily_missions WHERE user_id = ? AND day <= ? ORDER BY day DESC LIMIT ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        20,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET xp = xp + ? WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT xp FROM users WHERE id = ?",
+    },
+  ],
+  "status": 201,
+}
+`;
+
+exports[`economy golden master: POST /api/discover > eco roll hits but nothing is eligible -> normal Balance pull 1`] = `
+{
+  "body": {
+    "commonName": "Rex de Fuego",
+    "dailyBonusAwarded": false,
+    "discoveredAt": "2026-11-17 12:00:00",
+    "discoveryCode": "DX-DLT-DLT",
+    "discoveryId": 99,
+    "energyRefilled": false,
+    "imageUrl": "/species-art/rex/balance.webp",
+    "isNewSlot": true,
+    "lorePhrase": "Donde pisa, la tierra arde.",
+    "missionsCompleted": [
+      "percibir",
+    ],
+    "phase": "balance",
+    "rarityTier": {
+      "name": "Registrada",
+      "slug": "registrada",
+    },
+    "scientificName": "Tyrannosaurus imperator",
+    "speciesId": 7,
+    "streak": {
+      "days": 1,
+      "reward": null,
+    },
+    "xp": {
+      "level": 1,
+      "leveledUp": false,
+      "previousLevel": 1,
+      "totalXp": 20,
+      "xpGained": 20,
+    },
+  },
+  "statements": [
+    {
+      "args": [
+        "abc",
+      ],
+      "op": "first",
+      "sql": "SELECT users.id as id, users.email as email, users.display_name as display_name, users.xp as xp, users.avatar as avatar, sessions.expires_at as expires_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.id = ?",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
+        2,
+        1794916800000,
+        2,
+        1,
+      ],
+      "op": "run",
+      "sql": "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id FROM species WHERE is_active = 1",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT discoveries.species_id as id FROM discoveries JOIN species ON species.id = discoveries.species_id AND species.is_active = 1 JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco' WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'",
+    },
+    {
+      "args": [
+        7,
+        "balance",
+      ],
+      "op": "first",
+      "sql": "SELECT species.id as species_id, species.scientific_name as scientific_name, species.common_name as common_name, fractae.child_name as fractae_child_name, species_phase_anchors.image_url as anchor_image_url, species_phase_anchors.lore_phrase as lore_phrase FROM species JOIN fractae ON fractae.id = species.fractae_id JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id WHERE species.id = ? AND species_phase_anchors.phase = ? AND species.is_active = 1",
+    },
+    {
+      "args": [],
+      "op": "all",
+      "sql": "SELECT id, slug, name, drop_weight FROM rarity_tiers",
+    },
+    {
+      "args": [
+        1,
+        7,
+        "balance",
+      ],
+      "op": "first",
+      "sql": "SELECT COUNT(*) as count FROM discoveries WHERE user_id = ? AND species_id = ? AND phase = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT phase FROM discoveries WHERE user_id = ? AND species_id = ?",
+    },
+    {
+      "args": [
+        "DX-DLT-DLT",
+        1,
+        7,
+        "balance",
+        1,
+        "/species-art/rex/balance.webp",
+      ],
+      "op": "run",
+      "sql": "INSERT INTO discoveries (discovery_code, user_id, species_id, phase, rarity_tier_id, image_url) VALUES (?, ?, ?, ?, ?, ?)",
+    },
+    {
+      "args": [
+        99,
+      ],
+      "op": "first",
+      "sql": "SELECT discovered_at FROM discoveries WHERE id = ?",
+    },
+    {
+      "args": [
+        1,
+        7,
+      ],
+      "op": "first",
+      "sql": "SELECT COUNT(*) as balance_count FROM discoveries WHERE user_id = ? AND species_id = ? AND phase = 'balance' AND consumed_at IS NULL",
     },
     {
       "args": [
@@ -3949,6 +4668,13 @@ exports[`economy golden master: POST /api/discover > species completed by this d
       "args": [],
       "op": "all",
       "sql": "SELECT id FROM species WHERE is_active = 1",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "all",
+      "sql": "SELECT DISTINCT discoveries.species_id as id FROM discoveries JOIN species ON species.id = discoveries.species_id AND species.is_active = 1 JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco' WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'",
     },
     {
       "args": [

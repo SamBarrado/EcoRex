@@ -188,7 +188,7 @@ export default function FusionPage() {
       {!error && !result && !eligible && <p>Cargando...</p>}
 
       {!error && !result && eligible && eligible.length === 0 && (
-        <p>Aún no tienes {threshold} duplicados de Balance de ninguna especie. ¡Sigue percibiendo!</p>
+        <p>Aún no tienes {threshold} cartas Balance de la misma especie. ¡Sigue percibiendo!</p>
       )}
 
       {!error && !result && eligible && progress.length > 0 && (
@@ -217,7 +217,7 @@ export default function FusionPage() {
                 loading="lazy"
               />
               <strong>{species.commonName}</strong>
-              <div>Duplicados: {species.balanceCount}</div>
+              <div>Cartas Balance: {species.balanceCount}</div>
               <button disabled={fusing === species.speciesId} onClick={() => handleFuse(species)}>
                 {fusing === species.speciesId ? "Fusionando..." : "Fusionar"}
               </button>

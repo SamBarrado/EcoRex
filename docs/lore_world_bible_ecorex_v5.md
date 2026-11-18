@@ -126,7 +126,7 @@ Discovery ID:        DX-VOL-F7K
 
 1. **Balance** → flujo principal de descubrimiento (elección de especie del catálogo, ver sección 12). Siempre disponible.
 2. **Exceso** → se obtiene fusionando duplicados de Balance de la misma especie en el **Altar de Fusión** (ver sección 5.1). La formulación de v4 ("rachas de uso, duplicados, o completar una Operación entera") queda sustituida por este mecanismo concreto ya implementado — duplicados es la parte que sobrevivió, rachas/Operación no se llegaron a construir.
-3. **Eco** → exclusiva del minijuego de grietas. No es una especie nueva — es el eco de una especie ya descubierta.
+3. **Eco** → **drop raro de Percibir** (decidido el 2026-11-18; ya no hace falta el minijuego de grietas para llegar a Eco, ver §8). Al percibir hay un **5 %** de probabilidad de que, en vez de una carta Balance, salga una carta **Eco**, y solo de una **especie cuyo Balance ya has registrado** (el historial cuenta aunque esas cartas se hayan consumido en una fusión). No es una especie nueva — es el eco de una especie ya descubierta, así que un Eco nunca es la primera carta de una especie. Si el sorteo acierta pero el jugador aún no tiene el Balance de ninguna especie (cuenta nueva), cae una carta Balance normal. **Lo decide el servidor**: el cliente solo pide percibir y `POST /api/discover` rechaza `phase: "eco"` (si no, cualquiera podría pedir Eco garantizado). La rareza se sortea aparte, como siempre (§6). Un Eco repetido no tiene uso: Eco no entra en el Altar de Fusión. Completar las 3 fases de una especie da el bonus de especie completa (+200 XP). Implementación: `functions/api/discover.ts`, `ECO_DROP_CHANCE` y `loadEcoEligibleSpeciesIds` en `functions/lib/discovery.ts`.
 
 ### 5.1 Altar de Fusión (NUEVO EN v5)
 
@@ -176,12 +176,14 @@ Rareza y Fase son ejes ortogonales. Matriz de 5 rarezas × 3 fases = 15 estados 
 
 ## 8. MINIJUEGO DE GRIETAS (pseudo-AR)
 
+> **ACTUALIZADO (2026-11-18).** El minijuego **deja de ser la vía para obtener Eco**: esa recompensa pasa a ser un drop raro de Percibir (ver §5). El minijuego en sí **no se descarta**: sigue siendo una idea de exploración pospuesta, sin fecha y sin dependencias; si se construye, tendrá que aportar otra recompensa distinta de Eco. El texto de abajo se conserva tal cual, salvo que la «Recompensa» de Eco ya no aplica.
+
 *(heredado de v2/v3, sin cambios)*
 
 Mecánica ligera de exploración, no-batalla. Overlay simple (SVG/CSS) sobre el feed de cámara, sin tracking real de superficie — pseudo-AR ligera para MVP, sin WebXR.
 
 - **Disparador:** vinculado a Operaciones activas y, parcialmente, a ubicación real.
-- **Recompensa:** acceso a fase Eco de especies ya descubiertas (nunca especies nuevas).
+- **Recompensa:** ~~acceso a fase Eco de especies ya descubiertas~~ — *ya no aplica (2026-11-18): Eco es un drop raro de Percibir, §5. Recompensa por definir si se construye.*
 - **Requisito de acceso:** la sección de Grietas solo está activa si el usuario ya tiene al menos una especie en fase Balance. Si no, aparece bloqueada/vacía con mensaje contextual.
 
 **Fuera de alcance del MVP actual** (ver sección 17) — se construye después de cerrar cuentas + colección + perfil.
@@ -216,6 +218,20 @@ Serie especial de 8 cartas, una por Fractae, sin dinosaurio — solo la energía
 - Naming de tipos (Fractae): latín pleno para el registro científico.
 - Copy externalizado como datos desde el inicio, preparado para internacionalización futura.
 
+### Vocabulario del juego (decidido el 2026-11-18)
+
+Cada palabra designa una sola unidad, en toda la interfaz y la documentación:
+
+| Palabra | Significa | Ejemplo |
+|---|---|---|
+| **Especie** | La criatura | Tyrannosaurus imperator ("Rex de Fuego") |
+| **Fase** | Balance, Exceso o Eco: cada forma de una especie | La fase Exceso del Rex |
+| **Registro** | Una especie+fase conseguida al menos una vez (una entrada del EcoDex) | "Registros del EcoDex 12/18" |
+| **Carta** | Una copia concreta | "Cartas conseguidas 1000" |
+| **Repetida** | Una copia activa por encima de la primera de su registro | "Repetidas 988" |
+
+No se usa "variante" para las fases: es un término nuevo para un público de 5 años y además era el nombre de la mecánica de variantes únicas retirada (§15.6). Los contadores solo cuentan especies **jugables** (activas): los huecos "???" siguen en la cuadrícula del EcoDex pero no entran en los porcentajes. La fusión pide **5 cartas** Balance de una misma especie (no "5 duplicados").
+
 ---
 
 ## 12. ARQUITECTURA DE APP (ACTUALIZADO EN v5 — la tab bar real ya no coincide con v3/v4)
@@ -245,7 +261,7 @@ Serie especial de 8 cartas, una por Fractae, sin dinosaurio — solo la energía
 
 - **Altar de Fusión** (`/fusion`, `src/pages/FusionPage.tsx`) — no es una tab; se entra desde el modal de desbloqueo en Inicio o desde una notificación `fusion_ready`. Ver sección 5.1.
 - **Notificaciones** — no es una pantalla ni ruta propia, es un dropdown flotante dentro de un FAB (`src/components/ActionFab.tsx`, `src/lib/NotificationsContext.tsx`). Al pulsar una notificación navega a `/fusion` (`fusion_ready`) o dispara la pantalla de subida de nivel (`level_up`, `LevelUpScreen`).
-- **Grietas** — sigue sin ningún archivo/ruta/tabla en el código. Confirmado fuera de alcance, sin cambios respecto a v4.
+- **Grietas** — sin ningún archivo/ruta/tabla en el código, pospuesto sin fecha. Desde el 2026-11-18 ya no es la vía a la fase Eco (drop raro de Percibir, ver §5/§8).
 
 ### Decisión sobre capas de audiencia
 
@@ -535,7 +551,7 @@ Tabla de referencia (ajustable; estuvo sembrada como `anchor_probability` en `ra
 
 ## 16. CARTAS DE RESONANCIA, GRIETAS Y REGALO — RECORDATORIO DE ALCANCE
 
-Estas tres piezas (secciones 8, 9, 10) siguen siendo parte del lore completo del universo, pero **quedan explícitamente fuera del MVP en construcción ahora mismo** (ver sección 17). No se elimina nada del diseño, solo se pospone su implementación.
+Estas tres piezas (secciones 8, 9, 10) siguen siendo parte del lore completo del universo, pero **quedan explícitamente fuera del MVP en construcción ahora mismo** (ver sección 17). No se elimina nada del diseño, solo se pospone su implementación. **Cambio (2026-11-18):** las Grietas siguen pospuestas, pero ya no son la vía a la fase Eco, que se obtiene como drop de Percibir (§5).
 
 ---
 
@@ -558,12 +574,12 @@ Al haber cuentas reales, el email se captura **en el registro**, no en un gate p
 
 ~~Perfil/stats de usuario — confirmado como el mínimo de MVP que falta antes de considerar la base "cerrada"~~. **Ya implementado:** `src/pages/PerfilPage.tsx` + `getMyProfile()` sirven rango de explorador y progreso de colección (`progressPct`, `speciesTotalCount`). También se construyó, sin haber quedado registrado en v4, el **sistema de energía** (sección 5.2), el **Altar de Fusión** (sección 5.1) y un **sistema de niveles/XP** (`functions/lib/xp.ts`): curva triangular `xpForLevel`/`levelFromXp`, `MAX_LEVEL = 50`, XP por rareza (`RARITY_XP`: 10/20/40/80/150 según tier), bonus de fusión (`FUSION_XP_BONUS = 50`) y de completar las 3 fases de una especie (`SPECIES_COMPLETE_XP_BONUS = 200`). Existe también `GIFT_REDEEMED_XP_BONUS = 25` ya definido en código pero sin efecto real, a la espera de que exista el endpoint de Regalo (sección 9).
 
-**Siguiente bloque real a construir (v5):** Grietas, Regalo (que ni siquiera tiene endpoint todavía, sección 9), Cartas de Resonancia, leaderboards/amigos — en ese orden aproximado, sin fecha cerrada.
+**Siguiente bloque real a construir (v5):** Grietas (pospuestas, sin dependencia de Eco), Regalo (que ni siquiera tiene endpoint todavía, sección 9), Cartas de Resonancia, leaderboards/amigos — en ese orden aproximado, sin fecha cerrada.
 
 ### 17.4 Fuera de alcance por ahora (explícito)
 
 - Regalo bidireccional, leaderboards, lista de amigos (sección 9/16).
-- Minijuego de Grietas / fase Eco (sección 8/16).
+- Minijuego de Grietas (sección 8/16): sigue pospuesto. La fase Eco que iba a dar **ya está implementada** como drop raro de Percibir (sección 5), así que el minijuego ya no es necesario para ella.
 - Cartas de Resonancia (sección 10/16).
 - Verificación de email, recuperación de contraseña, login social — deseables a futuro, no bloqueantes para el MVP actual (email+contraseña es suficiente por ahora).
 - Distribución del sistema de rareza por Operación (sección 7) — el modo base usa una única distribución global; el mecanismo de override por Operación queda sin diseñar.
@@ -609,6 +625,9 @@ Gran parte de la capa de infraestructura (`rateLimit.ts`, `cache.ts`, `hash.ts`,
 ## 19. ESTADO DEL PROYECTO (actualizado a v5)
 
 ### Completado desde v4 (nuevo en v5)
+
+- **Fase Eco como drop raro de Percibir** (2026-11-18, sección 5): 5 %, solo de especies cuyo Balance ya tienes, decidido en servidor; el minijuego de Grietas deja de ser la vía a Eco (sección 8). Las 6 especies activas tienen arte y lore Eco.
+- **Vocabulario unificado** (2026-11-18, sección 11): especie / fase / registro / carta / repetida, aplicado a Inicio, Perfil y EcoDex.
 
 - **Altar de Fusión** (sección 5.1): mecanismo real de obtención de fase Exceso, sustituye la descripción vaga de v4.
 - **Sistema de energía visible** (sección 5.2): 2 usos/12h para Percibir, sustituye el rate-limit silencioso de v4.

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { onRequestPost } from './discover';
 
 function makeDb(opts: {
@@ -15,6 +15,8 @@ function makeDb(opts: {
   /** IDs returned by the "active species" draw. Defaults to [7], matching speciesRow's species_id. */
   activeSpeciesIds?: number[];
   missionProgress?: Record<string, { progress_count: number; completed_at: string | null }>;
+  /** Species the Eco-eligibility query returns (Balance already registered). Defaults to none. */
+  ecoEligibleSpeciesIds?: number[];
 }) {
   const calls: { sql: string; args: unknown[] }[] = [];
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000, xp: opts.xp ?? 0 };
@@ -62,6 +64,9 @@ function makeDb(opts: {
             const phases = insertDone ? phasesAfter : phasesBefore;
             return { results: phases.map((phase) => ({ phase })) as T[] };
           }
+          if (sql.includes("a.phase = 'eco'")) {
+            return { results: (opts.ecoEligibleSpeciesIds ?? []).map((id) => ({ id })) as T[] };
+          }
           if (sql.includes('FROM species WHERE is_active')) {
             const ids = opts.activeSpeciesIds ?? [7];
             return { results: ids.map((id) => ({ id })) as T[] };
@@ -91,6 +96,83 @@ function makeDb(opts: {
   };
   return db;
 }
+
+afterEach(() => vi.restoreAllMocks());
+
+/** The Eco roll is the first Math.random() call in the handler; later calls (rarity) fall through to `rest`. */
+function mockEcoRoll(roll: number, rest = 0) {
+  return vi.spyOn(Math, 'random').mockReturnValueOnce(roll).mockReturnValue(rest);
+}
+
+function discoverEnv(db: unknown) {
+  return {
+    DB: db as D1Database,
+    RATE_LIMIT_KV: { get: async () => null, put: async () => {} } as unknown as KVNamespace,
+  };
+}
+
+function post(phase: string) {
+  return new Request('https://ecorex.app/api/discover', {
+    method: 'POST',
+    headers: { Cookie: 'ecorex_session=abc' },
+    body: JSON.stringify({ phase }),
+  });
+}
+
+const insertedPhase = (db: ReturnType<typeof makeDb>) =>
+  db.calls.find((c) => c.sql.includes('INSERT INTO discoveries'))?.args[3];
+
+describe('POST /api/discover — Eco drop', () => {
+  it('rejects a client asking for eco: Eco is rolled by the server, never chosen', async () => {
+    const db = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [7] });
+    const response = await onRequestPost({ request: post('eco'), env: discoverEnv(db) } as never);
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { error: string }).error).toMatch(/Eco no se elige/);
+    expect(insertedPhase(db)).toBeUndefined();
+  });
+
+  it('drops an Eco card when the roll hits and the player already has that species Balance', async () => {
+    mockEcoRoll(0.01);
+    const db = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [7] });
+    const response = await onRequestPost({ request: post('balance'), env: discoverEnv(db) } as never);
+    const body = (await response.json()) as { phase: string; speciesId: number };
+    expect(response.status).toBe(201);
+    expect(body.phase).toBe('eco');
+    expect(body.speciesId).toBe(7);
+    expect(insertedPhase(db)).toBe('eco');
+    // Eligibility is looked up for this player.
+    expect(db.calls.find((c) => c.sql.includes("a.phase = 'eco'"))?.args).toEqual([1]);
+  });
+
+  it('falls back to a normal Balance pull when the roll hits but nothing is eligible (e.g. a brand-new account)', async () => {
+    mockEcoRoll(0.01);
+    const db = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [] });
+    const response = await onRequestPost({ request: post('balance'), env: discoverEnv(db) } as never);
+    expect(((await response.json()) as { phase: string }).phase).toBe('balance');
+    expect(insertedPhase(db)).toBe('balance');
+  });
+
+  it('does not even query eligibility when the roll misses (the 95% path costs nothing extra)', async () => {
+    mockEcoRoll(0.5);
+    const db = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [7] });
+    const response = await onRequestPost({ request: post('balance'), env: discoverEnv(db) } as never);
+    expect(((await response.json()) as { phase: string }).phase).toBe('balance');
+    expect(db.calls.some((c) => c.sql.includes("a.phase = 'eco'"))).toBe(false);
+  });
+
+  it('the drop rate is 5%: a roll just under hits, just over misses', async () => {
+    mockEcoRoll(0.049);
+    const hit = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [7] });
+    await onRequestPost({ request: post('balance'), env: discoverEnv(hit) } as never);
+    expect(insertedPhase(hit)).toBe('eco');
+
+    vi.restoreAllMocks();
+    mockEcoRoll(0.051);
+    const miss = makeDb({ balanceCountAfterInsert: 1, ecoEligibleSpeciesIds: [7] });
+    await onRequestPost({ request: post('balance'), env: discoverEnv(miss) } as never);
+    expect(insertedPhase(miss)).toBe('balance');
+  });
+});
 
 describe('POST /api/discover', () => {
   it('rejects phase=exceso', async () => {
@@ -238,11 +320,13 @@ describe('POST /api/discover', () => {
       xp: 0,
       ownedPhasesBefore: ['balance', 'exceso'],
       ownedPhasesAfter: ['balance', 'exceso', 'eco'],
+      ecoEligibleSpeciesIds: [7],
     });
+    mockEcoRoll(0.01);
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ phase: 'eco' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,
@@ -262,11 +346,13 @@ describe('POST /api/discover', () => {
       xp: 0,
       ownedPhasesBefore: ['balance', 'exceso', 'eco'],
       ownedPhasesAfter: ['balance', 'exceso', 'eco'],
+      ecoEligibleSpeciesIds: [7],
     });
+    mockEcoRoll(0.01);
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
       headers: { Cookie: 'ecorex_session=abc' },
-      body: JSON.stringify({ phase: 'eco' }),
+      body: JSON.stringify({ phase: 'balance' }),
     });
     const env = {
       DB: db as unknown as D1Database,

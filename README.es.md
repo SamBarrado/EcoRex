@@ -75,8 +75,9 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 |---|---|
 | **Percibir** | El ritual de descubrimiento: un sobre a pantalla completa que se rasga arrastrando por la costura, con vibración háptica donde el dispositivo lo permite. Sortea la rareza de la carta de forma independiente de la especie y de la fase. |
 | **Energía** | Percibir consume energía, visible en la navegación. Base de 3, se regenera **+1 cada 4 h**, y sube con el nivel (+1 en el 5 y +1 en el 30). Sustituyó a un rate-limit silencioso por IP. |
-| **EcoDex** | La colección: cada especie tiene 3 fases (Balance, Exceso, Eco) y las fases ya descubiertas se muestran como mini cartas (marco del color de la rareza, arte, nombre y rareza legibles), con visor a pantalla completa. |
+| **EcoDex** | La colección: cada especie tiene 3 fases (Balance, Exceso, Eco). El progreso se cuenta en *registros* (una especie+fase conseguida al menos una vez), aparte de las especies y las cartas, y solo cuentan las especies jugables. Las fases ya descubiertas se muestran como mini cartas (marco del color de la rareza, arte, nombre y rareza legibles), con visor a pantalla completa. |
 | **Altar de Fusión** | 5 cartas repetidas de una especie en fase Balance se consumen para obtener su carta en fase **Exceso** (4 a partir del nivel 15). No cuesta energía. |
+| **Eco** | Un drop raro de Percibir (5 %): el eco extremo y tenue de una especie cuyo Balance ya tienes, así que nunca es la primera carta de una especie. Lo decide el servidor (el cliente no puede pedirlo) y un Eco repetido no tiene uso. Completar las tres fases de una especie da un bonus. |
 | **Rareza** | Cinco niveles — Común, Poco común, Rara, Épica, Legendaria — con pesos de sorteo 55 / 27 / 12 / 5 / 1 %. Es un eje independiente de la fase. |
 | **XP y niveles** | Niveles 1–50 por XP acumulado. Solo da XP lo nuevo (especie+fase vista por primera vez, fusiones, completar las 3 fases de una especie): repetir no da nada. Ocho títulos cosméticos, de «Explorador Novato» a «Voz de la Fractura». |
 | **Misiones diarias** | Tres misiones diarias (Percibir, Conseguir 3 cartas y Fusión como extra opcional) más un bonus por completar las dos principales el mismo día. Una **racha diaria** (días seguidos con alguna actividad) da XP y recarga la energía a los 3 días, a los 7 y cada 7 después. Las dos principales caben en la energía diaria base, así que siguen siendo posibles aunque ya tengas todo el catálogo. El día cambia a medianoche en España. |
@@ -264,12 +265,11 @@ Detalle de cada versión: [GitHub Releases](https://github.com/SamBarrado/EcoRex
 - **React Native:** descartado; si hace falta tienda de aplicaciones, la vía es envolver la misma build con Capacitor.
 
 **Fuera de alcance por ahora**
-- **Fase Eco:** el dato y el arte existen, pero no hay camino de progresión en la interfaz. Hoy el juego solo llega hasta Exceso (el diseño la reserva a un minijuego de grietas).
 - **Regalo entre usuarios, lista de amigos y leaderboards:** el esquema ya lo contempla (`gifts`), pero no hay endpoint.
 - **Cartas de Resonancia y Operaciones temáticas** con su propia distribución de rareza.
 - **Verificación de email, recuperación de contraseña y login social.**
 
-**Backlog** ([docs/backlog.md](docs/backlog.md)): análisis de retención con quick wins priorizados (rachas, onboarding, progreso de fusión, fase Eco como drop), además de pesos de aparición por especie, ediciones para colecciones tipo sobre, rehacer el sistema de sonido, modo álbum con ilustraciones grandes, y distinguir «especie» de «variante» en la interfaz.
+**Backlog** ([docs/backlog.md](docs/backlog.md)): análisis de retención con quick wins priorizados (rachas, onboarding, progreso de fusión, el drop de Eco), además de pesos de aparición por especie, ediciones para colecciones tipo sobre, rehacer el sistema de sonido, modo álbum con ilustraciones grandes, y distinguir «especie» de «variante» en la interfaz.
 
 ---
 

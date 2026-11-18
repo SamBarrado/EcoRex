@@ -75,8 +75,9 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 |---|---|
 | **Percibir** (Perceive) | The discovery ritual: a full-screen pack you tear open by dragging along its seam, with haptic feedback where the device supports it. Rolls the card's rarity independently from species and phase. |
 | **Energy** | Perceiving costs energy, shown in the navigation. Base of 3, regenerating **+1 every 4 h**, and raised by level (+1 at level 5, +1 at level 30). It replaced a silent per-IP rate limit. |
-| **EcoDex** | The collection: every species has 3 phases (Balance, Exceso, Eco), and discovered phases render as mini cards (rarity-coloured frame, art, readable name and rarity), with a full-screen viewer. |
+| **EcoDex** | The collection: every species has 3 phases (Balance, Exceso, Eco). Progress is counted in *registries* (a species+phase obtained at least once), separately from species and cards, and only playable species count. Discovered phases render as mini cards (rarity-coloured frame, art, readable name and rarity), with a full-screen viewer. |
 | **Altar de Fusión** (Fusion Altar) | 5 duplicate Balance cards of a species are consumed to obtain its **Exceso** card (4 from level 15). It costs no energy. |
+| **Eco** | A rare drop of Percibir (5 %): the faded, extreme echo of a species whose Balance you already own, so it is never the first card of a species. The server decides it (the client can't ask for it) and a repeated Eco has no use. Completing a species' three phases pays a bonus. |
 | **Rarity** | Five tiers — Common, Uncommon, Rare, Epic, Legendary — with drop weights of 55 / 27 / 12 / 5 / 1 %. An axis independent from phase. |
 | **XP and levels** | Levels 1–50 from accumulated XP. Only what's new gives XP (a species+phase seen for the first time, fusions, completing a species' 3 phases): repeating gives nothing. Eight cosmetic titles, from "Explorador Novato" (Novice Explorer) to "Voz de la Fractura" (Voice of the Fracture). |
 | **Daily missions** | Three daily missions (Percibir, Collect 3 cards, and Fusion as an optional extra) plus a bonus for completing the two main ones the same day. A **daily streak** (consecutive days with any activity) pays XP and an energy refill at 3 days, 7 days and every 7 after. Both main missions fit the base daily energy budget, so they stay completable even once the catalog is fully collected. The day rolls over at midnight in Spain. |
@@ -265,12 +266,11 @@ Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/
 - **React Native:** discarded; if an app store becomes necessary, the path is wrapping the same build with Capacitor.
 
 **Out of scope for now**
-- **Eco phase:** the data and the art exist, but there's no progression path in the interface. Today the game only reaches Exceso (the design reserves it for a cracks minigame).
 - **Gifting between users, friends list and leaderboards:** the schema already allows for it (`gifts`), but there's no endpoint.
 - **Resonance Cards and themed Operations** with their own rarity distribution.
 - **Email verification and email-based password recovery.** Google sign-in exists instead (see CLAUDE.md); Google-linked accounts have no password, so Google handles their recovery.
 
-**Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): a retention analysis with prioritised quick wins (streaks, onboarding, fusion progress, an Eco phase drop), plus per-species appearance weights, editions for pack-style collections, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
+**Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): a retention analysis with prioritised quick wins (streaks, onboarding, fusion progress, the Eco drop), plus per-species appearance weights, editions for pack-style collections, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
 
 ---
 

@@ -344,7 +344,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
 
       {!error && phase === "revealed" && result && !showNewSlotOverlay && (
         <div className="percibir-overlay">
-          {showRevealTitle && <strong className="reveal-title-fade">¡Percibiste una Fractura!</strong>}
+          {showRevealTitle && <strong className="reveal-title-fade">
+              {result?.phase === "eco" ? "¡Percibiste un Eco!" : "¡Percibiste una Fractura!"}
+            </strong>}
           <CardScene
             imageUrl={result.imageUrl}
             commonName={result.commonName}

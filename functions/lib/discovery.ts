@@ -41,3 +41,28 @@ export async function hasCompletedAllPhases(
   const ownedPhases = new Set(results.map((row) => row.phase));
   return phases.every((phase) => ownedPhases.has(phase));
 }
+
+// Eco is a rare phase drop of Percibir (decided 2026-11-18, replacing the
+// "cracks minigame" idea). The *server* decides it: the client only asks to
+// percibir, otherwise anyone could POST phase=eco for a guaranteed Eco.
+export const ECO_DROP_CHANCE = 0.05;
+
+/**
+ * Species an Eco card can drop for: active species whose Balance the player
+ * has already registered (historically, so Balance cards consumed by a fusion
+ * still count) and that have an Eco anchor. "The echo of a species you have
+ * already discovered" — an Eco is never the first card of a species.
+ */
+export async function loadEcoEligibleSpeciesIds(db: D1Database, userId: number): Promise<number[]> {
+  const { results } = await db
+    .prepare(
+      `SELECT DISTINCT discoveries.species_id as id
+       FROM discoveries
+       JOIN species ON species.id = discoveries.species_id AND species.is_active = 1
+       JOIN species_phase_anchors a ON a.species_id = species.id AND a.phase = 'eco'
+       WHERE discoveries.user_id = ? AND discoveries.phase = 'balance'`
+    )
+    .bind(userId)
+    .all<{ id: number }>();
+  return results.map((row) => row.id);
+}

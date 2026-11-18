@@ -29,6 +29,10 @@ interface Fixture {
   /** Earlier days (YYYY-MM-DD) with activity, for the daily streak. Today is implied by the mission rows. */
   priorDays?: string[];
   streakRewardClaimed?: boolean;
+  /** The first Math.random() of /api/discover is the Eco roll (< 0.05 hits). Default: a miss. */
+  ecoRoll?: number;
+  /** Species the Eco-eligibility query returns (player already has their Balance). */
+  ecoEligible?: number[];
 }
 
 const NOW = new Date('2026-11-17T12:00:00Z');
@@ -88,6 +92,7 @@ function makeEnv(fx: Fixture, kind: 'discover' | 'fuse') {
         async all<T>() {
           rec('all');
           if (sql.includes('FROM rarity_tiers')) return { results: tiers as T[] };
+          if (sql.includes("a.phase = 'eco'")) return { results: (fx.ecoEligible ?? []).map((id) => ({ id })) as T[] };
           if (sql.includes('FROM species WHERE is_active')) return { results: (fx.activeSpeciesIds ?? [7]).map((id) => ({ id })) as T[] };
           if (sql.includes('ORDER BY discovered_at ASC')) return { results: (fx.oldestRows ?? []) as T[] };
           if (sql.includes('DISTINCT phase')) {
@@ -132,7 +137,9 @@ function makeEnv(fx: Fixture, kind: 'discover' | 'fuse') {
 }
 
 async function run(kind: 'discover' | 'fuse', fx: Fixture, body: unknown) {
-  vi.spyOn(Math, 'random').mockReturnValue(fx.random ?? 0);
+  const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(fx.random ?? 0);
+  // discover.ts rolls the Eco drop before anything else: keep the default a miss.
+  if (kind === 'discover') randomSpy.mockReturnValueOnce(fx.ecoRoll ?? 0.99);
   const { env, log } = makeEnv(fx, kind);
   const request = new Request(`https://ecorex.app/api/${kind === 'fuse' ? 'fuse' : 'discover'}`, {
     method: 'POST',
@@ -165,7 +172,10 @@ describe('economy golden master: POST /api/discover', () => {
     ['new slot, common rarity (first percibir of the day completes)', {}, { phase: 'balance' }],
     ['new slot, epic rarity', { random: 0.99 }, { phase: 'balance' }],
     ['duplicate (slot already registered)', { existingSlotCount: 3 }, { phase: 'balance' }],
-    ['eco phase', {}, { phase: 'eco' }],
+    ['client asking for eco -> 400 (Eco is rolled by the server)', {}, { phase: 'eco' }],
+    ['eco drop: roll hits and the species Balance is already registered', { ecoRoll: 0.01, ecoEligible: [7] }, { phase: 'balance' }],
+    ['eco roll hits but nothing is eligible -> normal Balance pull', { ecoRoll: 0.01, ecoEligible: [] }, { phase: 'balance' }],
+    ['eco drop completes the species (+200 xp)', { ecoRoll: 0.01, ecoEligible: [7], ownedBefore: ['balance', 'exceso'], ownedAfter: ['balance', 'exceso', 'eco'] }, { phase: 'balance' }],
     ['balance count reaches 5 -> fusion_ready notification', { balanceCountAfterInsert: 5 }, { phase: 'balance' }],
     ['percibir already done today, nothing completes', { missions: { percibir: { progress_count: 1, completed_at: '2026-11-17 08:00:00' } } }, { phase: 'balance' }],
     ['coleccionista completes with the 3rd card of the day', { missions: { percibir: { progress_count: 2, completed_at: '2026-11-17 08:00:00' }, coleccionista: { progress_count: 2, completed_at: null } } }, { phase: 'balance' }],
@@ -196,8 +206,9 @@ describe('economy golden master: POST /api/discover', () => {
     ['day 7 of a streak -> reward (+50 xp)', { priorDays: ['2026-11-16', '2026-11-15', '2026-11-14', '2026-11-13', '2026-11-12', '2026-11-11'] }, { phase: 'balance' }],
     ['streak reward already claimed today', { priorDays: ['2026-11-16', '2026-11-15'], streakRewardClaimed: true }, { phase: 'balance' }],
     ['a gap breaks the streak: no reward', { priorDays: ['2026-11-15', '2026-11-14'] }, { phase: 'balance' }],
-    ['species completed by this discovery', { ownedBefore: ['balance', 'exceso'], ownedAfter: ['balance', 'exceso', 'eco'] }, { phase: 'eco' }],
+    ['species completed by this discovery', { ecoRoll: 0.01, ecoEligible: [7], ownedBefore: ['balance', 'exceso'], ownedAfter: ['balance', 'exceso', 'eco'] }, { phase: 'balance' }],
     ['species already complete before', { ownedBefore: ['balance', 'exceso', 'eco'] }, { phase: 'balance' }],
+    ['an Eco duplicate of a complete species pays no species bonus', { ecoRoll: 0.01, ecoEligible: [7], ownedBefore: ['balance', 'exceso', 'eco'] }, { phase: 'balance' }],
     ['level up -> level_up notification', { xp: 5, random: 0.99 }, { phase: 'balance' }],
     ['no energy left -> 429', { energy: { energy_count: 0, energy_window_start: NOW.getTime(), unlimited_energy: 0 } }, { phase: 'balance' }],
     ['unlimited energy', { energy: { energy_count: 0, energy_window_start: null, unlimited_energy: 1 } }, { phase: 'balance' }],

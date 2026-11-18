@@ -47,8 +47,10 @@ export default function ColeccionPage() {
     return slots.filter((s) => s.phase === phaseFilter);
   }, [slots, phaseFilter]);
 
+  // The grid keeps the "???" placeholder slots (they tease the next wave), but
+  // only playable ones count toward the percentage, or it could never reach 100 %.
   const registeredCount = slots?.filter((s) => !s.locked).length ?? 0;
-  const totalSlotsCount = slots?.length ?? 0;
+  const totalSlotsCount = slots?.filter((s) => s.playable !== false).length ?? 0;
   const registeredPct = totalSlotsCount > 0 ? Math.round((registeredCount / totalSlotsCount) * 100) : 0;
 
   useLayoutEffect(() => {
@@ -84,7 +86,7 @@ export default function ColeccionPage() {
       {slots && slots.length > 0 && (
         <div className="card">
           <div className="stat">
-            <span>Especies registradas</span>
+            <span>Registros</span>
             <span>
               {registeredCount}/{totalSlotsCount} ({registeredPct}%)
             </span>

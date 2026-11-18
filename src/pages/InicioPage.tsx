@@ -83,6 +83,10 @@ export default function InicioPage() {
     profile && profile.speciesTotalCount > 0
       ? Math.round((profile.speciesDiscoveredCount / profile.speciesTotalCount) * 100)
       : 0;
+  const registeredPct =
+    profile && profile.registeredTotalCount > 0
+      ? Math.round((profile.registeredCount / profile.registeredTotalCount) * 100)
+      : 0;
 
   return (
     <div className="page">
@@ -132,6 +136,15 @@ export default function InicioPage() {
           <div className="level-progress-bar">
             <div className="species-progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
+          <div className="stat">
+            <span>Registros del EcoDex</span>
+            <span>
+              {profile.registeredCount}/{profile.registeredTotalCount} ({registeredPct}%)
+            </span>
+          </div>
+          <div className="level-progress-bar">
+            <div className="species-progress-fill" style={{ width: `${registeredPct}%` }} />
+          </div>
           {energy && (
             <div className="stat">
               <span>⚡ Energía</span>
@@ -162,11 +175,6 @@ export default function InicioPage() {
         >
           <img className="card-icon" src="/icons/altar-fusion.png" alt="" />
           <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
-        </div>
-        <div className="card card-compact card-coming-soon" aria-label="Eco, próximamente">
-          <img className="card-icon" src="/icons/eco.png" alt="" />
-          <strong>Eco</strong>
-          <span className="coming-soon-label">Próximamente</span>
         </div>
         <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
           <img className="card-icon" src="/icons/album.png" alt="" />

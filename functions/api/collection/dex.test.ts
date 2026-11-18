@@ -3,7 +3,7 @@ import { onRequestGet } from './dex';
 
 function makeEnv(opts: {
   currentWave: number;
-  speciesRows: { id: number; launch_wave: number }[];
+  speciesRows: { id: number; launch_wave: number; is_active?: number }[];
   discoveryRows: Array<{
     discovery_id: number;
     discovery_code: string;
@@ -53,7 +53,7 @@ describe('GET /api/collection/dex', () => {
   it('returns all species x phase slots for the current wave, locked when not discovered', async () => {
     const { env } = makeEnv({
       currentWave: 1,
-      speciesRows: [{ id: 1, launch_wave: 1 }, { id: 7, launch_wave: 1 }],
+      speciesRows: [{ id: 1, launch_wave: 1, is_active: 1 }, { id: 7, launch_wave: 1, is_active: 0 }],
       discoveryRows: [],
     });
     const request = new Request('https://example.com/api/collection/dex', {
@@ -64,6 +64,9 @@ describe('GET /api/collection/dex', () => {
     const body = (await response.json()) as { currentWave: number; slots: Array<Record<string, unknown>> };
     expect(body.currentWave).toBe(1);
     expect(body.slots).toHaveLength(6); // 2 species x 3 phases
+    // Placeholder ("???") species keep their slots but are flagged as not playable.
+    expect(body.slots.filter((s) => s.species_id === 1).every((s) => s.playable === true)).toBe(true);
+    expect(body.slots.filter((s) => s.species_id === 7).every((s) => s.playable === false)).toBe(true);
     for (const slot of body.slots) {
       expect(slot.locked).toBe(true);
       expect(slot).not.toHaveProperty('scientific_name');

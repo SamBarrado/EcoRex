@@ -31,7 +31,7 @@ Todo lo publicado funcionaba: typecheck OK, tests OK, esquema de D1 remota sincr
 | ✅ | **Quitar `discovery_code` de la carta de Fusión** | `8a5586e`. Sigue existiendo en API/BD, solo desaparece de la UI. Si se quiere conservar (p. ej. para el modo amigos), revertir ese commit. |
 | ✅ (local, sin desplegar) | **3 imágenes de perfil por defecto** | Avatares generados con `tools/generate-avatars.mjs` (fuentes 1024 px en `design/avatares/`, WebP 256 px en `public/avatars/`). El usuario los elige tocando su avatar en Perfil (o vuelve a la inicial); columna nueva `users.avatar` + `PATCH /api/auth/avatar`. **Antes de hacer push hay que aplicar en remoto:** `npx wrangler d1 execute DB --remote --command="ALTER TABLE users ADD COLUMN avatar TEXT;"` (si no, `/api/profile` y la sesión fallan con `no such column`). |
 | ⏳ | **Nombre truncado en la carta** (`.card-name`, nombres largos) | Esperar a los diseños definitivos de la carta. |
-| ❓ | **"Especies" vs "variantes"** en la UI | Falta decidir terminología y en qué pantallas cambia. |
+| ✅ | **"Especies" vs "variantes"** en la UI | Decidido y aplicado el 2026-11-18: especie / fase / registro / carta / repetida (ver `docs/backlog.md` y CLAUDE.md). |
 
 ---
 
@@ -39,8 +39,8 @@ Todo lo publicado funcionaba: typecheck OK, tests OK, esquema de D1 remota sincr
 
 Mientras no se decidan, **no construir nada de esto** (es el mayor ahorro de complejidad posible).
 
-- ❓ Qué hacer con la **fase Eco**: hoy la UI solo llega a Exceso.
-- ❓ Si las **fusiones** aplican más allá de Balance.
+- ✅ **Fase Eco** (2026-11-18): drop raro de Percibir (5 %, solo de especies cuyo Balance ya tienes). El minijuego de Grietas deja de ser la vía a Eco (queda pospuesto, sin dependencias).
+- ✅ **Fusiones** (2026-11-18): solo Balance → Exceso; Eco no se fusiona.
 - ❓ Alcance del **modo amigos** (QR con código, regalos…).
 - ❓ **Modo álbum** con ilustraciones grandes (ficha del dino + ilustración al natural/alternativa).
 - ❓ Ediciones/sobres, misiones semanales y rachas, pesos por especie, sistema de sonidos (ver `backlog.md`).

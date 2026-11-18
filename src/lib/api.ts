@@ -66,6 +66,8 @@ export interface DexSlotLocked {
   species_id: number;
   phase: string;
   wave: number;
+  /** False for the "???" placeholder species that hold a slot but can't be obtained yet. */
+  playable?: boolean;
   locked: true;
 }
 
@@ -73,6 +75,7 @@ export interface DexSlotRevealed {
   species_id: number;
   phase: string;
   wave: number;
+  playable?: boolean;
   locked: false;
   scientific_name: string;
   common_name: string;
@@ -99,10 +102,16 @@ export interface ProfileStats {
   xpIntoLevel: number;
   xpForNextLevel: number | null;
   title: string;
+  /** Playable species with at least one card, out of all playable species. */
   speciesDiscoveredCount: number;
   speciesTotalCount: number;
+  /** EcoDex registries: species+phase combinations obtained at least once, out of all playable ones. */
+  registeredCount: number;
+  registeredTotalCount: number;
+  /** Cards ever obtained (including those consumed by fusions). */
   totalDiscoveries: number;
-  duplicateCount: number;
+  /** Active copies beyond the first of each registry. */
+  repeatedCount: number;
   rarityBreakdown: { slug: string; name: string; count: number }[];
 }
 

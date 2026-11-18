@@ -30,7 +30,9 @@ const profile: ProfileStats = {
   speciesDiscoveredCount: 3,
   speciesTotalCount: 10,
   totalDiscoveries: 5,
-  duplicateCount: 2,
+  registeredCount: 4,
+  registeredTotalCount: 30,
+  repeatedCount: 2,
   rarityBreakdown: [],
 };
 
@@ -69,6 +71,21 @@ describe("InicioPage", () => {
     expect(speciesFill.style.width).toBe("30%"); // 3/10
   });
 
+  it("shows species and EcoDex registries as two separate, clearly labelled progress lines", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    renderPage();
+    await screen.findByText("Nivel 2");
+
+    expect(screen.getByText("Especies descubiertas")).toBeTruthy();
+    expect(screen.getByText("3/10 (30%)")).toBeTruthy();
+    expect(screen.getByText("Registros del EcoDex")).toBeTruthy();
+    expect(screen.getByText("4/30 (13%)")).toBeTruthy();
+  });
+
   it("labels the unbuilt features as coming soon instead of showing dead locks", async () => {
     getFuseEligibleMock.mockResolvedValue({ eligible: [] });
     getMyProfileMock.mockResolvedValue(profile);
@@ -78,8 +95,9 @@ describe("InicioPage", () => {
     renderPage();
     await screen.findByText("Nivel 2");
 
-    expect(screen.getAllByText("Próximamente")).toHaveLength(3);
-    expect(screen.getByLabelText("Eco, próximamente")).toBeTruthy();
+    // Eco is no longer a "mode": it's a rare drop of Percibir, so it has no tile.
+    expect(screen.getAllByText("Próximamente")).toHaveLength(2);
+    expect(screen.queryByLabelText("Eco, próximamente")).toBeNull();
     expect(screen.getByLabelText("Álbum, próximamente")).toBeTruthy();
     expect(screen.getByLabelText("Amigos, próximamente")).toBeTruthy();
     // The Fusion Altar keeps its lock: it's unlockable, unlike the others.
@@ -116,7 +134,7 @@ describe("InicioPage", () => {
 
   it("shows the welcome intro to a brand-new account (no cards yet), with no skip, and not again after it", async () => {
     getFuseEligibleMock.mockResolvedValue({ eligible: [] });
-    getMyProfileMock.mockResolvedValue({ ...profile, totalDiscoveries: 0, duplicateCount: 0 });
+    getMyProfileMock.mockResolvedValue({ ...profile, totalDiscoveries: 0, repeatedCount: 0 });
     getEnergyMock.mockResolvedValue(null);
     getMissionsMock.mockResolvedValue(null);
 
