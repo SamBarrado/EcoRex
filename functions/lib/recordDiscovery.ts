@@ -1,6 +1,7 @@
 import { hasCompletedAllPhases, pickRarityTier, type RarityTierRow, type SpeciesPhaseRow } from "./discovery";
 import { addXp, SPECIES_COMPLETE_XP_BONUS } from "./xp";
-import { maxEnergyForLevel } from "./energy";
+import { refillEnergy } from "./energy";
+import { getStreak, claimStreakReward } from "./streak";
 import {
   incrementMission,
   checkAndAwardDailyBonus,
@@ -77,8 +78,10 @@ export interface RecordDiscoveryResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
-  /** True when this discovery levelled the player up and refilled their energy. */
+  /** True when this discovery refilled the player's energy (level-up or streak reward). */
   energyRefilled: boolean;
+  /** Current daily streak, and the milestone reward granted by this action (if any). */
+  streak: { days: number; reward: { days: number; xp: number } | null };
 }
 
 export async function recordDiscovery(params: RecordDiscoveryParams): Promise<RecordDiscoveryResult> {
@@ -126,6 +129,12 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
     missionsCompleted.push("bonus");
   }
 
+  // The mission rows above guarantee today counts as an active day, so the
+  // streak is final at this point.
+  const streak = await getStreak(db, userId, day);
+  const streakReward = await claimStreakReward(db, userId, day, streak);
+  if (streakReward) xpAmount += streakReward.xp;
+
   const xpResult = await addXp(db, userId, xpAmount);
 
   if (xpResult.leveledUp) {
@@ -133,18 +142,12 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
       .prepare(`INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`)
       .bind(userId, "level_up", JSON.stringify({ newLevel: xpResult.level }))
       .run();
-
-    // Levelling up tops energy up to the (new) max: keeps the session going at
-    // the moment of the biggest reward. window_start NULL means "full", and the
-    // notified count is set to max so the push cron doesn't announce it.
-    const maxEnergy = maxEnergyForLevel(xpResult.level);
-    await db
-      .prepare(
-        "UPDATE users SET energy_count = ?, energy_window_start = NULL, energy_last_notified_count = ? WHERE id = ?"
-      )
-      .bind(maxEnergy, maxEnergy, userId)
-      .run();
   }
+
+  // Levelling up or hitting a streak milestone tops energy up: keeps the
+  // session going at the moment of the biggest reward.
+  const energyRefilled = xpResult.leveledUp || streakReward !== null;
+  if (energyRefilled) await refillEnergy(db, userId, xpResult.level);
 
   return {
     discoveryId,
@@ -159,7 +162,8 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
     },
     missionsCompleted,
     dailyBonusAwarded,
-    energyRefilled: xpResult.leveledUp,
+    energyRefilled,
+    streak: { days: streak.days, reward: streakReward },
   };
 }
 
@@ -185,5 +189,6 @@ export function discoveryResponseBody(
     missionsCompleted: result.missionsCompleted,
     dailyBonusAwarded: result.dailyBonusAwarded,
     energyRefilled: result.energyRefilled,
+    streak: result.streak,
   };
 }

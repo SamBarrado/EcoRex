@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CardScene } from "./card/CardScene";
 import { XpToast } from "./XpToast";
 import { LevelUpScreen } from "./LevelUpScreen";
+import { streakRewardNote } from "../lib/streak";
 import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
@@ -321,7 +322,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   return (
     <div className="percibir-ritual">
       {showXpToast && result && result.xp.xpGained > 0 && (
-        <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
+        <XpToast xpGained={result.xp.xpGained} note={streakRewardNote(result)} onDone={() => setShowXpToast(false)} />
       )}
       {levelUpInfo && (
         <LevelUpScreen

@@ -13,6 +13,7 @@ const missions: MissionsState = {
     { slug: "fusion", label: "Completa 1 fusión (extra)", progress: 0, target: 1, completed: false, optional: true },
   ],
   bonus: { completed: false, xp: 30 },
+  streak: { days: 2, activeToday: true, nextMilestone: 3, nextMilestoneXp: 20 },
 };
 
 describe("MissionsCard", () => {
@@ -33,5 +34,18 @@ describe("MissionsCard", () => {
     render(<MissionsCard missions={missions} />);
     expect(screen.getByText("Bonus: completa las misiones principales")).toBeTruthy();
     expect(screen.getByText("+30 XP")).toBeTruthy();
+  });
+
+  it("never shows progress beyond the target (e.g. a 2nd card after 'Percibe hoy' is done)", () => {
+    render(
+      <MissionsCard
+        missions={{
+          ...missions,
+          missions: [{ slug: "percibir", label: "Percibe hoy", progress: 4, target: 1, completed: true, optional: false }],
+        }}
+      />
+    );
+    expect(screen.getByText("1/1")).toBeTruthy();
+    expect(screen.queryByText("4/1")).toBeNull();
   });
 });

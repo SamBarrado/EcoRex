@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
+import { FusionProgressCard } from "../components/FusionProgressCard";
 import { XpToast } from "../components/XpToast";
 import { LevelUpScreen } from "../components/LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 import { RARITY_GLOW } from "../lib/rarityGlow";
+import { streakRewardNote } from "../lib/streak";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -25,6 +27,8 @@ export default function FusionPage() {
   const { refetch: refetchNotifications } = useNotifications();
   const [searchParams] = useSearchParams();
   const [eligible, setEligible] = useState<EligibleSpecies[] | null>(null);
+  const [progress, setProgress] = useState<EligibleSpecies[]>([]);
+  const [threshold, setThreshold] = useState(5);
   const [error, setError] = useState<string | null>(null);
   const [fusing, setFusing] = useState<number | null>(null);
   const [glowSlug, setGlowSlug] = useState<string | null>(null);
@@ -73,7 +77,11 @@ export default function FusionPage() {
   function load() {
     setError(null);
     getFuseEligible()
-      .then((data) => setEligible(data.eligible))
+      .then((data) => {
+        setEligible(data.eligible);
+        setProgress(data.progress ?? []);
+        if (data.threshold) setThreshold(data.threshold);
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
           navigate("/login");
@@ -180,7 +188,16 @@ export default function FusionPage() {
       {!error && !result && !eligible && <p>Cargando...</p>}
 
       {!error && !result && eligible && eligible.length === 0 && (
-        <p>Aún no tienes 5 duplicados de Balance de ninguna especie. ¡Sigue percibiendo!</p>
+        <p>Aún no tienes {threshold} duplicados de Balance de ninguna especie. ¡Sigue percibiendo!</p>
+      )}
+
+      {!error && !result && eligible && progress.length > 0 && (
+        <>
+          {eligible.length > 0 && <h2>En progreso</h2>}
+          {progress.map((species) => (
+            <FusionProgressCard key={species.speciesId} species={species} threshold={threshold} label="" />
+          ))}
+        </>
       )}
 
       {!error && !result && eligible && eligible.length > 0 && (
@@ -209,7 +226,7 @@ export default function FusionPage() {
         </div>
       )}
       {showXpToast && result && result.xp.xpGained > 0 && (
-        <XpToast xpGained={result.xp.xpGained} onDone={() => setShowXpToast(false)} />
+        <XpToast xpGained={result.xp.xpGained} note={streakRewardNote(result)} onDone={() => setShowXpToast(false)} />
       )}
       {levelUpInfo && (
         <LevelUpScreen

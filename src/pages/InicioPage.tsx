@@ -1,9 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFuseEligible, getMyProfile, getEnergy, getMissions, ProfileStats, EnergyState, MissionsState, ApiError } from "../lib/api";
+import {
+  getFuseEligible,
+  getMyProfile,
+  getEnergy,
+  getMissions,
+  ProfileStats,
+  EnergyState,
+  MissionsState,
+  EligibleSpecies,
+  ApiError,
+} from "../lib/api";
 import { formatEnergyCountdown } from "../lib/energy";
 import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
 import { MissionsCard } from "../components/MissionsCard";
+import { StreakCard } from "../components/StreakCard";
+import { FusionProgressCard } from "../components/FusionProgressCard";
+import { WelcomeFlow, hasSeenWelcome, markWelcomeSeen } from "../components/WelcomeFlow";
 import PushOnboardingTile from "../components/PushOnboardingTile";
 import { version } from "../../package.json";
 
@@ -16,6 +29,9 @@ export default function InicioPage() {
   const [energy, setEnergy] = useState<EnergyState | null>(null);
   const [missions, setMissions] = useState<MissionsState | null>(null);
   const [showFusionUnlockModal, setShowFusionUnlockModal] = useState(false);
+  const [fusionProgress, setFusionProgress] = useState<EligibleSpecies[]>([]);
+  const [fusionThreshold, setFusionThreshold] = useState(5);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -28,6 +44,8 @@ export default function InicioPage() {
       .then((data) => {
         const unlocked = data.eligible.length > 0;
         setFusionUnlocked(unlocked);
+        setFusionProgress(data.progress ?? []);
+        if (data.threshold) setFusionThreshold(data.threshold);
         if (unlocked && !localStorage.getItem(FUSION_UNLOCK_SEEN_KEY)) {
           localStorage.setItem(FUSION_UNLOCK_SEEN_KEY, "1");
           setShowFusionUnlockModal(true);
@@ -37,7 +55,15 @@ export default function InicioPage() {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
     getMyProfile()
-      .then(setProfile)
+      .then((data) => {
+        setProfile(data);
+        // The intro is for brand-new accounts only: anyone who already has
+        // cards is an existing player and never sees it.
+        if (!hasSeenWelcome(data.user.id)) {
+          if (data.totalDiscoveries === 0) setShowWelcome(true);
+          else markWelcomeSeen(data.user.id);
+        }
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
@@ -60,6 +86,15 @@ export default function InicioPage() {
 
   return (
     <div className="page">
+      {showWelcome && profile && (
+        <WelcomeFlow
+          onFinish={() => {
+            markWelcomeSeen(profile.user.id);
+            setShowWelcome(false);
+            navigate("/percibir");
+          }}
+        />
+      )}
       <PushOnboardingTile />
       {showFusionUnlockModal && (
         <FeatureUnlockModal
@@ -112,7 +147,9 @@ export default function InicioPage() {
         </div>
       )}
 
+      <StreakCard streak={missions?.streak} />
       <MissionsCard missions={missions} />
+      <FusionProgressCard species={fusionProgress[0]} threshold={fusionThreshold} />
 
       <div className="grid grid-compact">
         <div

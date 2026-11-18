@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, act, cleanup } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { render, screen, act, cleanup, fireEvent } from "@testing-library/react";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import InicioPage from "./InicioPage";
 import type { ProfileStats, EnergyState, MissionsState } from "../lib/api";
 
@@ -44,6 +44,7 @@ function renderPage() {
 
 afterEach(() => {
   cleanup();
+  localStorage.clear();
   vi.useRealTimers();
   vi.clearAllMocks();
 });
@@ -111,5 +112,73 @@ describe("InicioPage", () => {
     const laterMinutes = Number(laterMatch?.match(/(\d+)m/)?.[1]);
 
     expect(laterMinutes).toBeLessThanOrEqual(initialMinutes - 2);
+  });
+
+  it("shows the welcome intro to a brand-new account (no cards yet), with no skip, and not again after it", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue({ ...profile, totalDiscoveries: 0, duplicateCount: 0 });
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    render(
+      <MemoryRouter initialEntries={["/inicio"]}>
+        <Routes>
+          <Route path="/inicio" element={<InicioPage />} />
+          <Route path="/percibir" element={<div>Pantalla de percibir</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(await screen.findByText("Hace 66 millones de años…")).toBeTruthy();
+    expect(screen.queryByText(/saltar/i)).toBeNull();
+
+    // No skip: the only way through is "Siguiente" ×2 and then the final button.
+    fireEvent.click(screen.getByText("Siguiente"));
+    fireEvent.click(screen.getByText("Siguiente"));
+    expect(localStorage.getItem("ecorex_welcome_seen_1")).toBeNull();
+    fireEvent.click(screen.getByText("Percibir mi primera carta"));
+
+    expect(await screen.findByText("Pantalla de percibir")).toBeTruthy();
+    expect(localStorage.getItem("ecorex_welcome_seen_1")).toBe("1");
+
+    cleanup();
+    renderPage();
+    await screen.findByText("Nivel 2");
+    expect(screen.queryByText("Hace 66 millones de años…")).toBeNull();
+  });
+
+  it("never shows the intro to an existing player, and records that", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile); // totalDiscoveries: 5
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    renderPage();
+    await screen.findByText("Nivel 2");
+    expect(screen.queryByText("Hace 66 millones de años…")).toBeNull();
+    expect(localStorage.getItem("ecorex_welcome_seen_1")).toBe("1");
+  });
+
+  it("shows the streak and the closest fusion progress", async () => {
+    getFuseEligibleMock.mockResolvedValue({
+      threshold: 5,
+      eligible: [],
+      progress: [
+        { speciesId: 7, commonName: "Rex de Fuego", scientificName: "T. imperator", balanceAnchorUrl: "/x.webp", balanceCount: 3 },
+      ],
+    });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue({
+      day: "2026-11-18",
+      missions: [],
+      bonus: { completed: false, xp: 30 },
+      streak: { days: 2, activeToday: false, nextMilestone: 3, nextMilestoneXp: 20 },
+    } satisfies MissionsState);
+
+    renderPage();
+    expect(await screen.findByText("🔥 Racha: 2 días seguidos")).toBeTruthy();
+    expect(screen.getByText("¡Juega hoy para no perderla!")).toBeTruthy();
+    expect(screen.getByText(/Próxima fusión:/).textContent).toContain("Rex de Fuego");
+    expect(screen.getByText("3/5")).toBeTruthy();
   });
 });

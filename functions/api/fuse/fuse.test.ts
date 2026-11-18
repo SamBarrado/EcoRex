@@ -123,6 +123,30 @@ describe('GET /api/fuse/eligible', () => {
     ]);
   });
 
+  it('lists species still short of the threshold under `progress`, closest first', async () => {
+    const row = (species_id: number, balance_count: number) => ({
+      species_id,
+      common_name: `Especie ${species_id}`,
+      scientific_name: `Genus sp${species_id}`,
+      balance_anchor_url: `/species-art/${species_id}/balance.webp`,
+      balance_count,
+    });
+    const { env } = makeEnv({ eligibleRows: [row(1, 5), row(2, 3), row(3, 1)] });
+    const request = new Request('https://ecorex.app/api/fuse/eligible', { headers: { Cookie: 'ecorex_session=abc' } });
+    const response = await onRequestGet({ request, env } as never);
+    const body = (await response.json()) as {
+      threshold: number;
+      eligible: Array<{ speciesId: number }>;
+      progress: Array<{ speciesId: number; balanceCount: number }>;
+    };
+    expect(body.threshold).toBe(5);
+    expect(body.eligible.map((s) => s.speciesId)).toEqual([1]);
+    expect(body.progress.map((s) => [s.speciesId, s.balanceCount])).toEqual([
+      [2, 3],
+      [3, 1],
+    ]);
+  });
+
   it('includes a species with exactly 4 non-consumed duplicates for a level 15+ user', async () => {
     const { env, db } = makeEnv({
       xp: { xp: 2619 },
@@ -141,7 +165,7 @@ describe('GET /api/fuse/eligible', () => {
     });
     const response = await onRequestGet({ request, env } as never);
     expect(response.status).toBe(200);
-    const body = (await response.json()) as { eligible: unknown[] };
+    const body = (await response.json()) as { eligible: unknown[]; threshold: number };
     expect(body.eligible).toEqual([
       {
         speciesId: 7,
@@ -152,7 +176,9 @@ describe('GET /api/fuse/eligible', () => {
       },
     ]);
     const eligibleQueryCall = db.calls.find((c) => c.sql.includes('GROUP BY species.id'));
-    expect(eligibleQueryCall?.args).toEqual([1, 4]);
+    // The threshold is applied in code (so `progress` can list the rest), not in SQL.
+    expect(eligibleQueryCall?.args).toEqual([1]);
+    expect(body.threshold).toBe(4);
   });
 
   it('excludes a species with only 4 non-consumed duplicates for a level 1 user', async () => {
@@ -165,10 +191,11 @@ describe('GET /api/fuse/eligible', () => {
     });
     const response = await onRequestGet({ request, env } as never);
     expect(response.status).toBe(200);
-    const body = (await response.json()) as { eligible: unknown[] };
+    const body = (await response.json()) as { eligible: unknown[]; threshold: number };
     expect(body.eligible).toEqual([]);
     const eligibleQueryCall = db.calls.find((c) => c.sql.includes('GROUP BY species.id'));
-    expect(eligibleQueryCall?.args).toEqual([1, 5]);
+    expect(eligibleQueryCall?.args).toEqual([1]);
+    expect(body.threshold).toBe(5);
   });
 });
 

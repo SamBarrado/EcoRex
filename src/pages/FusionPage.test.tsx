@@ -148,4 +148,23 @@ describe("FusionPage", () => {
 
     expect(screen.queryByText("¡Fusión completada!")).not.toBeInTheDocument();
   });
+
+  it("lists progress toward the next fusions instead of a dead end", async () => {
+    getFuseEligibleMock.mockResolvedValue({
+      threshold: 5,
+      eligible: [],
+      progress: [
+        { ...eligibleSpecies, speciesId: 8, commonName: "Tricera", balanceCount: 4 },
+        { ...eligibleSpecies, speciesId: 9, commonName: "Ceratosaurio", balanceCount: 1 },
+      ],
+    });
+
+    renderPage();
+
+    expect(await screen.findByText(/Aún no tienes 5 duplicados/)).toBeInTheDocument();
+    expect(screen.getByText("Tricera")).toBeInTheDocument();
+    expect(screen.getByText("4/5")).toBeInTheDocument();
+    expect(screen.getByText("Ceratosaurio")).toBeInTheDocument();
+    expect(screen.getByText("1/5")).toBeInTheDocument();
+  });
 });

@@ -5,6 +5,27 @@ import { LevelUpScreen } from "./LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 
+function notificationText(n: AppNotification): string {
+  switch (n.type) {
+    case "fusion_ready":
+      return `¡Ya puedes fusionar ${(n.payload as { commonName?: string }).commonName ?? "una especie"}!`;
+    case "level_up":
+      return `¡Subiste a nivel ${(n.payload as { newLevel?: number }).newLevel ?? "?"}!`;
+    case "streak_reward": {
+      const { days, xp } = n.payload as { days?: number; xp?: number };
+      return `🔥 ¡Racha de ${days ?? "?"} días! +${xp ?? 0} XP y ⚡`;
+    }
+    case "energy_available": {
+      const { remaining, max } = n.payload as { remaining?: number; max?: number };
+      return remaining && max
+        ? `Tienes ${remaining}/${max} energía — ya puedes percibir.`
+        : "Tienes nueva energía disponible.";
+    }
+    default:
+      return n.type;
+  }
+}
+
 export default function ActionFab() {
   const navigate = useNavigate();
   const { visible } = useNavVisibility();
@@ -52,18 +73,7 @@ export default function ActionFab() {
                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleNotificationClick(n)}
                 style={{ padding: "0.5rem 0", fontWeight: n.readAt ? 400 : 700 }}
               >
-                {n.type === "fusion_ready"
-                  ? `¡Ya puedes fusionar ${(n.payload as { commonName?: string }).commonName ?? "una especie"}!`
-                  : n.type === "level_up"
-                    ? `¡Subiste a nivel ${(n.payload as { newLevel?: number }).newLevel ?? "?"}!`
-                    : n.type === "energy_available"
-                      ? (() => {
-                          const { remaining, max } = n.payload as { remaining?: number; max?: number };
-                          return remaining && max
-                            ? `Tienes ${remaining}/${max} energía — ya puedes percibir.`
-                            : "Tienes nueva energía disponible.";
-                        })()
-                      : n.type}
+                {notificationText(n)}
               </div>
             ))}
           </div>

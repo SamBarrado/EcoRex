@@ -1,7 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { onRequestGet } from './missions';
 
-function makeDb(rows: Array<{ mission_slug: string; progress_count: number; completed_at: string | null }>) {
+function makeDb(
+  rows: Array<{ mission_slug: string; progress_count: number; completed_at: string | null }>,
+  streakDays: string[] = []
+) {
   const sessionRow = { id: 1, email: 'a@a.com', display_name: 'A', expires_at: Date.now() + 100000 };
   return {
     prepare(sql: string) {
@@ -14,6 +17,9 @@ function makeDb(rows: Array<{ mission_slug: string; progress_count: number; comp
           return null;
         },
         async all<T>() {
+          if (sql.includes('SELECT DISTINCT day FROM daily_missions')) {
+            return { results: streakDays.map((day) => ({ day })) as T[] };
+          }
           if (sql.includes('FROM daily_missions')) return { results: rows as T[] };
           return { results: [] as T[] };
         },
@@ -66,5 +72,26 @@ describe('GET /api/missions', () => {
     const fusion = body.missions.find((m) => m.slug === 'fusion')!;
     expect(coleccionista).toMatchObject({ progress: 1, completed: false });
     expect(fusion).toMatchObject({ progress: 1, completed: true });
+  });
+
+  it('reports the streak: 0 with no activity', async () => {
+    const request = new Request('https://ecorex.app/api/missions', { headers: { Cookie: 'ecorex_session=abc' } });
+    const response = await onRequestGet({ request, env: { DB: makeDb([]) } } as never);
+    const body = (await response.json()) as { streak: unknown };
+    expect(body.streak).toEqual({ days: 0, activeToday: false, nextMilestone: 3, nextMilestoneXp: 20 });
+  });
+
+  it('reports a live streak that has not been extended today yet', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-18T10:00:00Z'));
+    try {
+      const request = new Request('https://ecorex.app/api/missions', { headers: { Cookie: 'ecorex_session=abc' } });
+      const env = { DB: makeDb([], ['2026-11-17', '2026-11-16', '2026-11-15']) };
+      const response = await onRequestGet({ request, env } as never);
+      const body = (await response.json()) as { streak: unknown };
+      expect(body.streak).toEqual({ days: 3, activeToday: false, nextMilestone: 7, nextMilestoneXp: 50 });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

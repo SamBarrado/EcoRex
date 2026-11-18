@@ -39,18 +39,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
      JOIN species_phase_anchors ON species_phase_anchors.species_id = species.id AND species_phase_anchors.phase = 'balance'
      WHERE discoveries.user_id = ? AND discoveries.phase = 'balance' AND discoveries.consumed_at IS NULL
      GROUP BY species.id
-     HAVING COUNT(*) >= ?`
+     ORDER BY balance_count DESC, species.id`
   )
-    .bind(user.id, fuseThreshold)
+    .bind(user.id)
     .all<EligibleRow>();
 
+  const toSpecies = (row: EligibleRow) => ({
+    speciesId: row.species_id,
+    commonName: row.common_name,
+    scientificName: row.scientific_name,
+    balanceAnchorUrl: row.balance_anchor_url,
+    balanceCount: row.balance_count,
+  });
+
+  // `eligible` keeps its original meaning (can fuse right now); `progress` lists
+  // the species with at least one Balance card that are still short, closest
+  // first, so the UI can show "3/5" instead of nothing.
   return Response.json({
-    eligible: results.map((row) => ({
-      speciesId: row.species_id,
-      commonName: row.common_name,
-      scientificName: row.scientific_name,
-      balanceAnchorUrl: row.balance_anchor_url,
-      balanceCount: row.balance_count,
-    })),
+    threshold: fuseThreshold,
+    eligible: results.filter((row) => row.balance_count >= fuseThreshold).map(toSpecies),
+    progress: results.filter((row) => row.balance_count < fuseThreshold).map(toSpecies),
   });
 };

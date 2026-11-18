@@ -25,12 +25,12 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 | # | Mejora | Qué cambia | Esfuerzo | Impacto | Estado |
 |---|---|---|---|---|---|
 | 1 | **Arreglar la economía de misiones** | "Carta nueva" pasa a "Consigue 1 carta" (cualquiera). Todas las misiones deben ser completables siempre. | S–M | Alto | ✅ 2026-11-18 (variante: ver nota) |
-| 2 | **Racha de días con premio** | Contador de días seguidos en Inicio; premio a los 3 y 7 días. Se deriva de `daily_missions`, sin migración. | M | Alto | ⏳ (tanda 2) |
+| 2 | **Racha de días con premio** | Contador de días seguidos en Inicio; premio de XP + energía recargada a los 3 días, a los 7 y cada 7 después. Se deriva de `daily_missions` (sin migración); el cobro es idempotente vía la bandeja de notificaciones. | M | Alto | ✅ 2026-11-18 |
 | 3 | **Subir de nivel rellena la energía** | En `recordDiscovery`, si `leveledUp`, energía al máximo; `LevelUpScreen` lo anuncia. | S | Alto | ✅ 2026-11-18 |
 | 4 | **Eco como drop raro** | ~3–5 % de las percepciones salen en fase Eco (el servidor ya acepta `eco`). Desbloquea 18 cartas y el bonus de +200 XP. | M | Muy alto | ❓ decidir (ver §4); requiere arte Eco |
-| 5 | **Onboarding de 3 pantallas** | Slides de lore tras registrarse + pista del gesto en la primera percepción. | M | Alto | ⏳ (tanda 2) |
+| 5 | **Onboarding de 3 pantallas** | 3 slides de lore al entrar por primera vez (solo cuentas sin cartas), **sin botón de saltar** (solo "Siguiente"), terminando en "Percibir mi primera carta". La pista del gesto ya existía en el propio ritual. Textos a revisar por ti. | M | Alto | ✅ 2026-11-18 |
 | 6 | **"Próximamente" en vez de candados muertos** | Eco/Álbum/Amigos con etiqueta y, si se puede, "Avísame" por push. | S | Medio | ✅ 2026-11-18 (sin "Avísame": queda para cuando haya algo que avisar) |
-| 7 | **Progreso de fusión visible** | "Rex de Fuego 3/5 → Exceso" en Inicio y EcoDex. Ampliar `/api/fuse/eligible` con los parciales. | S–M | Alto | ⏳ (tanda 2) |
+| 7 | **Progreso de fusión visible** | Barra "Próxima fusión: Rex de Fuego 3/5" en Inicio y lista "en progreso" en el Altar. `/api/fuse/eligible` añade `progress` y `threshold`. Falta mostrarlo en las baldosas del EcoDex. | S–M | Alto | ✅ 2026-11-18 (EcoDex pendiente) |
 | 8 | **Analítica mínima** | Cloudflare Web Analytics + `scripts/retention.sql` (D1/D7/D30 desde `discoveries`; se ejecuta a mano contra remoto). Revisar `/privacidad`. | S | Indirecto (alto) | ✅ 2026-11-18: `scripts/retention.sql` + `npm run db:retention[:remote]`. Pendiente tuyo: activar Web Analytics en el panel de Pages |
 | 9 | **Reinicio diario en hora de Madrid** | `todayUTC()` → `todayInSpain()` (`Europe/Madrid`). | S | Medio | ✅ 2026-11-18 |
 | 10 | **Compartir carta** | Botón en visor/revelado: `navigator.share` con fallback a descargar imagen. Lo delicado es renderizar la carta 3D a imagen (ver trampas en CLAUDE.md). | M–L | Alto (adquisición) | ⏳ |
@@ -41,7 +41,11 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 
 **Nota sobre #1 (variante aplicada):** al implementarlo apareció que la misión de **fusión** tampoco se puede cumplir a diario (5 duplicados ≈ 1,7 días de energía) y el bonus la exigía, así que el bonus era inalcanzable incluso al empezar. Resultado: `percibir` = 1 carta (10 XP), `coleccionista` = 3 cartas cualesquiera, nuevas o repetidas, fusión incluida (25 XP), bonus +30 XP por esas dos; `fusion` pasa a **extra opcional** (+20 XP, fuera del bonus). Techo diario sin fusión: 65 XP. Todo ajustable en `MISSION_DEFS`/`BONUS_SLUGS` ([missions.ts](../functions/lib/missions.ts)). Si más adelante se quiere la 4ª misión rotatoria, es una extensión de esto.
 
-**Tandas:** 1 = #3, #9, #6, #8, #1 (barato y arregla lo roto; **hecha 2026-11-18**, sin desplegar) → 2 = #2, #7, #5 (crea el hábito) → decidir #4 y generar la siguiente oleada → resto cuando haya tracción.
+**Notas de la tanda 2:**
+- **Racha:** cuenta días naturales (hora de Madrid) con cualquier actividad; si ayer jugaste y hoy aún no, sigue viva ("¡Juega hoy para no perderla!"). Premios: día 3 = 20 XP, día 7 = 50 XP, cada 7 días = 50 XP, y en todos la energía se recarga. Rachas y premios son constantes en [streak.ts](../functions/lib/streak.ts). Las rachas de usuarios existentes empiezan a contar desde el historial de `daily_missions`.
+- **Service worker:** al verificar en navegador real apareció que `sw.ts` no hacía `skipWaiting()`, así que tras un deploy los jugadores seguían con el build anterior hasta cerrar todas las pestañas. Corregido (ver CLAUDE.md); sin esto ningún quick win llegaba rápido a producción.
+
+**Tandas:** 1 = #3, #9, #6, #8, #1 (barato y arregla lo roto; **hecha 2026-11-18**, sin desplegar) → 2 = #2, #7, #5 (crea el hábito; **hecha 2026-11-18**, sin desplegar) → decidir #4 y generar la siguiente oleada → resto cuando haya tracción.
 
 **Extra sin ubicar:** "reciclar" duplicados sobrantes (más allá de las 5 de fusión) por XP o energía; hoy no sirven para nada y hace falta diseño.
 

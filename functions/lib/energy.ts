@@ -40,6 +40,20 @@ function computeState(row: EnergyRow, now: number, max: number): EnergyState {
   return { remaining, max, resetAt: row.energy_window_start + (ticks + 1) * REGEN_INTERVAL_MS };
 }
 
+/**
+ * Tops energy up to the max for `level`. window_start NULL means "full", and
+ * the notified count is set to max so the push cron doesn't announce it.
+ */
+export async function refillEnergy(db: D1Database, userId: number, level: number): Promise<void> {
+  const max = maxEnergyForLevel(level);
+  await db
+    .prepare(
+      "UPDATE users SET energy_count = ?, energy_window_start = NULL, energy_last_notified_count = ? WHERE id = ?"
+    )
+    .bind(max, max, userId)
+    .run();
+}
+
 export async function getEnergyState(db: D1Database, userId: number, level: number): Promise<EnergyState> {
   const max = maxEnergyForLevel(level);
   const row = await db

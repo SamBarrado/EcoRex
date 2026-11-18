@@ -26,6 +26,9 @@ interface Fixture {
   missions?: Record<string, MissionRow>;
   oldestRows?: { id: number }[];
   random?: number;
+  /** Earlier days (YYYY-MM-DD) with activity, for the daily streak. Today is implied by the mission rows. */
+  priorDays?: string[];
+  streakRewardClaimed?: boolean;
 }
 
 const NOW = new Date('2026-11-17T12:00:00Z');
@@ -75,6 +78,7 @@ function makeEnv(fx: Fixture, kind: 'discover' | 'fuse') {
           if (sql.includes('SELECT discovered_at')) return { discovered_at: '2026-11-17 12:00:00' } as unknown as T;
           if (sql.includes('COUNT(*) as balance_count')) return { balance_count: fx.balanceCountAfterInsert ?? 1 } as unknown as T;
           if (sql.includes('COUNT(*) as count FROM discoveries')) return { count: fx.existingSlotCount ?? 0 } as unknown as T;
+          if (sql.includes("type = 'streak_reward'")) return (fx.streakRewardClaimed ? { id: 1 } : null) as unknown as T;
           if (sql.includes('SELECT xp FROM users')) return { xp: currentXp } as unknown as T;
           if (sql.includes('SELECT progress_count, completed_at FROM daily_missions')) {
             return (missions[args[1] as string] ?? null) as unknown as T;
@@ -89,6 +93,9 @@ function makeEnv(fx: Fixture, kind: 'discover' | 'fuse') {
           if (sql.includes('DISTINCT phase')) {
             const phases = insertDone ? (fx.ownedAfter ?? fx.ownedBefore ?? []) : (fx.ownedBefore ?? []);
             return { results: phases.map((phase) => ({ phase })) as T[] };
+          }
+          if (sql.includes('SELECT DISTINCT day FROM daily_missions')) {
+            return { results: ['2026-11-17', ...(fx.priorDays ?? [])].map((day) => ({ day })) as T[] };
           }
           if (sql.includes('SELECT mission_slug, completed_at FROM daily_missions')) {
             return {
@@ -184,6 +191,11 @@ describe('economy golden master: POST /api/discover', () => {
       },
       { phase: 'balance' },
     ],
+    ['day 2 of a streak: no reward', { priorDays: ['2026-11-16'] }, { phase: 'balance' }],
+    ['day 3 of a streak -> reward (+20 xp, energy refill, inbox notification)', { priorDays: ['2026-11-16', '2026-11-15'] }, { phase: 'balance' }],
+    ['day 7 of a streak -> reward (+50 xp)', { priorDays: ['2026-11-16', '2026-11-15', '2026-11-14', '2026-11-13', '2026-11-12', '2026-11-11'] }, { phase: 'balance' }],
+    ['streak reward already claimed today', { priorDays: ['2026-11-16', '2026-11-15'], streakRewardClaimed: true }, { phase: 'balance' }],
+    ['a gap breaks the streak: no reward', { priorDays: ['2026-11-15', '2026-11-14'] }, { phase: 'balance' }],
     ['species completed by this discovery', { ownedBefore: ['balance', 'exceso'], ownedAfter: ['balance', 'exceso', 'eco'] }, { phase: 'eco' }],
     ['species already complete before', { ownedBefore: ['balance', 'exceso', 'eco'] }, { phase: 'balance' }],
     ['level up -> level_up notification', { xp: 5, random: 0.99 }, { phase: 'balance' }],
@@ -219,6 +231,7 @@ describe('economy golden master: POST /api/fuse', () => {
       },
       { speciesId: 7 },
     ],
+    ['fusion extends the streak and pays its milestone', { oldestRows: five, priorDays: ['2026-11-16', '2026-11-15'] }, { speciesId: 7 }],
     ['species completed by this fusion', { oldestRows: five, ownedBefore: ['balance', 'eco'], ownedAfter: ['balance', 'exceso', 'eco'] }, { speciesId: 7 }],
     ['species already complete before', { oldestRows: five, ownedBefore: ['balance', 'exceso', 'eco'] }, { speciesId: 7 }],
     ['level up -> level_up notification', { oldestRows: five, xp: 5, random: 0.99 }, { speciesId: 7 }],

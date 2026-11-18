@@ -79,7 +79,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 | **Altar de Fusión** | 5 cartas repetidas de una especie en fase Balance se consumen para obtener su carta en fase **Exceso** (4 a partir del nivel 15). No cuesta energía. |
 | **Rareza** | Cinco niveles — Común, Poco común, Rara, Épica, Legendaria — con pesos de sorteo 55 / 27 / 12 / 5 / 1 %. Es un eje independiente de la fase. |
 | **XP y niveles** | Niveles 1–50 por XP acumulado. Solo da XP lo nuevo (especie+fase vista por primera vez, fusiones, completar las 3 fases de una especie): repetir no da nada. Ocho títulos cosméticos, de «Explorador Novato» a «Voz de la Fractura». |
-| **Misiones diarias** | Tres misiones diarias (Percibir, Conseguir 3 cartas y Fusión como extra opcional) más un bonus por completar las dos principales el mismo día. Las dos principales caben en la energía diaria base, así que siguen siendo posibles aunque ya tengas todo el catálogo. El día cambia a medianoche en España. |
+| **Misiones diarias** | Tres misiones diarias (Percibir, Conseguir 3 cartas y Fusión como extra opcional) más un bonus por completar las dos principales el mismo día. Una **racha diaria** (días seguidos con alguna actividad) da XP y recarga la energía a los 3 días, a los 7 y cada 7 después. Las dos principales caben en la energía diaria base, así que siguen siendo posibles aunque ya tengas todo el catálogo. El día cambia a medianoche en España. |
 | **Notificaciones** | Bandeja in-app con badges en la navegación, y **Web Push** (funciona con la PWA cerrada) cada vez que se regenera un punto de energía. |
 
 <p align="center">

@@ -125,6 +125,15 @@ export interface MissionsState {
   day: string;
   missions: Array<{ slug: string; label: string; progress: number; target: number; completed: boolean; optional?: boolean }>;
   bonus: { completed: boolean; xp: number };
+  streak: StreakState;
+}
+
+export interface StreakState {
+  days: number;
+  /** False when the streak is alive but hasn't been extended today yet. */
+  activeToday: boolean;
+  nextMilestone: number;
+  nextMilestoneXp: number;
 }
 
 export function getMissions() {
@@ -161,6 +170,7 @@ export interface DiscoverResult {
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
   energyRefilled?: boolean;
+  streak?: { days: number; reward: { days: number; xp: number } | null };
 }
 
 export function discover(body: { phase: string }, signal?: AbortSignal) {
@@ -179,8 +189,16 @@ export interface EligibleSpecies {
   balanceCount: number;
 }
 
+export interface FuseEligibleState {
+  /** Duplicates of Balance needed to fuse (5, or 4 from level 15). */
+  threshold: number;
+  eligible: EligibleSpecies[];
+  /** Species with some Balance duplicates that are still short, closest first. */
+  progress: EligibleSpecies[];
+}
+
 export function getFuseEligible() {
-  return request<{ eligible: EligibleSpecies[] }>("/api/fuse/eligible");
+  return request<Partial<FuseEligibleState> & { eligible: EligibleSpecies[] }>("/api/fuse/eligible");
 }
 
 export function fuseSpecies(body: { speciesId: number }, signal?: AbortSignal) {

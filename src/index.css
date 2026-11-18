@@ -1891,3 +1891,81 @@ button:disabled {
   text-transform: uppercase;
   color: #7fa98a;
 }
+
+/* Streak + fusion progress hints on Home */
+.streak-hint {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: #7fa98a;
+}
+
+.streak-hint-warn {
+  color: #ffb74d;
+  font-weight: 700;
+}
+
+/* First-visit intro (3 slides). Sits above everything, including the bottom nav. */
+.welcome-flow {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: max(1rem, env(safe-area-inset-top)) 1.5rem max(1.25rem, env(safe-area-inset-bottom));
+  background: #0d1a0f;
+  text-align: center;
+}
+
+.welcome-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 0;
+}
+
+.welcome-image {
+  max-width: min(60vw, 240px);
+  max-height: 32vh;
+  object-fit: contain;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.welcome-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.welcome-text {
+  margin: 0;
+  max-width: 28rem;
+  line-height: 1.5;
+}
+
+.welcome-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.welcome-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.welcome-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #2f4a35;
+}
+
+.welcome-dot-active {
+  background: #3fae5a;
+}

@@ -17,7 +17,7 @@ export function MissionsCard({ missions }: MissionsCardProps) {
             {mission.label}
           </span>
           <span>
-            {mission.progress}/{mission.target}
+            {Math.min(mission.progress, mission.target)}/{mission.target}
           </span>
         </div>
       ))}

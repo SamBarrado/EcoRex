@@ -1,4 +1,5 @@
 import { getSessionCookie, verifySession, type Env } from "../lib/auth";
+import { getStreak } from "../lib/streak";
 import { MISSION_DEFS, MISSION_SLUGS, DAILY_BONUS_XP, todayInSpain, type MissionSlug } from "../lib/missions";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -32,9 +33,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   });
 
   const bonusRow = rowBySlug.get('bonus');
+  const streak = await getStreak(env.DB, user.id, day);
 
   return Response.json({
     day,
+    streak,
     missions,
     bonus: { completed: bonusRow?.completed_at != null, xp: DAILY_BONUS_XP },
   });
