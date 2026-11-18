@@ -75,6 +75,34 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 
 ## 5. Sistemas y UX
 
+- **✅ Diseño de interfaz ELEGIDO (2026-11-18) — pendiente de aplicar a la app.** Combinación (ábrela en la maqueta con la URL): `design/ux/mockup-interfaz-2026-11.html#trans-2,nav-1,xp-2,lvl-2,rew-4,fab-1,ntf-1,btn-1,home-1,auth-3,onb-1,coach-2,bg-4`
+
+  | Eje | Elegida |
+  |---|---|
+  | Transición entre pantallas | B · Deslizamiento direccional |
+  | Barra inferior | A · Píldora deslizante |
+  | XP | B · Orbes al nivel (requiere un indicador de nivel siempre visible) |
+  | Subida de nivel | B · Onda de fractura |
+  | Logros y recompensas | D · Mixta (banner para lo pequeño, medalla para especie nueva, Eco y especie completa) |
+  | Botón de notificaciones | A · Campana en la cabecera (desaparece el flotante; oculta en Percibir) |
+  | Llegada de notificaciones | A · Aviso que se pliega en la campana |
+  | Botones | A · Foil |
+  | Inicio | A · Panel de misión |
+  | Onboarding · entrada | C · Carnet de explorador |
+  | Onboarding · bienvenida | A · Cuento animado (sin «Saltar») |
+  | Onboarding · primeros pasos | B · Checklist con premio |
+  | Fondo | D · Atmósfera viva (según pantalla, energía y eventos; tinte por Fractae) |
+
+  **Estado: fase 1 aplicada el 2026-11-18 (sin commit/despliegue todavía): botones Foil, píldora de la barra, fondo «atmósfera viva» global, transición deslizante entre rutas (con migración a enrutador de datos) e indicador de nivel. Fases 2–4 pendientes.**
+
+  **Fases propuestas** (de menos a más riesgo; cada una se puede desplegar sola): **1 · Fundamentos** (botones Foil, píldora de la barra, fondo «atmósfera viva» como capa global con opacidad base para las transiciones, transición deslizante entre rutas, indicador de nivel superior) → **2 · Feedback** (orbes de XP, onda de fractura, cola de logros con banner/medalla, campana en cabecera + aviso que se pliega) → **3 · Inicio** (panel de misión) → **4 · Onboarding** (carnet, cuento animado, checklist). Todo CSS/Web Animations: no hay librerías de animación en el proyecto y no hace falta añadir ninguna.
+
+  **Restricciones detectadas en el código** (a resolver al construir): (a) el registro no recibe avatar → tras registrarse hay que llamar a `PATCH /api/auth/avatar` (sin cambios de servidor); (b) las notificaciones solo se recargan al cambiar de ruta (`NotificationsContext`), así que el aviso que se pliega necesita además recargar al volver a la app (`visibilitychange`) o con un sondeo suave; (c) el premio del checklist (+50 XP y energía llena) debe cobrarse **una sola vez en el servidor**: mismo patrón que el premio de racha (notificación `onboarding_reward` como marca de idempotencia, sin migración), y los pasos se derivan de datos reales (cuenta, cartas, permiso de push, misión completada) salvo «visitar el EcoDex», que necesita una marca; (d) en XP orbes + campana en cabecera comparten la esquina superior derecha: la campana se desplaza a la izquierda del indicador de nivel; (e) `prefers-reduced-motion` global obligatorio y prueba en un móvil de gama baja (capas animadas grandes del fondo y partículas de la onda de fractura).
+
+- **Maqueta de interfaz y animaciones** (2026-11-18; **variantes ya elegidas, ver arriba**): [design/ux/mockup-interfaz-2026-11.html](../design/ux/mockup-interfaz-2026-11.html) (autocontenida: se abre con doble clic). **Onboarding en la maqueta (2026-11-18):** 3 ejes nuevos (entrada, bienvenida, primeros pasos) con un flujo recorrible de principio a fin (▶ Flujo completo): registro → bienvenida → primer sobre → primera carta → Inicio. Hallazgo: hoy, tras la primera carta, **no hay ninguna guía** (solo la tarjeta de avisos push); además la fusión, la energía y las misiones no se explican en ningún momento. Ninguna variante de la bienvenida lleva «Saltar» (decisión de producto). A decidir antes de construir: la variante «Empezar jugando» exige sesiones de invitado en el servidor y tiene implicaciones de privacidad con menores (consentimiento parental y datos del niño; ver la política de privacidad); el copy de la guía con burbujas y del interactivo es propuesta (la Tricera de las Lágrimas es una especie real; el resto del texto reutiliza el de las diapositivas actuales).
+
+**Maqueta única con 13 ejes** (Actual + 3–4 variantes cada uno): transición entre pantallas, barra inferior e iconos, XP, subida de nivel, logros y recompensas, **botón de notificaciones** (¿mantenerlo, moverlo, ocultarlo o mostrarlo a veces?), llegada de notificaciones, botones, pantalla de inicio y **fondo** (con tinte por Fractae y estado de energía); con panel de demos, cámara lenta, «reducir movimiento» y la combinación guardada en la URL. Datos que conviene tener presentes al decidir el botón de notificaciones: hoy el botón flotante (88 px) **solo existe en Inicio** y tapa contenido, y sus 4 tipos de aviso ya tienen una señal persistente en la app (energía → barra de energía y punto en Percibir; fusión → progreso de fusión; nivel → pantalla de subida; racha → tarjeta de racha), así que el buzón es en buena parte redundante. Se regenera con `python3 design/ux/mockup-interfaz/build.py`. Aplicarla a la app es trabajo aparte (hoy React Router no tiene transiciones y no existe un HUD de XP ni un sistema de «Logros»).
+
 - **Sistema de sonidos**: revisión completa (qué suena en fusión, edición de los sonidos) y reorganizar el audio en componentes reutilizables (hoy repartido/duplicado; ver nota histórica en `PercibirRitual.tsx` sobre `safePlay` vs `.play()` directo en `FusionPage.tsx`).
 - **Revelados alternativos de carta** ya prototipados en `design/cartas/propuesta-cartas-2026-11.html`: Rotura, Iris y Giro con vueltas según rareza; para el giro manual, Libre y Toque. Idea abierta: un revelado distinto por rareza (p. ej. Rotura solo para Épica y Legendaria). También los diseños de carta A (Lámina) y C (Reliquia).
 

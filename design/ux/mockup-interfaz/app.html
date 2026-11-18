@@ -1,0 +1,392 @@
+<!-- Maqueta de interfaz Ecorex. El marcado replica el de los componentes reales
+     (InicioPage, BottomNav, ActionFab, XpToast, LevelUpScreen, EcodexTile, PerfilPage)
+     con sus clases, para que index.css los pinte tal cual. Las capas .mk-* son de la maqueta. -->
+<div class="mk-stage">
+
+  <!-- ===== Móvil simulado: todo lo `position: fixed` de la app queda contenido aquí ===== -->
+  <div class="phone" id="phone">
+    <!-- Capas de fondo de las variantes (las genera variants.js); «Actual» usa solo el degradado de index.css + .bg-fx -->
+    <div class="mk-bg" id="mkbg" aria-hidden="true"></div>
+    <div class="bg-fx" aria-hidden="true">
+      <span class="bg-particle" style="left:12%;width:5px;height:5px;animation-duration:19s;animation-delay:-4s;--drift:20px"></span>
+      <span class="bg-particle" style="left:34%;width:4px;height:4px;animation-duration:24s;animation-delay:-12s;--drift:-26px"></span>
+      <span class="bg-particle" style="left:58%;width:7px;height:7px;animation-duration:17s;animation-delay:-8s;--drift:30px"></span>
+      <span class="bg-particle" style="left:81%;width:4px;height:4px;animation-duration:22s;animation-delay:-16s;--drift:-14px"></span>
+    </div>
+
+    <!-- Alternativas al botón flotante de notificaciones (eje «Botón de notificaciones») -->
+    <button class="mk-hdr-bell" id="hdrBell" aria-label="Notificaciones"><img src="{{img:ic_notif}}" alt="" /><span class="mk-hbadge" id="hdrBadge">2</span></button>
+    <button class="mk-edge" id="edgeTab" aria-label="Notificaciones"><img src="{{img:ic_notif}}" alt="" /><b id="edgeN">2</b><span class="mk-edge-t" id="edgeT"></span></button>
+
+    <!-- HUD de experiencia (solo en las variantes de XP; hoy la app no lo tiene) -->
+    <div class="mk-hud" id="hud" aria-hidden="true">
+      <div class="mk-hud-bar"><i class="mk-hud-fill" id="hudFill"></i><span class="mk-hud-shine"></span></div>
+      <div class="mk-hud-lv" id="hudLv"><b>Nv <span data-lv>4</span></b></div>
+      <div class="mk-hud-chip" id="hudChip">
+        <svg viewBox="0 0 44 44" width="44" height="44">
+          <circle cx="22" cy="22" r="19" class="mk-ring-track"/>
+          <circle cx="22" cy="22" r="19" class="mk-ring-fill" id="hudRing" pathLength="100"/>
+        </svg>
+        <b data-lv>4</b>
+      </div>
+    </div>
+
+    <!-- Pantallas -->
+    <div class="mk-screens" id="screens">
+      <i class="mk-seam" id="seam"></i>
+
+      <!-- ========== INICIO ========== -->
+      <section class="mk-scr is-active" data-s="inicio" data-i="0">
+        <div class="page">
+          <!-- «Novedades» en línea (solo en la variante D del botón de notificaciones: sin botón) -->
+          <div class="card mk-news" id="news" hidden></div>
+          <div class="card mk-push">
+            <strong>Activa las notificaciones</strong>
+            <p style="margin:.4rem 0 .6rem;color:#cfe0d3">Te avisamos cuando tengas energía lista para descubrir de nuevo.</p>
+            <div style="display:flex;gap:.5rem"><button>Activar</button><button>Ahora no</button></div>
+          </div>
+
+          <!-- Inicio actual (variante 0) -->
+          <div class="mk-home-real">
+            <img src="{{img:logo}}" alt="Ecorex" class="home-logo" />
+            <div class="card">
+              <div class="stat"><span>Nivel <span data-lv>4</span></span><span><span data-into>60</span>/140 XP</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" data-fill style="width:43%"></div></div>
+              <div class="stat"><span>Especies descubiertas</span><span>3/6 (50%)</span></div>
+              <div class="level-progress-bar"><div class="species-progress-fill" style="width:50%"></div></div>
+              <div class="stat"><span>Registros del EcoDex</span><span>5/18 (28%)</span></div>
+              <div class="level-progress-bar"><div class="species-progress-fill" style="width:28%"></div></div>
+              <div class="stat"><span>⚡ Energía</span><span data-energy-text>2/3</span></div>
+            </div>
+            <div class="card streak-card">
+              <div class="stat"><strong>🔥 Racha: 3 días seguidos</strong><span>En 4 días: +50 XP y energía</span></div>
+            </div>
+            <div class="card">
+              <strong>Misiones de hoy</strong>
+              <div class="stat"><span>✓ Percibe hoy</span><span>1/1</span></div>
+              <div class="stat"><span>Consigue 3 cartas hoy</span><span>2/3</span></div>
+              <div class="stat"><span>Completa 1 fusión (extra)</span><span>0/1</span></div>
+              <div class="stat"><span>Bonus: completa las misiones principales</span><span>+30 XP</span></div>
+            </div>
+            <div class="card">
+              <div class="stat"><strong>Próxima fusión: Tricera de las Lágrimas</strong><span>3/5</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" style="width:60%"></div></div>
+              <div class="streak-hint">Junta 5 cartas Balance de esta especie para obtener su forma Exceso.</div>
+            </div>
+          </div>
+
+          <!-- Alt 1: Panel de misión -->
+          <div class="mk-home-alt mk-home-1">
+            <div class="mk-hero1">
+              <div class="mk-ringwrap">
+                <svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="28" class="mk-ring-track"/><circle cx="32" cy="32" r="28" class="mk-ring-fill" pathLength="100" data-ring style="stroke-dasharray:43 100"/></svg>
+                <img src="{{img:avatar}}" alt="" />
+              </div>
+              <div class="mk-hero1-txt"><b>Sam</b><span>Nivel <span data-lv>4</span> · Explorador Novato</span>
+                <div class="level-progress-bar" style="margin-top:.35rem"><div class="level-progress-fill" data-fill style="width:43%"></div></div></div>
+            </div>
+            <div class="mk-chips">
+              <div class="mk-chip"><span class="mk-bolts" data-bolts><i class="on"></i><i class="on"></i><i></i></span><small>Energía</small></div>
+              <div class="mk-chip"><span class="mk-flame">🔥 3</span><small>Racha</small></div>
+              <div class="mk-chip"><span class="mk-big">3<small>/6</small></span><small>Especies</small></div>
+              <div class="mk-chip"><span class="mk-big">5<small>/18</small></span><small>Registros</small></div>
+            </div>
+            <div class="card">
+              <strong>Misiones de hoy</strong>
+              <ul class="mk-missions">
+                <li class="done"><i>✓</i><span>Percibe hoy</span><em>1/1</em></li>
+                <li><i></i><span>Consigue 3 cartas</span><em>2/3</em></li>
+                <li class="extra"><i></i><span>Fusión (extra)</span><em>0/1</em></li>
+              </ul>
+              <div class="mk-bonusline"><span>🎁 Bonus del día</span><span>+30 XP</span></div>
+            </div>
+            <div class="card">
+              <div class="stat"><strong>Próxima fusión: Tricera</strong><span>3/5</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+
+          <!-- Alt 2: Camino del día -->
+          <div class="mk-home-alt mk-home-2">
+            <div class="mk-path card">
+              <div class="mk-path-head"><strong>Camino de hoy</strong><span>🔥 Racha 3</span></div>
+              <div class="mk-track">
+                <div class="mk-track-line"><i style="width:50%"></i></div>
+                <div class="mk-node done"><b>✓</b><small>Percibe</small></div>
+                <div class="mk-node cur"><b>2/3</b><small>3 cartas</small></div>
+                <div class="mk-node"><b>+20</b><small>Fusión</small></div>
+                <div class="mk-node chest"><b>🎁</b><small>Bonus</small></div>
+              </div>
+              <div class="mk-week">
+                <span class="d on">L</span><span class="d on">M</span><span class="d on">X</span><span class="d today">J</span><span class="d">V</span><span class="d">S</span><span class="d">D</span>
+              </div>
+              <div class="streak-hint">Racha de 3 días · en 4 días: +50 XP y energía</div>
+            </div>
+            <div class="card">
+              <div class="stat"><span>Nivel <span data-lv>4</span></span><span><span data-into>60</span>/140 XP</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" data-fill style="width:43%"></div></div>
+              <div class="stat"><span>⚡ Energía</span><span class="mk-bolts" data-bolts><i class="on"></i><i class="on"></i><i></i></span></div>
+              <div class="stat"><span>Registros del EcoDex</span><span>5/18</span></div>
+              <div class="level-progress-bar"><div class="species-progress-fill" style="width:28%"></div></div>
+            </div>
+            <div class="card">
+              <div class="stat"><strong>Próxima fusión: Tricera</strong><span>3/5</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+
+          <!-- Alt 3: Sobre protagonista -->
+          <div class="mk-home-alt mk-home-3">
+            <div class="mk-stagebox">
+              <div class="mk-glow"></div>
+              <img class="mk-hero-pack" src="{{img:pack}}" alt="Sobre de cartas" />
+              <div class="mk-ready"><span class="mk-bolts" data-bolts><i class="on"></i><i class="on"></i><i></i></span><b data-energy-ready>2 sobres listos</b></div>
+              <button class="mk-cta" data-act="go" data-to="percibir">Percibir ahora</button>
+            </div>
+            <div class="mk-strip">
+              <div><b>🔥 3</b><small>días</small></div>
+              <div><b>2/3</b><small>misiones</small></div>
+              <div><b>Nv <span data-lv>4</span></b><small><span data-into>60</span>/140 XP</small></div>
+            </div>
+            <div class="level-progress-bar"><div class="level-progress-fill" data-fill style="width:43%"></div></div>
+            <div class="card" style="margin-top:.9rem">
+              <div class="stat"><strong>Próxima fusión: Tricera</strong><span>3/5</span></div>
+              <div class="level-progress-bar"><div class="level-progress-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+
+          <div class="grid grid-compact">
+            <div class="card card-clickable card-compact" role="button">
+              <img class="card-icon" src="{{img:ic_altar}}" alt="" /><strong>Altar de Fusión</strong>
+            </div>
+            <div class="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
+              <img class="card-icon" src="{{img:ic_album}}" alt="" /><strong>Álbum</strong><span class="coming-soon-label">Próximamente</span>
+            </div>
+            <div class="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
+              <img class="card-icon" src="{{img:ic_perfil}}" alt="" /><strong>Amigos</strong><span class="coming-soon-label">Próximamente</span>
+            </div>
+          </div>
+          <p style="text-align:center;color:#7fa98a;font-size:.75rem">v0.10.0</p>
+        </div>
+      </section>
+
+      <!-- ========== PERCIBIR ========== -->
+      <section class="mk-scr" data-s="percibir" data-i="1">
+        <div class="mk-percibir">
+          <p class="envelope-hint mk-hint-top">Toca el sobre para abrirlo</p>
+          <img class="mk-pack" src="{{img:pack}}" alt="Sobre de cartas Ecorex" />
+          <p class="mk-sub">⚡ <span data-energy-text>2/3</span> · +1 en 3 h 12 min</p>
+        </div>
+      </section>
+
+      <!-- ========== ECODEX ========== -->
+      <section class="mk-scr" data-s="coleccion" data-i="2">
+        <div class="page">
+          <h1 class="ecodex-title"><img src="{{img:ic_ecodex}}" alt="" class="ecodex-title-icon" /> EcoDex</h1>
+          <div class="card">
+            <div class="stat"><span>Registros</span><span>5/18 (28%)</span></div>
+            <div class="level-progress-bar"><div class="level-progress-fill" style="width:28%"></div></div>
+          </div>
+          <div class="grid ecodex-grid" style="margin-top:.9rem">
+            <div class="ecodex-slot card-clickable" style="--rc:#4fa9e0;--glint-delay:1s"><div class="ecodex-tile tile-r1"><div class="ecodex-tile-art"><img src="{{img:rex_bal}}" alt="" /></div><span class="ecodex-tile-medal"><img src="{{img:fx_furia}}" alt="" /></span><span class="ecodex-count-badge">×4</span><div class="ecodex-tile-info"><b class="ecodex-tile-name">Rex de Fuego</b><span class="ecodex-tile-rarity"><span class="ecodex-tile-pips"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>Poco común</span></div><div class="ecodex-tile-fx"></div></div></div>
+            <div class="ecodex-slot card-clickable" style="--rc:#a35fe0;--glint-delay:2s"><div class="ecodex-tile tile-r2"><div class="ecodex-tile-art"><img src="{{img:rex_exc}}" alt="" /></div><span class="ecodex-tile-medal"><img src="{{img:fx_furia}}" alt="" /></span><div class="ecodex-tile-info"><b class="ecodex-tile-name">Rex de Fuego</b><span class="ecodex-tile-rarity"><span class="ecodex-tile-pips"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>Rara</span></div><div class="ecodex-tile-fx"></div></div></div>
+            <div class="ecodex-slot"><div class="ecodex-tile ecodex-tile-locked"><img src="{{img:locked}}" alt="Carta bloqueada" class="ecodex-tile-locked-img" /></div></div>
+            <div class="ecodex-slot card-clickable" style="--rc:#bfe6c9;--glint-delay:3s"><div class="ecodex-tile tile-r0"><div class="ecodex-tile-art"><img src="{{img:tri_bal}}" alt="" /></div><span class="ecodex-tile-medal"><img src="{{img:fx_tristeza}}" alt="" /></span><span class="ecodex-count-badge">×3</span><div class="ecodex-tile-info"><b class="ecodex-tile-name">Tricera de las Lágrimas</b><span class="ecodex-tile-rarity"><span class="ecodex-tile-pips"><i class="on"></i><i></i><i></i><i></i><i></i></span>Común</span></div><div class="ecodex-tile-fx"></div></div></div>
+            <div class="ecodex-slot"><div class="ecodex-tile ecodex-tile-locked"><img src="{{img:locked}}" alt="Carta bloqueada" class="ecodex-tile-locked-img" /></div></div>
+            <div class="ecodex-slot card-clickable" style="--rc:#e0a02f;--glint-delay:4s"><div class="ecodex-tile tile-r3"><div class="ecodex-tile-art"><img src="{{img:tri_eco}}" alt="" /></div><span class="ecodex-tile-medal"><img src="{{img:fx_tristeza}}" alt="" /></span><div class="ecodex-tile-info"><b class="ecodex-tile-name">Tricera de las Lágrimas</b><span class="ecodex-tile-rarity"><span class="ecodex-tile-pips"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Épica</span></div><div class="ecodex-tile-fx"></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== YO ========== -->
+      <section class="mk-scr" data-s="perfil" data-i="3">
+        <div class="page">
+          <h1>Yo</h1>
+          <div class="card" style="display:flex;align-items:center;gap:1rem">
+            <div class="avatar" style="width:64px;height:64px;border-radius:50%"><img src="{{img:avatar}}" alt="" class="avatar-img" /></div>
+            <div><strong>Sam</strong><div>Nivel <span data-lv>4</span></div><div>Explorador Novato</div></div>
+          </div>
+          <div class="card">
+            <div class="stat"><span>Progreso de nivel</span><span><span data-into>60</span>/140 XP</span></div>
+            <div class="level-progress-bar"><div class="level-progress-fill" data-fill style="width:43%"></div></div>
+          </div>
+          <div class="card">
+            <div class="stat"><span>Especies descubiertas</span><span>3/6 (50%)</span></div>
+            <div class="stat"><span>Registros del EcoDex</span><span>5/18 (28%)</span></div>
+            <div class="stat"><span>Cartas conseguidas</span><span>23</span></div>
+            <div class="stat"><span>Repetidas</span><span>18</span></div>
+          </div>
+          <div class="card">
+            <div class="stat"><span>Notificaciones de energía</span><input type="checkbox" checked /></div>
+          </div>
+          <button>Cerrar sesión</button>
+        </div>
+      </section>
+
+      <!-- ========== GALERÍA DE BOTONES (solo maqueta) ========== -->
+      <section class="mk-scr" data-s="botones" data-i="4">
+        <div class="page mk-gallery">
+          <h1>Botones</h1>
+          <p class="mk-sub" style="text-align:left">Pulsa los botones: cada variante tiene su estado «pulsado». El de la derecha cicla reposo → cargando → hecho.</p>
+          <div class="card">
+            <strong>Principal</strong>
+            <div class="mk-row"><button>Percibir</button><button class="mk-state" data-state-demo>Guardar</button></div>
+          </div>
+          <div class="card">
+            <strong>Secundario / texto</strong>
+            <div class="mk-row"><button class="mk-secondary">Ahora no</button><button class="mk-ghost">Volver al altar</button></div>
+          </div>
+          <div class="card">
+            <strong>Deshabilitado</strong>
+            <div class="mk-row"><button disabled>Fusionar</button><button disabled class="mk-secondary">Sin energía</button></div>
+          </div>
+          <div class="card">
+            <strong>Acción principal con confirmación</strong>
+            <div class="mk-row"><button class="mk-big-btn">Fusionar</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Capa de avisos (toasts, banners) -->
+    <div class="mk-layer" id="layer"></div>
+
+    <!-- FAB de notificaciones (ActionFab real) -->
+    <div class="action-fab-container" id="fab">
+      <div class="mk-ntf-sheet-backdrop" id="sheetBackdrop"></div>
+      <div class="card action-fab-notif-list mk-ntf-list" id="ntfList" hidden></div>
+      <button class="action-fab-main" id="fabBtn" aria-label="Notificaciones">
+        <img src="{{img:ic_notif}}" alt="" />
+        <span class="action-fab-badge" id="fabBadge">2</span>
+      </button>
+    </div>
+    <!-- Burbuja de la variante «ntf-3»: ahora vive a nivel del móvil y la coloca el JS junto a la campana activa -->
+    <div class="mk-pill" id="fabPill"><span id="fabPillTxt"></span></div>
+
+    <!-- Barra inferior (BottomNav real) -->
+    <nav class="bottom-nav" id="nav" aria-label="Navegación principal">
+      <i class="mk-nav-ind" id="navInd"></i>
+      <button class="bottom-nav-tab bottom-nav-tab-active" data-go="inicio">
+        <span class="bottom-nav-icon">
+          <svg class="mk-home-ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="bottom-nav-badge" id="navBadge">3</span>
+        </span><span class="bottom-nav-label">Inicio</span>
+      </button>
+      <button class="bottom-nav-tab" data-go="percibir">
+        <span class="bottom-nav-icon"><img class="mk-ico-img" src="{{img:ic_percibir}}" alt="" />
+          <svg class="mk-ico-line" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M6.5 3h11a1.5 1.5 0 0 1 1.5 1.5v15a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-15A1.5 1.5 0 0 1 6.5 3z"/><path pathLength="1" d="M5 8l2-1.5L9 8l2-1.5L13 8l2-1.5L17 8l2-1.5"/><path pathLength="1" d="M12 11.5l1.2 2.8 2.8 1.2-2.8 1.2L12 19.5l-1.2-2.8L8 15.5l2.8-1.2z"/></svg>
+          <span class="bottom-nav-badge" id="navBadgeP"></span>
+        </span><span class="bottom-nav-label">Percibir</span>
+      </button>
+      <button class="bottom-nav-tab" data-go="coleccion">
+        <span class="bottom-nav-icon"><img class="mk-ico-img" src="{{img:ic_ecodex}}" alt="" />
+          <svg class="mk-ico-line" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path pathLength="1" d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+        </span><span class="bottom-nav-label">EcoDex</span>
+      </button>
+      <button class="bottom-nav-tab" data-go="perfil">
+        <span class="bottom-nav-icon"><img class="bottom-nav-avatar" src="{{img:avatar}}" alt="" />
+          <svg class="mk-ico-line" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle pathLength="1" cx="12" cy="8" r="3.6"/><path pathLength="1" d="M5 20c0-3.9 3.1-6 7-6s7 2.1 7 6"/></svg>
+        </span><span class="bottom-nav-label">Yo</span>
+      </button>
+    </nav>
+
+    <!-- Overlays a pantalla completa (subida de nivel, medallas) -->
+    <div class="mk-overlays" id="overlays"></div>
+
+    <!-- Onboarding: flujo de entrada (registro → bienvenida → primer sobre → primera carta) y primeros pasos -->
+    <div class="mk-coach" id="coach" hidden></div>
+    <div class="mk-flow" id="flow" hidden></div>
+  </div>
+
+  <!-- Imágenes reales para el JS (data URI) -->
+  <div id="lib" hidden>
+    <img data-k="logo" src="{{img:logo}}" alt="" /><img data-k="pack" src="{{img:pack}}" alt="" />
+    <img data-k="tri" src="{{img:tri_bal}}" alt="" /><img data-k="rex" src="{{img:rex_bal}}" alt="" />
+    <img data-k="av1" src="{{img:avatar}}" alt="" /><img data-k="av2" src="{{img:avatar2}}" alt="" /><img data-k="av3" src="{{img:avatar3}}" alt="" />
+    <img data-k="fx_furia" src="{{img:fx_furia}}" alt="" />
+  </div>
+
+  <!-- ===== Panel de demostración (no es parte de la app) ===== -->
+  <aside class="mk-dock" id="dock">
+    <div class="mk-dock-sec">
+      <h4>Pantallas <small>(prueba la transición)</small></h4>
+      <div class="mk-btns">
+        <button data-act="go" data-to="inicio">Inicio</button>
+        <button data-act="go" data-to="percibir">Percibir</button>
+        <button data-act="go" data-to="coleccion">EcoDex</button>
+        <button data-act="go" data-to="perfil">Yo</button>
+        <button data-act="go" data-to="botones">Botones</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Onboarding <small>(elige variantes arriba)</small></h4>
+      <div class="mk-btns">
+        <button data-act="onb" data-s="flow" class="on">▶ Flujo completo</button>
+        <button data-act="onb" data-s="auth">Registro</button>
+        <button data-act="onb" data-s="welcome">Bienvenida</button>
+        <button data-act="onb" data-s="pack">Primer sobre</button>
+        <button data-act="onb" data-s="card">Primera carta</button>
+        <button data-act="onb" data-s="coach">Primeros pasos</button>
+        <button data-act="onb" data-s="mentor-energy">Mentor: sin energía</button>
+        <button data-act="onb" data-s="mentor-repeats">Mentor: repetidas</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Experiencia y nivel</h4>
+      <div class="mk-btns">
+        <button data-act="xp" data-n="10">+10 XP</button>
+        <button data-act="xp" data-n="35">+35 XP</button>
+        <button data-act="xp" data-n="75">+75 XP</button>
+        <button data-act="level">Subir de nivel</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Logros y recompensas</h4>
+      <div class="mk-btns">
+        <button data-act="reward" data-ev="mission">Misión</button>
+        <button data-act="reward" data-ev="bonus">Bonus diario</button>
+        <button data-act="reward" data-ev="streak3">Racha 3</button>
+        <button data-act="reward" data-ev="species">Especie nueva</button>
+        <button data-act="reward" data-ev="eco">Eco</button>
+        <button data-act="reward" data-ev="complete">Especie completa</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Notificaciones</h4>
+      <div class="mk-btns">
+        <button data-act="notify" data-k="energy">⚡ Energía</button>
+        <button data-act="notify" data-k="fusion">Fusión lista</button>
+        <button data-act="notify" data-k="streak">Racha</button>
+        <button data-act="fab">Abrir lista</button>
+        <button data-act="readall">Marcar leídas</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Fondo <small>(tinte y estado)</small></h4>
+      <div class="mk-tints" id="tints" title="El tinte afecta a los fondos A–D">
+        <button data-act="tint" data-t="0" class="on" style="--dh:135" aria-label="Verde Ecorex" title="Verde Ecorex"></button>
+        <button data-act="tint" data-t="1" style="--dh:5" aria-label="Furia" title="Furia"></button>
+        <button data-act="tint" data-t="2" style="--dh:32" aria-label="Sorpresa" title="Sorpresa"></button>
+        <button data-act="tint" data-t="3" style="--dh:48" aria-label="Alegría" title="Alegría"></button>
+        <button data-act="tint" data-t="4" style="--dh:82" aria-label="Asco" title="Asco"></button>
+        <button data-act="tint" data-t="5" style="--dh:172" aria-label="Confianza" title="Confianza"></button>
+        <button data-act="tint" data-t="6" style="--dh:215" aria-label="Tristeza" title="Tristeza"></button>
+        <button data-act="tint" data-t="7" style="--dh:265" aria-label="Miedo" title="Miedo"></button>
+        <button data-act="tint" data-t="8" style="--dh:292" aria-label="Curiosidad" title="Curiosidad"></button>
+      </div>
+      <div class="mk-btns" style="margin-top:7px">
+        <button data-act="energy" data-d="-1">Energía −1</button>
+        <button data-act="energy" data-d="1">Energía +1</button>
+        <button data-act="energy-full">Llena</button>
+      </div>
+    </div>
+    <div class="mk-dock-sec">
+      <h4>Ver</h4>
+      <div class="mk-btns">
+        <button data-act="slow" id="slowBtn">Cámara lenta ×3</button>
+        <button data-act="rm" id="rmBtn">Reducir movimiento</button>
+        <button data-act="reset">Reiniciar demo</button>
+      </div>
+    </div>
+  </aside>
+</div>
