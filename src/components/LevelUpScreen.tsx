@@ -3,10 +3,12 @@ import { useLayoutEffect } from "react";
 export function LevelUpScreen({
   previousLevel,
   level,
+  energyRefilled = false,
   onClose,
 }: {
   previousLevel: number;
   level: number;
+  energyRefilled?: boolean;
   onClose: () => void;
 }) {
   useLayoutEffect(() => {
@@ -29,6 +31,7 @@ export function LevelUpScreen({
           <span className="level-up-screen-arrow">›</span>
           <span className="level-up-screen-level-new">{level}</span>
         </div>
+        {energyRefilled && <p className="level-up-screen-energy">⚡ ¡Energía recargada!</p>}
         <p className="level-up-screen-hint">Toca para continuar</p>
       </div>
     </div>

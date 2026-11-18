@@ -24,7 +24,7 @@ export function MissionsCard({ missions }: MissionsCardProps) {
       <div className="stat">
         <span>
           {missions.bonus.completed ? "✓ " : ""}
-          Bonus: completa las 3
+          Bonus: completa las misiones principales
         </span>
         <span>+{missions.bonus.xp} XP</span>
       </div>

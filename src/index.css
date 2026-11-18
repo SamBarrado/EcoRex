@@ -1865,7 +1865,29 @@ button:disabled {
   color: #3fae5a;
 }
 
+.level-up-screen-energy {
+  color: #ffd86b;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
 .level-up-screen-hint {
   color: #7fa98a;
   font-size: 0.85rem;
+}
+
+/* Home tiles for features that aren't built yet: dimmed, but labelled so they
+   read as "coming" rather than "broken". */
+.card-coming-soon {
+  opacity: 0.55;
+}
+
+.coming-soon-label {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7fa98a;
 }

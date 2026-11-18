@@ -87,7 +87,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     (DiscoverResult & { fractaeChildName?: string; fractaeIconUrl?: string }) | null
   >(null);
   const [showXpToast, setShowXpToast] = useState(false);
-  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number; energyRefilled: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -301,7 +301,11 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     // now instead of proceeding — never at the same time as the reveal.
     // Dismissing the level-up screen (below) runs the deferred proceed step.
     if (result.xp.leveledUp && !levelUpInfo) {
-      setLevelUpInfo({ previousLevel: result.xp.previousLevel, level: result.xp.level });
+      setLevelUpInfo({
+        previousLevel: result.xp.previousLevel,
+        level: result.xp.level,
+        energyRefilled: result.energyRefilled === true,
+      });
       return;
     }
     proceedAfterCommit();
@@ -323,6 +327,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         <LevelUpScreen
           previousLevel={levelUpInfo.previousLevel}
           level={levelUpInfo.level}
+          energyRefilled={levelUpInfo.energyRefilled}
           onClose={() => {
             setLevelUpInfo(null);
             proceedAfterCommit();

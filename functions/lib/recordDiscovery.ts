@@ -1,9 +1,10 @@
 import { hasCompletedAllPhases, pickRarityTier, type RarityTierRow, type SpeciesPhaseRow } from "./discovery";
 import { addXp, SPECIES_COMPLETE_XP_BONUS } from "./xp";
+import { maxEnergyForLevel } from "./energy";
 import {
   incrementMission,
   checkAndAwardDailyBonus,
-  todayUTC,
+  todayInSpain,
   MISSION_DEFS,
   DAILY_BONUS_XP,
   type MissionSlug,
@@ -76,6 +77,8 @@ export interface RecordDiscoveryResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
+  /** True when this discovery levelled the player up and refilled their energy. */
+  energyRefilled: boolean;
 }
 
 export async function recordDiscovery(params: RecordDiscoveryParams): Promise<RecordDiscoveryResult> {
@@ -107,7 +110,7 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
   let xpAmount = rarityXp + (justCompletedSpecies ? SPECIES_COMPLETE_XP_BONUS : 0);
 
   const missionsCompleted: string[] = [];
-  const day = todayUTC();
+  const day = todayInSpain();
 
   for (const slug of missions) {
     const mission = await incrementMission(db, userId, slug, day);
@@ -130,6 +133,17 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
       .prepare(`INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)`)
       .bind(userId, "level_up", JSON.stringify({ newLevel: xpResult.level }))
       .run();
+
+    // Levelling up tops energy up to the (new) max: keeps the session going at
+    // the moment of the biggest reward. window_start NULL means "full", and the
+    // notified count is set to max so the push cron doesn't announce it.
+    const maxEnergy = maxEnergyForLevel(xpResult.level);
+    await db
+      .prepare(
+        "UPDATE users SET energy_count = ?, energy_window_start = NULL, energy_last_notified_count = ? WHERE id = ?"
+      )
+      .bind(maxEnergy, maxEnergy, userId)
+      .run();
   }
 
   return {
@@ -145,6 +159,7 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
     },
     missionsCompleted,
     dailyBonusAwarded,
+    energyRefilled: xpResult.leveledUp,
   };
 }
 
@@ -169,5 +184,6 @@ export function discoveryResponseBody(
     xp: result.xp,
     missionsCompleted: result.missionsCompleted,
     dailyBonusAwarded: result.dailyBonusAwarded,
+    energyRefilled: result.energyRefilled,
   };
 }

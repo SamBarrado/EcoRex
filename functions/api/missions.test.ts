@@ -41,9 +41,9 @@ describe('GET /api/missions', () => {
       bonus: { completed: boolean; xp: number };
     };
     expect(body.missions).toEqual([
-      { slug: 'percibir', label: 'Percibe 2 veces hoy', progress: 0, target: 2, completed: false },
-      { slug: 'coleccionista', label: 'Consigue 1 carta nueva hoy', progress: 0, target: 1, completed: false },
-      { slug: 'fusion', label: 'Completa 1 fusión hoy', progress: 0, target: 1, completed: false },
+      { slug: 'percibir', label: 'Percibe hoy', progress: 0, target: 1, completed: false, optional: false },
+      { slug: 'coleccionista', label: 'Consigue 3 cartas hoy', progress: 0, target: 3, completed: false, optional: false },
+      { slug: 'fusion', label: 'Completa 1 fusión (extra)', progress: 0, target: 1, completed: false, optional: true },
     ]);
     expect(body.bonus).toEqual({ completed: false, xp: 30 });
   });
@@ -54,7 +54,7 @@ describe('GET /api/missions', () => {
     });
     const env = {
       DB: makeDb([
-        { mission_slug: 'percibir', progress_count: 1, completed_at: null },
+        { mission_slug: 'coleccionista', progress_count: 1, completed_at: null },
         { mission_slug: 'fusion', progress_count: 1, completed_at: '2026-07-08T10:00:00Z' },
       ]),
     };
@@ -62,9 +62,9 @@ describe('GET /api/missions', () => {
     const body = (await response.json()) as {
       missions: Array<{ slug: string; progress: number; completed: boolean }>;
     };
-    const percibir = body.missions.find((m) => m.slug === 'percibir')!;
+    const coleccionista = body.missions.find((m) => m.slug === 'coleccionista')!;
     const fusion = body.missions.find((m) => m.slug === 'fusion')!;
-    expect(percibir).toMatchObject({ progress: 1, completed: false });
+    expect(coleccionista).toMatchObject({ progress: 1, completed: false });
     expect(fusion).toMatchObject({ progress: 1, completed: true });
   });
 });

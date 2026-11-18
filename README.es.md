@@ -79,7 +79,7 @@ Para niños que disfrutan con los dinosaurios y los juegos de cartas tipo Pokém
 | **Altar de Fusión** | 5 cartas repetidas de una especie en fase Balance se consumen para obtener su carta en fase **Exceso** (4 a partir del nivel 15). No cuesta energía. |
 | **Rareza** | Cinco niveles — Común, Poco común, Rara, Épica, Legendaria — con pesos de sorteo 55 / 27 / 12 / 5 / 1 %. Es un eje independiente de la fase. |
 | **XP y niveles** | Niveles 1–50 por XP acumulado. Solo da XP lo nuevo (especie+fase vista por primera vez, fusiones, completar las 3 fases de una especie): repetir no da nada. Ocho títulos cosméticos, de «Explorador Novato» a «Voz de la Fractura». |
-| **Misiones diarias** | Tres misiones fijas (Percibir ×2, Coleccionista, Fusión) más un bonus por completarlas todas el mismo día. |
+| **Misiones diarias** | Tres misiones diarias (Percibir, Conseguir 3 cartas y Fusión como extra opcional) más un bonus por completar las dos principales el mismo día. Las dos principales caben en la energía diaria base, así que siguen siendo posibles aunque ya tengas todo el catálogo. El día cambia a medianoche en España. |
 | **Notificaciones** | Bandeja in-app con badges en la navegación, y **Web Push** (funciona con la PWA cerrada) cada vez que se regenera un punto de energía. |
 
 <p align="center">
@@ -269,7 +269,7 @@ Detalle de cada versión: [GitHub Releases](https://github.com/SamBarrado/EcoRex
 - **Cartas de Resonancia y Operaciones temáticas** con su propia distribución de rareza.
 - **Verificación de email, recuperación de contraseña y login social.**
 
-**Backlog** ([docs/backlog.md](docs/backlog.md)): pesos de aparición por especie, ediciones para colecciones tipo sobre, misiones semanales y rachas, rehacer el sistema de sonido, modo álbum con ilustraciones grandes, y distinguir «especie» de «variante» en la interfaz.
+**Backlog** ([docs/backlog.md](docs/backlog.md)): análisis de retención con quick wins priorizados (rachas, onboarding, progreso de fusión, fase Eco como drop), además de pesos de aparición por especie, ediciones para colecciones tipo sobre, rehacer el sistema de sonido, modo álbum con ilustraciones grandes, y distinguir «especie» de «variante» en la interfaz.
 
 ---
 

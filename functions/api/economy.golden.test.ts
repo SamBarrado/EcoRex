@@ -155,21 +155,20 @@ afterEach(() => {
 
 describe('economy golden master: POST /api/discover', () => {
   const cases: [string, Fixture, unknown][] = [
-    ['new slot, common rarity, nothing completes', {}, { phase: 'balance' }],
+    ['new slot, common rarity (first percibir of the day completes)', {}, { phase: 'balance' }],
     ['new slot, epic rarity', { random: 0.99 }, { phase: 'balance' }],
     ['duplicate (slot already registered)', { existingSlotCount: 3 }, { phase: 'balance' }],
     ['eco phase', {}, { phase: 'eco' }],
     ['balance count reaches 5 -> fusion_ready notification', { balanceCountAfterInsert: 5 }, { phase: 'balance' }],
-    ['percibir mission completes (2nd percibir today)', { missions: { percibir: { progress_count: 1, completed_at: null } } }, { phase: 'balance' }],
-    ['coleccionista mission completes on a new slot', {}, { phase: 'balance' }],
-    ['coleccionista NOT incremented on a duplicate', { existingSlotCount: 1 }, { phase: 'balance' }],
+    ['percibir already done today, nothing completes', { missions: { percibir: { progress_count: 1, completed_at: '2026-11-17 08:00:00' } } }, { phase: 'balance' }],
+    ['coleccionista completes with the 3rd card of the day', { missions: { percibir: { progress_count: 2, completed_at: '2026-11-17 08:00:00' }, coleccionista: { progress_count: 2, completed_at: null } } }, { phase: 'balance' }],
+    ['a duplicate still advances the daily missions', { existingSlotCount: 1 }, { phase: 'balance' }],
     [
-      'all three missions done -> daily bonus',
+      'both required missions done -> daily bonus (fusion not needed)',
       {
         missions: {
-          percibir: { progress_count: 1, completed_at: null },
-          coleccionista: { progress_count: 0, completed_at: null },
-          fusion: { progress_count: 1, completed_at: '2026-11-17 08:00:00' },
+          percibir: { progress_count: 2, completed_at: '2026-11-17 08:00:00' },
+          coleccionista: { progress_count: 2, completed_at: null },
         },
       },
       { phase: 'balance' },
@@ -178,9 +177,8 @@ describe('economy golden master: POST /api/discover', () => {
       'daily bonus already awarded today',
       {
         missions: {
-          percibir: { progress_count: 1, completed_at: null },
-          coleccionista: { progress_count: 0, completed_at: null },
-          fusion: { progress_count: 1, completed_at: '2026-11-17 08:00:00' },
+          percibir: { progress_count: 2, completed_at: '2026-11-17 08:00:00' },
+          coleccionista: { progress_count: 2, completed_at: null },
           bonus: { progress_count: 0, completed_at: '2026-11-17 09:00:00' },
         },
       },
@@ -211,12 +209,12 @@ describe('economy golden master: POST /api/fuse', () => {
     ['epic rarity', { oldestRows: five, random: 0.99 }, { speciesId: 7 }],
     ['fusion mission completes', { oldestRows: five }, { speciesId: 7 }],
     [
-      'all three missions done -> daily bonus',
+      'fusion counts as a card: completes coleccionista -> daily bonus',
       {
         oldestRows: five,
         missions: {
           percibir: { progress_count: 2, completed_at: '2026-11-17 08:00:00' },
-          coleccionista: { progress_count: 1, completed_at: '2026-11-17 08:30:00' },
+          coleccionista: { progress_count: 2, completed_at: null },
         },
       },
       { speciesId: 7 },

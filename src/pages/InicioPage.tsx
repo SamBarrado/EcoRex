@@ -126,17 +126,20 @@ export default function InicioPage() {
           <img className="card-icon" src="/icons/altar-fusion.png" alt="" />
           <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
         </div>
-        <div className="card card-compact" style={{ opacity: 0.5 }}>
+        <div className="card card-compact card-coming-soon" aria-label="Eco, próximamente">
           <img className="card-icon" src="/icons/eco.png" alt="" />
-          <strong>Eco 🔒</strong>
+          <strong>Eco</strong>
+          <span className="coming-soon-label">Próximamente</span>
         </div>
-        <div className="card card-compact" style={{ opacity: 0.5 }}>
+        <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
           <img className="card-icon" src="/icons/album.png" alt="" />
-          <strong>Álbum 🔒</strong>
+          <strong>Álbum</strong>
+          <span className="coming-soon-label">Próximamente</span>
         </div>
-        <div className="card card-compact" style={{ opacity: 0.5 }}>
+        <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
           <img className="card-icon" src="/icons/perfil.png" alt="" />
-          <strong>Amigos 🔒</strong>
+          <strong>Amigos</strong>
+          <span className="coming-soon-label">Próximamente</span>
         </div>
       </div>
       <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>

@@ -93,7 +93,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     rarityTier,
     // Only a new slot pays the rarity XP; duplicates give 0.
     rarityXp: isNewSlot ? (RARITY_XP[rarityTier.slug] ?? 0) : 0,
-    missions: isNewSlot ? ["percibir", "coleccionista"] : ["percibir"],
+    // Every card counts for the daily missions, new or duplicate: they must be
+    // completable even once the catalog is fully collected.
+    missions: ["percibir", "coleccionista"],
     afterInsert: async () => {
       if (phase !== "balance") return;
       const countRow = await env.DB.prepare(

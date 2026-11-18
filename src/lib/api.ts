@@ -123,7 +123,7 @@ export function getEnergy() {
 
 export interface MissionsState {
   day: string;
-  missions: Array<{ slug: string; label: string; progress: number; target: number; completed: boolean }>;
+  missions: Array<{ slug: string; label: string; progress: number; target: number; completed: boolean; optional?: boolean }>;
   bonus: { completed: boolean; xp: number };
 }
 
@@ -160,6 +160,7 @@ export interface DiscoverResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
+  energyRefilled?: boolean;
 }
 
 export function discover(body: { phase: string }, signal?: AbortSignal) {

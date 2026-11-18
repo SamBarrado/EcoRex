@@ -1,5 +1,5 @@
 import { getSessionCookie, verifySession, type Env } from "../lib/auth";
-import { MISSION_DEFS, MISSION_SLUGS, DAILY_BONUS_XP, todayUTC, type MissionSlug } from "../lib/missions";
+import { MISSION_DEFS, MISSION_SLUGS, DAILY_BONUS_XP, todayInSpain, type MissionSlug } from "../lib/missions";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -10,7 +10,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const day = todayUTC();
+  const day = todayInSpain();
   const { results } = await env.DB.prepare(
     "SELECT mission_slug, progress_count, completed_at FROM daily_missions WHERE user_id = ? AND day = ?"
   )
@@ -27,6 +27,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       progress: row?.progress_count ?? 0,
       target: MISSION_DEFS[slug].target,
       completed: row?.completed_at != null,
+      optional: MISSION_DEFS[slug].optional === true,
     };
   });
 

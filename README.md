@@ -79,7 +79,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 | **Altar de Fusión** (Fusion Altar) | 5 duplicate Balance cards of a species are consumed to obtain its **Exceso** card (4 from level 15). It costs no energy. |
 | **Rarity** | Five tiers — Common, Uncommon, Rare, Epic, Legendary — with drop weights of 55 / 27 / 12 / 5 / 1 %. An axis independent from phase. |
 | **XP and levels** | Levels 1–50 from accumulated XP. Only what's new gives XP (a species+phase seen for the first time, fusions, completing a species' 3 phases): repeating gives nothing. Eight cosmetic titles, from "Explorador Novato" (Novice Explorer) to "Voz de la Fractura" (Voice of the Fracture). |
-| **Daily missions** | Three fixed missions (Percibir ×2, Collector, Fusion) plus a bonus for completing all of them on the same day. |
+| **Daily missions** | Three daily missions (Percibir, Collect 3 cards, and Fusion as an optional extra) plus a bonus for completing the two main ones the same day. Both main missions fit the base daily energy budget, so they stay completable even once the catalog is fully collected. The day rolls over at midnight in Spain. |
 | **Notifications** | An in-app inbox with navigation badges, and **Web Push** (works with the PWA closed) every time a point of energy regenerates. |
 
 <p align="center">
@@ -270,7 +270,7 @@ Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/
 - **Resonance Cards and themed Operations** with their own rarity distribution.
 - **Email verification and email-based password recovery.** Google sign-in exists instead (see CLAUDE.md); Google-linked accounts have no password, so Google handles their recovery.
 
-**Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): per-species appearance weights, editions for pack-style collections, weekly missions and streaks, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
+**Backlog** ([docs/backlog.md](docs/backlog.md), in Spanish): a retention analysis with prioritised quick wins (streaks, onboarding, fusion progress, an Eco phase drop), plus per-species appearance weights, editions for pack-style collections, reworking the sound system, an album mode with large illustrations, and distinguishing "species" from "variant" in the interface.
 
 ---
 

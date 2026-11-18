@@ -83,7 +83,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     phase: "exceso",
     rarityTier,
     rarityXp: FUSION_RARITY_XP[rarityTier.slug] ?? 0,
-    missions: ["fusion"],
+    missions: ["fusion", "coleccionista"],
     afterInsert: async () => {
       for (const { id } of oldestRows) {
         await env.DB.prepare("UPDATE discoveries SET consumed_at = datetime('now') WHERE id = ?").bind(id).run();

@@ -68,6 +68,23 @@ describe("InicioPage", () => {
     expect(speciesFill.style.width).toBe("30%"); // 3/10
   });
 
+  it("labels the unbuilt features as coming soon instead of showing dead locks", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    renderPage();
+    await screen.findByText("Nivel 2");
+
+    expect(screen.getAllByText("Próximamente")).toHaveLength(3);
+    expect(screen.getByLabelText("Eco, próximamente")).toBeTruthy();
+    expect(screen.getByLabelText("Álbum, próximamente")).toBeTruthy();
+    expect(screen.getByLabelText("Amigos, próximamente")).toBeTruthy();
+    // The Fusion Altar keeps its lock: it's unlockable, unlike the others.
+    expect(screen.getByText(/Altar de Fusión/).textContent).toContain("🔒");
+  });
+
   it("refreshes the energy countdown as time passes without a page reload", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const resetAt = Date.now() + 5 * 60000; // 5 minutes from now

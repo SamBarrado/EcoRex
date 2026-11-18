@@ -197,7 +197,7 @@ describe('POST /api/discover', () => {
       balanceCountAfterInsert: 1,
       xp: 0,
       existingSlotCount: 1, // duplicate, so rarity xp itself is 0 — isolates the mission xp
-      missionProgress: { percibir: { progress_count: 2, completed_at: null } },
+      missionProgress: { percibir: { progress_count: 1, completed_at: null } },
     });
     const request = new Request('https://ecorex.app/api/discover', {
       method: 'POST',
@@ -210,7 +210,7 @@ describe('POST /api/discover', () => {
     };
     const response = await onRequestPost({ request, env } as never);
     const body = (await response.json()) as { xp: { xpGained: number }; missionsCompleted: string[] };
-    expect(body.xp.xpGained).toBe(15); // 0 rarity xp (duplicate) + 15 percibir mission xp
+    expect(body.xp.xpGained).toBe(10); // 0 rarity xp (duplicate) + 10 percibir mission xp
     expect(body.missionsCompleted).toContain('percibir');
   });
 
