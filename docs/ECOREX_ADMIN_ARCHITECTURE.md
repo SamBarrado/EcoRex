@@ -1,13 +1,18 @@
 # Ecorex Admin & Art Studio
 ## Especificación funcional, técnica y plan de implementación
 
-**Versión:** 1.1  
+**Versión:** 1.2  
 **Fecha:** 22 de noviembre de 2026  
-**Fuente canónica:** `docs/lore_world_bible_ecorex_v6.md`  
+**Fuente canónica:** `docs/lore_world_bible_ecorex_v7.md`  
 **Fuente operativa complementaria:** README del pipeline `tools/species/`  
 **Destino de implementación:** repositorio `ecorex-project`, trabajando con VS Code y Claude Code
 
 ---
+
+### Historial de cambios
+
+- **1.2 (2026-11-22):** sincronizado con World Bible **v7**, que amplía los portadores más allá del dinosaurio (§4, §33, jerarquía de fuentes). Species Discovery implementado (fases 1–4): ver `CLAUDE.md`, sección «Ecorex Admin», para el estado real.
+- **1.1 (2026-11-22):** versión inicial de referencia (sobre World Bible v6).
 
 ## 0. Cómo utilizar este documento
 
@@ -15,21 +20,21 @@ Este documento es la especificación de referencia para construir el entorno pri
 
 ### Jerarquía de fuentes
 
-Esta jerarquía replica el contrato de autoridad definido en la sección 0.1 de la World Bible v6:
+Esta jerarquía replica el contrato de autoridad definido en la sección 0.1 de la World Bible v7:
 
-1. **Canon del universo y reglas de producto:** `docs/lore_world_bible_ecorex_v6.md`. Es la autoridad normativa para lore, Fractae, fases, naming, vocabulario, mecánicas, especies y reglas visuales. Admin debe implementarla, nunca redefinirla.
+1. **Canon del universo y reglas de producto:** `docs/lore_world_bible_ecorex_v7.md`. Es la autoridad normativa para lore, Fractae, fases, naming, vocabulario, mecánicas, especies y reglas visuales. Admin debe implementarla, nunca redefinirla.
 2. **Hechos paleontológicos:** fuentes científicas trazables consultadas por Species Discovery (PBDB, NHM Dino Directory y otras referencias registradas). Sustentan los hechos científicos de las especies; no deciden lore, Fractae ni mecánicas. Las discrepancias e incertidumbres deben conservarse.
-3. **Estado realmente implementado:** código, migraciones, esquema y datos del repositorio. Son la autoridad para describir qué funciona hoy, pero no sustituyen al canon. Las desviaciones respecto a World Bible v6 se registran y resuelven explícitamente.
+3. **Estado realmente implementado:** código, migraciones, esquema y datos del repositorio. Son la autoridad para describir qué funciona hoy, pero no sustituyen al canon. Las desviaciones respecto a World Bible v7 se registran y resuelven explícitamente.
 4. **Procedimientos operativos:** README de `tools/species/` y scripts existentes. Describen cómo funciona el tooling; no pueden contradecir el canon.
-5. **Esta arquitectura:** especifica cómo implementar Admin y Art Studio respetando World Bible v6. Las propuestas técnicas no se convierten automáticamente en canon ni en funcionalidad implementada.
-6. **Versiones anteriores:** v5 y anteriores son histórico y trazabilidad, no fuentes vigentes. No recuperar de ellas reglas retiradas o completar silenciosamente huecos de v6.
+5. **Esta arquitectura:** especifica cómo implementar Admin y Art Studio respetando World Bible v7. Las propuestas técnicas no se convierten automáticamente en canon ni en funcionalidad implementada.
+6. **Versiones anteriores:** v6 y anteriores son histórico y trazabilidad, no fuentes vigentes. No recuperar de ellas reglas retiradas o completar silenciosamente huecos de v6.
 
 **Regla de conflicto:** identificar primero el dominio de la afirmación y consultar la fuente que tiene autoridad en ese dominio. Si existe una discrepancia dentro del mismo dominio o no hay evidencia suficiente, registrarla como pendiente; no resolverla por inferencia silenciosa. Un cambio de canon exige nueva versión de World Bible y posterior sincronización de Admin, fichas-spec, prompts, tooling y código afectados.
 
 ### Etiquetas usadas
 
-- **[CANÓNICO v6]** Regla explícita de la World Bible v6.
-- **[EXISTENTE según README y estado descrito en World Bible v6; verificar en código]** Funcionalidad descrita como existente; debe comprobarse en el código antes de integrarla.
+- **[CANÓNICO v7]** Regla explícita de la World Bible v7.
+- **[EXISTENTE según README y estado descrito en World Bible v7; verificar en código]** Funcionalidad descrita como existente; debe comprobarse en el código antes de integrarla.
 - **[DECISIÓN]** Decisión arquitectónica recomendada para el proyecto.
 - **[PROPUESTA]** Diseño recomendado pendiente de validación técnica.
 - **[VERIFICAR]** Punto que Claude Code debe comprobar en el repositorio.
@@ -134,7 +139,7 @@ La separación se consigue mediante aplicaciones, módulos, límites de importac
 
 ## 3. Stack existente y restricciones
 
-**[CANÓNICO v6, §18]**
+**[CANÓNICO v7, §18]**
 
 - Cloudflare Pages.
 - Cloudflare Pages Functions.
@@ -163,7 +168,7 @@ No importar directamente scripts de CLI con efectos secundarios desde Pages Func
 
 Species Discovery es el punto de entrada de nuevas especies al bestiario. Su misión es apoyar decisiones editoriales con datos paleontológicos reales y producir fichas-spec revisables.
 
-No es un generador libre de dinosaurios ficticios: los portadores de los Fractae son dinosaurios y la especie debe tener base paleontológica.
+Los portadores de los Fractae pueden ser dinosaurios y otros organismos prehistóricos (World Bible v7 §1: pterosaurios, reptiles marinos, cocodrilomorfos… y, en el futuro, criaturas inventadas). Una especie real debe tener base paleontológica trazable; una criatura inventada no la tiene y debe declararse como tal. **Hoy Discovery solo parte de taxones reales (PBDB); no existe flujo para criaturas inventadas.** Los grupos soportados se definen en `shared/species-sources/groups.mjs`.
 
 ### Fuentes documentadas en el pipeline
 
@@ -204,7 +209,7 @@ Estos estados son una propuesta de workflow; no asumir que ya existen en D1.
 
 La ficha-spec aprobada es el contrato principal entre Discovery y Art Studio.
 
-**[CANÓNICO v6, §18.3]** La tabla `species` ya representa especie/ficha-spec y contiene, entre otros, `physical_traits`, `base_palette` y `silhouette`.
+**[CANÓNICO v7, §18.3]** La tabla `species` ya representa especie/ficha-spec y contiene, entre otros, `physical_traits`, `base_palette` y `silhouette`.
 
 **[VERIFICAR]** El esquema exacto del JSON en `tools/species/lote.json`, `species.example.json`, `scripts/seed.sql` y migraciones debe leerse desde el repositorio. No crear un nuevo formato incompatible.
 
@@ -214,7 +219,7 @@ La ficha-spec aprobada es el contrato principal entre Discovery y Art Studio.
 - Preservar los nombres científicos y populares.
 - Mantener el vínculo con Fractae.
 - Mantener `edition` como oleada/edición según el README.
-- Mantener `habitatSlug` y el catálogo canónico de hábitats documentado en World Bible v6.
+- Mantener `habitatSlug` y el catálogo canónico de hábitats documentado en World Bible v7.
 - Incorporar procedencia de fuentes y grado de certeza sin sobrescribir hechos paleontológicos.
 - Diferenciar datos científicos, interpretación creativa y decisiones de diseño.
 - Validar el JSON con un schema versionado (por ejemplo, Zod/JSON Schema) tras verificar las dependencias ya instaladas.
@@ -236,7 +241,7 @@ El README documenta:
 - `tools/species/lote.json`: 54 fichas-spec.
 - `tools/species/species.wave1.json`: descrito en README como cinco fichas de Wave 1 duplicadas en `lote.json`.
 
-World Bible v6 aclara que `species.wave1.json` está vacío de entradas. Esta discrepancia documental debe verificarse directamente antes de migrar o sincronizar. No asumir que la descripción antigua del README refleja el archivo actual.
+World Bible v7 aclara que `species.wave1.json` está vacío de entradas. Esta discrepancia documental debe verificarse directamente antes de migrar o sincronizar. No asumir que la descripción antigua del README refleja el archivo actual.
 
 **[DECISIÓN]** `lote.json` puede seguir siendo fuente de trabajo durante la primera fase, pero no debe convertirse indefinidamente en una base de datos multiusuario. La interfaz debe guardar borradores, versiones y aprobaciones en un almacenamiento adecuado cuando se defina la migración.
 
@@ -333,7 +338,7 @@ La hoja de referencia no sustituye a la ficha-spec ni a la imagen ancla de fase.
 
 ## 10. Dirección artística y anatomía
 
-La dirección artística debe respetar las reglas vigentes de World Bible v6 y los prompts reales del repositorio. No sustituirlas por una guía estética inventada.
+La dirección artística debe respetar las reglas vigentes de World Bible v7 y los prompts reales del repositorio. No sustituirlas por una guía estética inventada.
 
 Las preferencias visuales previamente definidas para el proyecto incluyen una ilustración TCG de influencia anime, contorno marcado, sombreado por planos, acabado mate y volumen estilizado, evitando el fotorrealismo. Claude Code debe extraer y conservar el prompt maestro exacto desde `print-species-prompt.mjs` y la documentación vigente antes de codificar una segunda versión.
 
@@ -350,7 +355,7 @@ Una variación de pose no puede modificar la identidad anatómica. Los rasgos in
 
 ## 11. Fases canónicas y generación de anclas
 
-**[CANÓNICO v6, §5]** Las fases son:
+**[CANÓNICO v7, §5]** Las fases son:
 - **Balance:** forma estable/base.
 - **Exceso:** forma desbordada/intensificada.
 - **Eco:** forma tenue, casi fantasmal.
@@ -385,7 +390,7 @@ El Art Studio produce y publica anclas. No implementa la lógica de cómo el jug
 - Exceso: cinco cartas Balance de la misma especie se fusionan en el Altar de Fusión.
 - Eco: drop raro del 5 % en Percibir, solo para especies cuyo Balance el usuario ya registró; lo decide el servidor.
 
-Estas mecánicas pertenecen al juego y su estado se conserva en la fotografía de implementación heredada por World Bible v6. No modificarlas al construir el panel de producción sin una decisión explícita.
+Estas mecánicas pertenecen al juego y su estado se conserva en la fotografía de implementación heredada por World Bible v7. No modificarlas al construir el panel de producción sin una decisión explícita.
 
 ## 12. Pipeline de generación
 
@@ -481,9 +486,9 @@ La publicación debe ser una operación transaccional o recuperable:
 8. registrar quién publicó y qué versión,
 9. permitir rollback controlado.
 
-**[CANÓNICO v6, §18.3]** `species_phase_anchors` utiliza `species_id`, `phase`, `image_url`. El esquema actual contempla una imagen por especie/fase.
+**[CANÓNICO v7, §18.3]** `species_phase_anchors` utiliza `species_id`, `phase`, `image_url`. El esquema actual contempla una imagen por especie/fase.
 
-El pipeline de dos capas (fondo + recorte) existe como experimento, pero World Bible v6 conserva la constatación de v5 de que no está implementado en el schema ni es el pipeline activo. No rediseñar el modelo para dos capas en el MVP sin una decisión explícita.
+El pipeline de dos capas (fondo + recorte) existe como experimento, pero World Bible v7 conserva la constatación de v5 de que no está implementado en el schema ni es el pipeline activo. No rediseñar el modelo para dos capas en el MVP sin una decisión explícita.
 
 ---
 
@@ -498,7 +503,7 @@ Las entidades de producto ya existentes deben reutilizarse:
 - `species_phase_anchors`
 - y las tablas actuales del juego.
 
-**[CANÓNICO v6, §18.3]** La rareza se sortea independientemente en cada captura; no es atributo fijo de especie ni de fase. No añadir rareza fija a `species` o `species_phase_anchors`.
+**[CANÓNICO v7, §18.3]** La rareza se sortea independientemente en cada captura; no es atributo fijo de especie ni de fase. No añadir rareza fija a `species` o `species_phase_anchors`.
 
 ### Entidades administrativas propuestas
 
@@ -533,7 +538,7 @@ Distinguir:
 2. Almacenamiento de ficheros: imágenes originales, drafts, vistas y exportaciones.
 3. Public assets: imágenes públicas aprobadas que consume la PWA.
 
-R2 figura como retirado de la arquitectura actual en el estado documentado por World Bible v6 (heredado de v5). La alternativa persistente para borradores y originales está **pendiente de decisión**. Evaluar almacenamiento compatible con Cloudflare u otro proveedor, coste, acceso privado, URLs firmadas, retención y backup. No asumir que el filesystem local o `public/` es almacenamiento privado persistente del Admin desplegado.
+R2 figura como retirado de la arquitectura actual en el estado documentado por World Bible v7 (heredado de v5). La alternativa persistente para borradores y originales está **pendiente de decisión**. Evaluar almacenamiento compatible con Cloudflare u otro proveedor, coste, acceso privado, URLs firmadas, retención y backup. No asumir que el filesystem local o `public/` es almacenamiento privado persistente del Admin desplegado.
 
 Para el MVP local, puede mantenerse un flujo basado en archivos del repositorio, pero debe documentarse como etapa temporal y evitar guardar secretos o datos sensibles en Git.
 
@@ -728,7 +733,7 @@ El dashboard deriva el progreso a partir de estas dimensiones. Una especie puede
 
 ## 22. Piloto de validación
 
-World Bible v6 confirma:
+World Bible v7 confirma:
 - 54 fichas-spec en `tools/species/lote.json`.
 - Solo 6 carpetas de arte en `public/species-art/`, coincidentes con las seis especies `is_active=1` descritas.
 - El cuello de botella principal es producir/curar el arte de las 48 restantes, no volver a diseñar 54 fichas.
@@ -754,7 +759,7 @@ No pedir a Claude Code que construya todo en una única tarea. Trabajar por fase
 
 ### Fase 0 — Auditoría sin cambios
 
-- Leer World Bible v6 completa.
+- Leer World Bible v7 completa.
 - Leer README de `tools/species/`.
 - Inspeccionar scripts mencionados.
 - Inspeccionar `lote.json`, `species.wave1.json`, `species.example.json`.
@@ -880,10 +885,10 @@ No pedir a Claude Code que construya todo en una única tarea. Trabajar por fase
 Quiero construir Ecorex Admin dentro del repositorio existente.
 
 Lee íntegramente:
-- docs/lore_world_bible_ecorex_v6.md
+- docs/lore_world_bible_ecorex_v7.md
 - README.md de tools/species/
 
-La World Bible v6 es la fuente canónica del lore y las reglas de producto; no debe confundirse con una auditoría del estado actual del código.
+La World Bible v7 es la fuente canónica del lore y las reglas de producto; no debe confundirse con una auditoría del estado actual del código.
 El README de tools/species documenta el pipeline local actual.
 
 Antes de modificar archivos, audita:
@@ -1075,7 +1080,7 @@ Implementa rollback y tests.
 
 ## 32. Guardrails del proyecto
 
-- La World Bible v6 prevalece sobre v5, v4 y documentos antiguos.
+- La World Bible v7 prevalece sobre v6, v5, v4 y documentos antiguos.
 - No llamar “Furia” a la fase: se llama Exceso.
 - Furia (Ira) es uno de los ocho Fractae.
 - Las ocho identidades Fractae son Alegría/Lumen, Tristeza/Tristitia, Furia/Ira, Miedo/Pavor, Confianza/Fides, Asco/Fastidium, Sorpresa/Stupor y Curiosidad/Spes.
@@ -1097,7 +1102,7 @@ Implementa rollback y tests.
 
 Al finalizar el MVP, el administrador podrá:
 
-1. Descubrir un género dinosauriano real y consultar sus fuentes.
+1. Descubrir un género prehistórico real (dinosaurio u otro grupo soportado) y consultar sus fuentes.
 2. Generar una ficha-spec con grounding.
 3. Revisar y aprobar la ficha.
 4. Abrir la especie en Art Studio.

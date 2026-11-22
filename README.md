@@ -229,7 +229,7 @@ EcoRex/
 ├── public/                      # Served statics: species-art, icons, logo, sounds
 ├── design/                      # Design material: Fractae and phase badges, buttons, cards
 └── docs/
-    ├── lore_world_bible_ecorex_v6.md   # Universe bible and lore → implementation mapping (Spanish)
+    ├── lore_world_bible_ecorex_v7.md   # Universe bible and lore → implementation mapping (Spanish)
     ├── backlog.md                       # Unprioritized ideas (Spanish)
     ├── screenshots/                     # Images used in this README
     └── archive/                         # Earlier lore versions

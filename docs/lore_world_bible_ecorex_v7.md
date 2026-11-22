@@ -1,6 +1,14 @@
-# LORE / WORLD BIBLE v6 — ECOREX
+# LORE / WORLD BIBLE v7 — ECOREX
 
-> Esta versión parte íntegramente de `lore_world_bible_ecorex_v5.md`. Conserva el contenido de producto, lore, mecánicas, bestiario, estado técnico y decisiones documentadas en v5. El cambio sustantivo de v6 es formalizar la **jerarquía de fuentes y autoridad documental** para el universo Ecorex y sus herramientas de producción. No se han reinterpretado ni actualizado silenciosamente las mecánicas ni el estado de implementación descritos en v5. Donde haya conflicto entre versiones de la World Bible, v6 tiene prioridad; v5 y anteriores quedan como histórico.
+> Esta versión parte íntegramente de `lore_world_bible_ecorex_v6.md` (que a su vez parte de v5). Conserva el contenido de producto, lore, mecánicas, bestiario, estado técnico y decisiones de v6. **El único cambio sustantivo de v7 es el alcance de los portadores** (ver «Cambios en v7» justo debajo): el portador de un Fractae ya no es exclusivamente el dinosaurio. No se han reinterpretado ni actualizado silenciosamente las mecánicas ni el estado de implementación. Donde haya conflicto entre versiones de la World Bible, v7 tiene prioridad; v6 y anteriores quedan como histórico (en el historial de git).
+
+### Cambios en v7 (2026-11-22, decididos por la dirección del proyecto)
+
+1. **Portadores ampliados.** Puede ser portador cualquier criatura prehistórica real: dinosaurios, pterosaurios, reptiles marinos (plesiosaurios, ictiosaurios, mosasaurios), cocodrilomorfos y cualquier otro grupo que se incorpore. En el futuro podrán existir también **criaturas inventadas** (sin base paleontológica). Esto sustituye a la frase de v6 «el único portador es el dinosaurio» (§1).
+2. **Hechos paleontológicos.** La obligación de fundamentar y registrar fuentes (§0.1) se aplica a los **taxones reales**. Una criatura inventada no tiene grounding científico, y su ficha debe declararlo; no se inventan citas.
+3. **Sin cambios de mecánicas ni de datos.** Fases, rareza, energía, Fusión y Eco no cambian. El esquema ya admite cualquier nombre científico: `Mosasaurus pavoris` (ya en el catálogo) deja de ser una excepción.
+4. **Pendiente de la dirección (no se ha reescrito aquí):** el mito fundacional (§2) y algunas frases de §0/§14 siguen redactados en torno a los dinosaurios. Cómo encajan los demás portadores en esa narrativa es decisión de lore y queda por redactar.
+5. **Estado de herramientas:** Ecorex Admin ya busca dinosaurios, pterosaurios, reptiles marinos y cocodrilomorfos. **No existe todavía un flujo para criaturas inventadas** (Species Discovery parte de un taxón real).
 
 ---
 
@@ -13,7 +21,7 @@ El nombre final del proyecto es **EcoRex**.
 Decisión clave: el universo/marca usa **un único nombre, sin doble capa científico/común**. El patrón de doble nombre (científico + popular) se reserva exclusivamente para:
 
 - Los **Fractae individuales** (ej. Lumen/Alegría, Ira/Furia) — ver sección 4.
-- Las **especies de dinosaurio** (ej. *Tyrannosaurus imperator* / "Rex de Fuego") — ver sección 14.
+- Las **especies** portadoras (ej. *Tyrannosaurus imperator* / "Rex de Fuego") — ver sección 14.
 
 **Razón de la decisión:** el nombre del universo funciona como marca (icono, App Store, portada), no como elemento de UI que el usuario vea repetido en dos registros dentro de cada carta.
 
@@ -28,7 +36,7 @@ Esta jerarquía define qué documento o sistema tiene autoridad cuando dos fuent
 ### A. Autoridad por dominio
 
 1. **Canon del universo y reglas de producto — esta World Bible, versión vigente.** `lore_world_bible_ecorex_v6.md` es la fuente normativa para el universo Ecorex: premisa, mito, Fractae, fases, rareza, operaciones, vocabulario, naming, especies, reglas narrativas y visuales del bestiario, mecánicas y decisiones de producto. Si una herramienta o documento secundario contradice estas reglas, debe corregirse el elemento secundario; no se debe modificar el canon por inferencia.
-2. **Hechos paleontológicos — fuentes científicas/paleontológicas trazables.** Para afirmaciones sobre taxonomía, nomenclatura, cronología, localización, fósiles, anatomía y ecología de dinosaurios, se deben consultar y registrar las fuentes paleontológicas pertinentes (por ejemplo, PBDB, NHM Dino Directory y otras referencias identificadas en el pipeline). Estas fuentes sustentan los hechos científicos de cada especie; no deciden el lore, la asignación emocional de Fractae ni las reglas del juego. Si las fuentes discrepan o la evidencia es insuficiente, la ficha debe conservar la incertidumbre y documentar la discrepancia; no inventar una certeza.
+2. **Hechos paleontológicos — fuentes científicas/paleontológicas trazables.** Para afirmaciones sobre taxonomía, nomenclatura, cronología, localización, fósiles, anatomía y ecología de organismos prehistóricos reales (dinosaurios y demás grupos admitidos, ver §1), se deben consultar y registrar las fuentes paleontológicas pertinentes (por ejemplo, PBDB, NHM Dino Directory y otras referencias identificadas en el pipeline). Estas fuentes sustentan los hechos científicos de cada especie; no deciden el lore, la asignación emocional de Fractae ni las reglas del juego. Si las fuentes discrepan o la evidencia es insuficiente, la ficha debe conservar la incertidumbre y documentar la discrepancia; no inventar una certeza. **(v7)** Las criaturas inventadas no tienen base paleontológica: su ficha lo declara y no lleva fuentes científicas.
 3. **Comportamiento realmente implementado — código, esquema y datos del repositorio.** El código desplegado, las migraciones, el esquema y los datos son la autoridad para describir qué hace el producto hoy. No pueden redefinir por sí solos qué debería ser el canon o el comportamiento objetivo. Si la implementación contradice la World Bible, se registra como desviación/pendiente y se decide explícitamente si hay que corregir el código o aprobar un cambio de canon mediante una nueva versión de la World Bible.
 4. **Procedimientos de producción — README y documentación de tooling.** Documentan cómo funcionan los scripts, comandos, fuentes consultadas, formatos y operaciones locales. Son autoridad operativa para el uso del tooling, pero no pueden redefinir el canon ni contradecir la World Bible. Si un procedimiento está obsoleto, se actualiza el procedimiento y/o el código correspondiente.
 5. **Arquitectura administrativa — Ecorex Admin & Art Studio Architecture.** Especifica cómo implementar las reglas canónicas en las herramientas privadas. Es subordinada a esta World Bible: puede proponer interfaces, modelos técnicos, automatizaciones y controles, pero no puede redefinir, reinterpretar ni contradecir el lore, las mecánicas ni las reglas visuales canónicas. Si existe conflicto, prevalece la World Bible y se actualiza Admin Architecture.
@@ -54,7 +62,7 @@ Esta jerarquía define qué documento o sistema tiene autoridad cuando dos fuent
 
 Los **Fractae** son fuerzas emocionales puras. No son criaturas por sí mismas — necesitan un **portador** físico para manifestarse en el plano material.
 
-En este universo, **el único portador es el dinosaurio**. No hay puertas abiertas a otras especies por ahora: foco total.
+En este universo, **el portador es una criatura prehistórica**: el dinosaurio es el portador por excelencia, pero **desde v7** también lo pueden ser pterosaurios, reptiles marinos, cocodrilomorfos y otros grupos prehistóricos reales, y en el futuro criaturas inventadas. *(En v6 decía: «el único portador es el dinosaurio»; sustituido por decisión de la dirección.)*
 
 ---
 
@@ -86,7 +94,7 @@ El explorador (el usuario) no es un científico de un consorcio burocrático. Es
 
 ```
 Fractae (núcleo emocional)
-+ Especie portadora (el dinosaurio)
++ Especie portadora (la criatura)
 + Fase (Balance / Exceso / Eco)
 + Rareza (eje independiente, ver sección 6)
 ```
@@ -324,7 +332,7 @@ No se usa "variante" para las fases: es un término nuevo para un público de 5 
 
 *(heredado de v2/v3, sin cambios)*
 
-Patrón de doble capa para cada dinosaurio:
+Patrón de doble capa para cada criatura:
 
 - Nombre científico (latín) → registro adulto/coleccionista, visible en la carta.
 - Nombre común (palabra niño) → registro principal de interacción.
