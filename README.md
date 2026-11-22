@@ -221,6 +221,7 @@ EcoRex/
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
+├── admin/                       # Ecorex Admin: private console, its own Pages project (own build, Functions and wrangler config) — see docs/ECOREX_ADMIN_ARCHITECTURE.md
 ├── workers/push-cron/           # Standalone Worker with a Cron Trigger (energy Web Push)
 ├── migrations/                  # Numbered D1 migrations (0001_baseline = production snapshot): the database's source of truth
 ├── scripts/                     # DB seed data (seed.sql)
@@ -228,7 +229,7 @@ EcoRex/
 ├── public/                      # Served statics: species-art, icons, logo, sounds
 ├── design/                      # Design material: Fractae and phase badges, buttons, cards
 └── docs/
-    ├── lore_world_bible_ecorex_v5.md   # Universe bible and lore → implementation mapping (Spanish)
+    ├── lore_world_bible_ecorex_v6.md   # Universe bible and lore → implementation mapping (Spanish)
     ├── backlog.md                       # Unprioritized ideas (Spanish)
     ├── screenshots/                     # Images used in this README
     └── archive/                         # Earlier lore versions

@@ -221,6 +221,7 @@ EcoRex/
 ├── functions/                   # Cloudflare Pages Functions (backend)
 │   ├── api/                     # auth, discover, collection, fuse, energy, missions, notifications, push, profile, species
 │   └── lib/                     # xp, energy, missions, discovery, rate limit
+├── admin/                       # Ecorex Admin: consola privada, proyecto Pages propio (build, Functions y wrangler propios) — ver docs/ECOREX_ADMIN_ARCHITECTURE.md
 ├── workers/push-cron/           # Worker independiente con Cron Trigger (Web Push de energía)
 ├── migrations/                  # Migraciones numeradas de D1 (0001_baseline = foto de producción): fuente de verdad de la base de datos
 ├── scripts/                     # Datos semilla de la BD (seed.sql)
