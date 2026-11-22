@@ -968,5 +968,22 @@
     "closestFamousRelative": "Mosasaurus",
     "distinguishingFromRelative": "sin diferencias notables conocidas",
     "edition": ""
+  },
+  {
+    "scientificName": "Diplodocus fidei",
+    "commonName": "Coloso de Ligadura",
+    "fractae": {
+      "name": "Confianza",
+      "latin": "Fides"
+    },
+    "traits": "Cuello enormemente extensible sostenido por ligamentos dorsales que forman una estructura de doble viga; cola chicote de doble riel óseo con función de estabilizador y comunicación; columna vertebral con canales ligamentosos visibles; extremidades columnares robustas de marcha ecuestre; cabeza pequeña y refinada con dentición cónica para ramoneo selectivo",
+    "habitat": "Llanuras aluviales semiáridas del Jurásico Superior de América del Norte (Wyoming, Utah, Colorado); ríos meandrantes estacionales, bosques riparios de coníferas y cicadáceas, con claros de vegetación herbácea baja; clima subtropical-templado con estaciones marcadas de sequía",
+    "palette": "Verde salvia con degradación a verde oliva en la columna vertebral; reflejos dorados en las vértebras y ligamentos dorsales; vientre gris-blanco de piedra caliza; tonos tierra en las extremidades",
+    "silhouette": "Cuadrúpedo masivo de cuello horizontal extremadamente largo y cola leonada, con grupa elevada y pecho descendente; silueta de puente vivo",
+    "closestFamousRelative": "Brachiosaurus",
+    "distinguishingFromRelative": "A diferencia del Brachiosaurus, Diplodocus carece de extremidades anteriores elevadas (sus patas delanteras no son más largas que las traseras); posee un cuello horizontal, no inclinado hacia arriba; su cráneo es mucho más pequeño y delicado; la cola es extremadamente larga y particularmente gruesa en su base, mientras que Brachiosaurus tenía cola corta y frágil; Diplodocus presenta la característica única de vértebras caudales con quillas dobles (doble riel)",
+    "oppositeFractae": "Asco (Fastidium)",
+    "lorePhrase": "El Coloso de Ligadura teje su certeza en los lazos invisibles que atraviesan su propio ser: donde otros vacilan, él alcanza lo lejano con la gravedad sosegada del acero suspendido.",
+    "edition": ""
   }
 ]

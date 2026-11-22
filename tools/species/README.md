@@ -40,4 +40,4 @@ Los avatares de perfil se generan aparte: `node tools/generate-avatars.mjs [1|2|
 - Cambios de ruta de imagen en especies ya publicadas: `discoveries.image_url` es una copia por usuario, no una referencia viva; hay que migrar también `discoveries` en local y remoto.
 - `scripts/seed.sql` usa `INSERT OR IGNORE`: no actualiza filas existentes.
 
-Documentación ampliada en [CLAUDE.md](../../CLAUDE.md) (secciones "Arte de especies" y "Seed y sync de especies") y [docs/lore_world_bible_ecorex_v5.md](../../docs/lore_world_bible_ecorex_v5.md) §15.
+Documentación ampliada en [CLAUDE.md](../../CLAUDE.md) (secciones "Arte de especies" y "Seed y sync de especies") y [docs/lore_world_bible_ecorex_v6.md](../../docs/lore_world_bible_ecorex_v6.md) §15.
