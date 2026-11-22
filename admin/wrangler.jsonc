@@ -1,0 +1,24 @@
+{
+  // Ecorex Admin: a separate Cloudflare Pages project (own build, own secrets,
+  // own domain). It shares the D1 and KV with the public PWA but not its
+  // routes: public code lives in /functions, admin code in /admin/functions.
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "ecorex-admin",
+  "pages_build_output_dir": "dist",
+  "compatibility_date": "2026-07-04",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ecorex-db",
+      "database_id": "5214a55d-98c7-450b-bd36-ef33d8fb6b2d",
+      "migrations_dir": "../migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT_KV",
+      "id": "caf39c48cb914f728143fb071a586a55",
+      "preview_id": "7e5e3d4e785e401aa6e7b975e3b4b180"
+    }
+  ]
+}
