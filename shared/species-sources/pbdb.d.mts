@@ -17,3 +17,4 @@ export function searchPbdbTaxa(
 ): Promise<PbdbCandidate[]>;
 export function autocompleteDinosaurGenus(prefix: string, fetchFn?: FetchFn): Promise<string[]>;
 export function listDinosaurGenera(fetchFn?: FetchFn): Promise<string[]>;
+export function listGenera(baseNames: string | string[], fetchFn?: FetchFn): Promise<string[]>;

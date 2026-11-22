@@ -1,4 +1,5 @@
-import { listDinosaurGenera, searchPbdbTaxa } from "../../../../../shared/species-sources/pbdb.mjs";
+import { listGenera, searchPbdbTaxa } from "../../../../../shared/species-sources/pbdb.mjs";
+import { resolveGroup } from "../../../../../shared/species-sources/groups.mjs";
 import { suggestGenera } from "../../../lib/genusLookup";
 import { denyUnlessRole, jsonError, type AdminContext, type AdminEnv } from "../../../lib/adminAuth";
 
@@ -9,6 +10,7 @@ const MAX_RESULTS = 200;
  * GET ?q=Steg            -> flexible genus suggestions (anywhere in the name, typos, Spanish
  *                            spellings, and Spanish common names via Wikipedia as a fallback)
  * GET ?baseName=Theropoda&interval=Cretaceous&country=US&min=5 -> PBDB candidates
+ * &group=pterosaurios|reptiles-marinos|cocodrilomorfos|dinosaurios(default) selects the taxonomic group.
  * Each candidate says whether the project already uses that genus (it is NOT
  * excluded: a genus can be reused for another Fractae / edition).
  */
@@ -16,15 +18,18 @@ export const onRequestGet: PagesFunction<AdminEnv & { WIKIMEDIA_CONTACT?: string
   const denied = denyUnlessRole(data.admin, ["content_editor"]);
   if (denied) return denied;
   const url = new URL(request.url);
+  const group = resolveGroup(url.searchParams.get("group"));
+  if (!group) return jsonError(400, "Grupo no válido");
 
   try {
     const q = url.searchParams.get("q");
-    if (q !== null) return Response.json(await suggestGenera(q, await listDinosaurGenera(), { contact: env.WIKIMEDIA_CONTACT }));
+    if (q !== null) return Response.json(await suggestGenera(q, await listGenera(group.baseNames), { contact: env.WIKIMEDIA_CONTACT }));
 
     const minRaw = Number(url.searchParams.get("min") ?? 1);
     const candidates = (
       await searchPbdbTaxa({
-        baseName: url.searchParams.get("baseName") || "Dinosauria",
+        // The clade filter only refines Dinosauria; other groups search their own clades.
+        baseName: group.dinosaur && /^[A-Z][a-z]{2,40}$/.test(url.searchParams.get("baseName") ?? "") ? url.searchParams.get("baseName")! : group.baseNames.join(","),
         interval: url.searchParams.get("interval") || undefined,
         country: url.searchParams.get("country") || undefined,
         minOccurrences: Number.isFinite(minRaw) && minRaw > 0 ? minRaw : 1,

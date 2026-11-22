@@ -3,6 +3,7 @@
 import { fetchPbdbTaxon, formatForPrompt as formatPbdb } from "../../../shared/species-sources/pbdb.mjs";
 import { fetchDinoDirectory, formatForPrompt as formatNhm } from "../../../shared/species-sources/dino-directory.mjs";
 import { fetchDinosaurPicturesOrg, formatForPrompt as formatDpo } from "../../../shared/species-sources/dinosaur-pictures-org.mjs";
+import { fetchWikipedia, formatForPrompt as formatWiki } from "../../../shared/species-sources/wikipedia.mjs";
 import { buildPrompt, parseModelJson, resolveFractae } from "../../../shared/species-spec/prompt.mjs";
 import { hasErrors, validateSpec, type Provenance, type SpecSheet, type SpecSource } from "./specContract";
 
@@ -37,23 +38,26 @@ export function sourceUrls(genus: string) {
     pbdb: `https://paleobiodb.org/data1.2/taxa/single.json?name=${encodeURIComponent(g)}&vocab=pbdb&show=app,attr,class`,
     nhm: `https://www.nhm.ac.uk/discover/dino-directory/${g.toLowerCase().replace(/[^a-z]/g, "")}.html`,
     dinosaurpictures: `https://dinosaurpictures.org/${g.replace(/\s+/g, "-")}-pictures`,
+    wikipediaEn: `https://en.wikipedia.org/wiki/${encodeURIComponent(g)}`,
+    wikipediaEs: `https://es.wikipedia.org/wiki/${encodeURIComponent(g)}`,
   };
 }
 
 export interface ResearchResult {
   consultedAt: string;
   genus: string;
-  raw: { pbdb: unknown; nhm: unknown; dinosaurpictures: unknown };
+  raw: { pbdb: unknown; nhm: unknown; dinosaurpictures: unknown; wikipedia?: unknown };
   realData: string | null;
   /** One entry per source that actually answered; absent sources are not invented. */
   sources: SpecSource[];
 }
 
 export async function research(genus: string, fetchFn: typeof fetch = fetch, now = new Date()): Promise<ResearchResult> {
-  const [nhm, dpo, pbdb] = await Promise.all([
+  const [nhm, dpo, pbdb, wiki] = await Promise.all([
     fetchDinoDirectory(genus, fetchFn).catch(() => null),
     fetchDinosaurPicturesOrg(genus, fetchFn).catch(() => null),
     fetchPbdbTaxon(genus, fetchFn).catch(() => null),
+    fetchWikipedia(genus, fetchFn).catch(() => null),
   ]);
   const consultedAt = now.toISOString();
   const urls = sourceUrls(genus);
@@ -61,8 +65,12 @@ export async function research(genus: string, fetchFn: typeof fetch = fetch, now
   if (pbdb) sources.push({ source: "pbdb", ref: urls.pbdb, observed: formatPbdb(pbdb) ?? undefined, consultedAt, note: pbdb.isSynonym ? `Sinónimo junior de ${pbdb.acceptedName}` : undefined });
   if (nhm) sources.push({ source: "nhm", ref: urls.nhm, observed: formatNhm(nhm) ?? undefined, consultedAt });
   if (dpo) sources.push({ source: "dinosaurpictures", ref: urls.dinosaurpictures, observed: formatDpo(dpo) ?? undefined, consultedAt, note: "Texto corroborante; sus imágenes son generadas por IA" });
-  const realData = [formatNhm(nhm), formatDpo(dpo), formatPbdb(pbdb)].filter(Boolean).join("\n\n") || null;
-  return { consultedAt, genus, raw: { pbdb, nhm, dinosaurpictures: dpo }, realData, sources };
+  for (const w of [wiki?.en, wiki?.es]) {
+    if (w) sources.push({ source: "wikipedia", ref: w.url, observed: w.extract, consultedAt, note: `Wikipedia (${w.lang}): texto enciclopédico, menos fiable que PBDB/NHM` });
+  }
+  // Wikipedia goes last: if sources disagree, the structured scientific ones come first in the prompt.
+  const realData = [formatNhm(nhm), formatDpo(dpo), formatPbdb(pbdb), formatWiki(wiki)].filter(Boolean).join("\n\n") || null;
+  return { consultedAt, genus, raw: { pbdb, nhm, dinosaurpictures: dpo, wikipedia: wiki }, realData, sources };
 }
 
 export interface AnthropicResult {

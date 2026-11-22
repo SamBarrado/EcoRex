@@ -135,25 +135,31 @@ export async function searchPbdbTaxa({ baseName, interval, country, minOccurrenc
 // dinosaur genera once (base_name=Dinosauria&rank=genus) and cache it in
 // memory, then filter that cached list by prefix — guarantees only real
 // dinosaur genera show up, and is instant after the first load.
-let dinosaurGenusCache = null;
+// One cached list per group ("Dinosauria", "Plesiosauria,Ichthyosauria,Mosasauridae"...).
+const genusListCache = new Map();
 
-async function loadDinosaurGenera(fetchFn) {
-  if (dinosaurGenusCache) return dinosaurGenusCache;
-  const url = `${BASE_URL}/taxa/list.json?base_name=Dinosauria&rank=genus&vocab=pbdb`;
+async function loadGenera(baseName, fetchFn) {
+  if (genusListCache.has(baseName)) return genusListCache.get(baseName);
+  const url = `${BASE_URL}/taxa/list.json?base_name=${encodeURIComponent(baseName)}&rank=genus&vocab=pbdb`;
   const res = await fetchFn(url, REQUEST_INIT);
   if (!res.ok) throw new Error(`PBDB genus list failed: ${res.status}`);
   const json = await res.json();
-  dinosaurGenusCache = (json.records ?? []).map((r) => r.taxon_name).filter(Boolean).sort();
-  return dinosaurGenusCache;
+  const list = (json.records ?? []).map((r) => r.taxon_name).filter(Boolean).sort();
+  genusListCache.set(baseName, list);
+  return list;
 }
 
-/** The full cached list of dinosaur genera (see above). */
+/** Cached genus list for one or several clades (PBDB base_name accepts a comma list). */
+export function listGenera(baseNames, fetchFn = fetch) {
+  return loadGenera([].concat(baseNames).join(','), fetchFn);
+}
+
+/** The full cached list of dinosaur genera. */
 export function listDinosaurGenera(fetchFn = fetch) {
-  return loadDinosaurGenera(fetchFn);
+  return loadGenera('Dinosauria', fetchFn);
 }
 
 // Flexible matching (anywhere in the name, typos, Spanish spellings): see genusSearch.mjs.
 export async function autocompleteDinosaurGenus(prefix, fetchFn = fetch) {
-  const genera = await loadDinosaurGenera(fetchFn);
-  return rankGenera(genera, prefix, 15);
+  return rankGenera(await loadGenera('Dinosauria', fetchFn), prefix, 15);
 }

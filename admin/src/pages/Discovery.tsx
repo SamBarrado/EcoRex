@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { FRACTAE_CANON } from "../../functions/lib/specContract";
 import Thumb from "../components/Thumb";
+import { GROUPS } from "../../../shared/species-sources/groups.mjs";
 
 interface Candidate {
   genus: string; family: string | null; nOccurrences: number; earlyMa: number | null; lateMa: number | null; countries: string[];
   inProject: { inGame: boolean; drafts: { fractae: string; edition: string; status: string }[] };
 }
-interface DraftRow { id: number; genus: string; fractae: string; edition: string; status: string; updated_at: string }
+interface DraftRow { id: number; genus: string; fractae: string; edition: string; taxon_group: string; status: string; updated_at: string }
 
 const CLADES = [["Dinosauria", "Todos"], ["Theropoda", "Terópodos"], ["Sauropodomorpha", "Saurópodos"], ["Ornithopoda", "Ornitópodos"], ["Thyreophora", "Tireóforos"], ["Marginocephalia", "Marginocéfalos"]];
 const INTERVALS = [["", "Cualquiera"], ["Triassic", "Triásico"], ["Jurassic", "Jurásico"], ["Cretaceous", "Cretácico"]];
@@ -25,6 +26,8 @@ export default function Discovery() {
   const [fractae, setFractae] = useState("Furia");
   const [edition, setEdition] = useState("");
   const [q, setQ] = useState("");
+  const [group, setGroup] = useState("dinosaurios");
+  const isDino = GROUPS[group]?.dinosaur ?? true;
   const [zoom, setZoom] = useState<{ src: string; caption: string } | null>(null);
   const open = (src: string, caption: string) => setZoom({ src, caption });
 
@@ -34,12 +37,12 @@ export default function Discovery() {
     if (term.length < 2) { setGenera([]); setAsked(""); return; }
     let live = true;
     const t = setTimeout(() => {
-      api<{ genera: string[]; via: string }>(`/discovery/search?q=${encodeURIComponent(term)}`)
+      api<{ genera: string[]; via: string }>(`/discovery/search?q=${encodeURIComponent(term)}&group=${group}`)
         .then((r) => { if (live) { setGenera(r.genera); setVia(r.via); setAsked(term); } })
         .catch((e: Error) => live && setError(e.message));
     }, 300);
     return () => { live = false; clearTimeout(t); };
-  }, [q]);
+  }, [q, group]);
 
   const loadDrafts = () => api<{ drafts: DraftRow[] }>("/drafts").then((r) => setDrafts(r.drafts)).catch((e: Error) => setError(e.message));
   useEffect(() => { void loadDrafts(); }, []);
@@ -50,7 +53,7 @@ export default function Discovery() {
     const f = new FormData(e.currentTarget);
     setBusy(true); setError(""); setCands(null);
     try {
-      const p = new URLSearchParams({ baseName: String(f.get("clade")), interval: String(f.get("interval")), country: String(f.get("country")).trim().toUpperCase(), min: String(f.get("min")) });
+      const p = new URLSearchParams({ group, baseName: String(f.get("clade") ?? ""), interval: String(f.get("interval")), country: String(f.get("country")).trim().toUpperCase(), min: String(f.get("min")) });
       setCands((await api<{ candidates: Candidate[] }>(`/discovery/search?${p}`)).candidates);
     } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   }
@@ -58,7 +61,7 @@ export default function Discovery() {
   async function createDraft(genus: string) {
     setError("");
     try {
-      const r = await api<{ id: number }>("/drafts", { method: "POST", body: JSON.stringify({ genus, fractae, edition }) });
+      const r = await api<{ id: number }>("/drafts", { method: "POST", body: JSON.stringify({ genus, fractae, edition, group }) });
       nav(`/discovery/${r.id}`);
     } catch (err) { setError((err as Error).message); }
   }
@@ -73,14 +76,19 @@ export default function Discovery() {
       <section className="panel">
         <h3>Buscar candidatos (PBDB)</h3>
         <form className="row" onSubmit={search}>
+          <label>Grupo
+            <select value={group} onChange={(e) => { setGroup(e.target.value); setCands(null); }}>
+              {Object.entries(GROUPS).map(([k, g]) => <option key={k} value={k}>{g.label}</option>)}
+            </select>
+          </label>
           <label>Nombre (prefijo)<input name="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Steg, tiranosaurio, saurus…" autoComplete="off" /></label>
-          <label>Clado<select name="clade">{CLADES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
+          {isDino && <label>Clado<select name="clade">{CLADES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>}
           <label>Época<select name="interval">{INTERVALS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
           <label>País (ISO)<input name="country" maxLength={2} placeholder="US" /></label>
           <label>Mín. fósiles<input name="min" type="number" min={1} defaultValue={5} /></label>
           <button disabled={busy}>{busy ? "Buscando…" : "Buscar"}</button>
         </form>
-        <p className="muted">Escribe parte del nombre (en cualquier posición), con erratas o en español: «tiranosaurio», «saurus», «triceratop». Sin nombre, se filtra por clado/época/país. Gratis.</p>
+        <p className="muted">Elige el grupo y escribe parte del nombre (en cualquier posición), con erratas o en español: «tiranosaurio», «saurus», «triceratop». Sin nombre, se filtra por época/país. Gratis. {!isDino && <b> Los borradores de este grupo se etiquetan «no dinosaurio» (canon v7: admitido).</b>}</p>
 
         <div className="row">
           <label>Fractae para el borrador
@@ -116,9 +124,9 @@ export default function Discovery() {
         <h3>Borradores</h3>
         {drafts.length === 0 ? <p className="muted">Aún no hay borradores.</p> : (
           <table>
-            <thead><tr><th>Género</th><th>Fractae</th><th>Edición</th><th>Estado</th><th>Actualizado</th></tr></thead>
+            <thead><tr><th>Género</th><th>Fractae</th><th>Edición</th><th>Grupo</th><th>Estado</th><th>Actualizado</th></tr></thead>
             <tbody>{drafts.map((d) => (
-              <tr key={d.id}><td><Link to={`/discovery/${d.id}`}>{d.genus}</Link></td><td>{d.fractae}</td><td>{d.edition || "—"}</td><td><span className="tag">{d.status}</span></td><td className="muted">{d.updated_at}</td></tr>
+              <tr key={d.id}><td><Link to={`/discovery/${d.id}`}>{d.genus}</Link></td><td>{d.fractae}</td><td>{d.edition || "—"}</td><td>{GROUPS[d.taxon_group]?.dinosaur === false ? <span className="tag">no dinosaurio · {GROUPS[d.taxon_group]?.label.split(" (")[0]}</span> : "Dinosaurio"}</td><td><span className="tag">{d.status}</span></td><td className="muted">{d.updated_at}</td></tr>
             ))}</tbody>
           </table>
         )}

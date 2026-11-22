@@ -77,7 +77,7 @@ describe("assembleSpec / approval", () => {
   });
   it("blocks approval until habitatSlug is chosen by a human", () => {
     const spec = assembleSpec(fields, "Miedo", "", prov);
-    expect(approvalBlockers(spec)).toEqual(["habitatSlug: Falta; obligatorio en fichas nuevas (World Bible v6 §15.4.4)"]);
+    expect(approvalBlockers(spec)).toEqual(["habitatSlug: Falta; obligatorio en fichas nuevas (World Bible v7 §15.4.4)"]);
     expect(approvalBlockers({ ...spec, habitatSlug: "pantano-oscuro" })).toEqual([]);
   });
   it("blocks approval of a sheet with empty model fields", () => {

@@ -109,6 +109,38 @@ describe("Species Discovery drafts", () => {
     expect(audit).toEqual(["draft.create", "draft.research", "draft.generate", "draft.edit", "draft.approved"]);
   });
 
+  it("non-dinosaur drafts store their group, are validated, and the prompt carries the group notice", async () => {
+    const db = makeD1();
+    const c = loginAs(db, "content_editor");
+    const bodies: string[] = [];
+    vi.stubGlobal("fetch", async (u: string, init?: RequestInit) => {
+      if (String(u).includes("api.anthropic.com")) { bodies.push(String(init?.body)); return new Response(JSON.stringify({ content: [{ type: "text", text: JSON.stringify(FIELDS) }] })); }
+      return new Response("", { status: 404 });
+    });
+    expect((await call(createDraft, db, c, "POST", "/api/admin/drafts", { genus: "Quetzalcoatlus", fractae: "Alegría", group: "mamiferos" })).status).toBe(400);
+    const r = await call(createDraft, db, c, "POST", "/api/admin/drafts", { genus: "Quetzalcoatlus", fractae: "Alegría", group: "pterosaurios" });
+    const id = ((await r.json()) as { id: number }).id;
+    expect(db.sqlite.prepare("SELECT taxon_group FROM species_drafts WHERE id = ?").get(id).taxon_group).toBe("pterosaurios");
+    const list = (await (await call(listDrafts, db, c, "GET", "/api/admin/drafts")).json()) as { drafts: { taxon_group: string }[] };
+    expect(list.drafts[0].taxon_group).toBe("pterosaurios");
+    await call(generateH, db, c, "POST", `/x`, { confirm: true }, { id: String(id) }, { ANTHROPIC_API_KEY: "k" });
+    expect(JSON.parse(bodies[0]).messages[0].content).toContain("AVISO DE GRUPO");
+  });
+
+  it("existing and default drafts are dinosaurs and get the unchanged prompt", async () => {
+    const db = makeD1();
+    const c = loginAs(db, "admin");
+    const bodies: string[] = [];
+    vi.stubGlobal("fetch", async (u: string, init?: RequestInit) => {
+      if (String(u).includes("api.anthropic.com")) { bodies.push(String(init?.body)); return new Response(JSON.stringify({ content: [{ type: "text", text: JSON.stringify(FIELDS) }] })); }
+      return new Response("", { status: 404 });
+    });
+    const id = await newDraft(db, c);
+    expect(db.sqlite.prepare("SELECT taxon_group FROM species_drafts WHERE id = ?").get(id).taxon_group).toBe("dinosaurios");
+    await call(generateH, db, c, "POST", `/x`, { confirm: true }, { id: String(id) }, { ANTHROPIC_API_KEY: "k" });
+    expect(JSON.parse(bodies[0]).messages[0].content).not.toContain("AVISO DE GRUPO");
+  });
+
   it("a structurally invalid edit is rejected and nothing is stored", async () => {
     const db = makeD1();
     const c = loginAs(db, "admin");

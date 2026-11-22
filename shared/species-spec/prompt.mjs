@@ -32,10 +32,12 @@ export function resolveFractae(input) {
   return f;
 }
 
-export function buildPrompt(especie, fractae, realData) {
+export function buildPrompt(especie, fractae, realData, group = null) {
   const realDataBlock = realData
     ? `\nDATOS REALES VERIFICADOS (usa esto como fuente de verdad por encima de tu propio conocimiento — si hay conflicto, estos datos ganan):\n${realData}\n`
     : `\n(No se encontraron datos verificados de esta especie en las bases de datos consultadas — usa tu mejor conocimiento general, pero sé conservador y no inventes detalles muy específicos.)\n`;
+
+  const groupBlock = group && !group.dinosaur ? groupNotice(group) : '';
 
   return `Eres el equipo de lore/diseño de bestiario de ECOREX. Cada criatura es la manifestación
 física de un Fractae (núcleo emocional puro) a través de una especie portadora (dinosaurio), en
@@ -44,7 +46,7 @@ una de tres Fases: Balance, Exceso o Eco (Fase ≠ Rareza, son ejes independient
 Datos de entrada:
 - Especie base (nombre científico real o parcial de dinosaurio): ${especie}
 - Fractae asociado: ${fractae.name} (${fractae.latin}), color canónico: ${fractae.color}
-${realDataBlock}
+${realDataBlock}${groupBlock}
 Deriva TODO lo demás:
 - scientificName: nombre científico completo y plausible (género + epíteto en latín), coherente
   con la especie base dada y con el Fractae.
@@ -95,4 +97,15 @@ export function parseModelJson(text) {
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/\s*```$/, '');
   return JSON.parse(jsonText);
+}
+
+// Only for species outside Dinosauria. The default prompt (no group / dinosaurs) is unchanged.
+function groupNotice(group) {
+  const examples = group.relatives?.length ? ` (por ejemplo: ${group.relatives.join(', ')})` : '';
+  return `
+AVISO DE GRUPO: esta especie NO es un dinosaurio; pertenece a «${group.label}». Donde estas instrucciones digan «dinosaurio», entiéndelo como este grupo de reptiles prehistóricos. Reglas adicionales:
+- closestFamousRelative debe ser un animal MUY conocido de ESTE MISMO grupo${examples}, nunca un dinosaurio.
+- No le atribuyas rasgos de dinosaurios ni de otros grupos (p. ej. no es un terópodo ni un saurópodo); mantén su anatomía y locomoción reales (vuelo, natación, etc.).
+- distinguishingFromRelative debe seguir las mismas reglas, comparando con ese pariente del mismo grupo.
+`;
 }

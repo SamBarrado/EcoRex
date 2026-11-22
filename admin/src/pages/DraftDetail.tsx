@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, ApiError } from "../api";
+import { GROUPS } from "../../../shared/species-sources/groups.mjs";
 import { HABITAT_SLUGS, type SpecIssue, type SpecSheet } from "../../functions/lib/specContract";
 
 interface Detail {
-  draft: { id: number; genus: string; fractae: string; edition: string; status: string; spec: SpecSheet | null; sources: { sources: { source: string; ref: string; observed?: string; note?: string; consultedAt: string }[]; consultedAt: string } | null };
+  draft: { id: number; genus: string; fractae: string; edition: string; taxon_group: string; status: string; spec: SpecSheet | null; sources: { sources: { source: string; ref: string; observed?: string; note?: string; consultedAt: string }[]; consultedAt: string } | null };
   issues: SpecIssue[];
   versions: { version: number; origin: string; note: string | null; created_at: string }[];
 }
@@ -55,6 +56,7 @@ export default function DraftDetail() {
       <p><Link to="/discovery">← Discovery</Link></p>
       <h2>{draft.genus} <span className="tag">{draft.status}</span></h2>
       <p className="muted">Fractae: {draft.fractae}{draft.edition ? ` · Edición: ${draft.edition}` : ""}</p>
+      {GROUPS[draft.taxon_group]?.dinosaur === false && <p className="muted">Grupo: {GROUPS[draft.taxon_group]?.label} (no dinosaurio; admitido por el canon, World Bible v7).</p>}
       {msg && <p className="ok">{msg}</p>}
       {err.map((e, i) => <p key={i} role="alert" className="error">{e}</p>)}
 

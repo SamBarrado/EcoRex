@@ -1,7 +1,7 @@
 // Ficha-spec contract, shared by Species Discovery and Art Studio.
 //
 // The canonical shape is the one already used by tools/species/lote.json and
-// produced by generate-species-spec.mjs (World Bible v6 §15.2/§15.4). This file
+// produced by generate-species-spec.mjs (World Bible v7 §15.2/§15.4). This file
 // only VALIDATES it; it adds no canonical fields. Traceability data lives in
 // the separate, optional `provenance` block so it can't be confused with canon.
 //
@@ -19,7 +19,7 @@ export const FRACTAE_CANON = [
   { name: "Curiosidad", latin: "Spes", opposite: "Sorpresa (Stupor)" },
 ] as const;
 
-// World Bible v6 §15.4.4: fixed catalog; reuse, don't invent new slugs lightly.
+// World Bible v7 §15.4.4: fixed catalog; reuse, don't invent new slugs lightly.
 export const HABITAT_SLUGS = [
   "bosque-abierto-templado",
   "matorral-arido",
@@ -36,7 +36,7 @@ export const HABITAT_SLUGS = [
 ] as const;
 
 export interface SpecSource {
-  source: "pbdb" | "nhm" | "dinosaurpictures" | "other";
+  source: "pbdb" | "nhm" | "dinosaurpictures" | "wikipedia" | "other";
   /** URL or record id of what was consulted. */
   ref: string;
   /** What was observed, verbatim or summarised. Never invented. */
@@ -118,7 +118,7 @@ export function validateSpec(input: unknown): SpecIssue[] {
     err("oppositeFractae", `No coincide con el opuesto canónico (${canon.opposite})`);
   }
 
-  if (s.habitatSlug === undefined) warn("habitatSlug", "Falta; obligatorio en fichas nuevas (World Bible v6 §15.4.4)");
+  if (s.habitatSlug === undefined) warn("habitatSlug", "Falta; obligatorio en fichas nuevas (World Bible v7 §15.4.4)");
   else if (!(HABITAT_SLUGS as readonly string[]).includes(s.habitatSlug as string)) {
     err("habitatSlug", "No es uno de los 12 hábitats canónicos");
   }

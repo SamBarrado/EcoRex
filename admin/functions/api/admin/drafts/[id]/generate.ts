@@ -1,5 +1,6 @@
 import { assembleSpec, buildPrompt, callAnthropic, research, type ResearchResult } from "../../../../lib/discovery";
 import { resolveFractae } from "../../../../../../shared/species-spec/prompt.mjs";
+import { resolveGroup } from "../../../../../../shared/species-sources/groups.mjs";
 import { addVersion, getDraft, parseId } from "../../../../lib/drafts";
 import { denyUnlessRole, jsonError, writeAudit, type AdminContext, type AdminEnv } from "../../../../lib/adminAuth";
 
@@ -35,7 +36,7 @@ export const onRequestPost: PagesFunction<AdminEnv & { SPEC_MODEL?: string }, "i
   const model = env.SPEC_MODEL || DEFAULT_SPEC_MODEL;
   let result;
   try {
-    result = await callAnthropic(buildPrompt(draft.genus, resolveFractae(draft.fractae), researched.realData), env.ANTHROPIC_API_KEY, model);
+    result = await callAnthropic(buildPrompt(draft.genus, resolveFractae(draft.fractae), researched.realData, resolveGroup(draft.taxon_group)), env.ANTHROPIC_API_KEY, model);
   } catch (e) {
     await writeAudit(env.DB, data.admin.user.id, "draft.generate.failed", `draft:${draft.id}`, { model, error: e instanceof Error ? e.message : "unknown" });
     return jsonError(502, "La generación falló; no se ha guardado nada");
