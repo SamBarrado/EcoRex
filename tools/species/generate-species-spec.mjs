@@ -61,8 +61,7 @@ function parseArgs(argv) {
   return args;
 }
 
-// Core logic, reusable from the CLI (main() below) and from
-// tools/species/discover-species-pbdb.mjs's web UI. Looks up real data from all
+// Core logic, reusable from the CLI (main() below). Looks up real data from all
 // three sources, calls the Anthropic API, and returns the ficha-spec —
 // does NOT write to disk (callers decide what to do with the result).
 export async function generateSpec(especie, fractaeInput, { apiKey, edition = '', onProgress = () => {} } = {}) {

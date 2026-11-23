@@ -14,7 +14,6 @@
     "species:art": "node tools/species/generate-species-art.mjs",
     "species:art:layered": "node tools/species/generate-species-art-layered.mjs",
     "species:spec": "node tools/species/generate-species-spec.mjs",
-    "species:discover": "node tools/species/discover-species-pbdb.mjs",
     "db:sync-species": "node tools/species/sync-species-db.mjs",
     "db:seed": "wrangler d1 execute DB --local --file=scripts/seed.sql",
     "db:retention": "wrangler d1 execute DB --local --file=scripts/retention.sql",

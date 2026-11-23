@@ -6,7 +6,7 @@ Las claves de API (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) se leen de variables d
 
 ## Flujo normal de una especie nueva
 
-1. **Elegir especie** — `npm run species:discover` (servidor local en `:4790`, ver "Discovery") o `node tools/species/lookup-species.mjs <Genero>` para inspeccionar datos reales.
+1. **Elegir especie** — Ecorex Admin → Species Discovery, o `node tools/species/lookup-species.mjs <Genero>` para inspeccionar datos reales.
 2. **Ficha-spec** 💸 — `npm run species:spec -- "<especie>" "<Fractae>" [--out tools/species/lote.json --append] [--edition "Wave 2"]`
 3. **Arte** — Balance se genera a mano en ChatGPT (prompt con `print-species-prompt`); Exceso y Eco 💸 con `npm run species:art`. Guardar en `public/species-art/{slug}/{balance,exceso,eco}.png`.
 4. **WebP** — `node tools/species/convert-species-art-to-webp.mjs` (conserva los PNG como fuente).
@@ -20,7 +20,6 @@ Las claves de API (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) se leen de variables d
 | `generate-species-art.mjs` | Arte de Balance/Exceso/Eco por image-to-image (pipeline de escena plana, el vigente) | 💸 OpenAI |
 | `print-species-prompt.mjs` | Imprime el prompt exacto de una fase sin generar nada (útil para pegarlo en ChatGPT) | gratis |
 | `lookup-species.mjs` | Muestra lo que devuelven las 3 fuentes reales para un género | gratis |
-| `discover-species-pbdb.mjs` | Herramienta web local para buscar candidatos en PBDB y generar+guardar su ficha | 💸 Anthropic al generar |
 | `convert-species-art-to-webp.mjs` | PNG → WebP (calidad 82) junto a cada original | gratis |
 | `sync-species-db.mjs` | Detecta carpetas nuevas en `public/species-art/`, las añade a `scripts/seed.sql` y lo aplica a la D1 **local** | gratis |
 | `generate-species-art-layered.mjs`, `composite-species-art.mjs` | Pipeline experimental de dos capas (fondo + recorte). **No es el vigente** (ver world bible §15.4.3) | 💸 OpenAI |

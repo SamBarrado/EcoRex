@@ -175,7 +175,6 @@ El cuello de botella real del proyecto no es el código, es el **arte curado**: 
 3. **Exceso y Eco**, generadas por API (image-to-image) a partir de la ancla. Lo que más costó afinar fueron la relación figura/fondo y la diferenciación de pose entre fases, y por eso el prompt lleva un «anclaje anatómico» explícito.
 4. **Conversión a WebP** y alta en la base de datos con `db:sync-species`.
 
-Para explorar candidatos hay una herramienta local, `npm run species:discover`, que consulta PBDB con filtros por clado, época, país y número de ocurrencias, y muestra una recreación de referencia antes de decidir. Los borradores de diseño nunca se sirven en la app: solo `public/species-art/{slug}/{balance|exceso|eco}` llega a producción.
 
 ---
 

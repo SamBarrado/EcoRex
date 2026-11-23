@@ -11,7 +11,7 @@
 //   lookup-species.mjs and generate-species-spec.mjs.
 // - searchPbdbTaxa(criteria): discovery of candidate genera matching a
 //   clade/interval/country, aggregated from occurrence records — used by
-//   tools/species/discover-species-pbdb.mjs.
+//   Ecorex Admin's Species Discovery.
 
 import { rankGenera } from './genusSearch.mjs';
 

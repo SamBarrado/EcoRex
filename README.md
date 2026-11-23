@@ -175,7 +175,6 @@ The project's real bottleneck isn't code, it's **curated art**: there are **54 s
 3. **Exceso and Eco**, generated via API (image-to-image) from the anchor. The hardest things to tune were the figure/ground relationship and pose differentiation between phases, which is why the prompt carries an explicit "anatomy anchor".
 4. **WebP conversion** and database registration with `db:sync-species`.
 
-For exploring candidates there is a local tool, `npm run species:discover`, which queries PBDB with filters by clade, epoch, country and occurrence count, and shows a reference reconstruction before deciding. Design drafts are never served by the app: only `public/species-art/{slug}/{balance|exceso|eco}` reaches production.
 
 ---
 
