@@ -7,7 +7,7 @@ Las claves de API (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) se leen de variables d
 ## Flujo normal de una especie nueva
 
 1. **Elegir especie** — Ecorex Admin → Species Discovery, o `node tools/species/lookup-species.mjs <Genero>` para inspeccionar datos reales.
-2. **Ficha-spec** 💸 — `npm run species:spec -- "<especie>" "<Fractae>" [--out tools/species/lote.json --append] [--edition "Wave 2"]`
+2. **Ficha-spec** 💸 — `npm run species:spec -- "<especie>" "<Fractae>" [--out tools/species/species.new.json --append] [--edition "Wave 2"]`
 3. **Arte** — Balance se genera a mano en ChatGPT (prompt con `print-species-prompt`); Exceso y Eco 💸 con `npm run species:art`. Guardar en `public/species-art/{slug}/{balance,exceso,eco}.png`.
 4. **WebP** — `node tools/species/convert-species-art-to-webp.mjs` (conserva los PNG como fuente).
 5. **Registrar en BD** — `npm run db:sync-species` (local) y después, a mano y conscientemente, `npm run db:seed:remote`.
@@ -29,7 +29,7 @@ Los avatares de perfil se generan aparte: `node tools/generate-avatars.mjs [1|2|
 
 ## Datos
 
-- `lote.json` — las 54 fichas-spec del bestiario. Campo `edition` = oleada/edición (`"Wave 1"`, vacío = sin planificar).
+- `archive/lote.json` — ARCHIVADO (2026-11-23): las 55 fichas-spec históricas del bestiario; ya no es fuente de trabajo, las especies nuevas nacen en Ecorex Admin (Species Discovery). Se conserva porque los tests del contrato lo leen como datos y `db:sync-species` lo consulta. Campo `edition` = oleada/edición (`"Wave 1"`, vacío = sin planificar).
 - `species.wave1.json` — las 5 fichas de Wave 1 (duplicadas en `lote.json`).
 - `species.example.json` — ejemplo del formato.
 

@@ -59,7 +59,7 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 ## 3. Contenido
 
 - **Eco de las próximas oleadas:** cada especie nueva necesita sus 3 artes (Balance, Exceso, Eco) y su ancla Eco con lore para que el drop pueda sacarla.
-- **Oleada siguiente de especies.** Solo 6 de 40 en remoto están activas; `tools/species/lote.json` tiene 54 fichas-spec. Pipeline: `species:art` → `convert-species-art-to-webp` → `db:sync-species` → `db:seed:remote`.
+- **Oleada siguiente de especies.** Solo 6 de 40 en remoto están activas; `tools/species/archive/lote.json` (archivado) tiene 55 fichas-spec históricas; las nuevas nacen en Admin. Pipeline: `species:art` → `convert-species-art-to-webp` → `db:sync-species` → `db:seed:remote`.
 - **Ediciones**: añadir "edición" como concepto de producto para colecciones tipo sobre (el campo `edition` ya existe en las fichas-spec, falta la mecánica de cara al usuario: sobres, desbloqueo, etc.).
 - **Operaciones/eventos con freshness automática**: una especie es "rara" porque es nueva y se normaliza sola con el tiempo, sin tocar `drop_weight` a mano. Encaja con el modelo de Operaciones del world bible (§7/18.3); el reparto de rareza por Operación sigue sin diseñar.
 - **Pesos por especie**: % de aparición distinto por especie dentro del pool activo (hoy el sorteo es uniforme entre `species.is_active`), independiente del sorteo de rareza.

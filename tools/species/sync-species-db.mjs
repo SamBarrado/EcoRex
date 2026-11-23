@@ -17,7 +17,7 @@ import path from 'node:path';
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 const ART_DIR = path.join(ROOT, 'public/species-art');
 const SEED_FILE = path.join(ROOT, 'scripts/seed.sql');
-const SPEC_FILES = ['tools/species/lote.json', 'tools/species/species.wave1.json'];
+const SPEC_FILES = ['tools/species/archive/lote.json', 'tools/species/species.wave1.json'];
 const PHASES = ['balance', 'exceso', 'eco'];
 
 // Fixed reference (docs/lore_world_bible_ecorex_v4.md §2) — the 8 Fractae.
@@ -113,7 +113,7 @@ async function main() {
   for (const slug of newFolders) {
     const spec = specs.find((s) => slugify(s.scientificName) === slug);
     if (!spec) {
-      console.error(`⚠️  ${slug}: no encontré su ficha-spec en tools/species/lote.json ni species.wave1.json. Sáltate esta especie o añade su spec primero.`);
+      console.error(`⚠️  ${slug}: no encontré su ficha-spec en tools/species/archive/lote.json ni species.wave1.json. Sáltate esta especie o añade su spec primero.`);
       continue;
     }
 

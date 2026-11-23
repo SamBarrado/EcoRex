@@ -3,7 +3,7 @@ import { getDraft } from "./drafts";
 import { activateDraft, deactivateDraft, parseWave, promoteDraft, unpromoteDraft } from "./promotion";
 import { makeD1 } from "./testD1";
 // Data only (tests may read tools/ JSON; application code must not).
-import lote from "../../../tools/species/lote.json";
+import lote from "../../../tools/species/archive/lote.json";
 
 const COMPLETE: any = (lote as any[]).find((s) => s.habitatSlug && s.lorePhrase && s.scientificName.startsWith("Tyrannosaurus rex furibundus"));
 

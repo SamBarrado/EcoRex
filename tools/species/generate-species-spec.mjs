@@ -5,7 +5,7 @@
 //
 // Usage:
 //   node tools/species/generate-species-spec.mjs "Stegosaurus" "Miedo"
-//   node tools/species/generate-species-spec.mjs "Velociraptor" "Sorpresa" --out tools/species/lote.json --append
+//   node tools/species/generate-species-spec.mjs "Velociraptor" "Sorpresa" --out tools/species/species.new.json --append
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { validateSpec, hasErrors, speciesSlug, HABITAT_SLUGS, type SpecSheet } from "./specContract";
 // Data only: the real catalog is the ground truth of the contract. (Tests may
 // read it; application code under functions/ must never import from tools/.)
-import lote from "../../../tools/species/lote.json";
+import lote from "../../../tools/species/archive/lote.json";
 import wave1 from "../../../tools/species/species.wave1.json";
 
 const valid: SpecSheet = {

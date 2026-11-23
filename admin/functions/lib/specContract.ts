@@ -1,6 +1,6 @@
 // Ficha-spec contract, shared by Species Discovery and Art Studio.
 //
-// The canonical shape is the one already used by tools/species/lote.json and
+// The canonical shape is the one already used by tools/species/archive/lote.json and
 // produced by generate-species-spec.mjs (World Bible v7 §15.2/§15.4). This file
 // only VALIDATES it; it adds no canonical fields. Traceability data lives in
 // the separate, optional `provenance` block so it can't be confused with canon.

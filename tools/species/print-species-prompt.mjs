@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 // Prints the exact image-gen prompt for a given species + phase from a
-// ficha-spec JSON file (tools/species/lote.json, tools/species/species.wave1.json, ...),
+// ficha-spec JSON file (tools/species/archive/lote.json, tools/species/species.wave1.json, ...),
 // reusing the same prompt builders as generate-species-art.mjs. Balance is
 // generated manually in ChatGPT (see CLAUDE.md), so this is how you get its
 // prompt without running the OpenAI pipeline.
 //
 // Usage:
-//   node tools/species/print-species-prompt.mjs tools/species/lote.json "Trompeta del Alba" balance
+//   node tools/species/print-species-prompt.mjs tools/species/archive/lote.json "Trompeta del Alba" balance
 //   node tools/species/print-species-prompt.mjs tools/species/species.wave1.json "Trompeta del Alba" exceso
-//   node tools/species/print-species-prompt.mjs tools/species/lote.json "Trompeta del Alba" eco
+//   node tools/species/print-species-prompt.mjs tools/species/archive/lote.json "Trompeta del Alba" eco
 
 import { readFile } from 'node:fs/promises';
 import {
