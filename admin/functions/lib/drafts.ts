@@ -6,6 +6,7 @@ export interface DraftRow {
   fractae: string;
   edition: string;
   taxon_group: string;
+  species_id: number | null;
   status: DraftStatus;
   spec_json: string | null;
   sources_json: string | null;

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Placeholder from "./pages/Placeholder";
 import Discovery from "./pages/Discovery";
 import DraftDetail from "./pages/DraftDetail";
+import Species from "./pages/Species";
 
 type State = { status: "loading" } | { status: "anon" } | { status: "ready"; session: AdminSession };
 
@@ -54,7 +55,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/discovery" element={<Discovery />} />
           <Route path="/discovery/:id" element={<DraftDetail />} />
-          <Route path="/bestiario" element={<Placeholder title="Bestiario" phase="Fase 5" />} />
+          <Route path="/bestiario" element={<Species />} />
           <Route path="/art-studio" element={<Placeholder title="Art Studio" phase="Fases 6–10 (pendiente de decidir almacenamiento y proveedor de imágenes)" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

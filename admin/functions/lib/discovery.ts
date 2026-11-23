@@ -9,7 +9,7 @@ import { hasErrors, validateSpec, type Provenance, type SpecSheet, type SpecSour
 
 export type DraftStatus = "candidate" | "researching" | "spec_draft" | "needs_revision" | "approved" | "rejected" | "promoted";
 
-// `promoted` is intentionally unreachable here: only the future Species Manager sets it.
+// `promoted` is intentionally unreachable here: only the Species Manager sets it (promote.ts), and undoes it.
 const TRANSITIONS: Record<DraftStatus, DraftStatus[]> = {
   candidate: ["researching", "rejected"],
   researching: ["spec_draft", "rejected"],

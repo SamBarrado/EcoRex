@@ -5,7 +5,7 @@ import { GROUPS } from "../../../shared/species-sources/groups.mjs";
 import { HABITAT_SLUGS, type SpecIssue, type SpecSheet } from "../../functions/lib/specContract";
 
 interface Detail {
-  draft: { id: number; genus: string; fractae: string; edition: string; taxon_group: string; status: string; spec: SpecSheet | null; sources: { sources: { source: string; ref: string; observed?: string; note?: string; consultedAt: string }[]; consultedAt: string } | null };
+  draft: { id: number; genus: string; fractae: string; edition: string; taxon_group: string; status: string; species_id: number | null; spec: SpecSheet | null; sources: { sources: { source: string; ref: string; observed?: string; note?: string; consultedAt: string }[]; consultedAt: string } | null };
   issues: SpecIssue[];
   versions: { version: number; origin: string; note: string | null; created_at: string }[];
 }
@@ -29,6 +29,7 @@ export default function DraftDetail() {
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [wave, setWave] = useState("1");
 
   const load = useCallback(async () => {
     const r = await api<Detail>(`/drafts/${id}`);
@@ -115,6 +116,22 @@ export default function DraftDetail() {
           ))}
         </div>
         <p className="muted">Aprobar no publica nada en el juego: solo deja la ficha lista para el Bestiario.</p>
+        {draft.status === "approved" && (
+          <div className="row">
+            <label>Oleada de lanzamiento<input type="number" min={1} max={99} value={wave} onChange={(e) => setWave(e.target.value)} /></label>
+            <button disabled={busy} onClick={() => {
+              if (window.confirm(`Esto ocupa un hueco «???» libre de la oleada ${wave} en la base de datos de producción y la deja INACTIVA (los jugadores no la ven). ¿Promover?`)) void run("Especie creada (inactiva)", () => post("/promote", { launchWave: Number(wave) }));
+            }}>Promover al Bestiario (inactiva)</button>
+          </div>
+        )}
+        {draft.status === "promoted" && (
+          <div className="row">
+            <span>Promovida como especie #{draft.species_id} (inactiva hasta que haya arte). <Link to="/bestiario">Ver Bestiario</Link></span>
+            <button disabled={busy} onClick={() => {
+              if (window.confirm("El hueco vuelve a «???» y la ficha vuelve a «approved». Solo es posible mientras esté inactiva, sin arte y sin cartas. ¿Despromover?")) void run("Promoción deshecha", () => api(`/drafts/${id}/promote`, { method: "DELETE" }));
+            }}>Despromover</button>
+          </div>
+        )}
         <h4>Historial</h4>
         <ul className="list">{d.versions.map((v) => <li key={v.version}>v{v.version} · {v.origin === "ai" ? "IA" : "humano"} · {v.created_at}{v.note ? ` · ${v.note}` : ""}</li>)}</ul>
       </section>
