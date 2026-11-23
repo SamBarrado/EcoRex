@@ -15,9 +15,9 @@ INSERT OR IGNORE INTO fractae (id, slug, latin_name, child_name, icon, color, op
   (3, 'tristeza', 'Tristitia', 'Tristeza', 'gota', 'azul', NULL),
   (4, 'miedo', 'Pavor', 'Miedo', 'ojo en sombra', 'morado', NULL),
   (5, 'asco', 'Fastidium', 'Asco', 'mancha', 'verde oscuro', NULL),
-  (6, 'curiosidad', 'Spes', 'Curiosidad', 'lupa', 'lila', NULL);
-  -- Pending: Alegría (Lumen), Confianza (Fides), Curiosidad (Spes) — add when
-  -- their first species ships (docs/lore_world_bible_ecorex_v4.md §2).
+  (6, 'curiosidad', 'Spes', 'Curiosidad', 'lupa', 'lila', NULL),
+  (7, 'alegria', 'Lumen', 'Alegría', 'sol', 'amarillo', NULL),
+  (8, 'confianza', 'Fides', 'Confianza', 'escudo', 'verde', NULL);
 
 INSERT OR IGNORE INTO rarity_tiers (id, slug, name, drop_weight, sort_order) VALUES
   (1, 'registrada', 'Especie Común', 0.55, 1),
@@ -40,8 +40,8 @@ INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, ope
 -- replaces a row here in place (same id) once the species is designed —
 -- never renumber.
 INSERT OR IGNORE INTO species (id, scientific_name, common_name, fractae_id, operation_id, physical_traits, base_palette, silhouette, launch_wave, is_active) VALUES
-  (7, '???', '???', 1, NULL, NULL, NULL, NULL, 1, 0),
-  (8, '???', '???', 2, NULL, NULL, NULL, NULL, 1, 0),
+  (7, '???', '???', 7, NULL, NULL, NULL, NULL, 1, 0),
+  (8, '???', '???', 8, NULL, NULL, NULL, NULL, 1, 0),
   (9, '???', '???', 3, NULL, NULL, NULL, NULL, 2, 0),
   (10, '???', '???', 4, NULL, NULL, NULL, NULL, 2, 0),
   (11, '???', '???', 5, NULL, NULL, NULL, NULL, 2, 0),
