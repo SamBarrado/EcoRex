@@ -41,7 +41,7 @@ export default function Species() {
       <section className="panel">
         <h3>Huecos «???» libres por oleada</h3>
         <p>{data.freeSlots.length ? data.freeSlots.map((f) => <span key={f.wave} className="tag">Oleada {f.wave}: {f.n}</span>) : "Ninguno"}</p>
-        <p className="muted">Promover una ficha ocupa uno de estos huecos (mismo id) en la oleada elegida.</p>
+        <p className="muted">Promover una ficha ocupa el hueco de su Fractae (mismo id) en la oleada elegida; si ese Fractae no tiene hueco libre ahí, se rechaza.</p>
       </section>
       <section className="panel">
         <h3>Fichas aprobadas, listas para promover ({data.approved.length})</h3>

@@ -31,17 +31,19 @@ describe("promoteDraft / unpromoteDraft", () => {
     expect(await getDraft(db, 1)).toMatchObject({ status: "promoted", species_id: 7 });
   });
 
-  it("falls back to another slot of the wave when its Fractae has none, and refuses a full wave", async () => {
-    const db = setup();
-    db.sqlite.prepare("UPDATE species SET scientific_name = 'X', common_name = 'X' WHERE id = 7").run(); // Furia slot taken
-    await promoteDraft(db, (await getDraft(db, 1))!, 1);
-    expect((await getDraft(db, 1))!.species_id).toBe(8);
-    expect(db.sqlite.prepare("SELECT fractae_id FROM species WHERE id = 8").get().fractae_id).toBe(1);
+  it("never takes a slot of another Fractae: refuses when its own is taken or the wave has none", async () => {
+    const taken = setup();
+    taken.sqlite.prepare("UPDATE species SET scientific_name = 'X', common_name = 'X' WHERE id = 7").run(); // the wave-1 Furia slot is gone
+    const r = (await promoteDraft(taken, (await getDraft(taken, 1))!, 1)) as any;
+    expect(r).toMatchObject({ ok: false, status: 409 });
+    expect(r.error).toContain("Furia");
+    expect(taken.sqlite.prepare("SELECT fractae_id FROM species WHERE id = 8").get().fractae_id).toBe(2); // Sorpresa slot untouched
+    expect((await getDraft(taken, 1))!.status).toBe("approved");
 
-    const full = setup();
-    full.sqlite.prepare("UPDATE species SET scientific_name = 'X' WHERE launch_wave = 1").run();
-    expect((await promoteDraft(full, (await getDraft(full, 1))!, 1)) as any).toMatchObject({ ok: false, status: 409 });
-    expect((await getDraft(full, 1))!.status).toBe("approved");
+    const other = setup();
+    expect(await promoteDraft(other, (await getDraft(other, 1))!, 2)).toEqual({ ok: true }); // wave 2 has a Furia slot (id 9)
+    expect((await getDraft(other, 1))!.species_id).toBe(9);
+    expect((await promoteDraft(other, (await getDraft(other, 1))!, 3)) as any).toMatchObject({ ok: false }); // no longer approved
   });
 
   it("refuses drafts that are not approved, incomplete sheets, unknown Fractae and duplicates", async () => {

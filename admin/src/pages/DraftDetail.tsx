@@ -121,7 +121,7 @@ export default function DraftDetail() {
           <div className="row">
             <label>Oleada de lanzamiento<input type="number" min={1} max={99} value={wave} onChange={(e) => setWave(e.target.value)} /></label>
             <button disabled={busy} onClick={() => {
-              if (window.confirm(`Esto ocupa un hueco «???» libre de la oleada ${wave} en la base de datos de producción y la deja INACTIVA (los jugadores no la ven). ¿Promover?`)) void run("Especie creada (inactiva)", () => post("/promote", { launchWave: Number(wave) }));
+              if (window.confirm(`Esto ocupa el hueco «???» de su Fractae en la oleada ${wave} (si no hay uno libre, se rechaza) y la deja INACTIVA (los jugadores no la ven). ¿Promover?`)) void run("Especie creada (inactiva)", () => post("/promote", { launchWave: Number(wave) }));
             }}>Promover al Bestiario (inactiva)</button>
           </div>
         )}

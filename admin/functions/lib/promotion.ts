@@ -1,5 +1,5 @@
 // Species Manager: promoting an approved draft into the game's `species` table, and undoing it.
-// A promoted species fills a reserved '???' Dex slot in place and stays inactive (is_active = 0):
+// A promoted species fills the reserved '???' Dex slot of its Fractae in place and stays inactive (is_active = 0):
 // it only reaches players once curated art exists and someone activates it (a later step).
 import { approvalBlockers } from "./discovery";
 import type { DraftRow } from "./drafts";
@@ -23,18 +23,19 @@ export async function promoteDraft(db: D1Database, draft: DraftRow, launchWave: 
   const dup = await db.prepare("SELECT id FROM species WHERE scientific_name = ?").bind(spec.scientificName).first();
   if (dup) return { ok: false, status: 409, error: `Ya existe una especie con el nombre científico "${spec.scientificName}"` };
 
-  // The Dex reserves 24 slots per wave as '???' rows (scripts/seed.sql); a designed species
-  // takes one IN PLACE (same id, never renumbered). Prefer a slot of its own Fractae.
+  // The Dex reserves one '???' slot per Fractae in each wave (scripts/seed.sql, migration 0009); a
+  // designed species takes the slot of ITS Fractae in place (same id, never renumbered). No
+  // fallback to another Fractae's slot: that would leave a wave with two of one Fractae and none of another.
   const slot = await db
     .prepare(
-      `SELECT id FROM species WHERE scientific_name = '???' AND is_active = 0 AND launch_wave = ?
+      `SELECT id FROM species WHERE scientific_name = '???' AND is_active = 0 AND launch_wave = ? AND fractae_id = ?
          AND NOT EXISTS (SELECT 1 FROM species_phase_anchors a WHERE a.species_id = species.id)
          AND NOT EXISTS (SELECT 1 FROM discoveries d WHERE d.species_id = species.id)
-       ORDER BY (fractae_id = ?) DESC, id LIMIT 1`
+       ORDER BY id LIMIT 1`
     )
     .bind(launchWave, fractae.id)
     .first<{ id: number }>();
-  if (!slot) return { ok: false, status: 409, error: `La oleada ${launchWave} no tiene huecos «???» libres` };
+  if (!slot) return { ok: false, status: 409, error: `La oleada ${launchWave} no tiene un hueco «???» libre de ${spec.fractae.name}. Elige otra oleada.` };
 
   // One batch: either the slot is filled and the link set, or neither.
   await db.batch([
