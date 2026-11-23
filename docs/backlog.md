@@ -64,6 +64,7 @@ Conclusión: los quick wins amortiguan, pero la palanca de fondo es **más conte
 - **Operaciones/eventos con freshness automática**: una especie es "rara" porque es nueva y se normaliza sola con el tiempo, sin tocar `drop_weight` a mano. Encaja con el modelo de Operaciones del world bible (§7/18.3); el reparto de rareza por Operación sigue sin diseñar.
 - **Pesos por especie**: % de aparición distinto por especie dentro del pool activo (hoy el sorteo es uniforme entre `species.is_active`), independiente del sorteo de rareza.
 - **Misiones más allá de las 3 fijas**: semanales, rotación de objetivos, rachas (ver #1, #2). Merece bloque propio de diseño.
+- **Admin · pantalla de auditoría (opcional, baja prioridad).** `admin_audit_log` ya guarda cada acción (crear, generar, aprobar, promover, activar…), pero no hay pantalla para verla: se consulta con `wrangler d1 execute`. Tabla filtrable por acción y fecha; solo aporta si algún día hay más de un editor. ⏳
 
 ## 4. Decisiones (abiertas y cerradas)
 
