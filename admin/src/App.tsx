@@ -37,6 +37,7 @@ export default function App() {
     <div className="shell">
       <aside>
         <h1>Ecorex Admin</h1>
+        <img src="/logo-ecorex.webp" alt="" className="side-logo" draggable={false} />
         <nav>
           <NavLink to="/" end>Dashboard</NavLink>
           <NavLink to="/discovery">Species Discovery</NavLink>

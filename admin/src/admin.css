@@ -11,6 +11,7 @@ label { display:block; margin-bottom:1rem; }
 .login { max-width:22rem; margin:15vh auto 0; padding:2rem; background:var(--panel); border:1px solid var(--line); border-radius:10px; }
 .shell { display:grid; grid-template-columns:15rem 1fr; min-height:100vh; }
 aside { background:var(--panel); border-right:1px solid var(--line); padding:1.25rem; display:flex; flex-direction:column; gap:1rem; }
+aside .side-logo { width:100%; height:auto; max-width:9rem; margin:-.25rem auto 0; display:block; }
 aside nav { display:flex; flex-direction:column; gap:.25rem; flex:1; }
 aside nav a { color:var(--muted); text-decoration:none; padding:.5rem .75rem; border-radius:6px; }
 aside nav a.active { background:var(--bg); color:var(--fg); }
