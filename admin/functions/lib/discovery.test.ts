@@ -8,6 +8,7 @@ describe("status workflow", () => {
     expect(canTransition("candidate", "researching")).toBe(true);
     expect(canTransition("spec_draft", "approved")).toBe(true);
     expect(canTransition("needs_revision", "spec_draft")).toBe(true);
+    expect(canTransition("needs_revision", "approved")).toBe(true); // shortcut; approval still demands a complete sheet
   });
   it("cannot skip review or approve straight from a candidate", () => {
     expect(canTransition("candidate", "approved")).toBe(false);

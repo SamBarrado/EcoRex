@@ -14,7 +14,7 @@ const TRANSITIONS: Record<DraftStatus, DraftStatus[]> = {
   candidate: ["researching", "rejected"],
   researching: ["spec_draft", "rejected"],
   spec_draft: ["approved", "needs_revision", "rejected"],
-  needs_revision: ["spec_draft", "rejected"],
+  needs_revision: ["spec_draft", "approved", "rejected"], // approving straight from a revision skips the spec_draft stop; the same completeness check applies
   approved: ["needs_revision"], // reopening creates the chance of a new version; the approved one stays in history
   rejected: ["candidate"],
   promoted: [],

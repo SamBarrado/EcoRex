@@ -16,7 +16,11 @@ export const onRequestGet: PagesFunction<AdminEnv, "id", Ctx> = async ({ params,
   )
     .bind(draft.id)
     .all();
+  const species = draft.species_id
+    ? await env.DB.prepare("SELECT is_active, (SELECT COUNT(*) FROM species_phase_anchors a WHERE a.species_id = species.id) AS anchors FROM species WHERE id = ?").bind(draft.species_id).first()
+    : null;
   return Response.json({
+    species,
     draft: {
       ...draft,
       spec: draft.spec_json ? JSON.parse(draft.spec_json) : null,

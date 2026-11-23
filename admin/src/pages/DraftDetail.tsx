@@ -7,6 +7,7 @@ import { HABITAT_SLUGS, type SpecIssue, type SpecSheet } from "../../functions/l
 interface Detail {
   draft: { id: number; genus: string; fractae: string; edition: string; taxon_group: string; status: string; species_id: number | null; spec: SpecSheet | null; sources: { sources: { source: string; ref: string; observed?: string; note?: string; consultedAt: string }[]; consultedAt: string } | null };
   issues: SpecIssue[];
+  species: { is_active: number; anchors: number } | null;
   versions: { version: number; origin: string; note: string | null; created_at: string }[];
 }
 
@@ -18,7 +19,7 @@ const TEXT_FIELDS: [keyof SpecSheet, string, boolean][] = [
 const NEXT: Record<string, [string, string][]> = {
   candidate: [["rejected", "Descartar"]], researching: [["rejected", "Descartar"]],
   spec_draft: [["approved", "Aprobar ficha"], ["needs_revision", "Pedir cambios"], ["rejected", "Descartar"]],
-  needs_revision: [["spec_draft", "Volver a revisión"], ["rejected", "Descartar"]],
+  needs_revision: [["approved", "Aprobar ficha"], ["spec_draft", "Volver a revisión"], ["rejected", "Descartar"]],
   approved: [["needs_revision", "Reabrir"]], rejected: [["candidate", "Recuperar"]],
 };
 
@@ -126,10 +127,20 @@ export default function DraftDetail() {
         )}
         {draft.status === "promoted" && (
           <div className="row">
-            <span>Promovida como especie #{draft.species_id} (inactiva hasta que haya arte). <Link to="/bestiario">Ver Bestiario</Link></span>
-            <button disabled={busy} onClick={() => {
-              if (window.confirm("El hueco vuelve a «???» y la ficha vuelve a «approved». Solo es posible mientras esté inactiva, sin arte y sin cartas. ¿Despromover?")) void run("Promoción deshecha", () => api(`/drafts/${id}/promote`, { method: "DELETE" }));
-            }}>Despromover</button>
+            <span>Promovida como especie #{draft.species_id} — <b>{d.species?.is_active ? "ACTIVA en el juego" : "inactiva"}</b>. <Link to="/bestiario">Ver Bestiario</Link></span>
+            {!d.species?.is_active && <>
+              <button disabled={busy} onClick={() => {
+                if (window.confirm("Se comprueba que el arte (balance, exceso y eco .webp) ya está publicado en la PWA y la especie pasa a ser JUGABLE: entra en Percibir y en la fusión. ¿Activar?")) void run("Especie activada", () => api(`/drafts/${id}/activate`, { method: "POST" }));
+              }}>Activar en el juego</button>
+              <button disabled={busy} onClick={() => {
+                if (window.confirm("El hueco vuelve a «???» y la ficha vuelve a «approved». Solo es posible mientras esté inactiva, sin arte y sin cartas. ¿Despromover?")) void run("Promoción deshecha", () => api(`/drafts/${id}/promote`, { method: "DELETE" }));
+              }}>Despromover</button>
+            </>}
+            {d.species?.is_active === 1 && (
+              <button disabled={busy} onClick={() => {
+                if (window.confirm("La especie sale de los sorteos y se borran sus anclas. Solo es posible si ningún jugador tiene cartas suyas. ¿Desactivar?")) void run("Especie desactivada", () => api(`/drafts/${id}/activate`, { method: "DELETE" }));
+              }}>Desactivar</button>
+            )}
           </div>
         )}
         <h4>Historial</h4>

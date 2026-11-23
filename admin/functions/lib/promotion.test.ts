@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getDraft } from "./drafts";
-import { parseWave, promoteDraft, unpromoteDraft } from "./promotion";
+import { activateDraft, deactivateDraft, parseWave, promoteDraft, unpromoteDraft } from "./promotion";
 import { makeD1 } from "./testD1";
 // Data only (tests may read tools/ JSON; application code must not).
 import lote from "../../../tools/species/lote.json";
@@ -77,6 +77,47 @@ describe("promoteDraft / unpromoteDraft", () => {
       expect((await unpromoteDraft(db, (await getDraft(db, 1))!)) as any).toMatchObject({ ok: false, status: 409 });
       expect(db.sqlite.prepare("SELECT common_name FROM species WHERE id = 7").get().common_name).toBe(COMPLETE.commonName);
     }
+  });
+
+  const imgFetch = (have: string[]) => (async (url: string) => {
+    const ok = have.some((p) => String(url).includes(`/${p}.webp`));
+    // Pages answers a missing file with index.html and 200: only the content-type tells.
+    return new Response("", { status: 200, headers: { "content-type": ok ? "image/webp" : "text/html" } });
+  }) as unknown as typeof fetch;
+
+  it("activates only when all three images are published; Balance alone carries the lore", async () => {
+    const db = setup();
+    await promoteDraft(db, (await getDraft(db, 1))!, 1);
+    const d = (await getDraft(db, 1))!;
+    const r = (await activateDraft(db, d, "https://pwa.test", imgFetch(["balance", "eco"]))) as any;
+    expect(r).toMatchObject({ ok: false, status: 422 });
+    expect(r.error).toContain("exceso");
+    expect(db.sqlite.prepare("SELECT is_active FROM species WHERE id = 7").get().is_active).toBe(0);
+    expect(db.sqlite.prepare("SELECT COUNT(*) AS n FROM species_phase_anchors").get().n).toBe(0);
+
+    expect(await activateDraft(db, d, "https://pwa.test", imgFetch(["balance", "exceso", "eco"]))).toEqual({ ok: true });
+    expect(db.sqlite.prepare("SELECT is_active FROM species WHERE id = 7").get().is_active).toBe(1);
+    const slug = COMPLETE.scientificName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const anchors = db.sqlite.prepare("SELECT phase, image_url, lore_phrase FROM species_phase_anchors ORDER BY id").all();
+    expect(anchors.map((a: any) => [a.phase, a.image_url])).toEqual([["balance", `/species-art/${slug}/balance.webp`], ["exceso", `/species-art/${slug}/exceso.webp`], ["eco", `/species-art/${slug}/eco.webp`]]);
+    expect(anchors.map((a: any) => a.lore_phrase)).toEqual([COMPLETE.lorePhrase, null, null]);
+    expect((await activateDraft(db, d, "https://pwa.test", imgFetch(["balance", "exceso", "eco"]))) as any).toMatchObject({ ok: false, status: 409 });
+  });
+
+  it("refuses to activate a draft that is not promoted", async () => {
+    const db = setup();
+    expect((await activateDraft(db, (await getDraft(db, 1))!, "https://pwa.test", imgFetch([]))) as any).toMatchObject({ ok: false, status: 409 });
+  });
+
+  it("deactivates (anchors removed) only while no player has a card", async () => {
+    const db = setup();
+    await promoteDraft(db, (await getDraft(db, 1))!, 1);
+    await activateDraft(db, (await getDraft(db, 1))!, "https://pwa.test", imgFetch(["balance", "exceso", "eco"]));
+    expect(await deactivateDraft(db, (await getDraft(db, 1))!)).toEqual({ ok: true });
+    expect(db.sqlite.prepare("SELECT is_active FROM species WHERE id = 7").get().is_active).toBe(0);
+    expect(db.sqlite.prepare("SELECT COUNT(*) AS n FROM species_phase_anchors").get().n).toBe(0);
+    // and then it can be unpromoted again
+    expect(await unpromoteDraft(db, (await getDraft(db, 1))!)).toEqual({ ok: true });
   });
 
   it("validates the wave", () => {
