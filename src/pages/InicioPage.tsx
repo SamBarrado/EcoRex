@@ -110,7 +110,7 @@ export default function InicioPage() {
           onClose={() => setShowFusionUnlockModal(false)}
         />
       )}
-      <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" />
+      <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" fetchPriority="high" />
 
       {profile && (
         <div className="card">
