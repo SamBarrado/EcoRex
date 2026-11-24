@@ -8,7 +8,10 @@ exports[`economy golden master: POST /api/discover > a duplicate still advances 
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": false,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -226,7 +229,10 @@ exports[`economy golden master: POST /api/discover > a gap breaks the streak: no
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -444,7 +450,10 @@ exports[`economy golden master: POST /api/discover > an Eco duplicate of a compl
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -661,7 +670,10 @@ exports[`economy golden master: POST /api/discover > balance count reaches 5 -> 
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -888,7 +900,10 @@ exports[`economy golden master: POST /api/discover > both required missions done
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -1119,6 +1134,13 @@ exports[`economy golden master: POST /api/discover > both required missions done
       ],
       "op": "run",
       "sql": "INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
     },
     {
       "args": [
@@ -1177,7 +1199,10 @@ exports[`economy golden master: POST /api/discover > coleccionista completes wit
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -1411,6 +1436,13 @@ exports[`economy golden master: POST /api/discover > coleccionista completes wit
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -1431,7 +1463,10 @@ exports[`economy golden master: POST /api/discover > daily bonus already awarded
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -1658,7 +1693,10 @@ exports[`economy golden master: POST /api/discover > day 2 of a streak: no rewar
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -1876,7 +1914,10 @@ exports[`economy golden master: POST /api/discover > day 3 of a streak -> reward
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 1,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -2103,6 +2144,13 @@ exports[`economy golden master: POST /api/discover > day 3 of a streak -> reward
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -2123,7 +2171,10 @@ exports[`economy golden master: POST /api/discover > day 7 of a streak -> reward
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 1,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -2359,6 +2410,13 @@ exports[`economy golden master: POST /api/discover > day 7 of a streak -> reward
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -2379,7 +2437,10 @@ exports[`economy golden master: POST /api/discover > duplicate (slot already reg
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": false,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -2597,7 +2658,10 @@ exports[`economy golden master: POST /api/discover > eco drop completes the spec
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -2812,6 +2876,13 @@ exports[`economy golden master: POST /api/discover > eco drop completes the spec
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -2832,7 +2903,10 @@ exports[`economy golden master: POST /api/discover > eco drop: roll hits and the
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -3049,7 +3123,10 @@ exports[`economy golden master: POST /api/discover > eco roll hits but nothing i
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -3309,7 +3386,10 @@ exports[`economy golden master: POST /api/discover > level up -> level_up notifi
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -3525,6 +3605,13 @@ exports[`economy golden master: POST /api/discover > level up -> level_up notifi
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -3580,7 +3667,10 @@ exports[`economy golden master: POST /api/discover > new slot, common rarity (fi
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -3798,7 +3888,10 @@ exports[`economy golden master: POST /api/discover > new slot, epic rarity 1`] =
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -4014,6 +4107,13 @@ exports[`economy golden master: POST /api/discover > new slot, epic rarity 1`] =
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -4153,7 +4253,10 @@ exports[`economy golden master: POST /api/discover > percibir already done today
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -4395,7 +4498,10 @@ exports[`economy golden master: POST /api/discover > species already complete be
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -4613,7 +4719,10 @@ exports[`economy golden master: POST /api/discover > species completed by this d
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -4828,6 +4937,13 @@ exports[`economy golden master: POST /api/discover > species completed by this d
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -4896,7 +5012,10 @@ exports[`economy golden master: POST /api/discover > streak reward already claim
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -5122,7 +5241,10 @@ exports[`economy golden master: POST /api/discover > unlimited energy 1`] = `
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/balance.webp",
     "isNewSlot": true,
     "lorePhrase": "Donde pisa, la tierra arde.",
@@ -5330,7 +5452,10 @@ exports[`economy golden master: POST /api/fuse > epic rarity 1`] = `
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -5558,6 +5683,13 @@ exports[`economy golden master: POST /api/fuse > epic rarity 1`] = `
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -5578,7 +5710,10 @@ exports[`economy golden master: POST /api/fuse > fuses 5 duplicates, common rari
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -5808,7 +5943,10 @@ exports[`economy golden master: POST /api/fuse > fusion counts as a card: comple
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -6064,6 +6202,13 @@ exports[`economy golden master: POST /api/fuse > fusion counts as a card: comple
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -6084,7 +6229,10 @@ exports[`economy golden master: POST /api/fuse > fusion extends the streak and p
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 1,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -6332,6 +6480,13 @@ exports[`economy golden master: POST /api/fuse > fusion extends the streak and p
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -6352,7 +6507,10 @@ exports[`economy golden master: POST /api/fuse > fusion mission completes 1`] = 
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -6600,7 +6758,10 @@ exports[`economy golden master: POST /api/fuse > level 15+ fuses with only 4 dup
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -6823,7 +6984,10 @@ exports[`economy golden master: POST /api/fuse > level up -> level_up notificati
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -7051,6 +7215,13 @@ exports[`economy golden master: POST /api/fuse > level up -> level_up notificati
     },
     {
       "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
+    },
+    {
+      "args": [
         3,
         3,
         1,
@@ -7156,7 +7327,10 @@ exports[`economy golden master: POST /api/fuse > species already complete before
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": false,
+    "energyGained": {
+      "levelUp": 0,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -7386,7 +7560,10 @@ exports[`economy golden master: POST /api/fuse > species completed by this fusio
     "discoveredAt": "2026-11-17 12:00:00",
     "discoveryCode": "DX-DLT-DLT",
     "discoveryId": 99,
-    "energyRefilled": true,
+    "energyGained": {
+      "levelUp": 1,
+      "streak": 0,
+    },
     "imageUrl": "/species-art/rex/exceso.webp",
     "lorePhrase": "Donde pisa, la tierra arde.",
     "missionsCompleted": [
@@ -7611,6 +7788,13 @@ exports[`economy golden master: POST /api/fuse > species completed by this fusio
       ],
       "op": "run",
       "sql": "INSERT INTO notifications (user_id, type, payload) VALUES (?, ?, ?)",
+    },
+    {
+      "args": [
+        1,
+      ],
+      "op": "first",
+      "sql": "SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?",
     },
     {
       "args": [

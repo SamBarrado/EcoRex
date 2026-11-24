@@ -1,6 +1,6 @@
 import { hasCompletedAllPhases, pickRarityTier, type RarityTierRow, type SpeciesPhaseRow } from "./discovery";
 import { addXp, SPECIES_COMPLETE_XP_BONUS } from "./xp";
-import { refillEnergy } from "./energy";
+import { grantEnergy } from "./energy";
 import { getStreak, claimStreakReward } from "./streak";
 import {
   incrementMission,
@@ -78,8 +78,8 @@ export interface RecordDiscoveryResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
-  /** True when this discovery refilled the player's energy (level-up or streak reward). */
-  energyRefilled: boolean;
+  /** Energy this discovery granted, by cause (level-up and streak reward: +1 each). */
+  energyGained: { levelUp: number; streak: number };
   /** Current daily streak, and the milestone reward granted by this action (if any). */
   streak: { days: number; reward: { days: number; xp: number } | null };
 }
@@ -144,10 +144,11 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
       .run();
   }
 
-  // Levelling up or hitting a streak milestone tops energy up: keeps the
-  // session going at the moment of the biggest reward.
-  const energyRefilled = xpResult.leveledUp || streakReward !== null;
-  if (energyRefilled) await refillEnergy(db, userId, xpResult.level);
+  // Levelling up and streak milestones each give +1 energy (decided
+  // 2026-11-25; full refills were too generous).
+  const energyGained = { levelUp: xpResult.leveledUp ? 1 : 0, streak: streakReward ? 1 : 0 };
+  const energyTotal = energyGained.levelUp + energyGained.streak;
+  if (energyTotal > 0) await grantEnergy(db, userId, xpResult.level, energyTotal);
 
   return {
     discoveryId,
@@ -162,7 +163,7 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
     },
     missionsCompleted,
     dailyBonusAwarded,
-    energyRefilled,
+    energyGained,
     streak: { days: streak.days, reward: streakReward },
   };
 }
@@ -188,7 +189,7 @@ export function discoveryResponseBody(
     xp: result.xp,
     missionsCompleted: result.missionsCompleted,
     dailyBonusAwarded: result.dailyBonusAwarded,
-    energyRefilled: result.energyRefilled,
+    energyGained: result.energyGained,
     streak: result.streak,
   };
 }

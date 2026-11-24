@@ -90,7 +90,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
     (DiscoverResult & { fractaeChildName?: string; fractaeIconUrl?: string }) | null
   >(null);
   const [showXpToast, setShowXpToast] = useState(false);
-  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number; energyRefilled: boolean } | null>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number; energyGained: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -311,7 +311,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
       setLevelUpInfo({
         previousLevel: result.xp.previousLevel,
         level: result.xp.level,
-        energyRefilled: result.energyRefilled === true,
+        energyGained: result.energyGained?.levelUp ?? 0,
       });
       return;
     }
@@ -334,7 +334,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         <LevelUpScreen
           previousLevel={levelUpInfo.previousLevel}
           level={levelUpInfo.level}
-          energyRefilled={levelUpInfo.energyRefilled}
+          energyGained={levelUpInfo.energyGained}
           onClose={() => {
             setLevelUpInfo(null);
             proceedAfterCommit();

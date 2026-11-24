@@ -54,6 +54,43 @@ export async function refillEnergy(db: D1Database, userId: number, level: number
     .run();
 }
 
+/**
+ * Adds `amount` energy (capped at the max for `level`) without touching the
+ * drip anchor's partial progress. Reaching max collapses to the "full" state.
+ */
+export async function grantEnergy(
+  db: D1Database,
+  userId: number,
+  level: number,
+  amount: number
+): Promise<void> {
+  const max = maxEnergyForLevel(level);
+  const row = await db
+    .prepare("SELECT energy_count, energy_window_start, unlimited_energy FROM users WHERE id = ?")
+    .bind(userId)
+    .first<EnergyRow>();
+  if (!row || row.unlimited_energy) return;
+
+  const now = Date.now();
+  const state = computeState(row, now, max);
+  const newRemaining = Math.min(max, state.remaining + amount);
+  if (newRemaining >= max) {
+    await refillEnergy(db, userId, level);
+    return;
+  }
+  const anchor =
+    row.energy_window_start === null
+      ? now
+      : row.energy_window_start +
+        Math.floor((now - row.energy_window_start) / REGEN_INTERVAL_MS) * REGEN_INTERVAL_MS;
+  await db
+    .prepare(
+      "UPDATE users SET energy_count = ?, energy_window_start = ?, energy_last_notified_count = ? WHERE id = ?"
+    )
+    .bind(newRemaining, anchor, newRemaining, userId)
+    .run();
+}
+
 export async function getEnergyState(db: D1Database, userId: number, level: number): Promise<EnergyState> {
   const max = maxEnergyForLevel(level);
   const row = await db

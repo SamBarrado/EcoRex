@@ -13,7 +13,7 @@ function notificationText(n: AppNotification): string {
       return `¡Subiste a nivel ${(n.payload as { newLevel?: number }).newLevel ?? "?"}!`;
     case "streak_reward": {
       const { days, xp } = n.payload as { days?: number; xp?: number };
-      return `🔥 ¡Racha de ${days ?? "?"} días! +${xp ?? 0} XP y ⚡`;
+      return `🔥 ¡Racha de ${days ?? "?"} días! +${xp ?? 0} XP y +1 ⚡`;
     }
     case "energy_available": {
       const { remaining, max } = n.payload as { remaining?: number; max?: number };

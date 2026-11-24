@@ -8,7 +8,7 @@ import { D1Database } from '@cloudflare/workers-types';
 
 const STREAK_LOOKBACK_DAYS = 120;
 
-// Rewards at day 3, day 7 and every 7 days after that. Each also refills
+// Rewards at day 3, day 7 and every 7 days after that. Each also gives +1
 // energy (see recordDiscovery). Kept in code, like mission rewards.
 export const STREAK_FIRST_MILESTONE = 3;
 export const STREAK_WEEKLY_INTERVAL = 7;
