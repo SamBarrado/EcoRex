@@ -10,9 +10,9 @@ const HIDDEN_ON = ["/login", "/registro", "/elegir-usuario", "/privacidad"];
 
 const TABS = [
   { path: "/inicio", label: "Inicio" },
-  { path: "/percibir", label: "Percibir", icon: "/icons/percibir.png" },
-  { path: "/coleccion", label: "EcoDex", icon: "/icons/mi-coleccion.png" },
-  { path: "/perfil", label: "Yo", icon: "/icons/perfil.png" },
+  { path: "/percibir", label: "Percibir", icon: "/icons/percibir.webp" },
+  { path: "/coleccion", label: "EcoDex", icon: "/icons/mi-coleccion.webp" },
+  { path: "/perfil", label: "Yo", icon: "/icons/perfil.webp" },
 ];
 
 function HomeIcon() {

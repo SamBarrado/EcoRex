@@ -8,7 +8,7 @@ export default function PageHeader() {
         ←
       </button>
       <button className="page-header-logo" onClick={() => navigate("/inicio")} aria-label="Ir a Inicio">
-        <img src="/logo/logo-ecorex.png" alt="Ecorex" />
+        <img src="/logo/logo-ecorex.webp" alt="Ecorex" />
       </button>
     </div>
   );

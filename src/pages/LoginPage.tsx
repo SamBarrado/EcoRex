@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="auth-page">
       <div className="auth-badge-wrap">
         <div className="auth-badge">
-          <img src="/logo/logo-ecorex.png" alt="Ecorex" />
+          <img src="/logo/logo-ecorex.webp" alt="Ecorex" />
         </div>
       </div>
       <form onSubmit={handleSubmit} className="auth-card">

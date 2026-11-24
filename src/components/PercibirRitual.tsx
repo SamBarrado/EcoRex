@@ -385,7 +385,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
           {stageSize.width > 0 && (
             <>
               <img
-                src="/cards/sobre.png"
+                src="/cards/sobre.webp"
                 alt="Sobre de cartas Ecorex"
                 className="envelope-pack-img"
                 data-testid="envelope-pack"

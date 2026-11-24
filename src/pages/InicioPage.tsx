@@ -102,12 +102,12 @@ export default function InicioPage() {
       <PushOnboardingTile />
       {showFusionUnlockModal && (
         <FeatureUnlockModal
-          icon="/icons/altar-fusion.png"
+          icon="/icons/altar-fusion.webp"
           title="Altar de Fusión"
           onClose={() => setShowFusionUnlockModal(false)}
         />
       )}
-      <img src="/logo/logo-ecorex.png" alt="Ecorex" className="home-logo" />
+      <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" />
 
       {profile && (
         <div className="card">
@@ -173,16 +173,16 @@ export default function InicioPage() {
           onClick={() => fusionUnlocked && navigate("/fusion")}
           onKeyDown={(e) => fusionUnlocked && (e.key === "Enter" || e.key === " ") && navigate("/fusion")}
         >
-          <img className="card-icon" src="/icons/altar-fusion.png" alt="" />
+          <img className="card-icon" src="/icons/altar-fusion.webp" alt="" />
           <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
         </div>
         <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
-          <img className="card-icon" src="/icons/album.png" alt="" />
+          <img className="card-icon" src="/icons/album.webp" alt="" />
           <strong>Álbum</strong>
           <span className="coming-soon-label">Próximamente</span>
         </div>
         <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
-          <img className="card-icon" src="/icons/perfil.png" alt="" />
+          <img className="card-icon" src="/icons/perfil.webp" alt="" />
           <strong>Amigos</strong>
           <span className="coming-soon-label">Próximamente</span>
         </div>

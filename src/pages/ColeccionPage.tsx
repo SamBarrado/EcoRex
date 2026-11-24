@@ -72,7 +72,7 @@ export default function ColeccionPage() {
   return (
     <div className="page">
       <h1 className="ecodex-title">
-        <img src="/icons/album.png" alt="" className="ecodex-title-icon" />
+        <img src="/icons/album.webp" alt="" className="ecodex-title-icon" />
         EcoDex
       </h1>
       {error && (

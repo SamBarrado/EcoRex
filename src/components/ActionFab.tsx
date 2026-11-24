@@ -84,7 +84,7 @@ export default function ActionFab() {
         aria-label="Notificaciones"
         onClick={() => setShowList((v) => !v)}
       >
-        <img src="/icons/notificaciones.png" alt="" />
+        <img src="/icons/notificaciones.webp" alt="" />
         {unreadCount > 0 && <span className="action-fab-badge">{unreadCount}</span>}
       </button>
       {levelUpTo && (

@@ -51,7 +51,7 @@ describe("BottomNav avatar", () => {
     renderNav();
     await waitFor(() => expect(getMyProfileMock).toHaveBeenCalled());
     const yo = screen.getByText("Yo").closest("button")!;
-    expect(yo.querySelector("img")).toHaveAttribute("src", "/icons/perfil.png");
+    expect(yo.querySelector("img")).toHaveAttribute("src", "/icons/perfil.webp");
   });
 });
 

@@ -23,7 +23,7 @@ export function LevelUpScreen({
     <div className="level-up-screen" onClick={onClose}>
       <div className="level-up-screen-top">
         <strong className="level-up-screen-title">¡Subiste de nivel!</strong>
-        <img src="/logo/logo-ecorex.png" alt="" className="level-up-screen-avatar" />
+        <img src="/logo/logo-ecorex.webp" alt="" className="level-up-screen-avatar" />
       </div>
       <div className="level-up-screen-bottom">
         <div className="level-up-screen-levels">

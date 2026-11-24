@@ -13,7 +13,7 @@ interface Slide {
 // through to the first pack.
 const SLIDES: Slide[] = [
   {
-    image: "/logo/logo-ecorex.png",
+    image: "/logo/logo-ecorex.webp",
     title: "Hace 66 millones de años…",
     text: "Cuando los dinosaurios desaparecieron, sus emociones no se fueron con ellos. Quedaron atrapadas y dormidas, como fósiles, pero de sentimientos.",
   },
@@ -23,7 +23,7 @@ const SLIDES: Slide[] = [
     text: "Son ocho emociones puras: Alegría, Tristeza, Furia, Miedo, Confianza, Asco, Sorpresa y Curiosidad. Para mostrarse necesitan un cuerpo, y solo conocen uno: el de un dinosaurio.",
   },
   {
-    image: "/cards/sobre.png",
+    image: "/cards/sobre.webp",
     title: "Tú puedes percibirlos",
     text: "Algo ha agrietado la barrera y tú eres de los pocos que lo notan. Percibe para encontrar cartas, completa el EcoDex y fusiona las repetidas. Tu energía se recupera con el tiempo.",
   },

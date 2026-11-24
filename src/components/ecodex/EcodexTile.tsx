@@ -18,7 +18,7 @@ export interface EcodexTileProps {
 function LockedTile() {
   return (
     <div className="ecodex-tile ecodex-tile-locked">
-      <img src="/icons/carta-bloqueada.png" alt="Carta bloqueada" className="ecodex-tile-locked-img" loading="lazy" draggable={false} />
+      <img src="/icons/carta-bloqueada.webp" alt="Carta bloqueada" className="ecodex-tile-locked-img" loading="lazy" draggable={false} />
     </div>
   );
 }
