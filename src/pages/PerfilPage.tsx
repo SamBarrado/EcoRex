@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyProfile, logout, setAvatar, ProfileStats, ApiError } from "../lib/api";
 import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
 import { useAvatar } from "../lib/AvatarContext";
-import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush } from "../lib/push";
+import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush, hasActivePushSubscription } from "../lib/push";
 
 export default function PerfilPage() {
   const navigate = useNavigate();
@@ -13,16 +13,27 @@ export default function PerfilPage() {
   const { setCurrentAvatar, clearAvatar } = useAvatar();
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
-  const [pushEnabled, setPushEnabled] = useState(isPushSupported() && getNotificationPermission() === "granted");
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
   const pushDenied = isPushSupported() && getNotificationPermission() === "denied";
 
+  useEffect(() => {
+    if (!isPushSupported()) return;
+    hasActivePushSubscription().then(setPushEnabled).catch(() => setPushEnabled(false));
+  }, []);
+
   async function handleTogglePush() {
-    if (pushEnabled) {
-      await unsubscribeFromPush();
-      setPushEnabled(false);
-    } else {
-      await subscribeToPush();
-      setPushEnabled(getNotificationPermission() === "granted");
+    setPushError(null);
+    try {
+      if (pushEnabled) {
+        await unsubscribeFromPush();
+      } else {
+        await subscribeToPush();
+      }
+      setPushEnabled(await hasActivePushSubscription());
+    } catch (err) {
+      setPushError(err instanceof Error ? err.message : "No se pudieron cambiar las notificaciones.");
+      setPushEnabled(await hasActivePushSubscription().catch(() => false));
     }
   }
 
@@ -212,6 +223,7 @@ export default function PerfilPage() {
             <span>Notificaciones de energía</span>
             <input type="checkbox" checked={pushEnabled} disabled={pushDenied} onChange={handleTogglePush} />
           </div>
+          {pushError && <p role="alert">{pushError}</p>}
           {pushDenied && (
             <p>Bloqueaste los permisos de notificación en el navegador. Actívalos desde los ajustes del navegador para este sitio.</p>
           )}

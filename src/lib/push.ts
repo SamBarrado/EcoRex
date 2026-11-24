@@ -19,8 +19,19 @@ export function getNotificationPermission(): NotificationPermission {
 
 async function getVapidPublicKey(): Promise<string> {
   const response = await fetch("/api/push/vapid-public-key", { credentials: "include" });
-  const data = (await response.json()) as { publicKey: string };
+  const data = (await response.json()) as { publicKey?: string };
+  if (!data.publicKey) {
+    throw new Error("El servidor no tiene configurada la clave VAPID de notificaciones.");
+  }
   return data.publicKey;
+}
+
+// The browser permission stays "granted" after unsubscribing (a page cannot
+// revoke it), so the real on/off state is whether a push subscription exists.
+export async function hasActivePushSubscription(): Promise<boolean> {
+  if (!isPushSupported() || Notification.permission !== "granted") return false;
+  const registration = await navigator.serviceWorker.ready;
+  return (await registration.pushManager.getSubscription()) !== null;
 }
 
 export async function subscribeToPush(): Promise<void> {
@@ -35,12 +46,16 @@ export async function subscribeToPush(): Promise<void> {
   });
 
   const json = subscription.toJSON();
-  await fetch("/api/push/subscribe", {
+  const response = await fetch("/api/push/subscribe", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
   });
+  if (!response.ok) {
+    await subscription.unsubscribe();
+    throw new Error("No se pudo guardar la suscripción en el servidor.");
+  }
 }
 
 export async function unsubscribeFromPush(): Promise<void> {
