@@ -437,7 +437,12 @@ button:disabled {
 
 @keyframes ecodex-unlock-glint {
   from { transform: translateX(-130%); opacity: 1; }
-  to { transform: translateX(130%); opacity: 1; }
+  to { transform: translateX(130%); opacity: 0; }
+}
+
+/* The level ring would overlap the viewer's close button. */
+body.card-preview-open .level-hud {
+  display: none;
 }
 
 @keyframes ecodex-unlock-ring {
@@ -458,6 +463,10 @@ button:disabled {
   position: absolute;
   inset: 0;
   background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.7) 50%, transparent 70%);
+  /* Resting state is off-tile and invisible: without this the gradient stays
+     painted over the tile once the animation ends. */
+  transform: translateX(130%);
+  opacity: 0;
   animation: ecodex-unlock-glint 800ms ease-out;
 }
 

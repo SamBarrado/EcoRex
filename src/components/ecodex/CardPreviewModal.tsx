@@ -13,8 +13,10 @@ export function CardPreviewModal({ slot, onClose }: CardPreviewModalProps) {
   useLayoutEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.body.classList.add("card-preview-open");
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.classList.remove("card-preview-open");
     };
   }, []);
 
