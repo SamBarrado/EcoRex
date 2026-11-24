@@ -13,6 +13,7 @@ import ActionFab from "./components/ActionFab";
 import BottomNav from "./components/BottomNav";
 import Atmosphere from "./components/Atmosphere";
 import LevelHud from "./components/LevelHud";
+import DesktopNotice from "./components/DesktopNotice";
 import { NavVisibilityProvider } from "./lib/NavVisibilityContext";
 import { NotificationsProvider } from "./lib/NotificationsContext";
 import { PlayerProvider } from "./lib/PlayerContext";
@@ -30,6 +31,7 @@ function Shell() {
             <Outlet />
             <BottomNav />
             <LevelHud />
+            <DesktopNotice />
           </AvatarProvider>
         </NotificationsProvider>
       </PlayerProvider>
