@@ -2093,6 +2093,7 @@ body.card-preview-open .level-hud {
   top: 0.35rem;
   bottom: calc(0.35rem + env(safe-area-inset-bottom));
   left: 0.5rem;
+  box-sizing: border-box; /* si no, el borde de 1px ensancha la píldora y se desalinea ~2px por pestaña */
   width: calc((100% - 1rem) / 4);
   border-radius: 15px;
   background: rgba(127, 200, 145, 0.14);
