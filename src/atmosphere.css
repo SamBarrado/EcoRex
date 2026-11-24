@@ -28,11 +28,23 @@
 }
 
 .atm-c {
+  /* Más grande que la pantalla para poder derivar sin enseñar bordes */
   position: absolute;
-  inset: 0;
+  inset: -8%;
   display: block;
   opacity: 0;
   transition: opacity 1000ms ease;
+  animation: atm-drift 14s ease-in-out infinite alternate;
+}
+
+/* Deriva lenta de la luz de cada pantalla (solo transform: barato en móvil) */
+@keyframes atm-drift {
+  from {
+    transform: translate3d(-2.5%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.08);
+  }
 }
 
 .atm[data-ctx="inicio"] .atm-c-inicio,
@@ -196,6 +208,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .atm-c,
   .atm-spot,
   .atm-dust i,
   .atm-shine,

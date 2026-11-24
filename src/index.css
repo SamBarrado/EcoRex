@@ -536,8 +536,7 @@ body.card-preview-open .level-hud {
   margin: 0 auto;
   padding: clamp(1rem, 4vh, 2rem) 1.25rem calc(clamp(1rem, 4vh, 2rem) + env(safe-area-inset-bottom));
   box-sizing: border-box;
-  background: radial-gradient(120% 80% at 50% 0%, rgba(63, 174, 90, 0.35), transparent 60%),
-    linear-gradient(160deg, #1c3624 0%, #16351f 40%, #0f2115 100%);
+  /* Sin fondo propio: deja ver la atmósfera global (Atmosphere) también en login/registro */
 }
 
 @supports (height: 100dvh) {
