@@ -96,10 +96,11 @@ describe("InicioPage", () => {
     await screen.findByText("Nivel 2");
 
     // Eco is no longer a "mode": it's a rare drop of Percibir, so it has no tile.
-    expect(screen.getAllByText("Próximamente")).toHaveLength(2);
+    // Álbum y Amigos están ocultos (SHOW_COMING_SOON_TILES = false).
+    expect(screen.queryByText("Próximamente")).toBeNull();
     expect(screen.queryByLabelText("Eco, próximamente")).toBeNull();
-    expect(screen.getByLabelText("Álbum, próximamente")).toBeTruthy();
-    expect(screen.getByLabelText("Amigos, próximamente")).toBeTruthy();
+    expect(screen.queryByLabelText("Álbum, próximamente")).toBeNull();
+    expect(screen.queryByLabelText("Amigos, próximamente")).toBeNull();
     // The Fusion Altar keeps its lock: it's unlockable, unlike the others.
     expect(screen.getByText(/Altar de Fusión/).textContent).toContain("🔒");
   });

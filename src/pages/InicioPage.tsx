@@ -22,6 +22,9 @@ import { version } from "../../package.json";
 
 const FUSION_UNLOCK_SEEN_KEY = "ecorex_unlock_seen_fusion";
 
+// Pon a true para volver a mostrar las tarjetas de Álbum y Amigos.
+const SHOW_COMING_SOON_TILES = false;
+
 export default function InicioPage() {
   const navigate = useAppNavigate();
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
@@ -166,26 +169,35 @@ export default function InicioPage() {
 
       <div className="grid grid-compact">
         <div
-          className={fusionUnlocked ? "card card-clickable card-compact" : "card card-compact"}
-          style={{ opacity: fusionUnlocked ? 1 : 0.5 }}
+          className={fusionUnlocked ? "card card-clickable card-altar card-altar-unlocked" : "card card-altar"}
           role={fusionUnlocked ? "button" : undefined}
           tabIndex={fusionUnlocked ? 0 : undefined}
           onClick={() => fusionUnlocked && navigate("/fusion")}
           onKeyDown={(e) => fusionUnlocked && (e.key === "Enter" || e.key === " ") && navigate("/fusion")}
         >
           <img className="card-icon" src="/icons/altar-fusion.webp" alt="" />
-          <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
+          <div className="card-altar-text">
+            <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
+            <span className="card-altar-hint">
+              {fusionUnlocked ? `Fusiona ${fusionThreshold} cartas Balance en una nueva` : "Aún bloqueado"}
+            </span>
+          </div>
         </div>
-        <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
-          <img className="card-icon" src="/icons/album.webp" alt="" />
-          <strong>Álbum</strong>
-          <span className="coming-soon-label">Próximamente</span>
-        </div>
-        <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
-          <img className="card-icon" src="/icons/perfil.webp" alt="" />
-          <strong>Amigos</strong>
-          <span className="coming-soon-label">Próximamente</span>
-        </div>
+        {/* Álbum y Amigos: ocultos hasta que estén definidos y desarrollados. */}
+        {SHOW_COMING_SOON_TILES && (
+          <>
+            <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
+              <img className="card-icon" src="/icons/album.webp" alt="" />
+              <strong>Álbum</strong>
+              <span className="coming-soon-label">Próximamente</span>
+            </div>
+            <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
+              <img className="card-icon" src="/icons/perfil.webp" alt="" />
+              <strong>Amigos</strong>
+              <span className="coming-soon-label">Próximamente</span>
+            </div>
+          </>
+        )}
       </div>
       <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>
     </div>
