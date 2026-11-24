@@ -226,6 +226,15 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   }
 
   function handleTapEnvelope() {
+    // Tapping the pack again while it is brought close puts it back (nothing
+    // is spent until the seam is torn), and the nav returns with it.
+    if (phase === "sealed" && peeking && !draggingRef.current && !committedRef.current) {
+      vibrate(10);
+      setPeeking(false);
+      setDragProgress(0);
+      showNav();
+      return;
+    }
     if (phase !== "sealed" || peeking || !species.length || energyDepleted) return;
     vibrate(15);
     hideNav();
@@ -411,7 +420,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
                       ? "Toca el sobre para abrirlo"
                       : phase === "opening"
                         ? "Percibiendo..."
-                        : "Desliza de izquierda a derecha para abrir"}
+                        : "Desliza de izquierda a derecha para abrir · toca el sobre para guardarlo"}
               </p>
 
               {peeking && (

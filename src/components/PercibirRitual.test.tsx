@@ -92,6 +92,19 @@ describe("PercibirRitual", () => {
     expect(screen.getByText(/desliza de izquierda a derecha/i)).toBeInTheDocument();
   });
 
+  it("puts the pack back when it is tapped again while brought close", () => {
+    const discoverFn = vi.fn();
+    renderRitual({ discoverFn });
+    openPeek();
+    expect(screen.getByTestId("envelope-drag-line")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("envelope-pack"));
+
+    expect(screen.queryByTestId("envelope-drag-line")).not.toBeInTheDocument();
+    expect(screen.getByText(/toca el sobre para abrirlo/i)).toBeInTheDocument();
+    expect(discoverFn).not.toHaveBeenCalled();
+  });
+
   it("does not call discoverFn when the drag doesn't reach the tear threshold", () => {
     const discoverFn = vi.fn();
     renderRitual({ discoverFn });
