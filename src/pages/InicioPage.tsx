@@ -5,6 +5,9 @@ import {
   getMyProfile,
   getEnergy,
   getMissions,
+  getOnboarding,
+  claimOnboarding,
+  OnboardingState,
   ProfileStats,
   EnergyState,
   MissionsState,
@@ -14,6 +17,11 @@ import {
 import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
 import { MissionsCard } from "../components/MissionsCard";
 import { HomeHero } from "../components/HomeHero";
+import { OnboardingChecklist } from "../components/OnboardingChecklist";
+import { usePlayer } from "../lib/PlayerContext";
+import { useNotifications } from "../lib/NotificationsContext";
+import { useAchievements } from "../lib/AchievementsContext";
+import { FIRST_STEPS_ACHIEVEMENT } from "../lib/achievements";
 import { FusionProgressCard } from "../components/FusionProgressCard";
 import { WelcomeFlow, hasSeenWelcome, markWelcomeSeen } from "../components/WelcomeFlow";
 import PushOnboardingTile from "../components/PushOnboardingTile";
@@ -26,6 +34,10 @@ const SHOW_COMING_SOON_TILES = false;
 
 export default function InicioPage() {
   const navigate = useAppNavigate();
+  const { refresh: refreshPlayer } = usePlayer();
+  const { refetch: refetchNotifications } = useNotifications();
+  const { announce } = useAchievements();
+  const [onboarding, setOnboarding] = useState<OnboardingState | null>(null);
   const [fusionUnlocked, setFusionUnlocked] = useState(false);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [energy, setEnergy] = useState<EnergyState | null>(null);
@@ -74,12 +86,32 @@ export default function InicioPage() {
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
+    // "Primeros pasos": when the last step is done, collect the prize (the
+    // server re-checks it and pays once) and celebrate with a medal.
+    getOnboarding()
+      .then((state) => {
+        setOnboarding(state);
+        if (!state.eligible || state.rewardClaimed || !state.steps.every((s) => s.done)) return;
+        claimOnboarding()
+          .then((result) => {
+            if (!result.claimed) return;
+            setOnboarding({ ...state, rewardClaimed: true });
+            refreshPlayer();
+            refetchNotifications();
+            void announce([FIRST_STEPS_ACHIEVEMENT]);
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
     getMissions()
       .then(setMissions)
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) navigate("/login");
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
+
+  const showChecklist = !!onboarding && onboarding.eligible && !onboarding.rewardClaimed;
 
   return (
     <div className="page">
@@ -92,7 +124,7 @@ export default function InicioPage() {
           }}
         />
       )}
-      <PushOnboardingTile />
+      {!showChecklist && <PushOnboardingTile />}
       {showFusionUnlockModal && (
         <FeatureUnlockModal
           icon="/icons/altar-fusion.webp"
@@ -101,6 +133,8 @@ export default function InicioPage() {
         />
       )}
       <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" fetchPriority="high" />
+
+      {onboarding && showChecklist && <OnboardingChecklist state={onboarding} onGo={navigate} />}
 
       {profile && <HomeHero profile={profile} energy={energy} streak={missions?.streak} now={now} />}
 

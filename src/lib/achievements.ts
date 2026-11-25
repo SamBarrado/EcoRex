@@ -88,3 +88,13 @@ export function achievementsFromResult(
 
   return [...medals, ...banners];
 }
+
+/** The "Primeros pasos" prize: not derived from a discovery, the checklist raises it. */
+export const FIRST_STEPS_ACHIEVEMENT: Achievement = {
+  id: "firststeps",
+  kind: "medal",
+  icon: "🎓",
+  title: "Primeros pasos completados",
+  subtitle: "+50 XP y la energía al máximo",
+  color: "#ffd54a",
+};

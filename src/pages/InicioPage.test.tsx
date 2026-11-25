@@ -1,13 +1,18 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, act, cleanup, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import InicioPage from "./InicioPage";
-import type { ProfileStats, EnergyState, MissionsState } from "../lib/api";
+import type { ProfileStats, EnergyState, MissionsState, OnboardingState } from "../lib/api";
+import { NotificationsProvider } from "../lib/NotificationsContext";
+import { AchievementsProvider } from "../lib/AchievementsContext";
 
 const getFuseEligibleMock = vi.fn();
 const getMyProfileMock = vi.fn();
 const getEnergyMock = vi.fn();
 const getMissionsMock = vi.fn();
+const getOnboardingMock = vi.fn();
+const claimOnboardingMock = vi.fn();
+const getNotificationsMock = vi.fn();
 
 vi.mock("../lib/api", async () => {
   const actual = await vi.importActual<typeof import("../lib/api")>("../lib/api");
@@ -17,6 +22,9 @@ vi.mock("../lib/api", async () => {
     getMyProfile: (...args: unknown[]) => getMyProfileMock(...args),
     getEnergy: (...args: unknown[]) => getEnergyMock(...args),
     getMissions: (...args: unknown[]) => getMissionsMock(...args),
+    getOnboarding: (...args: unknown[]) => getOnboardingMock(...args),
+    claimOnboarding: (...args: unknown[]) => claimOnboardingMock(...args),
+    getNotifications: (...args: unknown[]) => getNotificationsMock(...args),
   };
 });
 
@@ -39,10 +47,31 @@ const profile: ProfileStats = {
 function renderPage() {
   return render(
     <MemoryRouter>
-      <InicioPage />
+      <NotificationsProvider>
+        <AchievementsProvider>
+          <InicioPage />
+        </AchievementsProvider>
+      </NotificationsProvider>
     </MemoryRouter>
   );
 }
+
+const veteran: OnboardingState = {
+  eligible: false,
+  rewardClaimed: false,
+  steps: ["account", "pack", "ecodex", "push", "mission"].map((slug) => ({ slug, done: false })) as OnboardingState["steps"],
+};
+
+const newcomer = (done: string[]): OnboardingState => ({
+  eligible: true,
+  rewardClaimed: false,
+  steps: (["account", "pack", "ecodex", "push", "mission"] as const).map((slug) => ({ slug, done: done.includes(slug) })),
+});
+
+beforeEach(() => {
+  getOnboardingMock.mockResolvedValue(veteran);
+  getNotificationsMock.mockResolvedValue({ notifications: [] });
+});
 
 afterEach(() => {
   cleanup();
@@ -137,10 +166,14 @@ describe("InicioPage", () => {
 
     render(
       <MemoryRouter initialEntries={["/inicio"]}>
-        <Routes>
-          <Route path="/inicio" element={<InicioPage />} />
-          <Route path="/percibir" element={<div>Pantalla de percibir</div>} />
-        </Routes>
+        <NotificationsProvider>
+          <AchievementsProvider>
+            <Routes>
+              <Route path="/inicio" element={<InicioPage />} />
+              <Route path="/percibir" element={<div>Pantalla de percibir</div>} />
+            </Routes>
+          </AchievementsProvider>
+        </NotificationsProvider>
       </MemoryRouter>
     );
     expect(await screen.findByText("Hace 66 millones de años…")).toBeTruthy();
@@ -195,5 +228,67 @@ describe("InicioPage", () => {
     expect(screen.getByText("¡Juega hoy para no perder tu racha de 2 días seguidos!")).toBeTruthy();
     expect(screen.getByText(/Próxima fusión:/).textContent).toContain("Rex de Fuego");
     expect(screen.getByText("3/5")).toBeTruthy();
+  });
+
+  it("shows the Primeros pasos checklist to a new account, with progress and the prize", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+    getOnboardingMock.mockResolvedValue(newcomer(["account", "pack"]));
+
+    renderPage();
+    expect(await screen.findByText("Primeros pasos")).toBeTruthy();
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("2");
+    expect(screen.getByText("+50 XP y ⚡ llena")).toBeTruthy();
+    expect(screen.getByText(/Visitar tu EcoDex/)).toBeTruthy();
+    expect(claimOnboardingMock).not.toHaveBeenCalled();
+  });
+
+  it("never shows the checklist to a veteran account, nor once the prize was claimed", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    renderPage();
+    await screen.findByText("Nivel 2 · Explorador");
+    expect(screen.queryByText("Primeros pasos")).toBeNull();
+    cleanup();
+
+    getOnboardingMock.mockResolvedValue({ ...newcomer(["account", "pack", "ecodex", "push", "mission"]), rewardClaimed: true });
+    renderPage();
+    await screen.findByText("Nivel 2 · Explorador");
+    expect(screen.queryByText("Primeros pasos")).toBeNull();
+    expect(claimOnboardingMock).not.toHaveBeenCalled();
+  });
+
+  it("claims the prize when every step is done and celebrates with a medal", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+    getOnboardingMock.mockResolvedValue(newcomer(["account", "pack", "ecodex", "push", "mission"]));
+    claimOnboardingMock.mockResolvedValue({ claimed: true, xp: { xpGained: 50, level: 2, previousLevel: 2, leveledUp: false } });
+
+    renderPage();
+    expect(await screen.findByRole("dialog", { name: "Primeros pasos completados" })).toBeTruthy();
+    expect(claimOnboardingMock).toHaveBeenCalledTimes(1);
+    // The checklist leaves once the prize is paid.
+    expect(screen.queryByRole("progressbar", { name: "" })).toBeNull();
+  });
+
+  it("stays quiet when the server says there was nothing to claim", async () => {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+    getOnboardingMock.mockResolvedValue(newcomer(["account", "pack", "ecodex", "push", "mission"]));
+    claimOnboardingMock.mockResolvedValue({ claimed: false });
+
+    renderPage();
+    await screen.findByText("Nivel 2 · Explorador");
+    await act(async () => {});
+    expect(screen.queryByRole("dialog", { name: "Primeros pasos completados" })).toBeNull();
   });
 });

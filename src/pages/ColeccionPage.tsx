@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getDex, DexSlot, DexSlotRevealed, ApiError } from "../lib/api";
+import { getDex, markEcodexVisited, DexSlot, DexSlotRevealed, ApiError } from "../lib/api";
 import { PhaseFilter } from "../components/ecodex/PhaseFilter";
 import { EcodexTile } from "../components/ecodex/EcodexTile";
 import { CardPreviewModal } from "../components/ecodex/CardPreviewModal";
@@ -31,6 +31,15 @@ export default function ColeccionPage() {
       .then((data) => {
         setCurrentWave(data.currentWave);
         setSlots(data.slots);
+        // "Visitar tu EcoDex" step of Primeros pasos. Best effort, once per session.
+        try {
+          if (!sessionStorage.getItem("ecorex_ecodex_marked")) {
+            sessionStorage.setItem("ecorex_ecodex_marked", "1");
+            markEcodexVisited().catch(() => {});
+          }
+        } catch {
+          // Storage unavailable: skip the mark, the step just stays pending.
+        }
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {

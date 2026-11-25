@@ -1875,20 +1875,167 @@ body.card-preview-open .notif-bell-wrap {
   gap: 1rem;
 }
 
-.welcome-dots {
+.welcome-prog {
   display: flex;
-  gap: 0.5rem;
+  gap: 6px;
+  flex: none;
+  margin-bottom: 0.8rem;
 }
 
-.welcome-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+.welcome-prog i {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  transition: background 400ms;
+}
+
+.welcome-prog i.on {
+  background: linear-gradient(90deg, #3fae5a, #86efac);
+  box-shadow: 0 0 8px rgba(134, 239, 172, 0.5);
+}
+
+/* Cuento animado: cada elemento de la escena entra en cascada (--k) */
+.story-in {
+  animation: story-in 650ms cubic-bezier(0.2, 0.9, 0.3, 1) calc(var(--k, 0) * 170ms) both;
+}
+
+@keyframes story-in {
+  from { opacity: 0; transform: translateY(22px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.story-pulse {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  display: grid;
+  place-items: center;
+}
+
+.story-pulse img {
+  position: relative;
+  z-index: 1;
+  width: 170px;
+  max-width: none;
+  max-height: none;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
+}
+
+.story-pulse > i {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  background: #2f4a35;
+  border: 2px solid rgba(86, 214, 130, 0.55);
+  animation: story-ringout 3000ms ease-out infinite;
 }
 
-.welcome-dot-active {
-  background: #3fae5a;
+.story-pulse > i:nth-child(2) { animation-delay: -1000ms; }
+.story-pulse > i:nth-child(3) { animation-delay: -2000ms; }
+
+@keyframes story-ringout {
+  from { transform: scale(0.55); opacity: 0.9; }
+  to { transform: scale(1.35); opacity: 0; }
+}
+
+.story-orbit-wrap {
+  position: relative;
+  width: 270px;
+  height: 270px;
+}
+
+.story-orbit {
+  position: absolute;
+  inset: 0;
+  animation: story-spin 38s linear infinite;
+}
+
+.story-orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, hsl(var(--oh) 90% 82%), hsl(var(--oh) 75% 50%));
+  box-shadow: 0 0 14px hsl(var(--oh) 90% 60% / 0.8);
+  transform: rotate(calc(var(--a) * 1deg)) translateY(-120px);
+}
+
+.story-orbit-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160px;
+  height: 160px;
+  max-width: none;
+  max-height: none;
+  margin: -80px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 62% 40%;
+  border: 3px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 40px rgba(60, 130, 230, 0.45);
+}
+
+@keyframes story-spin { to { transform: rotate(360deg); } }
+
+.story-packshine {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.story-packshine img {
+  display: block;
+  width: 150px;
+  max-width: none;
+  max-height: none;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+}
+
+.story-packshine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.5) 48%, transparent 60%);
+  transform: translateX(-120%);
+  animation: story-sheen 3000ms ease-in-out infinite;
+}
+
+@keyframes story-sheen { to { transform: translateX(120%); } }
+
+/* Tres rayos que se encienden uno a uno: la energía */
+.story-bolts {
+  display: flex;
+  gap: 7px;
+}
+
+.story-bolts i {
+  width: 18px;
+  height: 30px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  transform: skewX(-14deg);
+  animation: story-bolt-on 300ms ease-out calc(900ms + var(--i) * 260ms) both;
+}
+
+@keyframes story-bolt-on {
+  to { background: #ffd86b; box-shadow: 0 0 10px rgba(255, 216, 107, 0.75); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-in,
+  .story-pulse > i,
+  .story-orbit,
+  .story-packshine::after {
+    animation: none;
+  }
+  .story-bolts i {
+    animation: none;
+    background: #ffd86b;
+  }
 }
 
 /* Barra inferior: píldora que se desliza bajo la pestaña activa (diseño elegido el 2026-11-18) */
@@ -2771,4 +2918,160 @@ body.card-preview-open .notif-bell-wrap {
   margin-top: 0.35rem;
   font-size: 0.72rem;
   color: #7fa98a;
+}
+
+/* Registro · carnet de explorador (la tarjeta se rellena según se escribe el nombre y se elige avatar) */
+.id-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  margin: 0 0 0.9rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1e5030, #0e2a19);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.id-card-photo {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 2px solid #ffd54a;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.id-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.id-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.id-card-body small {
+  font: 800 0.62rem "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: 0.22em;
+  color: #86efac;
+}
+
+.id-card-name {
+  font: 800 1.55rem/1.1 "Barlow Condensed", system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: id-card-bump 260ms ease-out;
+}
+
+.id-card-body span {
+  font-size: 0.76rem;
+  color: #b9d3c0;
+}
+
+.id-card-foil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.22) 46%, transparent 60%);
+  transform: translateX(-120%);
+  animation: id-card-sheen 4200ms ease-in-out infinite;
+  pointer-events: none;
+}
+
+.id-avatars {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 1rem;
+}
+
+.id-avatar {
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 3px solid transparent;
+  box-shadow: none;
+  transition: transform 200ms, border-color 200ms;
+}
+
+.id-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.id-avatar.on {
+  border-color: #ffd54a;
+  transform: scale(1.1);
+}
+
+@keyframes id-card-bump { 40% { transform: scale(1.06); } }
+@keyframes id-card-sheen { to { transform: translateX(120%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .id-card-name,
+  .id-card-foil {
+    animation: none;
+  }
+}
+
+/* Primeros pasos (checklist con premio) */
+.onboarding-steps {
+  list-style: none;
+  margin: 0.5rem 0 0.6rem;
+  padding: 0;
+}
+
+.onboarding-steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.9rem;
+}
+
+.onboarding-box {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  border: 2px solid #3d5a46;
+  font-size: 0.75rem;
+  color: #06120a;
+}
+
+.onboarding-steps li.done .onboarding-box {
+  background: #3fae5a;
+  border-color: #3fae5a;
+}
+
+.onboarding-steps li.done .onboarding-label {
+  color: #7fa98a;
+  text-decoration: line-through;
+}
+
+.onboarding-label {
+  flex: 1;
+}
+
+.onboarding-mini {
+  padding: 0.25rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
 }

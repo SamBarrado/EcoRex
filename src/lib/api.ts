@@ -145,6 +145,29 @@ export interface StreakState {
   nextMilestoneXp: number;
 }
 
+export interface OnboardingState {
+  /** The account is new enough for the "Primeros pasos" checklist. */
+  eligible: boolean;
+  /** The one-off prize was already paid. */
+  rewardClaimed: boolean;
+  steps: Array<{ slug: "account" | "pack" | "ecodex" | "push" | "mission"; done: boolean }>;
+}
+
+export function getOnboarding() {
+  return request<OnboardingState>("/api/onboarding");
+}
+
+export function markEcodexVisited() {
+  return request<{ ok: boolean }>("/api/onboarding/ecodex", { method: "POST" });
+}
+
+export function claimOnboarding() {
+  return request<{ claimed: boolean; xp?: { xpGained: number; level: number; previousLevel: number; leveledUp: boolean } }>(
+    "/api/onboarding/claim",
+    { method: "POST" },
+  );
+}
+
 export function getMissions() {
   return request<MissionsState>("/api/missions");
 }

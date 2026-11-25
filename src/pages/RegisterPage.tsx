@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register, ApiError } from "../lib/api";
+import { register, setAvatar, ApiError } from "../lib/api";
+import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
 import { MailIcon, UserIcon, LockIcon } from "../components/AuthIcons";
 import GoogleButton from "../components/GoogleButton";
 
@@ -9,6 +10,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
+  // The explorer card needs a photo: the first avatar is pre-picked, the player can change it.
+  const [avatar, setAvatarChoice] = useState<string>(AVATAR_IDS[0]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -18,6 +21,9 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register({ email, password, display_name: displayName });
+      // Registering does not take an avatar: set the chosen one right after (the
+      // session cookie is already there). Failing here must not block the sign-up.
+      await setAvatar(avatar).catch(() => {});
       navigate("/inicio");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Error al registrarse");
@@ -34,7 +40,35 @@ export default function RegisterPage() {
         </div>
       </div>
       <form onSubmit={handleSubmit} className="auth-card">
-        <h1 className="auth-title">Crear cuenta</h1>
+        <h1 className="auth-title">Tu carnet de explorador</h1>
+
+        <div className="id-card">
+          <div className="id-card-photo">
+            <img src={avatarUrl(avatar)} alt="" />
+          </div>
+          <div className="id-card-body">
+            <small>CARNET DE EXPLORADOR</small>
+            <b className="id-card-name" key={displayName}>{displayName || "Tu nombre"}</b>
+            <span>Nivel 1 · Explorador Novato</span>
+          </div>
+          <i className="id-card-foil" aria-hidden="true" />
+        </div>
+
+        <div className="id-avatars" role="radiogroup" aria-label="Elige tu avatar">
+          {AVATAR_IDS.map((id, i) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={avatar === id}
+              aria-label={`Avatar ${i + 1}`}
+              className={`id-avatar${avatar === id ? " on" : ""}`}
+              onClick={() => setAvatarChoice(id)}
+            >
+              <img src={avatarUrl(id)} alt="" />
+            </button>
+          ))}
+        </div>
 
         <GoogleButton />
 
@@ -82,7 +116,7 @@ export default function RegisterPage() {
         {error && <p className="error">{error}</p>}
 
         <button type="submit" className="auth-submit" disabled={loading}>
-          {loading ? "Creando..." : "Registrarme"}
+          {loading ? "Creando..." : "Crear mi carnet"}
         </button>
 
         <p className="auth-switch">
