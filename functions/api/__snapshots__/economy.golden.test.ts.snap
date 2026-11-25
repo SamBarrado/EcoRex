@@ -24,6 +24,7 @@ exports[`economy golden master: POST /api/discover > a duplicate still advances 
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -245,6 +246,7 @@ exports[`economy golden master: POST /api/discover > a gap breaks the streak: no
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -466,6 +468,7 @@ exports[`economy golden master: POST /api/discover > an Eco duplicate of a compl
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -686,6 +689,7 @@ exports[`economy golden master: POST /api/discover > balance count reaches 5 -> 
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -917,6 +921,7 @@ exports[`economy golden master: POST /api/discover > both required missions done
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -1216,6 +1221,7 @@ exports[`economy golden master: POST /api/discover > coleccionista completes wit
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -1479,6 +1485,7 @@ exports[`economy golden master: POST /api/discover > daily bonus already awarded
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -1709,6 +1716,7 @@ exports[`economy golden master: POST /api/discover > day 2 of a streak: no rewar
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 2,
@@ -1930,6 +1938,7 @@ exports[`economy golden master: POST /api/discover > day 3 of a streak -> reward
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 3,
@@ -2187,6 +2196,7 @@ exports[`economy golden master: POST /api/discover > day 7 of a streak -> reward
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 7,
@@ -2453,6 +2463,7 @@ exports[`economy golden master: POST /api/discover > duplicate (slot already reg
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -2674,6 +2685,7 @@ exports[`economy golden master: POST /api/discover > eco drop completes the spec
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": true,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -2919,6 +2931,7 @@ exports[`economy golden master: POST /api/discover > eco drop: roll hits and the
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -3139,6 +3152,7 @@ exports[`economy golden master: POST /api/discover > eco roll hits but nothing i
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -3402,6 +3416,7 @@ exports[`economy golden master: POST /api/discover > level up -> level_up notifi
       "slug": "epica",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -3683,6 +3698,7 @@ exports[`economy golden master: POST /api/discover > new slot, common rarity (fi
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -3904,6 +3920,7 @@ exports[`economy golden master: POST /api/discover > new slot, epic rarity 1`] =
       "slug": "epica",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -4267,6 +4284,7 @@ exports[`economy golden master: POST /api/discover > percibir already done today
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -4514,6 +4532,7 @@ exports[`economy golden master: POST /api/discover > species already complete be
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -4735,6 +4754,7 @@ exports[`economy golden master: POST /api/discover > species completed by this d
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": true,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -5028,6 +5048,7 @@ exports[`economy golden master: POST /api/discover > streak reward already claim
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 3,
@@ -5257,6 +5278,7 @@ exports[`economy golden master: POST /api/discover > unlimited energy 1`] = `
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -5467,6 +5489,7 @@ exports[`economy golden master: POST /api/fuse > epic rarity 1`] = `
       "slug": "epica",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -5725,6 +5748,7 @@ exports[`economy golden master: POST /api/fuse > fuses 5 duplicates, common rari
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -5960,6 +5984,7 @@ exports[`economy golden master: POST /api/fuse > fusion counts as a card: comple
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -6244,6 +6269,7 @@ exports[`economy golden master: POST /api/fuse > fusion extends the streak and p
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 3,
@@ -6522,6 +6548,7 @@ exports[`economy golden master: POST /api/fuse > fusion mission completes 1`] = 
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -6773,6 +6800,7 @@ exports[`economy golden master: POST /api/fuse > level 15+ fuses with only 4 dup
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -6999,6 +7027,7 @@ exports[`economy golden master: POST /api/fuse > level up -> level_up notificati
       "slug": "epica",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -7342,6 +7371,7 @@ exports[`economy golden master: POST /api/fuse > species already complete before
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": false,
     "speciesId": 7,
     "streak": {
       "days": 1,
@@ -7575,6 +7605,7 @@ exports[`economy golden master: POST /api/fuse > species completed by this fusio
       "slug": "registrada",
     },
     "scientificName": "Tyrannosaurus imperator",
+    "speciesCompleted": true,
     "speciesId": 7,
     "streak": {
       "days": 1,

@@ -78,6 +78,8 @@ export interface RecordDiscoveryResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
+  /** This action completed Balance + Exceso + Eco of the species for the first time. */
+  speciesCompleted: boolean;
   /** Energy this discovery granted, by cause (level-up and streak reward: +1 each). */
   energyGained: { levelUp: number; streak: number };
   /** Current daily streak, and the milestone reward granted by this action (if any). */
@@ -163,6 +165,7 @@ export async function recordDiscovery(params: RecordDiscoveryParams): Promise<Re
     },
     missionsCompleted,
     dailyBonusAwarded,
+    speciesCompleted: justCompletedSpecies,
     energyGained,
     streak: { days: streak.days, reward: streakReward },
   };
@@ -189,6 +192,7 @@ export function discoveryResponseBody(
     xp: result.xp,
     missionsCompleted: result.missionsCompleted,
     dailyBonusAwarded: result.dailyBonusAwarded,
+    speciesCompleted: result.speciesCompleted,
     energyGained: result.energyGained,
     streak: result.streak,
   };
