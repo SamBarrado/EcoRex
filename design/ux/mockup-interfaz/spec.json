@@ -3,84 +3,512 @@
   "out": "design/ux/mockup-interfaz-2026-11.html",
   "note": "<b>Maqueta única de todo lo de hoy:</b> 13 ejes independientes (pantallas, barra, XP, nivel, logros, botón y llegada de notificaciones, botones, inicio, fondo y los tres del <b>onboarding</b>: entrada, bienvenida y primeros pasos; pulsa <b>▶ Flujo completo</b> en el panel). Combínalos a tu gusto: <b>la dirección de la barra del navegador guarda tu combinación</b> (cópiala para compartirla o volver a ella). <br><b>Cómo probar:</b> a la derecha del móvil (o arriba, en pantalla estrecha) está el panel de demostración. Elige variantes arriba (cada eje es independiente) y dispara los eventos: <b>Pantallas</b> (o toca la barra inferior) para ver la transición, <b>+XP</b>, <b>Subir de nivel</b>, <b>Logros</b>, <b>Notificaciones</b> y la pantalla <b>Botones</b>. Usa <b>Cámara lenta ×3</b> para estudiar el movimiento y <b>Reducir movimiento</b> para ver la degradación. En <b>Fondo</b>, el panel tiene el <b>tinte por Fractae</b> (los puntos de color) y botones de energía: la variante D reacciona a la pantalla, a la energía y a los eventos. «Actual» = lo que hay hoy (index.css real). El marcado replica el de los componentes reales; las pantallas Percibir/Yo y los iconos de logros (emoji) son aproximados.",
   "base_url": "",
-  "html": [{ "file": "design/ux/mockup-interfaz/.build/app.html" }],
-  "css": ["src/index.css"],
+  "html": [
+    {
+      "file": "design/ux/mockup-interfaz/.build/app.html"
+    }
+  ],
+  "css": [
+    "src/index.css"
+  ],
   "variants_css": "design/ux/mockup-interfaz/.build/variants.css",
   "variants_js": "design/ux/mockup-interfaz/variants.js",
-  "viewports": [1440, 768, 390],
+  "viewports": [
+    1440,
+    768,
+    390
+  ],
   "axes": [
-    { "id": "trans", "label": "Transición entre pantallas", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (corte seco)" },
-      { "v": "1", "label": "A · Fundido con ascenso" },
-      { "v": "2", "label": "B · Deslizamiento direccional" },
-      { "v": "3", "label": "C · Fractura (grieta de luz)" } ] },
-    { "id": "nav", "label": "Barra inferior e iconos", "type": "radio", "options": [
-      { "v": "0", "label": "Actual" },
-      { "v": "1", "label": "A · Píldora deslizante" },
-      { "v": "2", "label": "B · Elevación con halo" },
-      { "v": "3", "label": "C · Iconos de línea" } ] },
-    { "id": "xp", "label": "Experiencia (XP)", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (toast)" },
-      { "v": "1", "label": "A · Pastilla + barra de nivel" },
-      { "v": "2", "label": "B · Orbes al nivel" },
-      { "v": "3", "label": "C · Cuenta flotante + anillo" } ] },
-    { "id": "lvl", "label": "Subida de nivel", "type": "radio", "options": [
-      { "v": "0", "label": "Actual" },
-      { "v": "1", "label": "A · Anillo y números rodantes" },
-      { "v": "2", "label": "B · Onda de fractura" },
-      { "v": "3", "label": "C · Medalla con foil" } ] },
-    { "id": "rew", "label": "Logros y recompensas", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (solo XP)" },
-      { "v": "1", "label": "A · Banner apilable" },
-      { "v": "2", "label": "B · Medalla central" },
-      { "v": "3", "label": "C · Sello en ficha" },
-      { "v": "4", "label": "D · Mixta (banner + medalla)" } ] },
-    { "id": "fab", "label": "Notificaciones · botón", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (flotante, solo Inicio)" },
-      { "v": "1", "label": "A · Campana en la cabecera" },
-      { "v": "2", "label": "B · Aparece solo si hay novedades" },
-      { "v": "3", "label": "C · Pestaña en el borde" },
-      { "v": "4", "label": "D · Sin botón (tarjeta en Inicio)" } ] },
-    { "id": "ntf", "label": "Notificaciones · llegada", "type": "radio", "options": [
-      { "v": "0", "label": "Actual" },
-      { "v": "1", "label": "A · Aviso que se pliega" },
-      { "v": "2", "label": "B · Campana viva + hoja" },
-      { "v": "3", "label": "C · Burbuja que se expande" } ] },
-    { "id": "btn", "label": "Botones", "type": "radio", "options": [
-      { "v": "0", "label": "Actual" },
-      { "v": "1", "label": "A · Foil" },
-      { "v": "2", "label": "B · Tecla 3D" },
-      { "v": "3", "label": "C · Pulso + onda" } ] },
-    { "id": "home", "label": "Pantalla de inicio", "type": "radio", "options": [
-      { "v": "0", "label": "Actual" },
-      { "v": "1", "label": "A · Panel de misión" },
-      { "v": "2", "label": "B · Camino del día" },
-      { "v": "3", "label": "C · Sobre protagonista" } ] },
-    { "id": "auth", "label": "Onboarding · entrada", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (formulario)" },
-      { "v": "1", "label": "A · Pasos cortos" },
-      { "v": "2", "label": "B · Empezar jugando" },
-      { "v": "3", "label": "C · Carnet de explorador" } ] },
-    { "id": "onb", "label": "Onboarding · bienvenida", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (3 diapositivas)" },
-      { "v": "1", "label": "A · Cuento animado" },
-      { "v": "2", "label": "B · Guía con burbujas" },
-      { "v": "3", "label": "C · Despierta la Fractura (interactivo)" } ] },
-    { "id": "coach", "label": "Onboarding · primeros pasos", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (nada)" },
-      { "v": "1", "label": "A · Focos guiados" },
-      { "v": "2", "label": "B · Checklist con premio" },
-      { "v": "3", "label": "C · Mentor contextual" } ] },
-    { "id": "bg", "label": "Fondo", "type": "radio", "options": [
-      { "v": "0", "label": "Actual (verde estático)" },
-      { "v": "1", "label": "A · Aurora viva" },
-      { "v": "2", "label": "B · Selva en capas" },
-      { "v": "3", "label": "C · Grietas de energía" },
-      { "v": "4", "label": "D · Atmósfera viva" } ] }
+    {
+      "id": "trans",
+      "label": "Transición entre pantallas",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (corte seco)"
+        },
+        {
+          "v": "1",
+          "label": "A · Fundido con ascenso"
+        },
+        {
+          "v": "2",
+          "label": "B · Deslizamiento direccional"
+        },
+        {
+          "v": "3",
+          "label": "C · Fractura (grieta de luz)"
+        }
+      ]
+    },
+    {
+      "id": "nav",
+      "label": "Barra inferior e iconos",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual"
+        },
+        {
+          "v": "1",
+          "label": "A · Píldora deslizante"
+        },
+        {
+          "v": "2",
+          "label": "B · Elevación con halo"
+        },
+        {
+          "v": "3",
+          "label": "C · Iconos de línea"
+        }
+      ]
+    },
+    {
+      "id": "xp",
+      "label": "Experiencia (XP)",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (toast)"
+        },
+        {
+          "v": "1",
+          "label": "A · Pastilla + barra de nivel"
+        },
+        {
+          "v": "2",
+          "label": "B · Orbes al nivel"
+        },
+        {
+          "v": "3",
+          "label": "C · Cuenta flotante + anillo"
+        }
+      ]
+    },
+    {
+      "id": "lvl",
+      "label": "Subida de nivel",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual"
+        },
+        {
+          "v": "1",
+          "label": "A · Anillo y números rodantes"
+        },
+        {
+          "v": "2",
+          "label": "B · Onda de fractura"
+        },
+        {
+          "v": "3",
+          "label": "C · Medalla con foil"
+        }
+      ]
+    },
+    {
+      "id": "rew",
+      "label": "Logros y recompensas",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (solo XP)"
+        },
+        {
+          "v": "1",
+          "label": "A · Banner apilable"
+        },
+        {
+          "v": "2",
+          "label": "B · Medalla central"
+        },
+        {
+          "v": "3",
+          "label": "C · Sello en ficha"
+        },
+        {
+          "v": "4",
+          "label": "D · Mixta (banner + medalla)"
+        }
+      ]
+    },
+    {
+      "id": "fab",
+      "label": "Notificaciones · botón",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (flotante, solo Inicio)"
+        },
+        {
+          "v": "1",
+          "label": "A · Campana en la cabecera"
+        },
+        {
+          "v": "2",
+          "label": "B · Aparece solo si hay novedades"
+        },
+        {
+          "v": "3",
+          "label": "C · Pestaña en el borde"
+        },
+        {
+          "v": "4",
+          "label": "D · Sin botón (tarjeta en Inicio)"
+        }
+      ]
+    },
+    {
+      "id": "bell",
+      "label": "Campana · icono",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (medallón pequeño, 44 px)"
+        },
+        {
+          "v": "1",
+          "label": "A · Medallón grande y recortado"
+        },
+        {
+          "v": "2",
+          "label": "B · Campana clara dorada"
+        },
+        {
+          "v": "3",
+          "label": "C · Campana con etiqueta «Avisos»"
+        }
+      ]
+    },
+    {
+      "id": "ntf",
+      "label": "Notificaciones · llegada",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual"
+        },
+        {
+          "v": "1",
+          "label": "A · Aviso que se pliega"
+        },
+        {
+          "v": "2",
+          "label": "B · Campana viva + hoja"
+        },
+        {
+          "v": "3",
+          "label": "C · Burbuja que se expande"
+        }
+      ]
+    },
+    {
+      "id": "btn",
+      "label": "Botones",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual"
+        },
+        {
+          "v": "1",
+          "label": "A · Foil"
+        },
+        {
+          "v": "2",
+          "label": "B · Tecla 3D"
+        },
+        {
+          "v": "3",
+          "label": "C · Pulso + onda"
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "label": "Pantalla de inicio",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual"
+        },
+        {
+          "v": "1",
+          "label": "A · Panel de misión"
+        },
+        {
+          "v": "2",
+          "label": "B · Camino del día"
+        },
+        {
+          "v": "3",
+          "label": "C · Sobre protagonista"
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "label": "Onboarding · entrada",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (formulario)"
+        },
+        {
+          "v": "1",
+          "label": "A · Pasos cortos"
+        },
+        {
+          "v": "2",
+          "label": "B · Empezar jugando"
+        },
+        {
+          "v": "3",
+          "label": "C · Carnet de explorador"
+        }
+      ]
+    },
+    {
+      "id": "onb",
+      "label": "Onboarding · bienvenida",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (3 diapositivas)"
+        },
+        {
+          "v": "1",
+          "label": "A · Cuento animado"
+        },
+        {
+          "v": "2",
+          "label": "B · Guía con burbujas"
+        },
+        {
+          "v": "3",
+          "label": "C · Despierta la Fractura (interactivo)"
+        }
+      ]
+    },
+    {
+      "id": "coach",
+      "label": "Onboarding · primeros pasos",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (nada)"
+        },
+        {
+          "v": "1",
+          "label": "A · Focos guiados"
+        },
+        {
+          "v": "2",
+          "label": "B · Checklist con premio"
+        },
+        {
+          "v": "3",
+          "label": "C · Mentor contextual"
+        }
+      ]
+    },
+    {
+      "id": "bg",
+      "label": "Fondo",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (verde estático)"
+        },
+        {
+          "v": "1",
+          "label": "A · Aurora viva"
+        },
+        {
+          "v": "2",
+          "label": "B · Selva en capas"
+        },
+        {
+          "v": "3",
+          "label": "C · Grietas de energía"
+        },
+        {
+          "v": "4",
+          "label": "D · Atmósfera viva"
+        }
+      ]
+    },
+    {
+      "id": "prof",
+      "label": "Perfil (Yo)",
+      "type": "radio",
+      "options": [
+        {
+          "v": "0",
+          "label": "Actual (tarjetas con texto)"
+        },
+        {
+          "v": "1",
+          "label": "A · Panel con anillos"
+        },
+        {
+          "v": "2",
+          "label": "B · Cuadro de mando"
+        },
+        {
+          "v": "3",
+          "label": "C · Tarjeta de coleccionista"
+        }
+      ]
+    }
   ],
   "presets": [
-    { "label": "Sobria", "set": { "trans": "1", "nav": "1", "xp": "1", "lvl": "1", "rew": "1", "fab": "1", "ntf": "1", "btn": "1", "home": "1", "bg": "1", "auth": "1", "onb": "1", "coach": "1" } },
-    { "label": "Recomendada", "set": { "trans": "2", "nav": "1", "xp": "2", "lvl": "2", "rew": "4", "fab": "1", "ntf": "1", "btn": "1", "home": "1", "bg": "4", "auth": "1", "onb": "2", "coach": "2" } },
-    { "label": "Atrevida", "set": { "trans": "3", "nav": "2", "xp": "3", "lvl": "3", "rew": "3", "fab": "3", "ntf": "3", "btn": "2", "home": "3", "bg": "3", "auth": "3", "onb": "3", "coach": "3" } }
+    {
+      "label": "Sobria",
+      "set": {
+        "trans": "1",
+        "nav": "1",
+        "xp": "1",
+        "lvl": "1",
+        "rew": "1",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "1",
+        "auth": "1",
+        "onb": "1",
+        "coach": "1"
+      }
+    },
+    {
+      "label": "Recomendada",
+      "set": {
+        "trans": "2",
+        "nav": "1",
+        "xp": "2",
+        "lvl": "2",
+        "rew": "4",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "4",
+        "auth": "1",
+        "onb": "2",
+        "coach": "2"
+      }
+    },
+    {
+      "label": "Atrevida",
+      "set": {
+        "trans": "3",
+        "nav": "2",
+        "xp": "3",
+        "lvl": "3",
+        "rew": "3",
+        "fab": "3",
+        "ntf": "3",
+        "btn": "2",
+        "home": "3",
+        "bg": "3",
+        "auth": "3",
+        "onb": "3",
+        "coach": "3"
+      }
+    },
+    {
+      "label": "Hoy + campana A + perfil A",
+      "set": {
+        "trans": "2",
+        "nav": "1",
+        "xp": "2",
+        "lvl": "2",
+        "rew": "4",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "4",
+        "auth": "3",
+        "onb": "1",
+        "coach": "2",
+        "bell": "1",
+        "prof": "1"
+      }
+    },
+    {
+      "label": "Hoy + campana B + perfil B",
+      "set": {
+        "trans": "2",
+        "nav": "1",
+        "xp": "2",
+        "lvl": "2",
+        "rew": "4",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "4",
+        "auth": "3",
+        "onb": "1",
+        "coach": "2",
+        "bell": "2",
+        "prof": "2"
+      }
+    },
+    {
+      "label": "Hoy + campana C + perfil C",
+      "set": {
+        "trans": "2",
+        "nav": "1",
+        "xp": "2",
+        "lvl": "2",
+        "rew": "4",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "4",
+        "auth": "3",
+        "onb": "1",
+        "coach": "2",
+        "bell": "3",
+        "prof": "3"
+      }
+    },
+    {
+      "label": "Producción hoy",
+      "set": {
+        "trans": "2",
+        "nav": "1",
+        "xp": "2",
+        "lvl": "2",
+        "rew": "4",
+        "fab": "1",
+        "ntf": "1",
+        "btn": "1",
+        "home": "1",
+        "bg": "4",
+        "auth": "3",
+        "onb": "1",
+        "coach": "2"
+      }
+    }
   ]
 }

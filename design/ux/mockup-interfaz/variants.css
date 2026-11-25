@@ -561,3 +561,90 @@ html, body { background: #08100b !important; }
    ===================================================================== */
 #mk.rm *, #mk.rm *::before, #mk.rm *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 #mk.rm .mk-hero-pack, #mk.rm .mk-glow { animation: none !important; }
+
+/* =====================================================================
+   Campana · icono (eje «bell»). Las tres variantes se ven con la campana en la cabecera (fab-1)
+   y con el anillo de nivel al lado, como en la app de hoy.
+   ===================================================================== */
+#mk .mk-bellsvg, #mk .mk-belllbl { display: none; }
+#mk:is(.bell-1, .bell-2, .bell-3) .mk-hud { display: block; }
+#mk:is(.bell-1, .bell-2, .bell-3) .mk-hud-chip { display: grid; place-items: center; position: absolute; top: 10px; right: 12px; width: 44px; height: 44px; border-radius: 50%; background: rgba(10,20,13,.88); box-shadow: 0 4px 14px rgba(0,0,0,.45); }
+#mk:is(.bell-1, .bell-2, .bell-3) .mk-hdr-bell { right: 66px; }
+/* A · Medallón recortado y grande: el mismo icono ilustrado, pero llenando el círculo en vez de flotar pequeño en él */
+#mk.bell-1 .mk-hdr-bell { width: 56px; height: 56px; overflow: visible; }
+#mk.bell-1 .mk-hdr-bell img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 50%; }
+#mk.bell-1 .mk-hdr-bell { background: #1b1408; border: 2px solid #d9a93b; box-shadow: 0 4px 14px rgba(0,0,0,.5), 0 0 14px rgba(217,169,59,.35); }
+/* B · Campana clara: glifo de campana reconocible a primera vista, dorado sobre fondo oscuro */
+#mk.bell-2 .mk-hdr-bell { width: 54px; height: 54px; background: #12261a; border: 2px solid #e6b94a; box-shadow: 0 4px 14px rgba(0,0,0,.5), 0 0 16px rgba(230,185,74,.3); }
+#mk.bell-2 .mk-hdr-bell img { display: none; }
+#mk.bell-2 .mk-bellsvg { display: block; width: 30px; height: 30px; fill: #ffd86b; filter: drop-shadow(0 0 4px rgba(255,216,107,.55)); }
+/* C · Campana con etiqueta: no hay que adivinar; dice «Avisos» */
+#mk.bell-3 .mk-hdr-bell { width: auto; min-width: 54px; height: 48px; padding: 0 .85rem 0 .65rem; gap: .35rem; grid-auto-flow: column; border-radius: 999px; background: #12261a; border: 2px solid #e6b94a; box-shadow: 0 4px 14px rgba(0,0,0,.5); right: 66px; }
+#mk.bell-3 .mk-hdr-bell img { display: none; }
+#mk.bell-3 .mk-bellsvg { display: block; width: 24px; height: 24px; fill: #ffd86b; }
+#mk.bell-3 .mk-belllbl { display: block; font: 800 1rem 'Barlow Condensed', system-ui; letter-spacing: .04em; color: #f2f6f3; text-transform: uppercase; }
+@media (prefers-reduced-motion: no-preference) { #mk:is(.bell-2, .bell-3) .mk-hdr-bell.ring .mk-bellsvg { animation: mk-bell calc(1000ms * var(--slow)) ease-in-out; transform-origin: 50% 12%; } }
+
+/* =====================================================================
+   Perfil (eje «prof»): menos texto, más gráficas. Lo actual se conserva como «mk-prof-real».
+   ===================================================================== */
+#mk .mk-prof-alt { display: none; }
+#mk:is(.prof-1, .prof-2, .prof-3) .mk-prof-real { display: none; }
+#mk.prof-1 .mk-prof-1, #mk.prof-2 .mk-prof-2, #mk.prof-3 .mk-prof-3 { display: block; }
+#mk .mk-phero { display: flex; align-items: center; gap: 1rem; margin: .2rem 0 .9rem; }
+#mk .mk-phero-t { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: .8rem; color: #9fc0a8; }
+#mk .mk-phero-t b { font: 800 1.35rem 'Barlow Condensed', system-ui; color: #f2f6f3; }
+#mk .mk-phero-t small { margin-top: .2rem; font-size: .7rem; color: #7fa98a; }
+#mk .mk-chips2 { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1rem; }
+#mk .mk-ptoggle { display: flex; align-items: center; justify-content: space-between; }
+#mk .mk-switch { position: relative; width: 52px; height: 30px; flex: none; }
+#mk .mk-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+#mk .mk-switch i { position: absolute; inset: 0; border-radius: 999px; background: rgba(255,255,255,.18); transition: background calc(200ms * var(--slow)); }
+#mk .mk-switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform calc(200ms * var(--slow)); }
+#mk .mk-switch input:checked + i { background: #3fae5a; }
+#mk .mk-switch input:checked + i::after { transform: translateX(22px); }
+#mk .mk-plogout { margin-top: 1.1rem; }
+/* A · Panel con anillos */
+#mk .mk-donuts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+#mk .mk-donut { position: relative; display: flex; flex-direction: column; align-items: center; gap: .45rem; text-align: center; font-size: .72rem; color: #9fc0a8; }
+#mk .mk-donut svg { width: 104px; height: 104px; transform: rotate(-90deg); }
+#mk .mk-donut .t { fill: none; stroke: rgba(255,255,255,.13); stroke-width: 8; }
+#mk .mk-donut .f { fill: none; stroke: #3fae5a; stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(63,174,90,.6)); }
+#mk .mk-donut.blue .f { stroke: #4fa9e0; filter: drop-shadow(0 0 4px rgba(79,169,224,.6)); }
+#mk .mk-donut-n { position: absolute; top: 0; left: 0; right: 0; height: 104px; display: flex; align-items: center; justify-content: center; font: 800 1.9rem 'Barlow Condensed', system-ui; color: #f2f6f3; }
+#mk .mk-donut-n small { font-size: .9rem; color: #7fa98a; margin-left: 1px; }
+#mk .mk-stack { display: flex; height: 14px; margin: .7rem 0 .6rem; border-radius: 999px; overflow: hidden; gap: 2px; }
+#mk .mk-stack i { display: block; min-width: 6px; }
+#mk .mk-legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .3rem .9rem; font-size: .8rem; }
+#mk .mk-legend li { display: flex; align-items: center; gap: .45rem; }
+#mk .mk-legend li i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+#mk .mk-legend li span { flex: 1; color: #b9d3c0; } #mk .mk-legend li b { font: 800 .95rem 'Barlow Condensed', system-ui; }
+/* B · Cuadro de mando */
+#mk .mk-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1rem; }
+#mk .mk-tile { padding: .8rem .9rem; border-radius: 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); }
+#mk .mk-tile b { display: block; font: 800 2.1rem/1 'Barlow Condensed', system-ui; } #mk .mk-tile b small { font-size: .95rem; color: #7fa98a; }
+#mk .mk-tile span { display: block; margin-top: .15rem; font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; color: #7fa98a; }
+#mk .mk-cols { display: flex; align-items: flex-end; justify-content: space-around; gap: .6rem; height: 150px; margin-top: .8rem; }
+#mk .mk-col { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .3rem; }
+#mk .mk-col b { font: 800 1.15rem 'Barlow Condensed', system-ui; }
+#mk .mk-col i { display: block; width: 70%; max-width: 44px; border-radius: 8px 8px 3px 3px; box-shadow: 0 0 10px rgba(255,255,255,.12); }
+#mk .mk-col small { font-size: .62rem; color: #9fc0a8; text-transform: uppercase; letter-spacing: .03em; }
+/* C · Tarjeta de coleccionista */
+#mk .mk-collector { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 1.2rem; background: linear-gradient(180deg, rgba(63,174,90,.18), rgba(15,26,18,.96) 70%); }
+#mk .mk-bigring { position: relative; width: 132px; height: 132px; }
+#mk .mk-bigring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+#mk .mk-bigring .mk-ring-track { stroke-width: 6; } #mk .mk-bigring .mk-ring-fill { stroke-width: 6; }
+#mk .mk-bigring img { position: absolute; inset: 12px; width: 108px; height: 108px; border-radius: 50%; object-fit: cover; }
+#mk .mk-bigring em { position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); font: 800 .85rem 'Barlow Condensed', system-ui; font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: .12rem .7rem; border-radius: 999px; background: #3fae5a; color: #06120a; box-shadow: 0 3px 8px rgba(0,0,0,.4); white-space: nowrap; }
+#mk .mk-collector-name { margin-top: 1.1rem; font: 800 1.7rem 'Barlow Condensed', system-ui; }
+#mk .mk-collector-title { font-size: .8rem; color: #9fc0a8; }
+#mk .mk-pips { display: flex; gap: 6px; margin-top: .5rem; }
+#mk .mk-pips i { flex: 1; height: 18px; border-radius: 6px; background: rgba(255,255,255,.12); }
+#mk .mk-pips i.on { background: linear-gradient(180deg, #7fe0a0, #3fae5a); box-shadow: 0 0 8px rgba(63,174,90,.55); }
+#mk .mk-pips.small { gap: 3px; } #mk .mk-pips.small i { height: 14px; border-radius: 4px; } #mk .mk-pips.small i.on { background: linear-gradient(180deg, #8fd0f0, #4fa9e0); box-shadow: 0 0 6px rgba(79,169,224,.55); }
+#mk .mk-hbars { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .5rem; }
+#mk .mk-hbars li { display: grid; grid-template-columns: 5.2rem 1fr 1.6rem; align-items: center; gap: .6rem; font-size: .82rem; color: #b9d3c0; }
+#mk .mk-hbars li div { height: 10px; border-radius: 999px; background: rgba(255,255,255,.1); overflow: hidden; }
+#mk .mk-hbars li div i { display: block; height: 100%; border-radius: 999px; }
+#mk .mk-hbars li b { font: 800 1rem 'Barlow Condensed', system-ui; color: #f2f6f3; text-align: right; }
+@media (prefers-reduced-motion: reduce) { #mk .mk-switch i, #mk .mk-switch i::after { transition: none; } }
