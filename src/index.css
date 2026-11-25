@@ -2174,9 +2174,11 @@ body.card-preview-open .notif-bell-wrap {
   position: fixed;
   z-index: 2;
   top: 50%;
-  left: max(1.5rem, calc(50% - 240px - 260px - 1.5rem));
+  left: max(1.5rem, calc(50% - 240px - 300px - 1.5rem));
   transform: translateY(-50%);
-  width: 240px;
+  width: 280px;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
   box-sizing: border-box;
   padding: 1.25rem;
   text-align: center;
@@ -2201,6 +2203,28 @@ body.card-preview-open .notif-bell-wrap {
   height: 160px;
   margin: 0 auto 1rem;
   border-radius: 10px;
+}
+
+.desktop-notice-steps {
+  margin: 0 0 1rem;
+  text-align: left;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+.desktop-notice-steps h3 {
+  margin: 0 0 0.5rem;
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 1.15rem;
+  text-align: center;
+}
+.desktop-notice-steps h4 {
+  margin: 0.7rem 0 0.2rem;
+  font-size: 0.85rem;
+}
+.desktop-notice-steps ol {
+  margin: 0;
+  padding-left: 1.2rem;
 }
 
 /* Subida de nivel · onda de fractura (diseño elegido 2026-11-18, prototipo en design/ux) */

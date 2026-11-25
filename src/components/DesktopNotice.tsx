@@ -45,6 +45,21 @@ export default function DesktopNotice() {
       <p className="desktop-notice-title">Mejor en el móvil</p>
       <p className="desktop-notice-text">Ecorex está pensado para jugar desde el teléfono. Escanea el código para abrirlo ahí.</p>
       <img className="desktop-notice-qr" src="/qr-ecorex.svg" alt="Código QR de ecorex-project.pages.dev" width={160} height={160} draggable={false} />
+      <div className="desktop-notice-steps">
+        <h3>Instálala como app</h3>
+        <h4>En Android</h4>
+        <ol>
+          <li>Abre Ecorex en Chrome.</li>
+          <li>Menú (tres puntos) → «Instalar aplicación» o «Añadir a pantalla de inicio».</li>
+          <li>Confirma y el icono aparecerá en tu pantalla.</li>
+        </ol>
+        <h4>En iPhone o iPad</h4>
+        <ol>
+          <li>Abre Ecorex en Safari.</li>
+          <li>Pulsa Compartir (el cuadrado con una flecha hacia arriba).</li>
+          <li>Elige «Añadir a pantalla de inicio» y pulsa «Añadir».</li>
+        </ol>
+      </div>
       <button type="button" className="btn-ghost" onClick={hide}>
         Continuar aquí
       </button>
