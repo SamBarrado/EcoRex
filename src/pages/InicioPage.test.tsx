@@ -126,8 +126,10 @@ describe("InicioPage", () => {
     expect(screen.queryByLabelText("Eco, próximamente")).toBeNull();
     expect(screen.queryByLabelText("Álbum, próximamente")).toBeNull();
     expect(screen.queryByLabelText("Amigos, próximamente")).toBeNull();
-    // The Fusion Altar keeps its lock: it's unlockable, unlike the others.
-    expect(screen.getByText(/Altar de Fusión/).textContent).toContain("🔒");
+    // The Fusion Altar is always there, never as a dead lock: with nothing gathered it says how to start.
+    expect(screen.getByText("Altar de Fusión")).toBeTruthy();
+    expect(screen.getByText("Junta 5 cartas Balance de una especie para fusionarlas")).toBeTruthy();
+    expect(screen.queryByText(/🔒/)).toBeNull();
   });
 
   it("refreshes the energy countdown as time passes without a page reload", async () => {
@@ -226,8 +228,44 @@ describe("InicioPage", () => {
     renderPage();
     expect(await screen.findByRole("group", { name: "Racha: 2 días seguidos" })).toBeTruthy();
     expect(screen.getByText("¡Juega hoy para no perder tu racha de 2 días seguidos!")).toBeTruthy();
-    expect(screen.getByText(/Próxima fusión:/).textContent).toContain("Rex de Fuego");
-    expect(screen.getByText("3/5")).toBeTruthy();
+    // Nothing is ready: the altar card says so and shows the closest species with how many cards are missing.
+    expect(screen.getByText("Aún no hay fusiones listas")).toBeTruthy();
+    expect(screen.getByText("Rex de Fuego")).toBeTruthy();
+    expect(screen.getByText("Falta 2")).toBeTruthy();
+    expect(document.querySelector(".fusion-card")?.className).not.toContain("is-active");
+  });
+
+  it("lights up the Fusion Altar and opens straight onto the species that is ready", async () => {
+    getFuseEligibleMock.mockResolvedValue({
+      threshold: 5,
+      eligible: [{ speciesId: 2, commonName: "Destello del Pantano", scientificName: "T. mirus", balanceAnchorUrl: "/y.webp", balanceCount: 5 }],
+      progress: [{ speciesId: 6, commonName: "Hustor de Umbra", scientificName: "H. inquisitus", balanceAnchorUrl: "/h.webp", balanceCount: 4 }],
+    });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+
+    render(
+      <MemoryRouter initialEntries={["/inicio"]}>
+        <NotificationsProvider>
+          <AchievementsProvider>
+            <Routes>
+              <Route path="/inicio" element={<InicioPage />} />
+              <Route path="/fusion" element={<div>Pantalla de fusión</div>} />
+            </Routes>
+          </AchievementsProvider>
+        </NotificationsProvider>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("1 especie lista para fusionar")).toBeTruthy();
+    expect(document.querySelector(".fusion-card")?.className).toContain("is-active");
+    expect(screen.getByText("Destello del Pantano")).toBeTruthy();
+    expect(screen.getByText("Hustor de Umbra")).toBeTruthy();
+    expect(screen.getByText("Falta 1")).toBeTruthy();
+    // The unlock modal also pops the first time; it does not get in the way of the card.
+    fireEvent.click(screen.getByRole("button", { name: "Fusionar" }));
+    expect(await screen.findByText("Pantalla de fusión")).toBeTruthy();
   });
 
   it("shows the Primeros pasos checklist to a new account, with progress and the prize", async () => {

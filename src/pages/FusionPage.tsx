@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getFuseEligible, fuseSpecies, EligibleSpecies, DiscoverResult, ApiError } from "../lib/api";
-import { FusionProgressCard } from "../components/FusionProgressCard";
+import { FusionSpeciesRow } from "../components/fusion/FusionSpeciesRow";
+import { shortRarityName } from "../lib/rarityGlow";
 import { XpToast } from "../components/XpToast";
 import { LevelUpScreen } from "../components/LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
@@ -38,6 +39,8 @@ export default function FusionPage() {
   const [fusing, setFusing] = useState<number | null>(null);
   const [glowSlug, setGlowSlug] = useState<string | null>(null);
   const [result, setResult] = useState<DiscoverResult | null>(null);
+  // Balance art of the species just fused: the five cards that merge in the result animation.
+  const [fusedFrom, setFusedFrom] = useState<EligibleSpecies | null>(null);
   const [showXpToast, setShowXpToast] = useState(false);
   const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
 
@@ -113,6 +116,7 @@ export default function FusionPage() {
     stopSound();
     hideNav();
     setFusing(species.speciesId);
+    setFusedFrom(species);
     setGlowSlug(null);
     setError(null);
     primeSound(species.scientificName);
@@ -150,6 +154,7 @@ export default function FusionPage() {
     if (result) void announce(achievementsFromResult(result));
     stopSound();
     setResult(null);
+    setFusedFrom(null);
     setShowXpToast(false);
     setLevelUpInfo(null);
     setGlowSlug(null);
@@ -181,17 +186,36 @@ export default function FusionPage() {
 
       {!error && result && (
         <div
-          className="card"
-          style={{ border: `4px solid ${RARITY_GLOW[result.rarityTier.slug] ?? "#3fae5a"}` }}
+          className="card fusion-result"
+          style={{ "--rc": RARITY_GLOW[result.rarityTier.slug] ?? "#3fae5a" } as React.CSSProperties}
         >
-          <strong>¡Fusión completada!</strong>
-          <img src={result.imageUrl} alt={result.commonName} className="species-image" />
-          <div>
-            {result.commonName} ({result.scientificName})
+          <span className="fusion-result-chip">¡Fusión completada!</span>
+          <div className="fusion-result-ins" role="img" aria-label={`${threshold} cartas Balance`}>
+            {Array.from({ length: threshold }, (_, k) => (
+              <img
+                key={k}
+                style={{ "--k": k, "--n": threshold } as React.CSSProperties}
+                src={fusedFrom?.balanceAnchorUrl ?? result.imageUrl}
+                alt=""
+                draggable={false}
+              />
+            ))}
           </div>
-          <div>Fase: {result.phase}</div>
-          <div>Rareza: {result.rarityTier.name}</div>
-          <button onClick={handleReset}>Volver al altar</button>
+          <div className="fusion-result-arrow" aria-hidden="true">▼</div>
+          <div className="fusion-result-out">
+            <img src={result.imageUrl} alt={result.commonName} draggable={false} />
+            <i className="fusion-result-flash" aria-hidden="true" />
+          </div>
+          <strong className="fusion-result-name">{result.commonName}</strong>
+          <span className="fusion-result-sub">
+            {threshold} cartas Balance → 1 carta {result.phase.charAt(0).toUpperCase() + result.phase.slice(1)}
+          </span>
+          <div className="fusion-result-facts">
+            <span>
+              Rareza <b>{shortRarityName(result.rarityTier.name)}</b>
+            </span>
+          </div>
+          <button className="fusion-result-btn" onClick={handleReset}>Volver al altar</button>
         </div>
       )}
 
@@ -201,40 +225,53 @@ export default function FusionPage() {
         <p>Aún no tienes {threshold} cartas Balance de la misma especie. ¡Sigue percibiendo!</p>
       )}
 
-      {!error && !result && eligible && progress.length > 0 && (
+      {!error && !result && eligible && eligible.length > 0 && (
         <>
-          {eligible.length > 0 && <h2>En progreso</h2>}
-          {progress.map((species) => (
-            <FusionProgressCard key={species.speciesId} species={species} threshold={threshold} label="" />
-          ))}
+          <h2 className="fusion-h2">Listas para fusionar</h2>
+          <div className="card fusion-list">
+            {eligible.map((species) => (
+              <FusionSpeciesRow
+                key={species.speciesId}
+                species={species}
+                threshold={threshold}
+                ready
+                big
+                highlighted={species.speciesId === preselectedId}
+                trailing={
+                  <button disabled={fusing === species.speciesId} onClick={() => handleFuse(species)}>
+                    {fusing === species.speciesId ? "Fusionando..." : "Fusionar"}
+                  </button>
+                }
+              />
+            ))}
+          </div>
         </>
       )}
 
-      {!error && !result && eligible && eligible.length > 0 && (
-        <div className="grid">
-          {eligible.map((species) => (
-            <div
-              key={species.speciesId}
-              className="card"
-              style={{
-                border: species.speciesId === preselectedId ? "3px solid #ffd54a" : undefined,
-              }}
-            >
-              <img
-                src={species.balanceAnchorUrl}
-                alt={species.commonName}
-                className="species-image"
-                loading="lazy"
+      {!error && !result && eligible && progress.length > 0 && (
+        <>
+          <h2 className="fusion-h2">En progreso</h2>
+          <div className="card fusion-list">
+            {progress.map((species) => (
+              <FusionSpeciesRow
+                key={species.speciesId}
+                species={species}
+                threshold={threshold}
+                trailing={
+                  <em>
+                    {species.balanceCount}/{threshold}
+                  </em>
+                }
               />
-              <strong>{species.commonName}</strong>
-              <div>Cartas Balance: {species.balanceCount}</div>
-              <button disabled={fusing === species.speciesId} onClick={() => handleFuse(species)}>
-                {fusing === species.speciesId ? "Fusionando..." : "Fusionar"}
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
+
+      {!error && !result && eligible && (eligible.length > 0 || progress.length > 0) && (
+        <p className="fusion-foot">Junta {threshold} cartas Balance de una especie para obtener su forma Exceso.</p>
+      )}
+
       {showXpToast && result && result.xp.xpGained > 0 && (
         <XpToast xpGained={result.xp.xpGained} note={streakRewardNote(result)} onDone={() => setShowXpToast(false)} />
       )}

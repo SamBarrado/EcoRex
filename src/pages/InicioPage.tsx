@@ -22,7 +22,7 @@ import { usePlayer } from "../lib/PlayerContext";
 import { useNotifications } from "../lib/NotificationsContext";
 import { useAchievements } from "../lib/AchievementsContext";
 import { FIRST_STEPS_ACHIEVEMENT } from "../lib/achievements";
-import { FusionProgressCard } from "../components/FusionProgressCard";
+import { FusionAltarCard } from "../components/fusion/FusionAltarCard";
 import { WelcomeFlow, hasSeenWelcome, markWelcomeSeen } from "../components/WelcomeFlow";
 import PushOnboardingTile from "../components/PushOnboardingTile";
 import { version } from "../../package.json";
@@ -38,7 +38,7 @@ export default function InicioPage() {
   const { refetch: refetchNotifications } = useNotifications();
   const { announce } = useAchievements();
   const [onboarding, setOnboarding] = useState<OnboardingState | null>(null);
-  const [fusionUnlocked, setFusionUnlocked] = useState(false);
+  const [fusionReady, setFusionReady] = useState<EligibleSpecies[]>([]);
   const [profile, setProfile] = useState<ProfileStats | null>(null);
   const [energy, setEnergy] = useState<EnergyState | null>(null);
   const [missions, setMissions] = useState<MissionsState | null>(null);
@@ -57,7 +57,7 @@ export default function InicioPage() {
     getFuseEligible()
       .then((data) => {
         const unlocked = data.eligible.length > 0;
-        setFusionUnlocked(unlocked);
+        setFusionReady(data.eligible);
         setFusionProgress(data.progress ?? []);
         if (data.threshold) setFusionThreshold(data.threshold);
         if (unlocked && !localStorage.getItem(FUSION_UNLOCK_SEEN_KEY)) {
@@ -139,40 +139,28 @@ export default function InicioPage() {
       {profile && <HomeHero profile={profile} energy={energy} streak={missions?.streak} now={now} />}
 
       <MissionsCard missions={missions} />
-      <FusionProgressCard species={fusionProgress[0]} threshold={fusionThreshold} />
+      <FusionAltarCard
+        eligible={fusionReady}
+        next={fusionProgress[0]}
+        threshold={fusionThreshold}
+        onFuse={(speciesId) => navigate(speciesId ? `/fusion?speciesId=${speciesId}` : "/fusion")}
+      />
 
-      <div className="grid grid-compact">
-        <div
-          className={fusionUnlocked ? "card card-clickable card-altar card-altar-unlocked" : "card card-altar"}
-          role={fusionUnlocked ? "button" : undefined}
-          tabIndex={fusionUnlocked ? 0 : undefined}
-          onClick={() => fusionUnlocked && navigate("/fusion")}
-          onKeyDown={(e) => fusionUnlocked && (e.key === "Enter" || e.key === " ") && navigate("/fusion")}
-        >
-          <img className="card-icon" src="/icons/altar-fusion.webp" alt="" />
-          <div className="card-altar-text">
-            <strong>Altar de Fusión {!fusionUnlocked && "🔒"}</strong>
-            <span className="card-altar-hint">
-              {fusionUnlocked ? `Fusiona ${fusionThreshold} cartas Balance en una nueva` : "Aún bloqueado"}
-            </span>
+      {/* Álbum y Amigos: ocultos hasta que estén definidos y desarrollados. */}
+      {SHOW_COMING_SOON_TILES && (
+        <div className="grid grid-compact">
+          <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
+            <img className="card-icon" src="/icons/album.webp" alt="" />
+            <strong>Álbum</strong>
+            <span className="coming-soon-label">Próximamente</span>
+          </div>
+          <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
+            <img className="card-icon" src="/icons/perfil.webp" alt="" />
+            <strong>Amigos</strong>
+            <span className="coming-soon-label">Próximamente</span>
           </div>
         </div>
-        {/* Álbum y Amigos: ocultos hasta que estén definidos y desarrollados. */}
-        {SHOW_COMING_SOON_TILES && (
-          <>
-            <div className="card card-compact card-coming-soon" aria-label="Álbum, próximamente">
-              <img className="card-icon" src="/icons/album.webp" alt="" />
-              <strong>Álbum</strong>
-              <span className="coming-soon-label">Próximamente</span>
-            </div>
-            <div className="card card-compact card-coming-soon" aria-label="Amigos, próximamente">
-              <img className="card-icon" src="/icons/perfil.webp" alt="" />
-              <strong>Amigos</strong>
-              <span className="coming-soon-label">Próximamente</span>
-            </div>
-          </>
-        )}
-      </div>
+      )}
       <p style={{ textAlign: "center", color: "#7fa98a", fontSize: "0.75rem" }}>v{version}</p>
     </div>
   );

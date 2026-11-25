@@ -167,4 +167,52 @@ describe("FusionPage", () => {
     expect(screen.getByText("Ceratosaurio")).toBeInTheDocument();
     expect(screen.getByText("1/5")).toBeInTheDocument();
   });
+
+  it("lists what is ready and what is in progress as compact rows, with the hint only once", async () => {
+    getFuseEligibleMock.mockResolvedValue({
+      threshold: 5,
+      eligible: [eligibleSpecies],
+      progress: [{ ...eligibleSpecies, speciesId: 8, commonName: "Tricera", balanceCount: 3 }],
+    });
+
+    renderPage();
+
+    expect(await screen.findByText("Listas para fusionar")).toBeInTheDocument();
+    expect(screen.getByText("En progreso")).toBeInTheDocument();
+    expect(screen.getByText("5 cartas Balance")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Fusionar" })).toBeInTheDocument();
+    expect(screen.getByText("3/5")).toBeInTheDocument();
+    expect(screen.getAllByText(/Junta 5 cartas Balance de una especie/)).toHaveLength(1);
+  });
+
+  it("shows the fusion as five Balance cards merging into the new card, with what it was worth", async () => {
+    vi.useFakeTimers();
+    getFuseEligibleMock.mockResolvedValue({ eligible: [{ ...eligibleSpecies, balanceAnchorUrl: "/balance.png" }], threshold: 5 });
+    fuseSpeciesMock.mockResolvedValue({
+      ...fuseResult,
+      imageUrl: "/exceso.png",
+      rarityTier: { slug: "registrada", name: "Especie Común" },
+      xp: { xpGained: 15, totalXp: 15, previousLevel: 1, level: 1, leveledUp: false },
+    });
+
+    renderPage();
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+    fireEvent.click(screen.getByRole("button", { name: /fusionar/i }));
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    expect(screen.getByText("¡Fusión completada!")).toBeInTheDocument();
+    const merging = screen.getByRole("img", { name: "5 cartas Balance" });
+    const cards = Array.from(merging.querySelectorAll("img"));
+    expect(cards).toHaveLength(5);
+    expect(cards.every((c) => c.getAttribute("src") === "/balance.png")).toBe(true);
+    expect(screen.getByAltText("Test Dino")).toHaveAttribute("src", "/exceso.png");
+    expect(screen.getByText("5 cartas Balance → 1 carta Exceso")).toBeInTheDocument();
+    expect(screen.getByText("Común")).toBeInTheDocument();
+    // The XP is announced once, by the pill and the orbs at the top (not repeated in the card).
+    expect(screen.getAllByText("+15 XP")).toHaveLength(1);
+  });
 });

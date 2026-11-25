@@ -3288,3 +3288,342 @@ body.card-preview-open .notif-bell-wrap {
     transition: none;
   }
 }
+
+/* Altar de Fusión (diseño elegido 2026-11-25): filas con casillas, tarjeta de Inicio y resultado «cinco en una» */
+.fusion-pips {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.fusion-pips i {
+  width: 14px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fusion-pips i.on {
+  background: linear-gradient(180deg, #7fe0a0, #3fae5a);
+  box-shadow: 0 0 6px rgba(63, 174, 90, 0.55);
+}
+
+.fusion-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.fusion-row:first-child,
+.fusion-card-head + .fusion-row {
+  border-top: 0;
+}
+
+.fusion-th {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+}
+
+.fusion-th.big {
+  width: 64px;
+  height: 64px;
+}
+
+.fusion-mid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.fusion-mid b {
+  font: 800 1.1rem/1.1 "Barlow Condensed", system-ui, sans-serif;
+}
+
+.fusion-mid small {
+  font-size: 0.72rem;
+  color: #7fa98a;
+}
+
+.fusion-row em {
+  font-style: normal;
+  font-size: 0.82rem;
+  color: #9fc0a8;
+  white-space: nowrap;
+}
+
+.fusion-row button {
+  flex: none;
+  padding: 0.6rem 1rem;
+}
+
+.fusion-row.ready .fusion-th {
+  border-color: #ffd54a;
+  box-shadow: 0 0 12px rgba(255, 213, 74, 0.35);
+}
+
+.fusion-row.highlighted {
+  border-radius: 12px;
+  background: rgba(255, 213, 74, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 213, 74, 0.6);
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+}
+
+.fusion-list {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.fusion-h2 {
+  margin: 1.1rem 0 0.5rem;
+  font: 800 1.15rem "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9fc0a8;
+}
+
+.fusion-foot {
+  margin: 1rem 0 0;
+  font-size: 0.78rem;
+  color: #7fa98a;
+  text-align: center;
+}
+
+/* Tarjeta del altar en Inicio. Activa (algo listo para fusionar): contorno dorado y brasas que laten. */
+.fusion-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.fusion-card-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  margin: 0 0 0.4rem;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+.fusion-card-head img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex: none;
+}
+
+.fusion-card-head > span:nth-child(2) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fusion-card-head strong {
+  font-size: 1.15rem;
+}
+
+.fusion-card-head > span:nth-child(2) > span {
+  font-size: 0.8rem;
+  color: #9fc0a8;
+}
+
+.fusion-card-go {
+  font: 800 2rem "Barlow Condensed", system-ui, sans-serif;
+  color: #9fc0a8;
+}
+
+.fusion-card.is-active {
+  border-color: rgba(255, 213, 74, 0.7);
+  background: linear-gradient(180deg, rgba(40, 32, 12, 0.95), rgba(15, 26, 18, 0.98));
+  animation: fusion-ember 2.6s ease-in-out infinite;
+}
+
+.fusion-card.is-active .fusion-card-head img {
+  filter: drop-shadow(0 0 12px rgba(255, 170, 60, 0.85));
+}
+
+.fusion-card.is-active .fusion-card-go {
+  color: #ffd86b;
+}
+
+.fusion-card-glow {
+  position: absolute;
+  inset: -40% -10% auto -10%;
+  height: 90%;
+  background: radial-gradient(closest-side, rgba(255, 160, 50, 0.4), transparent);
+  pointer-events: none;
+}
+
+@keyframes fusion-ember {
+  50% { box-shadow: 0 0 26px rgba(255, 170, 60, 0.45); }
+}
+
+/* Cabecera de las pantallas del Altar: el altar con su lumbre hace de marca */
+.page-header-altar img {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 0 14px rgba(255, 170, 60, 0.7));
+}
+
+/* Resultado de la fusión: las cartas Balance se juntan y se convierten en la carta nueva */
+.fusion-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.55rem;
+  border: 2px solid var(--rc);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--rc) 40%, transparent);
+}
+
+.fusion-result-chip {
+  display: inline-block;
+  padding: 0.18rem 0.7rem;
+  border-radius: 999px;
+  background: #3fae5a;
+  color: #06120a;
+  font: 800 0.8rem "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fusion-result-ins {
+  display: flex;
+  justify-content: center;
+  padding-left: 1.4rem;
+}
+
+.fusion-result-ins img {
+  width: 54px;
+  height: 72px;
+  margin-left: -1.4rem;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  opacity: 0.45;
+  pointer-events: none;
+  transform: rotate(calc((var(--k) - (var(--n) - 1) / 2) * 4deg));
+  animation:
+    fusion-card-in 450ms ease-out calc(var(--k) * 100ms) backwards,
+    fusion-card-merge 650ms ease-in 950ms backwards;
+}
+
+.fusion-result-arrow {
+  color: #ffd86b;
+  font-size: 1.1rem;
+  animation: fusion-rise 400ms ease-out 1100ms backwards;
+}
+
+.fusion-result-out {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 3px solid var(--rc);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--rc) 55%, transparent);
+  animation: fusion-reveal 900ms cubic-bezier(0.2, 1.2, 0.3, 1) 1250ms backwards;
+}
+
+.fusion-result-out img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.fusion-result-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-side, #fff, rgba(255, 255, 255, 0));
+  opacity: 0;
+  pointer-events: none;
+  animation: fusion-flash 700ms ease-out 1300ms backwards;
+}
+
+.fusion-result-name {
+  font: 800 1.6rem/1.1 "Barlow Condensed", system-ui, sans-serif;
+  animation: fusion-rise 500ms ease-out 1750ms backwards;
+}
+
+.fusion-result-sub {
+  font-size: 0.82rem;
+  color: #9fc0a8;
+  animation: fusion-rise 500ms ease-out 1850ms backwards;
+}
+
+.fusion-result-facts {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  font-size: 0.9rem;
+  color: #b9d3c0;
+  animation: fusion-rise 500ms ease-out 1950ms backwards;
+}
+
+.fusion-result-facts b {
+  color: #f2f6f3;
+}
+
+.fusion-result-btn {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  animation: fusion-rise 500ms ease-out 2050ms backwards;
+}
+
+@keyframes fusion-card-in {
+  from { opacity: 0; transform: translateY(-18px) scale(0.9); }
+}
+
+/* Cada carta se desliza al centro y se queda atenuada: las cinco se «consumen» en la nueva */
+@keyframes fusion-card-merge {
+  to {
+    opacity: 0.2;
+    transform: translateX(calc(((var(--n) - 1) / 2 - var(--k)) * 31.6px)) scale(0.55) rotate(0deg);
+  }
+}
+
+@keyframes fusion-reveal {
+  from { opacity: 0; transform: scale(0.5); filter: blur(10px) brightness(2); }
+}
+
+@keyframes fusion-flash {
+  0% { opacity: 0; }
+  35% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+@keyframes fusion-rise {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fusion-card.is-active,
+  .fusion-result-ins img,
+  .fusion-result-arrow,
+  .fusion-result-out,
+  .fusion-result-flash,
+  .fusion-result-name,
+  .fusion-result-sub,
+  .fusion-result-facts,
+  .fusion-result-btn {
+    animation: none;
+  }
+}
