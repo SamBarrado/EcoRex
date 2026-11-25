@@ -9,6 +9,8 @@ import { useNotifications } from "../lib/NotificationsContext";
 import { usePlayer } from "../lib/PlayerContext";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 import { streakRewardNote } from "../lib/streak";
+import { useAchievements } from "../lib/AchievementsContext";
+import { achievementsFromResult } from "../lib/achievements";
 
 const RITUAL_MS = 1500;
 const MAX_SOUND_MS = 3000;
@@ -27,6 +29,7 @@ export default function FusionPage() {
   const { hideNav, showNav } = useNavVisibility();
   const { refetch: refetchNotifications } = useNotifications();
   const { refresh: refreshPlayer, pulse: pulseAtmosphere } = usePlayer();
+  const { announce } = useAchievements();
   const [searchParams] = useSearchParams();
   const [eligible, setEligible] = useState<EligibleSpecies[] | null>(null);
   const [progress, setProgress] = useState<EligibleSpecies[]>([]);
@@ -142,6 +145,9 @@ export default function FusionPage() {
   }
 
   function finishReset() {
+    // Achievements of this fusion (completed species, missions, bonus, streak)
+    // show over the altar once the player leaves the result.
+    if (result) void announce(achievementsFromResult(result));
     stopSound();
     setResult(null);
     setShowXpToast(false);

@@ -9,7 +9,8 @@ import ColeccionPage from "./pages/ColeccionPage";
 import PerfilPage from "./pages/PerfilPage";
 import FusionPage from "./pages/FusionPage";
 import PageHeader from "./components/PageHeader";
-import ActionFab from "./components/ActionFab";
+import NotificationBell from "./components/NotificationBell";
+import { AchievementsProvider } from "./lib/AchievementsContext";
 import BottomNav from "./components/BottomNav";
 import Atmosphere from "./components/Atmosphere";
 import LevelHud from "./components/LevelHud";
@@ -27,11 +28,14 @@ function Shell() {
       <PlayerProvider>
         <NotificationsProvider>
           <AvatarProvider>
-            <Atmosphere />
-            <Outlet />
-            <BottomNav />
-            <LevelHud />
-            <DesktopNotice />
+            <AchievementsProvider>
+              <Atmosphere />
+              <Outlet />
+              <BottomNav />
+              <LevelHud />
+              <NotificationBell />
+              <DesktopNotice />
+            </AchievementsProvider>
           </AvatarProvider>
         </NotificationsProvider>
       </PlayerProvider>
@@ -52,12 +56,7 @@ export const router = createBrowserRouter([
       { path: "/privacidad", element: <PrivacidadPage /> },
       {
         path: "/inicio",
-        element: (
-          <>
-            <InicioPage />
-            <ActionFab />
-          </>
-        ),
+        element: <InicioPage />,
       },
       { path: "/percibir", element: <PercibirPage /> },
       { path: "/coleccion", element: <ColeccionPage /> },

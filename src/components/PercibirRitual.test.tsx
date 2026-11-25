@@ -6,6 +6,7 @@ import { ApiError, Species } from "../lib/api";
 import { NavVisibilityProvider } from "../lib/NavVisibilityContext";
 import { NotificationsProvider } from "../lib/NotificationsContext";
 import { PlayerProvider } from "../lib/PlayerContext";
+import { AchievementsProvider } from "../lib/AchievementsContext";
 import Atmosphere from "./Atmosphere";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 
@@ -64,7 +65,9 @@ function renderRitual(props: Partial<React.ComponentProps<typeof PercibirRitual>
     <MemoryRouter>
       <NavVisibilityProvider>
         <NotificationsProvider>
-          <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+          <AchievementsProvider>
+            <PercibirRitual species={species} discoverFn={vi.fn()} onUnauthorized={vi.fn()} {...props} />
+          </AchievementsProvider>
         </NotificationsProvider>
       </NavVisibilityProvider>
     </MemoryRouter>
@@ -353,9 +356,9 @@ describe("PercibirRitual", () => {
     expect(screen.getByText(/subiste de nivel/i)).toBeInTheDocument();
     expect(screen.queryByText(/nueva especie registrada/i)).not.toBeInTheDocument();
 
-    // Dismissing it is what finally proceeds to the new-species toast.
+    // Dismissing it is what finally proceeds to the new-species medal.
     fireEvent.click(screen.getByText(/subiste de nivel/i));
 
-    expect(screen.getByText(/nueva especie registrada/i)).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: /nueva especie registrada/i })).toBeInTheDocument();
   });
 });

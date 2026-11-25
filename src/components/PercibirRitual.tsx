@@ -8,13 +8,14 @@ import { ApiError, DiscoverResult, Species } from "../lib/api";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 import { usePlayer } from "../lib/PlayerContext";
+import { useAchievements } from "../lib/AchievementsContext";
+import { achievementsFromResult } from "../lib/achievements";
 import { formatEnergyCountdown } from "../lib/energy";
 import { RARITY_GLOW } from "../lib/rarityGlow";
 
 const PHASE = "balance";
 const DRAG_COMMIT_PROGRESS = 0.96;
 const RITUAL_ANIM_MS = 1800;
-const NEW_SLOT_OVERLAY_MS = 1300;
 const REVEAL_TITLE_VISIBLE_MS = 2000;
 const MAX_SOUND_MS = 3000;
 const SFX_TEAR = "/sounds/sfx-tear.mp3";
@@ -81,7 +82,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const { hideNav, showNav, pulseTab } = useNavVisibility();
   const { refetch: refetchNotifications } = useNotifications();
   const { refresh: refreshPlayer, pulse: pulseAtmosphere } = usePlayer();
-  const [showNewSlotOverlay, setShowNewSlotOverlay] = useState(false);
+  const { announce } = useAchievements();
   const [showRevealTitle, setShowRevealTitle] = useState(false);
   const [phase, setPhase] = useState<RitualPhase>("sealed");
   const [peeking, setPeeking] = useState(false);
@@ -298,16 +299,26 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
 
   function proceedAfterCommit() {
     if (!result) return;
-    if (result.isNewSlot) {
-      setShowNewSlotOverlay(true);
-      setTimeout(() => {
+    const current = result;
+    const finish = () => {
+      if (current.isNewSlot) {
         navigate("/coleccion", {
-          state: { justUnlockedKey: `${result.speciesId}_${result.phase}` },
+          state: { justUnlockedKey: `${current.speciesId}_${current.phase}` },
         });
-      }, NEW_SLOT_OVERLAY_MS);
+      } else {
+        pulseTab("/coleccion");
+        handleReset();
+      }
+    };
+    // Achievements (medals for a new species / Eco / completed species, banners
+    // for missions, bonus and streak) show over the screen. With a medal we move
+    // on once it is dismissed; with only banners we move on straight away.
+    const achievements = achievementsFromResult(current);
+    const pending = announce(achievements);
+    if (achievements.some((a) => a.kind === "medal")) {
+      pending.then(finish);
     } else {
-      pulseTab("/coleccion");
-      handleReset();
+      finish();
     }
   }
 
@@ -357,7 +368,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
         </div>
       )}
 
-      {!error && phase === "revealed" && result && !showNewSlotOverlay && (
+      {!error && phase === "revealed" && result && (
         <div className="percibir-overlay">
           {showRevealTitle && <strong className="reveal-title-fade">
               {result?.phase === "eco" ? "¡Percibiste un Eco!" : "¡Percibiste una Fractura!"}
@@ -375,17 +386,6 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
             allowSpin={false}
             onCommitUp={handleCommitUp}
           />
-        </div>
-      )}
-
-      {showNewSlotOverlay && result && (
-        <div className="percibir-overlay">
-          <div className="new-slot-toast">
-            <strong>¡Nueva especie registrada!</strong>
-            <div>
-              {result.commonName} ({result.fractaeChildName ?? result.phase})
-            </div>
-          </div>
         </div>
       )}
 

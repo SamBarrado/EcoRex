@@ -178,6 +178,8 @@ export interface DiscoverResult {
   xp: { xpGained: number; totalXp: number; level: number; previousLevel: number; leveledUp: boolean };
   missionsCompleted: string[];
   dailyBonusAwarded: boolean;
+  /** This action completed all three phases of the species for the first time. */
+  speciesCompleted?: boolean;
   energyGained?: { levelUp: number; streak: number };
   streak?: { days: number; reward: { days: number; xp: number } | null };
 }
