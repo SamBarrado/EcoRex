@@ -76,7 +76,7 @@ a {
   max-width: 480px;
   margin: 0 auto;
   /* 3.6rem arriba: deja sitio al indicador de nivel (.level-hud), siempre visible en la esquina */
-  padding: 3.6rem 1rem calc(2rem + 64px + env(safe-area-inset-bottom));
+  padding: 3.6rem 1rem calc(2rem + 84px + env(safe-area-inset-bottom));
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -872,26 +872,29 @@ body.card-preview-open .notif-bell-wrap {
   color: #a8d8b4;
 }
 
+/* Barra flotante (diseño elegido 2026-11-25): una píldora separada del borde, con sombra */
 .bottom-nav {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
   z-index: 50;
   display: flex;
   justify-content: space-around;
-  max-width: 480px;
+  max-width: 456px;
   margin: 0 auto;
-  background: linear-gradient(180deg, rgba(20, 34, 24, 0.92), rgba(12, 22, 15, 0.98));
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(14, 26, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(10px);
-  padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom));
+  padding: 0.4rem 0.5rem;
   transition: transform 0.25s ease;
   transform: translateY(0);
 }
 
 .bottom-nav-hidden {
-  transform: translateY(100%);
+  transform: translateY(calc(100% + 24px + env(safe-area-inset-bottom)));
 }
 
 .bottom-nav-tab {
@@ -2068,11 +2071,11 @@ body.card-preview-open .notif-bell-wrap {
   position: absolute;
   z-index: 0;
   top: 0.35rem;
-  bottom: calc(0.35rem + env(safe-area-inset-bottom));
+  bottom: 0.35rem;
   left: 0.5rem;
   box-sizing: border-box; /* si no, el borde de 1px ensancha la píldora y se desalinea ~2px por pestaña */
   width: calc((100% - 1rem) / 4);
-  border-radius: 15px;
+  border-radius: 20px;
   background: rgba(127, 200, 145, 0.14);
   border: 1px solid rgba(127, 200, 145, 0.3);
   transform: translateX(calc(var(--nav-i, 0) * 100%));
@@ -3637,5 +3640,57 @@ body.card-preview-open .notif-bell-wrap {
   .fusion-result-facts,
   .fusion-result-btn {
     animation: none;
+  }
+}
+
+/* Botón de Percibir: el ojo con un anillo que muestra la energía; late con la energía llena y se apaga sin ella */
+.bottom-nav-tab-percibir .bottom-nav-icon {
+  width: 42px;
+  height: 42px;
+  margin: -8px 0;
+  translate: 0 -4px;
+}
+
+.en-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.en-ring .t {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 3;
+}
+
+.en-ring .f {
+  fill: none;
+  stroke: #7fc891;
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(127, 200, 145, 0.8));
+  transition: stroke-dasharray 600ms ease;
+}
+
+.bottom-nav-tab-full .bottom-nav-icon {
+  animation: nav-energy-full 2.6s ease-in-out infinite;
+}
+
+.bottom-nav-tab-empty .bottom-nav-icon > svg:not(.en-ring) {
+  opacity: 0.45;
+}
+
+@keyframes nav-energy-full {
+  50% { filter: drop-shadow(0 0 8px rgba(127, 200, 145, 0.9)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav-tab-full .bottom-nav-icon,
+  .en-ring .f {
+    animation: none;
+    transition: none;
   }
 }

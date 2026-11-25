@@ -1,11 +1,14 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { setUsername, ApiError } from "../lib/api";
+import { setUsername, setAvatar, ApiError } from "../lib/api";
+import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
 import { UserIcon } from "../components/AuthIcons";
 
 export default function UsernameSetupPage() {
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState("");
+  // Same explorer card as the sign-up page: Google accounts have no avatar yet.
+  const [avatar, setAvatarChoice] = useState<string>(AVATAR_IDS[0]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +18,8 @@ export default function UsernameSetupPage() {
     setLoading(true);
     try {
       await setUsername({ display_name: displayName });
+      // Failing to save the avatar must not block the account setup.
+      await setAvatar(avatar).catch(() => {});
       navigate("/inicio");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Error al guardar el nombre de usuario");
@@ -31,10 +36,35 @@ export default function UsernameSetupPage() {
         </div>
       </div>
       <form onSubmit={handleSubmit} className="auth-card">
-        <h1 className="auth-title">Elige tu nombre de usuario</h1>
-        <p className="auth-switch" style={{ marginTop: 0, marginBottom: "1rem" }}>
-          Tu cuenta necesita un nombre de usuario único para continuar.
-        </p>
+        <h1 className="auth-title">Tu carnet de explorador</h1>
+
+        <div className="id-card">
+          <div className="id-card-photo">
+            <img src={avatarUrl(avatar)} alt="" />
+          </div>
+          <div className="id-card-body">
+            <small>CARNET DE EXPLORADOR</small>
+            <b className="id-card-name" key={displayName}>{displayName || "Tu nombre"}</b>
+            <span>Nivel 1 · Explorador Novato</span>
+          </div>
+          <i className="id-card-foil" aria-hidden="true" />
+        </div>
+
+        <div className="id-avatars" role="radiogroup" aria-label="Elige tu avatar">
+          {AVATAR_IDS.map((id, i) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={avatar === id}
+              aria-label={`Avatar ${i + 1}`}
+              className={`id-avatar${avatar === id ? " on" : ""}`}
+              onClick={() => setAvatarChoice(id)}
+            >
+              <img src={avatarUrl(id)} alt="" />
+            </button>
+          ))}
+        </div>
 
         <div className="auth-field">
           <UserIcon />
@@ -55,7 +85,7 @@ export default function UsernameSetupPage() {
         {error && <p className="error">{error}</p>}
 
         <button type="submit" className="auth-submit" disabled={loading}>
-          {loading ? "Guardando..." : "Continuar"}
+          {loading ? "Creando..." : "Crear mi carnet"}
         </button>
       </form>
     </div>
