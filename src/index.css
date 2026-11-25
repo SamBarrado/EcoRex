@@ -759,27 +759,39 @@ body.card-preview-open .notif-bell-wrap {
   align-items: center;
   max-width: 480px;
   margin: 0 auto;
-  padding: 0.75rem 1rem 0;
+  /* a la misma altura que la campana y el anillo de nivel (fijos arriba a la derecha) */
+  padding: calc(10px + env(safe-area-inset-top)) 1rem 0;
 }
 
+/* Controles de la cabecera: la misma familia que la campana y el anillo de nivel (círculo oscuro, borde fino,
+   sombra suave). Sin esto heredaban del `button` global el relieve y el halo verde del Foil. */
 .page-back-btn {
   justify-self: start;
-  background: none;
-  border: none;
-  padding: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   margin: 0;
+  border-radius: 50%;
+  background: rgba(10, 20, 13, 0.88);
+  border: 1px solid rgba(127, 200, 145, 0.38);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   color: #f2f6f3;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
 }
 
+/* La marca del centro va sin contenedor: el icono solo, sin relieve */
 .page-header-logo {
   grid-column: 2;
   justify-self: center;
   display: block;
   background: none;
   border: none;
+  border-radius: 0;
+  box-shadow: none;
   padding: 0;
   margin: 0;
   cursor: pointer;
@@ -3475,9 +3487,9 @@ body.card-preview-open .notif-bell-wrap {
 
 /* Cabecera de las pantallas del Altar: el altar con su lumbre hace de marca */
 .page-header-altar img {
-  width: 72px;
-  height: 72px;
-  filter: drop-shadow(0 0 14px rgba(255, 170, 60, 0.7));
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 0 8px rgba(255, 170, 60, 0.5));
 }
 
 /* Resultado de la fusión: las cartas Balance se juntan y se convierten en la carta nueva */
