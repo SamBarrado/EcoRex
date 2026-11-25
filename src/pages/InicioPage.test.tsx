@@ -52,7 +52,7 @@ afterEach(() => {
 });
 
 describe("InicioPage", () => {
-  it("renders separate progress bars for level xp and species discovered", async () => {
+  it("shows the level bar in the hero", async () => {
     getFuseEligibleMock.mockResolvedValue({ eligible: [] });
     getMyProfileMock.mockResolvedValue(profile);
     getEnergyMock.mockResolvedValue(null);
@@ -60,30 +60,26 @@ describe("InicioPage", () => {
 
     renderPage();
 
-    await screen.findByText("Nivel 2");
+    await screen.findByText("Nivel 2 · Explorador");
     const levelFill = document.querySelector(".level-progress-fill") as HTMLElement;
-    const speciesFill = document.querySelector(".species-progress-fill") as HTMLElement;
 
     expect(levelFill).toBeTruthy();
-    expect(speciesFill).toBeTruthy();
-    expect(levelFill).not.toBe(speciesFill);
     expect(levelFill.style.width).toBe("25%"); // 10/40
-    expect(speciesFill.style.width).toBe("30%"); // 3/10
+    expect(screen.getByText("10/40 XP")).toBeTruthy();
+    expect(document.querySelector(".home-hero-text b")?.textContent).toBe("A"); // display name
   });
 
-  it("shows species and EcoDex registries as two separate, clearly labelled progress lines", async () => {
+  it("shows species and EcoDex registries as two separate, clearly labelled chips", async () => {
     getFuseEligibleMock.mockResolvedValue({ eligible: [] });
     getMyProfileMock.mockResolvedValue(profile);
     getEnergyMock.mockResolvedValue(null);
     getMissionsMock.mockResolvedValue(null);
 
     renderPage();
-    await screen.findByText("Nivel 2");
+    await screen.findByText("Nivel 2 · Explorador");
 
-    expect(screen.getByText("Especies descubiertas")).toBeTruthy();
-    expect(screen.getByText("3/10 (30%)")).toBeTruthy();
-    expect(screen.getByText("Registros del EcoDex")).toBeTruthy();
-    expect(screen.getByText("4/30 (13%)")).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Especies descubiertas 3 de 10" })).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Registros del EcoDex 4 de 30" })).toBeTruthy();
   });
 
   it("labels the unbuilt features as coming soon instead of showing dead locks", async () => {
@@ -93,7 +89,7 @@ describe("InicioPage", () => {
     getMissionsMock.mockResolvedValue(null);
 
     renderPage();
-    await screen.findByText("Nivel 2");
+    await screen.findByText("Nivel 2 · Explorador");
 
     // Eco is no longer a "mode": it's a rare drop of Percibir, so it has no tile.
     // Álbum y Amigos están ocultos (SHOW_COMING_SOON_TILES = false).
@@ -119,7 +115,7 @@ describe("InicioPage", () => {
       await vi.runOnlyPendingTimersAsync();
     });
 
-    const initialMatch = screen.getByText(/\+1 en \d+m/).textContent;
+    const initialMatch = screen.getByText(/de energía en \d+m/).textContent;
     const initialMinutes = Number(initialMatch?.match(/(\d+)m/)?.[1]);
 
     await act(async () => {
@@ -127,7 +123,7 @@ describe("InicioPage", () => {
       await vi.runOnlyPendingTimersAsync();
     });
 
-    const laterMatch = screen.getByText(/\+1 en \d+m/).textContent;
+    const laterMatch = screen.getByText(/de energía en \d+m/).textContent;
     const laterMinutes = Number(laterMatch?.match(/(\d+)m/)?.[1]);
 
     expect(laterMinutes).toBeLessThanOrEqual(initialMinutes - 2);
@@ -161,7 +157,7 @@ describe("InicioPage", () => {
 
     cleanup();
     renderPage();
-    await screen.findByText("Nivel 2");
+    await screen.findByText("Nivel 2 · Explorador");
     expect(screen.queryByText("Hace 66 millones de años…")).toBeNull();
   });
 
@@ -172,7 +168,7 @@ describe("InicioPage", () => {
     getMissionsMock.mockResolvedValue(null);
 
     renderPage();
-    await screen.findByText("Nivel 2");
+    await screen.findByText("Nivel 2 · Explorador");
     expect(screen.queryByText("Hace 66 millones de años…")).toBeNull();
     expect(localStorage.getItem("ecorex_welcome_seen_1")).toBe("1");
   });
@@ -195,8 +191,8 @@ describe("InicioPage", () => {
     } satisfies MissionsState);
 
     renderPage();
-    expect(await screen.findByText("🔥 Racha: 2 días seguidos")).toBeTruthy();
-    expect(screen.getByText("¡Juega hoy para no perderla!")).toBeTruthy();
+    expect(await screen.findByRole("group", { name: "Racha: 2 días seguidos" })).toBeTruthy();
+    expect(screen.getByText("¡Juega hoy para no perder tu racha de 2 días seguidos!")).toBeTruthy();
     expect(screen.getByText(/Próxima fusión:/).textContent).toContain("Rex de Fuego");
     expect(screen.getByText("3/5")).toBeTruthy();
   });

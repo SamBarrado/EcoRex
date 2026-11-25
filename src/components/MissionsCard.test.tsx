@@ -24,15 +24,18 @@ describe("MissionsCard", () => {
 
   it("lists every mission with its progress, marking completed ones", () => {
     render(<MissionsCard missions={missions} />);
-    expect(screen.getByText("✓ Percibe hoy")).toBeTruthy();
-    expect(screen.getByText("Consigue 3 cartas hoy")).toBeTruthy();
+    const done = screen.getByText("Percibe hoy", { exact: false }).closest("li");
+    expect(done?.className).toContain("done");
+    expect(done?.textContent).toContain("completada");
+    expect(screen.getByText("Consigue 3 cartas hoy").closest("li")?.className).not.toContain("done");
     expect(screen.getByText("1/3")).toBeTruthy();
-    expect(screen.getByText("Completa 1 fusión (extra)")).toBeTruthy();
+    expect(screen.getByText("Completa 1 fusión (extra)").closest("li")?.className).toContain("extra");
   });
 
   it("describes the bonus as depending on the main missions, not all of them", () => {
     render(<MissionsCard missions={missions} />);
-    expect(screen.getByText("Bonus: completa las misiones principales")).toBeTruthy();
+    expect(screen.getByText(/Bonus del día/)).toBeTruthy();
+    expect(screen.getByText(/misiones principales/)).toBeTruthy();
     expect(screen.getByText("+30 XP")).toBeTruthy();
   });
 

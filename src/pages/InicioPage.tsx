@@ -11,10 +11,9 @@ import {
   EligibleSpecies,
   ApiError,
 } from "../lib/api";
-import { formatEnergyCountdown } from "../lib/energy";
 import { FeatureUnlockModal } from "../components/FeatureUnlockModal";
 import { MissionsCard } from "../components/MissionsCard";
-import { StreakCard } from "../components/StreakCard";
+import { HomeHero } from "../components/HomeHero";
 import { FusionProgressCard } from "../components/FusionProgressCard";
 import { WelcomeFlow, hasSeenWelcome, markWelcomeSeen } from "../components/WelcomeFlow";
 import PushOnboardingTile from "../components/PushOnboardingTile";
@@ -82,15 +81,6 @@ export default function InicioPage() {
       });
   }, [navigate]);
 
-  const progressPct =
-    profile && profile.speciesTotalCount > 0
-      ? Math.round((profile.speciesDiscoveredCount / profile.speciesTotalCount) * 100)
-      : 0;
-  const registeredPct =
-    profile && profile.registeredTotalCount > 0
-      ? Math.round((profile.registeredCount / profile.registeredTotalCount) * 100)
-      : 0;
-
   return (
     <div className="page">
       {showWelcome && profile && (
@@ -112,58 +102,8 @@ export default function InicioPage() {
       )}
       <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" fetchPriority="high" />
 
-      {profile && (
-        <div className="card">
-          <div className="stat">
-            <span>Nivel {profile.level}</span>
-            <span>
-              {profile.xpForNextLevel === null
-                ? "MAX"
-                : `${profile.xpIntoLevel}/${profile.xpForNextLevel} XP`}
-            </span>
-          </div>
-          {profile.xpForNextLevel !== null && (
-            <div className="level-progress-bar">
-              <div
-                className="level-progress-fill"
-                style={{ width: `${Math.round((profile.xpIntoLevel / profile.xpForNextLevel) * 100)}%` }}
-              />
-            </div>
-          )}
-          <div className="stat">
-            <span>Especies descubiertas</span>
-            <span>
-              {profile.speciesDiscoveredCount}/{profile.speciesTotalCount} ({progressPct}%)
-            </span>
-          </div>
-          <div className="level-progress-bar">
-            <div className="species-progress-fill" style={{ width: `${progressPct}%` }} />
-          </div>
-          <div className="stat">
-            <span>Registros del EcoDex</span>
-            <span>
-              {profile.registeredCount}/{profile.registeredTotalCount} ({registeredPct}%)
-            </span>
-          </div>
-          <div className="level-progress-bar">
-            <div className="species-progress-fill" style={{ width: `${registeredPct}%` }} />
-          </div>
-          {energy && (
-            <div className="stat">
-              <span>⚡ Energía</span>
-              <span>
-                {energy.unlimited ? "∞/∞" : `${energy.remaining}/${energy.max}`}
-                {!energy.unlimited &&
-                  energy.remaining === 0 &&
-                  energy.resetAt !== null &&
-                  ` · +1 en ${formatEnergyCountdown(energy.resetAt, now)}`}
-              </span>
-            </div>
-          )}
-        </div>
-      )}
+      {profile && <HomeHero profile={profile} energy={energy} streak={missions?.streak} now={now} />}
 
-      <StreakCard streak={missions?.streak} />
       <MissionsCard missions={missions} />
       <FusionProgressCard species={fusionProgress[0]} threshold={fusionThreshold} />
 
