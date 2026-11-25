@@ -39,15 +39,17 @@ export default function PushOnboardingTile() {
     <div className="card">
       <strong>Activa las notificaciones</strong>
       <p>Te avisamos cuando tengas energía lista para descubrir de nuevo.</p>
-      <button
-        onClick={() => {
-          dismiss();
-          navigate("/perfil");
-        }}
-      >
-        Activar
-      </button>
-      <button className="btn-secondary" onClick={dismiss}>Ahora no</button>
+      <div className="btn-row">
+        <button
+          onClick={() => {
+            dismiss();
+            navigate("/perfil");
+          }}
+        >
+          Activar
+        </button>
+        <button className="btn-secondary" onClick={dismiss}>Ahora no</button>
+      </div>
     </div>
   );
 }

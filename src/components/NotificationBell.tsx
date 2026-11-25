@@ -7,7 +7,8 @@ import { useNotifications } from "../lib/NotificationsContext";
 import { useAppNavigate } from "../lib/navigation";
 
 // Notification bell in the header, left of the level ring (design chosen
-// 2026-11-18). A new notification slides in as a banner and, after a moment,
+// 2026-11-18; icon changed 2026-11-25 to a plain gold bell glyph: the illustrated
+// medallion was unreadable at header size). A new notification slides in as a banner and, after a moment,
 // folds into the bell, which rings. Hidden on the account screens, in Percibir
 // and whenever the bottom nav is hidden (immersive moments), like the level ring.
 
@@ -176,7 +177,10 @@ export default function NotificationBell() {
             aria-expanded={showList}
             onClick={() => setShowList((v) => !v)}
           >
-            <img src="/icons/notificaciones.webp" alt="" />
+            <svg className="notif-bell-glyph" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.2c-.9 0-1.6.7-1.6 1.6v.7C7.6 5.2 6 7.6 6 10.4v3.3L4.3 16c-.5.7 0 1.7.9 1.7h13.6c.9 0 1.4-1 .9-1.7L18 13.7v-3.3c0-2.8-1.6-5.2-4.4-5.9v-.7c0-.9-.7-1.6-1.6-1.6Z" />
+              <path d="M9.6 19c.3 1.2 1.3 2 2.4 2s2.1-.8 2.4-2H9.6Z" />
+            </svg>
             {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
           </button>
         </div>

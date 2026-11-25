@@ -206,6 +206,14 @@ button:disabled {
   text-underline-offset: 4px;
 }
 
+/* Botones de una misma acción, uno junto a otro: con aire entre ellos */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
 .error {
   color: #ff8a8a;
   font-size: 0.9rem;
@@ -2324,29 +2332,30 @@ body.card-preview-open .notif-bell-wrap {
   z-index: 55;
   top: calc(10px + env(safe-area-inset-top));
   /* anillo de nivel: 12 px de margen + 44 de ancho; la campana va 12 px a su izquierda */
-  right: calc(max(0px, (100vw - 480px) / 2) + 12px + 44px + 12px);
-  width: 44px;
-  height: 44px;
+  right: calc(max(0px, (100vw - 480px) / 2) + 12px + 44px + 10px);
+  width: 54px;
+  height: 54px;
   view-transition-name: notif-bell;
 }
 
 .notif-bell {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   padding: 0;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(10, 20, 13, 0.88);
-  border: 1px solid rgba(127, 200, 145, 0.38);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  background: #12261a;
+  border: 2px solid #e6b94a;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 16px rgba(230, 185, 74, 0.3);
 }
 
-.notif-bell img {
+.notif-bell-glyph {
   width: 30px;
   height: 30px;
-  object-fit: contain;
+  fill: #ffd86b;
+  filter: drop-shadow(0 0 4px rgba(255, 216, 107, 0.55));
   transform-origin: 50% 12%;
 }
 
@@ -2365,16 +2374,16 @@ body.card-preview-open .notif-bell-wrap {
   text-align: center;
 }
 
-.notif-bell-ring img {
+.notif-bell-ring .notif-bell-glyph {
   animation: notif-bell-swing 1000ms ease-in-out;
 }
 
 .notif-bell-ring::before {
   content: "";
   position: absolute;
-  inset: 4px;
+  inset: 2px;
   border-radius: 50%;
-  border: 2px solid rgba(127, 224, 160, 0.8);
+  border: 2px solid rgba(230, 185, 74, 0.8);
   animation: notif-bell-halo 1000ms ease-out;
   pointer-events: none;
 }
@@ -2401,8 +2410,10 @@ body.card-preview-open .notif-bell-wrap {
 
 .notif-list {
   position: absolute;
-  top: 52px;
-  right: 0;
+  top: 62px;
+  /* alineada con el borde derecho del anillo de nivel (a 12 px del borde de la pantalla) */
+  right: -54px;
+  box-sizing: border-box;
   width: min(310px, calc(100vw - 24px));
   max-height: 58vh;
   overflow-y: auto;
@@ -2464,7 +2475,7 @@ body.card-preview-open .notif-bell-wrap {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .notif-bell-ring img,
+  .notif-bell-ring .notif-bell-glyph,
   .notif-bell-ring::before,
   .notif-list,
   .notif-item,
@@ -3074,4 +3085,206 @@ body.card-preview-open .notif-bell-wrap {
   padding: 0.25rem 0.8rem;
   font-size: 0.8rem;
   border-radius: 999px;
+}
+
+/* Perfil · panel con anillos (diseño elegido 2026-11-25) */
+.profile-ring .avatar {
+  position: absolute;
+  inset: 8px;
+  width: 48px;
+  height: 48px;
+}
+
+/* `.home-ring img` (el avatar de Inicio) también casaría con esta imagen anidada */
+.profile-ring .avatar .avatar-img {
+  position: static;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-donuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.profile-donut {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #9fc0a8;
+}
+
+.profile-donut svg {
+  width: 104px;
+  height: 104px;
+  transform: rotate(-90deg);
+}
+
+.profile-donut .t {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.13);
+  stroke-width: 8;
+}
+
+.profile-donut .f {
+  fill: none;
+  stroke: #3fae5a;
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(63, 174, 90, 0.6));
+  transition: stroke-dasharray 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.profile-donut-blue .f {
+  stroke: #4fa9e0;
+  filter: drop-shadow(0 0 4px rgba(79, 169, 224, 0.6));
+}
+
+.profile-donut-n {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 1.9rem "Barlow Condensed", system-ui, sans-serif;
+  color: #f2f6f3;
+}
+
+.profile-donut-n small {
+  margin-left: 1px;
+  font-size: 0.9rem;
+  color: #7fa98a;
+}
+
+.profile-chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.profile-stack {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  margin: 0.7rem 0 0.6rem;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.profile-stack i {
+  display: block;
+  min-width: 6px;
+}
+
+.profile-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.profile-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.profile-legend li i {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.profile-legend li span {
+  flex: 1;
+  color: #b9d3c0;
+}
+
+.profile-legend li b {
+  font: 800 0.95rem "Barlow Condensed", system-ui, sans-serif;
+}
+
+.profile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-switch {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  flex: none;
+}
+
+.profile-switch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.profile-switch input:disabled {
+  cursor: not-allowed;
+}
+
+.profile-switch i {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background 200ms;
+}
+
+.profile-switch i::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 200ms;
+}
+
+.profile-switch input:checked + i {
+  background: #3fae5a;
+}
+
+.profile-switch input:checked + i::after {
+  transform: translateX(22px);
+}
+
+.profile-switch input:disabled + i {
+  opacity: 0.5;
+}
+
+.profile-switch input:focus-visible + i {
+  outline: 2px solid #86efac;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-donut .f,
+  .profile-switch i,
+  .profile-switch i::after {
+    transition: none;
+  }
 }

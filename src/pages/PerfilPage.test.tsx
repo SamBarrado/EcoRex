@@ -99,19 +99,68 @@ describe("PerfilPage avatar", () => {
 });
 
 describe("PerfilPage collection stats", () => {
-  it("uses one label per unit: species, EcoDex registries, cards and repeated cards", async () => {
+  it("shows species and EcoDex registries as two labelled rings, plus cards and repeated cards", async () => {
     getMyProfileMock.mockResolvedValue(baseProfile);
     renderPage();
 
-    await screen.findByText("Especies descubiertas");
-    expect(screen.getByText("3/10 (30%)")).toBeInTheDocument(); // species
-    expect(screen.getByText("Registros del EcoDex")).toBeInTheDocument();
-    expect(screen.getByText("4/30 (13%)")).toBeInTheDocument(); // registries
-    expect(screen.getByText("Cartas conseguidas")).toBeInTheDocument();
-    expect(screen.getByText("Repetidas")).toBeInTheDocument();
+    expect(await screen.findByRole("img", { name: "Especies descubiertas 3 de 10" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Registros del EcoDex 4 de 30" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Cartas conseguidas 5" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Cartas repetidas 2" })).toBeInTheDocument();
     // Retired labels that mixed units.
     expect(screen.queryByText("Duplicados")).not.toBeInTheDocument();
     expect(screen.queryByText("Capturas totales")).not.toBeInTheDocument();
     expect(screen.queryByText("Progreso de colección")).not.toBeInTheDocument();
+  });
+
+  it("fills each ring in proportion to what is collected", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    renderPage();
+    const species = await screen.findByRole("img", { name: "Especies descubiertas 3 de 10" });
+    expect((species.querySelector(".f") as SVGElement).style.strokeDasharray).toBe("30 100");
+    const registries = screen.getByRole("img", { name: "Registros del EcoDex 4 de 30" });
+    expect((registries.querySelector(".f") as SVGElement).style.strokeDasharray).toBe("13 100");
+  });
+
+  it("shows the level, title and XP bar in the hero", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    renderPage();
+    expect(await screen.findByText("Nivel 2 · Explorador")).toBeInTheDocument();
+    expect(screen.getByText("10/40 XP")).toBeInTheDocument();
+    expect((document.querySelector(".level-progress-fill") as HTMLElement).style.width).toBe("25%");
+  });
+
+  it("draws the rarity as a stacked bar with a legend, weakest first, with the card colours", async () => {
+    getMyProfileMock.mockResolvedValue({
+      ...baseProfile,
+      rarityBreakdown: [
+        { slug: "epica", name: "Especie Épica", count: 1 },
+        { slug: "registrada", name: "Especie Registrada", count: 14 },
+        { slug: "notable", name: "Especie Notable", count: 6 },
+      ],
+    });
+    renderPage();
+    const bar = await screen.findByRole("img", { name: "Registrada 14, Notable 6, Épica 1" });
+    const segments = Array.from(bar.querySelectorAll("i")) as HTMLElement[];
+    expect(segments.map((s) => s.style.flexGrow)).toEqual(["14", "6", "1"]);
+    expect(segments[1].style.background).toBe("rgb(79, 169, 224)"); // notable blue
+    expect(screen.getByText("Notable")).toBeInTheDocument();
+  });
+
+  it("hides the rarity card when nothing was found yet", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    renderPage();
+    await screen.findByText("Nivel 2 · Explorador");
+    expect(screen.queryByText("Por rareza")).not.toBeInTheDocument();
+  });
+});
+
+describe("PerfilPage logout", () => {
+  it("is a primary (filled) button like \"Activar\", not the outlined secondary one", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    renderPage();
+    const logoutButton = await screen.findByRole("button", { name: "Cerrar sesión" });
+    expect(logoutButton.className).toBe("");
+    expect(logoutButton.parentElement).toHaveClass("btn-row");
   });
 });
