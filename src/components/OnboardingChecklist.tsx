@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { OnboardingState } from "../lib/api";
+import { isPushSupported, getNotificationPermission, subscribeToPush } from "../lib/push";
 
 // "Primeros pasos" (design chosen 2026-11-18): a checklist with a prize. The
 // steps come from the server (real data); the card only draws them.
@@ -17,7 +19,37 @@ const ACTIONS: Partial<Record<OnboardingState["steps"][number]["slug"], { label:
   push: { label: "Activar", to: "/perfil" },
 };
 
-export function OnboardingChecklist({ state, onGo }: { state: OnboardingState; onGo: (to: string) => void }) {
+export function OnboardingChecklist({
+  state,
+  onGo,
+  onChanged,
+}: {
+  state: OnboardingState;
+  onGo: (to: string) => void;
+  /** Called after a step was completed from the card itself (reload the state). */
+  onChanged?: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  // "Activar" subscribes right here (it is a tap, so the permission prompt is
+  // allowed). Only if that is impossible (unsupported, denied, error) we send
+  // the player to Perfil, where the switch explains why.
+  async function activatePush() {
+    if (busy) return;
+    if (!isPushSupported()) return onGo("/perfil");
+    setBusy(true);
+    try {
+      await subscribeToPush();
+      // subscribeToPush returns quietly when the player refuses the prompt.
+      if (getNotificationPermission() !== "granted") return onGo("/perfil");
+      onChanged?.();
+    } catch {
+      onGo("/perfil");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const done = state.steps.filter((s) => s.done).length;
   const total = state.steps.length;
 
@@ -43,7 +75,11 @@ export function OnboardingChecklist({ state, onGo }: { state: OnboardingState; o
                 {step.done && <span className="sr-only"> (hecho)</span>}
               </span>
               {action && (
-                <button className="onboarding-mini" onClick={() => onGo(action.to)}>
+                <button
+                  className="onboarding-mini"
+                  disabled={busy && step.slug === "push"}
+                  onClick={() => (step.slug === "push" ? void activatePush() : onGo(action.to))}
+                >
                   {action.label}
                 </button>
               )}

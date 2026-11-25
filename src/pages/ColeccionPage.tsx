@@ -31,15 +31,11 @@ export default function ColeccionPage() {
       .then((data) => {
         setCurrentWave(data.currentWave);
         setSlots(data.slots);
-        // "Visitar tu EcoDex" step of Primeros pasos. Best effort, once per session.
-        try {
-          if (!sessionStorage.getItem("ecorex_ecodex_marked")) {
-            sessionStorage.setItem("ecorex_ecodex_marked", "1");
-            markEcodexVisited().catch(() => {});
-          }
-        } catch {
-          // Storage unavailable: skip the mark, the step just stays pending.
-        }
+        // "Visitar tu EcoDex" step of Primeros pasos. Best effort. The endpoint is
+        // idempotent, so no client-side "already done" flag: a sessionStorage one
+        // is shared between accounts and was set before the request succeeded,
+        // which left the step pending forever.
+        markEcodexVisited().catch(() => {});
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {

@@ -134,7 +134,13 @@ export default function InicioPage() {
       )}
       <img src="/logo/logo-ecorex.webp" alt="Ecorex" className="home-logo" fetchPriority="high" />
 
-      {onboarding && showChecklist && <OnboardingChecklist state={onboarding} onGo={navigate} />}
+      {onboarding && showChecklist && <OnboardingChecklist
+          state={onboarding}
+          onGo={navigate}
+          onChanged={() => {
+            getOnboarding().then(setOnboarding).catch(() => {});
+          }}
+        />}
 
       {profile && <HomeHero profile={profile} energy={energy} streak={missions?.streak} now={now} />}
 
