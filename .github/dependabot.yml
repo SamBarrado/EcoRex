@@ -1,43 +1,28 @@
 version: 2
 
+# Monthly, minors and patches only. Majors are upgraded by hand when wanted;
+# security updates are not affected by these limits.
 updates:
   - package-ecosystem: npm
     directories:
       - /
       - /workers/push-cron
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: "08:00"
       timezone: Europe/Madrid
     # Skip releases younger than a week. Security updates ignore this delay.
     cooldown:
       default-days: 7
-    # A dependency joins the first group it matches.
-    groups:
-      # Wrangler minor releases can require a new major of the Workers types.
-      cloudflare:
-        patterns:
-          - wrangler
-          - "@cloudflare/*"
-      react:
-        patterns:
-          - react
-          - react-dom
-          - "@types/react"
-          - "@types/react-dom"
-      # jest-dom majors are tied to Vitest majors.
-      testing:
-        patterns:
-          - vitest
-          - "@vitest/*"
-          - jsdom
-          - "@testing-library/*"
-      # Everything else: one PR for minors and patches, one per major.
-      minor-and-patch:
+    ignore:
+      - dependency-name: "*"
         update-types:
-          - minor
-          - patch
+          - version-update:semver-major
+    # A single pull request for everything.
+    groups:
+      monthly:
+        patterns:
+          - "*"
 
   - package-ecosystem: github-actions
     directory: /
@@ -45,3 +30,7 @@ updates:
       interval: monthly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
