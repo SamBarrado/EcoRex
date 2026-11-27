@@ -1,0 +1,55 @@
+name: CI
+
+# Typecheck, tests and builds. Cloudflare Pages only runs `npm run build`, so
+# this is the only place where the tests run before code reaches production.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          # Not 22: there the tests that import node:sqlite fail to load
+          # under the default jsdom environment.
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            workers/push-cron/package-lock.json
+
+      # The worker imports functions/lib, so both installs are needed.
+      - run: npm ci
+      - run: npm ci
+        working-directory: workers/push-cron
+
+      - name: Typecheck and build the app
+        run: npm run build
+      - name: Build Admin
+        run: npm run admin:build
+      - name: Test app, Admin and worker
+        run: npm test
+
+      - name: Typecheck the worker
+        run: npx tsc -p tsconfig.json --noEmit
+        working-directory: workers/push-cron
+      - name: Test the worker with its own toolchain
+        run: npm test
+        working-directory: workers/push-cron
+      - name: Bundle the worker
+        run: npx wrangler deploy --dry-run
+        working-directory: workers/push-cron
