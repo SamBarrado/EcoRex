@@ -1,7 +1,7 @@
 {
   "name": "ecorex-project",
   "private": true,
-  "version": "0.14.0",
+  "version": "0.14.1",
   "scripts": {
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.functions.json --noEmit && tsc -p tsconfig.admin-app.json --noEmit && tsc -p tsconfig.admin-functions.json --noEmit",
     "test": "vitest run",
