@@ -102,6 +102,7 @@ Kids who like dinosaurs and Pokémon-style collectible games. One early design d
 | **Content generation** | Anthropic and OpenAI APIs (species spec sheets; art and phases) | Content production pipeline, see "Art pipeline" |
 | **Testing** | Vitest + Testing Library + jsdom | One tool for components, API functions and the Worker |
 | **Deploy** | Cloudflare Pages connected to GitHub | Every push to `main` builds and deploys to production |
+| **CI and dependencies** | GitHub Actions ([ci.yml](.github/workflows/ci.yml)) + Dependabot | Typecheck, builds and tests on every pull request and push to `main`; one monthly update pull request (minors and patches), plus security updates |
 
 ---
 
@@ -180,7 +181,9 @@ The project's real bottleneck isn't code, it's **curated art**: there are **54 s
 
 ## 🧪 How it's tested
 
-**172 automated tests** (Vitest + Testing Library, across 32 files) covering React components, API functions and the push Worker's logic (`selectUsersToNotify`). `npm run build` also runs the app and Functions typecheck before bundling.
+**544 automated tests** (Vitest + Testing Library, across 63 files) covering React components, the API functions of the app and Ecorex Admin, and the push Worker's logic (`selectUsersToNotify`). `npm run build` also typechecks the app, Admin and their Functions before bundling.
+
+GitHub Actions runs the typecheck, the builds and the tests on every pull request and push to `main`. It reports, it doesn't gate: Cloudflare Pages deploys a push to `main` even if CI fails.
 
 What the automated tests **don't** cover, and how that's handled:
 
@@ -212,6 +215,7 @@ What the automated tests **don't** cover, and how that's handled:
 
 ```
 EcoRex/
+├── .github/                     # CI workflow and Dependabot config
 ├── src/                         # React frontend
 │   ├── pages/                   # Home, Percibir, Collection (EcoDex), Profile, Fusion, Login/Register
 │   ├── components/              # Navigation, Percibir ritual, missions, level-up, push
@@ -252,6 +256,12 @@ EcoRex/
 | v0.9.5 | A notification for every point of energy regenerated, also mirrored in the in-app inbox |
 | v0.9.6 | Clearer error message for unhandled API failures |
 | v0.10.0 | Card redesign (Foil frame by rarity, mystery reveal, spring spin, levitation) and a new EcoDex tile, default profile avatars, numbered D1 migrations, codebase cleanup |
+| v0.10.1 | Retention features, interface revamp, Ecorex Admin and a notice for desktop visitors |
+| v0.11.0 | Interface redesign complete: XP orbs, achievements, header bell, Home mission panel and onboarding |
+| v0.12.0 | Profile ring panel, readable notification bell and spaced buttons |
+| v0.13.0 – v0.13.1 | Fusion Altar redesign; header controls unified |
+| v0.14.0 | Floating bottom bar, unified icons and an energy ring on Percibir |
+| v0.14.1 | Smoother reward feedback, dependency updates, CI and Dependabot |
 
 Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/releases).
 
@@ -276,6 +286,8 @@ Detail for each version: [GitHub Releases](https://github.com/SamBarrado/EcoRex/
 
 ## ⚙️ Running it locally
 
+Use Node 24, the version CI runs: on Node 22 the test files that rely on `node:sqlite` fail to load. The root test suite includes the push Worker, so run `npm install` inside `workers/push-cron` too if you work on it.
+
 ```bash
 npm install
 npm run dev            # typecheck + build + wrangler pages dev (frontend + Functions + local D1/KV)
@@ -298,7 +310,7 @@ Copy `.dev.vars.example` to `.dev.vars` and fill in `ANTHROPIC_API_KEY` and `OPE
 
 1. Create the resources: `npx wrangler d1 create ecorex-db`, `npx wrangler kv namespace create RATE_LIMIT_KV`; copy the resulting IDs into `wrangler.jsonc` (and the `database_id` into `workers/push-cron/wrangler.jsonc`).
 2. Apply the migrations to the remote D1: `npm run db:migrate:remote`, and seed with `npm run db:seed:remote`.
-3. Create the Pages project and connect the repository (branch `main`): every push builds and deploys.
+3. Create the Pages project and connect the repository (branch `main`): every push builds and deploys. Set preview deployments to **None** (Settings → Build → Branch control): `wrangler.jsonc` defines no `preview` environment, so a branch preview would use the production database.
 4. Generate a VAPID key pair and store it as secrets, both for the Pages project (`wrangler pages secret put`) and for the Worker (`wrangler secret put`, inside `workers/push-cron/`): `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. Also add `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` to the Pages project.
 5. Deploy the push Worker: `cd workers/push-cron && npm install && npm run deploy`.
 
