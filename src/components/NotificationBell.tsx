@@ -3,8 +3,9 @@ import { useLocation } from "react-router-dom";
 import { AppNotification } from "../lib/api";
 import { LevelUpScreen } from "./LevelUpScreen";
 import { useNavVisibility } from "../lib/NavVisibilityContext";
-import { useNotifications } from "../lib/NotificationsContext";
+import { QUIET_TYPES, useNotifications } from "../lib/NotificationsContext";
 import { useAppNavigate } from "../lib/navigation";
+import { useAchievements } from "../lib/AchievementsContext";
 
 // Notification bell in the header, left of the level ring (design chosen
 // 2026-11-18; icon changed 2026-11-25 to a plain gold bell glyph: the illustrated
@@ -16,9 +17,6 @@ const HIDDEN_ON = ["/login", "/registro", "/elegir-usuario", "/privacidad", "/pe
 const BANNER_MS = 2300;
 const FOLD_MS = 520;
 const RING_MS = 1000;
-// These already have their own moment on screen (level-up screen, streak toast):
-// they only make the bell ring.
-const QUIET_TYPES = new Set(["level_up", "streak_reward"]);
 
 export function notificationText(n: AppNotification): string {
   switch (n.type) {
@@ -61,6 +59,8 @@ export default function NotificationBell() {
   const { pathname } = useLocation();
   const { visible } = useNavVisibility();
   const { notifications, unreadCount, markRead, incoming, clearIncoming } = useNotifications();
+  // Medals, the level-up screen and achievement banners go first.
+  const { busy } = useAchievements();
   const [showList, setShowList] = useState(false);
   const [banner, setBanner] = useState<AppNotification | null>(null);
   const [folding, setFolding] = useState(false);
@@ -76,23 +76,25 @@ export default function NotificationBell() {
     setTimeout(() => setRinging(false), RING_MS);
   }
 
-  // A notification arrived: banner (if the bell is on screen and it is not one
-  // that has its own moment), then fold into the bell and ring it.
+  // A notification arrived: banner (unless it has its own moment), then fold
+  // into the bell and ring it. While the bell is off screen (Percibir, immersive
+  // moments) or achievements are showing, it stays pending and is announced
+  // afterwards.
   useEffect(() => {
-    if (!incoming) return;
+    if (!incoming || !shown || busy) return;
     const n = incoming;
     clearIncoming();
-    if (!shown) return;
     if (QUIET_TYPES.has(n.type)) {
       ring();
       return;
     }
     setBanner(n);
     setFolding(false);
-  }, [incoming, clearIncoming, shown]);
+  }, [incoming, clearIncoming, shown, busy]);
 
+  // Covered halfway, the banner hides and starts its whole time again later.
   useEffect(() => {
-    if (!banner) return;
+    if (!banner || busy) return;
     const reduced = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(
@@ -123,7 +125,7 @@ export default function NotificationBell() {
       }, BANNER_MS),
     );
     return () => timers.forEach(clearTimeout);
-  }, [banner]);
+  }, [banner, busy]);
 
   // Leaving the bell's screens closes its list.
   useEffect(() => {
@@ -185,7 +187,7 @@ export default function NotificationBell() {
           </button>
         </div>
       )}
-      {shown && banner && (
+      {shown && !busy && banner && (
         <div ref={bannerRef} className={`notif-banner${folding ? " notif-banner-folding" : ""}`} role="status">
           <span className="notif-banner-icon" aria-hidden="true">{notificationIcon(banner)}</span>
           <span>{notificationText(banner)}</span>

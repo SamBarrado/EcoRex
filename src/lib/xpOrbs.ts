@@ -1,4 +1,4 @@
-// XP orbs: glowing dots that leave a source element and fly to the level ring
+// XP orbs: glowing dots that leave the centre of the screen and fly to the level ring
 // (`[data-level-hud]`). Pure Web Animations API, no library. The ring can be
 // hidden (immersive moments hide it with the bottom nav); then the orbs aim at
 // the spot where it sits, and the ring's own gain flash covers the arrival
@@ -9,10 +9,26 @@ const MAX_ORBS = 10;
 const XP_PER_ORB = 5;
 const START_DELAY_MS = 350;
 const STAGGER_MS = 70;
-const FLIGHT_MS = 700;
+const FLIGHT_MS = 900;
 
 export function orbCountFor(xp: number): number {
   return Math.max(MIN_ORBS, Math.min(MAX_ORBS, Math.ceil(xp / XP_PER_ORB)));
+}
+
+/** When the orbs of a flight arrive, counted from its launch. */
+export interface XpFlight {
+  firstLandingMs: number;
+  lastLandingMs: number;
+}
+
+const flightListeners = new Set<(flight: XpFlight) => void>();
+
+/** The level ring listens here to show up and fill in step with the orbs. */
+export function onXpFlight(listener: (flight: XpFlight) => void): () => void {
+  flightListeners.add(listener);
+  return () => {
+    flightListeners.delete(listener);
+  };
 }
 
 function prefersReducedMotion(): boolean {
@@ -32,21 +48,27 @@ function targetPoint(): { x: number; y: number; ring: HTMLElement | null } {
 }
 
 /**
- * Launches the orbs. Returns a cleanup that cancels whatever is still in
- * flight. Does nothing under reduced motion or where WAAPI is missing.
+ * Launches the orbs; their layer removes itself once the last one lands, so the
+ * flight survives the screen that launched it. Returns a cleanup that cancels
+ * whatever is still in flight. Does nothing under reduced motion or where WAAPI
+ * is missing.
  */
-export function flyOrbs({ from, amount }: { from: HTMLElement; amount: number }): () => void {
-  if (prefersReducedMotion() || typeof from.animate !== "function") return () => {};
+export function flyOrbs({ amount }: { amount: number }): () => void {
+  const count = orbCountFor(amount);
+  // Announced even when nothing is animated: the ring still shows the XP arriving.
+  const firstLandingMs = START_DELAY_MS + FLIGHT_MS;
+  flightListeners.forEach((listener) => listener({ firstLandingMs, lastLandingMs: firstLandingMs + (count - 1) * STAGGER_MS }));
+
+  if (prefersReducedMotion() || typeof document.body.animate !== "function") return () => {};
 
   const layer = document.createElement("div");
   layer.className = "xp-orb-layer";
   layer.setAttribute("aria-hidden", "true");
   document.body.appendChild(layer);
 
-  const origin = from.getBoundingClientRect();
-  const ox = origin.left + origin.width / 2;
-  const oy = origin.top + origin.height / 2;
-  const count = orbCountFor(amount);
+  const ox = window.innerWidth / 2;
+  const oy = window.innerHeight / 2;
+  let landed = 0;
   const animations: Animation[] = [];
   const timers: ReturnType<typeof setTimeout>[] = [];
 
@@ -66,12 +88,20 @@ export function flyOrbs({ from, amount }: { from: HTMLElement; amount: number })
           ({ transform: `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${scale})`, opacity }) as Keyframe;
 
         const flight = orb.animate(
-          [pos(ox, oy, 0.4, 0), { ...pos(midX, midY, 1, 1), offset: 0.4 }, pos(target.x, target.y, 0.55, 0.9)],
+          [
+            pos(ox, oy, 0.4, 0),
+            // Pop in at the centre before leaving, so the origin is noticed.
+            { ...pos(ox + spread, oy, 1, 1), offset: 0.12 },
+            { ...pos(midX, midY, 1, 1), offset: 0.5 },
+            pos(target.x, target.y, 0.55, 0.9),
+          ],
           { duration: FLIGHT_MS, easing: "cubic-bezier(0.5, 0, 0.7, 0.4)", fill: "forwards" },
         );
         animations.push(flight);
         flight.onfinish = () => {
           orb.remove();
+          landed += 1;
+          if (landed === count) layer.remove();
           // Arrival: the ring swells a little with each orb.
           target.ring?.animate?.(
             [{ transform: "scale(1)" }, { transform: "scale(1.14)" }, { transform: "scale(1)" }],

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import ColeccionPage from "./ColeccionPage";
+import * as onboardingContext from "../lib/OnboardingContext";
 
 const lockedSlot = { species_id: 1, phase: "balance", wave: 1, locked: true as const, count: 0 };
 const revealedSlot = {
@@ -30,6 +31,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
@@ -165,5 +167,35 @@ describe("ColeccionPage behavior", () => {
     // 1 registered out of 2 playable (not out of 4 slots).
     expect(screen.getByText("1/2 (50%)")).toBeInTheDocument();
     expect(screen.queryByText(/Especies registradas/)).not.toBeInTheDocument();
+  });
+
+  async function visit(state?: { justUnlockedKey: string }) {
+    vi.useFakeTimers();
+    Element.prototype.scrollIntoView = () => {};
+    const check = vi.fn().mockResolvedValue(null);
+    vi.spyOn(onboardingContext, "useOnboarding").mockReturnValue({ check, paid: 0 });
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/coleccion", state }]}>
+        <ColeccionPage />
+      </MemoryRouter>,
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    return check;
+  }
+
+  it("checks Primeros pasos as soon as the visit is recorded", async () => {
+    const check = await visit();
+    expect(check).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets a just unlocked card be seen before checking", async () => {
+    const check = await visit({ justUnlockedKey: "2_balance" });
+    expect(check).not.toHaveBeenCalled();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1800);
+    });
+    expect(check).toHaveBeenCalledTimes(1);
   });
 });

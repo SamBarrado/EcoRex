@@ -15,6 +15,8 @@ export interface Achievement {
   /** Extra style hook (the Eco medal looks ghostly). */
   variant?: "eco";
   xp?: number;
+  /** Medals only: runs when it is actually on screen (it may wait behind another). */
+  onShow?: () => void;
 }
 
 const MISSION_BANNERS: Record<string, { title: string; subtitle: string }> = {

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useMemo } from "react";
+import { useCoverScreen } from "../lib/AchievementsContext";
 
 // Level-up as a fracture wave (design chosen 2026-11-18): shockwave rings, cracks
 // radiating from the new level number and a burst of particles. Pure SVG/CSS.
@@ -43,6 +44,8 @@ export function LevelUpScreen({
   energyGained?: number;
   onClose: () => void;
 }) {
+  useCoverScreen();
+
   useLayoutEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

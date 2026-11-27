@@ -215,4 +215,22 @@ describe("FusionPage", () => {
     // The XP is announced once, by the pill and the orbs at the top (not repeated in the card).
     expect(screen.getAllByText("+15 XP")).toHaveLength(1);
   });
+
+  it("shows the energy granted by a level-up reached through a fusion", async () => {
+    vi.useFakeTimers();
+    getFuseEligibleMock.mockResolvedValue({ eligible: [eligibleSpecies], threshold: 5 });
+    fuseSpeciesMock.mockResolvedValue({ ...fuseResult, energyGained: { levelUp: 1, streak: 0 } });
+
+    renderPage();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Fusionar" }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2500);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Volver al altar" }));
+
+    expect(screen.getByText("⚡ +1 de energía")).toBeInTheDocument();
+  });
 });

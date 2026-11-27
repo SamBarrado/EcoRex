@@ -1750,11 +1750,12 @@ body.card-preview-open .notif-bell-wrap {
   }
 }
 
-/* Orbes de XP: salen de la píldora "+N XP" y vuelan al indicador de nivel (lib/xpOrbs) */
+/* Orbes de XP: salen del centro de la pantalla y vuelan al indicador de nivel (lib/xpOrbs) */
 .xp-orb-layer {
   position: fixed;
   inset: 0;
-  z-index: 1001;
+  /* por encima de banners, medallas y subida de nivel (solo la intro, 1300, va por encima) */
+  z-index: 1250;
   pointer-events: none;
 }
 
@@ -2156,9 +2157,43 @@ body.card-preview-open .notif-bell-wrap {
   }
 }
 
+/* Mientras vuela XP el anillo va por encima de cualquier pantalla completa (justo bajo los orbes) y,
+   si la pantalla lo oculta, asoma. Sobre una pantalla inmersiva o una medalla no recibe toques. */
+.level-hud-xp {
+  z-index: 1240;
+}
+
+.level-hud-passive {
+  pointer-events: none;
+}
+
+.level-hud-peek {
+  animation: level-hud-in 260ms ease-out both;
+}
+
+/* La animación de entrada se repite en la lista para que no vuelva a empezar al acabar el destello */
+.level-hud-peek.level-hud-gain {
+  animation: level-hud-in 260ms ease-out both, level-hud-pulse 520ms ease-out;
+}
+
+.level-hud-peek.level-hud-leaving {
+  animation: level-hud-out 300ms ease-in forwards;
+}
+
+@keyframes level-hud-in {
+  from { opacity: 0; scale: 0.6; }
+}
+
+@keyframes level-hud-out {
+  to { opacity: 0; scale: 0.6; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .level-hud-gain,
-  .level-hud-fill {
+  .level-hud-fill,
+  .level-hud-peek,
+  .level-hud-peek.level-hud-gain,
+  .level-hud-peek.level-hud-leaving {
     animation: none;
     transition: none;
   }
@@ -2481,7 +2516,8 @@ body.card-preview-open .notif-bell-wrap {
 .notif-banner {
   position: fixed;
   z-index: 75;
-  top: calc(12px + env(safe-area-inset-top));
+  /* bajo la campana y el anillo de nivel, que acaban a 64px */
+  top: calc(74px + env(safe-area-inset-top));
   left: 12px;
   right: 12px;
   max-width: 456px;
@@ -2538,7 +2574,7 @@ body.card-preview-open .notif-bell-wrap {
   position: absolute;
   left: 12px;
   right: 12px;
-  top: calc(12px + env(safe-area-inset-top) + var(--stack, 0) * 76px);
+  top: calc(74px + env(safe-area-inset-top) + var(--stack, 0) * 76px);
   max-width: 456px;
   margin: 0 auto;
   box-sizing: border-box;

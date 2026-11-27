@@ -9,6 +9,7 @@ import { PlayerProvider } from "../lib/PlayerContext";
 import { AchievementsProvider } from "../lib/AchievementsContext";
 import Atmosphere from "./Atmosphere";
 import { RARITY_GLOW } from "../lib/rarityGlow";
+import * as onboardingContext from "../lib/OnboardingContext";
 
 const species: Species[] = [
   {
@@ -360,5 +361,43 @@ describe("PercibirRitual", () => {
     fireEvent.click(screen.getByText(/subiste de nivel/i));
 
     expect(screen.getByRole("dialog", { name: /nueva especie registrada/i })).toBeInTheDocument();
+  });
+
+  async function discoverAndSwipeAway(result: unknown) {
+    vi.useFakeTimers();
+    const check = vi.fn().mockResolvedValue(null);
+    vi.spyOn(onboardingContext, "useOnboarding").mockReturnValue({ check, paid: 0 });
+    renderRitual({ discoverFn: vi.fn().mockResolvedValue(result) });
+    openPeek();
+    const track = screen.getByTestId("envelope-drag-line");
+    fireEvent.touchStart(track, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(track, { touches: [{ clientX: 290 }] });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+    expect(check).not.toHaveBeenCalled(); // never on top of the reveal
+
+    const card = screen.getByTestId("card-perspective");
+    fireEvent.pointerDown(card, { clientX: 0, clientY: 0, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerMove(card, { clientX: 0, clientY: -150, pointerId: 1, pointerType: "touch" });
+    fireEvent.pointerUp(card, { pointerId: 1, pointerType: "touch" });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+    return check;
+  }
+
+  it("checks Primeros pasos once a repeated card is swiped away", async () => {
+    const check = await discoverAndSwipeAway({ ...discoverResult, isNewSlot: false });
+    expect(check).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves that check to the EcoDex when the card takes the player there", async () => {
+    const check = await discoverAndSwipeAway({ ...discoverResult, isNewSlot: true });
+    fireEvent.click(screen.getByRole("dialog", { name: "¡Nueva especie registrada!" }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(check).not.toHaveBeenCalled();
   });
 });

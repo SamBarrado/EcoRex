@@ -19,6 +19,7 @@ import { NavVisibilityProvider } from "./lib/NavVisibilityContext";
 import { NotificationsProvider } from "./lib/NotificationsContext";
 import { PlayerProvider } from "./lib/PlayerContext";
 import { AvatarProvider } from "./lib/AvatarContext";
+import { OnboardingProvider } from "./lib/OnboardingContext";
 
 // Common shell: shared state, the living background, the page outlet and the
 // persistent chrome (bottom nav + level ring).
@@ -29,12 +30,14 @@ function Shell() {
         <NotificationsProvider>
           <AvatarProvider>
             <AchievementsProvider>
-              <Atmosphere />
-              <Outlet />
-              <BottomNav />
-              <LevelHud />
-              <NotificationBell />
-              <DesktopNotice />
+              <OnboardingProvider>
+                <Atmosphere />
+                <Outlet />
+                <BottomNav />
+                <LevelHud />
+                <NotificationBell />
+                <DesktopNotice />
+              </OnboardingProvider>
             </AchievementsProvider>
           </AvatarProvider>
         </NotificationsProvider>

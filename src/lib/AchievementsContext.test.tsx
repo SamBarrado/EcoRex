@@ -1,7 +1,9 @@
+import { StrictMode } from "react";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, cleanup, act, fireEvent } from "@testing-library/react";
 import { AchievementsProvider, useAchievements } from "./AchievementsContext";
 import type { Achievement } from "./achievements";
+import { LevelUpScreen } from "../components/LevelUpScreen";
 
 const medal = (id: string, title: string): Achievement => ({ id, kind: "medal", icon: "🦖", title, subtitle: "sub", color: "#7fc891" });
 const banner = (id: string, title: string): Achievement => ({ id, kind: "banner", icon: "✅", title, subtitle: "sub", color: "#3fae5a" });
@@ -72,5 +74,66 @@ describe("AchievementsProvider", () => {
     });
     expect(done).toBe(true);
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  const wait = (ms: number) =>
+    act(async () => {
+      await vi.advanceTimersByTimeAsync(ms);
+    });
+
+  it("holds the banners while a medal is up and then shows them for their whole time", async () => {
+    act(() => {
+      void announce([medal("m1", "Nueva especie"), banner("a", "Misión completada")]);
+    });
+    await wait(10_000);
+    expect(screen.queryByText("Misión completada")).toBeNull();
+
+    fireEvent.click(screen.getByRole("dialog", { name: "Nueva especie" }));
+    await wait(3000);
+    expect(screen.getByText("Misión completada")).toBeTruthy();
+    await wait(1200);
+    expect(screen.queryByText("Misión completada")).toBeNull();
+  });
+
+  it("holds the banners while the level-up screen is open", async () => {
+    cleanup();
+    const view = (levelUp: boolean) => (
+      <AchievementsProvider>
+        <Grab />
+        {levelUp && <LevelUpScreen previousLevel={1} level={2} onClose={() => {}} />}
+      </AchievementsProvider>
+    );
+    const { rerender } = render(view(false));
+    act(() => {
+      void announce([banner("a", "Misión completada")]);
+    });
+    await wait(1000);
+    rerender(view(true)); // the level-up covers a banner already on screen
+    await wait(10_000);
+    expect(screen.queryByText("Misión completada")).toBeNull();
+
+    rerender(view(false));
+    await wait(3000);
+    expect(screen.getByText("Misión completada")).toBeTruthy();
+  });
+
+  it("tells a queued medal when it is actually shown, only once", async () => {
+    cleanup();
+    render(
+      <StrictMode>
+        <AchievementsProvider>
+          <Grab />
+        </AchievementsProvider>
+      </StrictMode>,
+    );
+    const onShow = vi.fn();
+    act(() => {
+      void announce([medal("m1", "Primera"), { ...medal("m2", "Segunda"), onShow }]);
+    });
+    expect(onShow).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("dialog", { name: "Primera" }));
+    await wait(0);
+    expect(onShow).toHaveBeenCalledTimes(1);
   });
 });

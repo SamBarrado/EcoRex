@@ -42,7 +42,7 @@ export default function FusionPage() {
   // Balance art of the species just fused: the five cards that merge in the result animation.
   const [fusedFrom, setFusedFrom] = useState<EligibleSpecies | null>(null);
   const [showXpToast, setShowXpToast] = useState(false);
-  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number } | null>(null);
+  const [levelUpInfo, setLevelUpInfo] = useState<{ previousLevel: number; level: number; energyGained: number } | null>(null);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,7 +167,11 @@ export default function FusionPage() {
     // up, show that now instead of resetting — never at the same time as
     // the fusion result. Dismissing the level-up screen finishes the reset.
     if (result?.xp.leveledUp && !levelUpInfo) {
-      setLevelUpInfo({ previousLevel: result.xp.previousLevel, level: result.xp.level });
+      setLevelUpInfo({
+        previousLevel: result.xp.previousLevel,
+        level: result.xp.level,
+        energyGained: result.energyGained?.levelUp ?? 0,
+      });
       return;
     }
     finishReset();
@@ -279,6 +283,7 @@ export default function FusionPage() {
         <LevelUpScreen
           previousLevel={levelUpInfo.previousLevel}
           level={levelUpInfo.level}
+          energyGained={levelUpInfo.energyGained}
           onClose={finishReset}
         />
       )}

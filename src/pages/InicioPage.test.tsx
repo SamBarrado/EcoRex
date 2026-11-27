@@ -5,6 +5,7 @@ import InicioPage from "./InicioPage";
 import type { ProfileStats, EnergyState, MissionsState, OnboardingState } from "../lib/api";
 import { NotificationsProvider } from "../lib/NotificationsContext";
 import { AchievementsProvider } from "../lib/AchievementsContext";
+import { OnboardingProvider } from "../lib/OnboardingContext";
 
 const getFuseEligibleMock = vi.fn();
 const getMyProfileMock = vi.fn();
@@ -13,6 +14,13 @@ const getMissionsMock = vi.fn();
 const getOnboardingMock = vi.fn();
 const claimOnboardingMock = vi.fn();
 const getNotificationsMock = vi.fn();
+const subscribeMock = vi.fn();
+
+vi.mock("../lib/push", () => ({
+  isPushSupported: () => true,
+  getNotificationPermission: () => "granted",
+  subscribeToPush: (...args: unknown[]) => subscribeMock(...args),
+}));
 
 vi.mock("../lib/api", async () => {
   const actual = await vi.importActual<typeof import("../lib/api")>("../lib/api");
@@ -49,7 +57,9 @@ function renderPage() {
     <MemoryRouter>
       <NotificationsProvider>
         <AchievementsProvider>
-          <InicioPage />
+          <OnboardingProvider>
+            <InicioPage />
+          </OnboardingProvider>
         </AchievementsProvider>
       </NotificationsProvider>
     </MemoryRouter>
@@ -170,10 +180,12 @@ describe("InicioPage", () => {
       <MemoryRouter initialEntries={["/inicio"]}>
         <NotificationsProvider>
           <AchievementsProvider>
+            <OnboardingProvider>
             <Routes>
               <Route path="/inicio" element={<InicioPage />} />
               <Route path="/percibir" element={<div>Pantalla de percibir</div>} />
             </Routes>
+            </OnboardingProvider>
           </AchievementsProvider>
         </NotificationsProvider>
       </MemoryRouter>
@@ -249,10 +261,12 @@ describe("InicioPage", () => {
       <MemoryRouter initialEntries={["/inicio"]}>
         <NotificationsProvider>
           <AchievementsProvider>
+            <OnboardingProvider>
             <Routes>
               <Route path="/inicio" element={<InicioPage />} />
               <Route path="/fusion" element={<div>Pantalla de fusión</div>} />
             </Routes>
+            </OnboardingProvider>
           </AchievementsProvider>
         </NotificationsProvider>
       </MemoryRouter>
@@ -328,5 +342,107 @@ describe("InicioPage", () => {
     await screen.findByText("Nivel 2 · Explorador");
     await act(async () => {});
     expect(screen.queryByRole("dialog", { name: "Primeros pasos completados" })).toBeNull();
+  });
+
+  const allSteps = ["account", "pack", "ecodex", "push", "mission"];
+  const paid = (xp: Partial<{ level: number; previousLevel: number; leveledUp: boolean }> = {}) => ({
+    claimed: true,
+    xp: { xpGained: 50, level: 2, previousLevel: 2, leveledUp: false, ...xp },
+  });
+
+  function quietHome() {
+    getFuseEligibleMock.mockResolvedValue({ eligible: [] });
+    getMyProfileMock.mockResolvedValue(profile);
+    getEnergyMock.mockResolvedValue(null);
+    getMissionsMock.mockResolvedValue(null);
+  }
+
+  it("pays the prize at once when 'Activar' on the checklist was the last step", async () => {
+    quietHome();
+    getOnboardingMock.mockResolvedValue(newcomer(["account", "pack", "ecodex", "mission"]));
+    subscribeMock.mockResolvedValue(undefined);
+    claimOnboardingMock.mockResolvedValue(paid());
+
+    renderPage();
+    const activate = await screen.findByRole("button", { name: "Activar" });
+    getOnboardingMock.mockResolvedValue(newcomer(allSteps));
+    fireEvent.click(activate);
+
+    expect(await screen.findByRole("dialog", { name: "Primeros pasos completados" })).toBeTruthy();
+    expect(claimOnboardingMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("updates the XP and energy of the header as soon as the prize is paid", async () => {
+    quietHome();
+    getMyProfileMock.mockResolvedValueOnce(profile).mockResolvedValue({ ...profile, xpIntoLevel: 30 });
+    getEnergyMock
+      .mockResolvedValueOnce({ remaining: 0, max: 3, resetAt: null, unlimited: false })
+      .mockResolvedValue({ remaining: 3, max: 3, resetAt: null, unlimited: false });
+    getOnboardingMock.mockResolvedValue(newcomer(allSteps));
+    claimOnboardingMock.mockResolvedValue(paid());
+
+    renderPage();
+    expect(await screen.findByText("30/40 XP")).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Energía 3 de 3" })).toBeTruthy();
+  });
+
+  it("shows the level-up after the medal when the prize levels the player up", async () => {
+    quietHome();
+    getOnboardingMock.mockResolvedValue(newcomer(allSteps));
+    claimOnboardingMock.mockResolvedValue(paid({ previousLevel: 1, level: 2, leveledUp: true }));
+
+    renderPage();
+    const medal = await screen.findByRole("dialog", { name: "Primeros pasos completados" });
+    expect(screen.queryByRole("dialog", { name: "¡Subiste al nivel 2!" })).toBeNull();
+    fireEvent.click(medal);
+
+    const levelUp = await screen.findByRole("dialog", { name: "¡Subiste al nivel 2!" });
+    // Outside .page (its own stacking context), or the bottom bar would sit on top of it.
+    expect(levelUp.closest(".page")).toBeNull();
+    fireEvent.click(levelUp);
+    expect(screen.queryByRole("dialog", { name: "¡Subiste al nivel 2!" })).toBeNull();
+  });
+
+  describe("Fusion Altar unlock popup", () => {
+    const ready = { speciesId: 2, commonName: "Destello del Pantano", scientificName: "T. mirus", balanceAnchorUrl: "/y.webp", balanceCount: 5 };
+    const scrolled: Element[] = [];
+
+    beforeEach(() => {
+      scrolled.length = 0;
+      // jsdom has no layout, so it does not implement scrollIntoView.
+      Element.prototype.scrollIntoView = function (this: Element) {
+        scrolled.push(this);
+      };
+      quietHome();
+      getFuseEligibleMock.mockResolvedValue({ threshold: 5, eligible: [ready] });
+    });
+
+    afterEach(() => {
+      delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+    });
+
+    it("scrolls to the altar when 'Genial' confirms it, and only that first time", async () => {
+      renderPage();
+      fireEvent.click(await screen.findByRole("button", { name: "Genial" }));
+
+      expect(screen.queryByText("¡Función desbloqueada!")).toBeNull();
+      expect(scrolled).toHaveLength(1);
+      expect(scrolled[0].querySelector(".fusion-card")).not.toBeNull();
+
+      cleanup();
+      renderPage();
+      await screen.findByText("1 especie lista para fusionar");
+      expect(screen.queryByRole("button", { name: "Genial" })).toBeNull();
+      expect(scrolled).toHaveLength(1);
+    });
+
+    it("stays where it is when the popup is dismissed by tapping outside", async () => {
+      renderPage();
+      await screen.findByRole("button", { name: "Genial" });
+      fireEvent.click(document.querySelector(".level-up-backdrop")!);
+
+      expect(screen.queryByText("¡Función desbloqueada!")).toBeNull();
+      expect(scrolled).toHaveLength(0);
+    });
   });
 });

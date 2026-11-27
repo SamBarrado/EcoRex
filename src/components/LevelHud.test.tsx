@@ -4,6 +4,8 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import LevelHud from "./LevelHud";
 import { PlayerProvider, usePlayer } from "../lib/PlayerContext";
 import { NavVisibilityProvider, useNavVisibility } from "../lib/NavVisibilityContext";
+import { AchievementsProvider, useAchievements } from "../lib/AchievementsContext";
+import { flyOrbs } from "../lib/xpOrbs";
 
 const getMyProfileMock = vi.fn();
 const getEnergyMock = vi.fn();
@@ -48,6 +50,7 @@ const profile = (level: number, into: number, next: number | null) => ({ level, 
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.clearAllMocks();
 });
 
@@ -124,3 +127,103 @@ describe("<LevelHud />", () => {
     expect(screen.getByTestId("path")).toHaveTextContent("/perfil");
   });
 });
+
+describe("<LevelHud /> while XP flies", () => {
+  const wait = (ms: number) =>
+    act(async () => {
+      await vi.advanceTimersByTimeAsync(ms);
+    });
+  const ring = () => document.querySelector<HTMLElement>(".level-hud");
+  const fill = () => (document.querySelector(".level-hud-fill") as SVGElement).style.strokeDasharray;
+  // 4 orbs: the first lands at 1250 ms and the last at 1460 ms.
+  const fly = () => act(() => void flyOrbs({ amount: 20 }));
+
+  async function hudWith(path = "/inicio") {
+    vi.useFakeTimers();
+    getMyProfileMock.mockResolvedValue(profile(4, 70, 140));
+    getEnergyMock.mockResolvedValue({ remaining: 2, max: 3, resetAt: null });
+    renderHud(path);
+    await wait(0);
+  }
+
+  async function gain() {
+    getMyProfileMock.mockResolvedValue(profile(4, 105, 140));
+    act(() => screen.getByText("refresh").click());
+    await wait(0);
+  }
+
+  it("peeks over an immersive screen while the orbs fly, then leaves again", async () => {
+    await hudWith("/percibir");
+    act(() => screen.getByText("hide").click());
+    expect(ring()).toBeNull();
+
+    fly();
+    expect(ring()).toHaveClass("level-hud-xp", "level-hud-peek", "level-hud-passive");
+
+    await wait(1460 + 1100);
+    expect(ring()).not.toBeNull();
+    await wait(200);
+    expect(ring()).toHaveClass("level-hud-leaving");
+    await wait(400);
+    expect(ring()).toBeNull();
+  });
+
+  it("keeps the old value until the first orb lands, so the ring is seen filling up", async () => {
+    await hudWith();
+    act(() => screen.getByText("hide").click());
+    fly();
+    await gain();
+    await wait(1000);
+    expect(fill()).toBe("50 100");
+    expect(ring()).not.toHaveClass("level-hud-gain");
+
+    await wait(300);
+    expect(fill()).toBe("75 100");
+    expect(ring()).toHaveClass("level-hud-gain");
+  });
+
+  it("stays after the flight where it is normally shown, and goes back to normal", async () => {
+    await hudWith();
+    fly();
+    expect(ring()).toHaveClass("level-hud-xp");
+    expect(ring()).not.toHaveClass("level-hud-peek", "level-hud-passive");
+
+    await wait(4000);
+    expect(ring()).not.toBeNull();
+    expect(ring()).not.toHaveClass("level-hud-xp");
+  });
+
+  it("does not peek on the account screens", async () => {
+    await hudWith("/login");
+    fly();
+    expect(ring()).toBeNull();
+  });
+
+  it("lets taps through to a medal it flies over", async () => {
+    vi.useFakeTimers();
+    getMyProfileMock.mockResolvedValue(profile(4, 70, 140));
+    getEnergyMock.mockResolvedValue({ remaining: 2, max: 3, resetAt: null });
+    let announce!: ReturnType<typeof useAchievements>["announce"];
+    function Grab() {
+      announce = useAchievements().announce;
+      return null;
+    }
+    render(
+      <MemoryRouter>
+        <NavVisibilityProvider>
+          <PlayerProvider>
+            <AchievementsProvider>
+              <LevelHud />
+              <Grab />
+            </AchievementsProvider>
+          </PlayerProvider>
+        </NavVisibilityProvider>
+      </MemoryRouter>,
+    );
+    await wait(0);
+    act(() => void announce([{ id: "m", kind: "medal", icon: "🎓", title: "Medalla", subtitle: "sub", color: "#ffd54a" }]));
+    fly();
+    expect(ring()).toHaveClass("level-hud-xp", "level-hud-passive");
+  });
+});
+

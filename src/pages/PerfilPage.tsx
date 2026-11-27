@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyProfile, logout, setAvatar, ProfileStats, ApiError } from "../lib/api";
 import { AVATAR_IDS, avatarUrl } from "../lib/avatars";
 import { useAvatar } from "../lib/AvatarContext";
+import { useOnboarding } from "../lib/OnboardingContext";
 import { RARITY_GLOW, RARITY_ORDER, shortRarityName } from "../lib/rarityGlow";
 import { isPushSupported, getNotificationPermission, subscribeToPush, unsubscribeFromPush, hasActivePushSubscription } from "../lib/push";
 
@@ -29,6 +30,7 @@ export default function PerfilPage() {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const { setCurrentAvatar, clearAvatar } = useAvatar();
+  const { check: checkOnboarding } = useOnboarding();
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [pushEnabled, setPushEnabled] = useState(false);
@@ -48,7 +50,10 @@ export default function PerfilPage() {
       } else {
         await subscribeToPush();
       }
-      setPushEnabled(await hasActivePushSubscription());
+      const enabled = await hasActivePushSubscription();
+      setPushEnabled(enabled);
+      // Activating the alerts may have been the last of the first steps.
+      if (enabled) void checkOnboarding();
     } catch (err) {
       setPushError(err instanceof Error ? err.message : "No se pudieron cambiar las notificaciones.");
       setPushEnabled(await hasActivePushSubscription().catch(() => false));

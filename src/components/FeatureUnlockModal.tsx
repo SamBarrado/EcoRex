@@ -2,10 +2,13 @@ export function FeatureUnlockModal({
   icon,
   title,
   onClose,
+  onConfirm,
 }: {
   icon: string;
   title: string;
   onClose: () => void;
+  /** "Genial", when it should do more than close (e.g. show the new feature). */
+  onConfirm?: () => void;
 }) {
   return (
     <div className="level-up-backdrop" onClick={onClose}>
@@ -13,7 +16,7 @@ export function FeatureUnlockModal({
         <strong>¡Función desbloqueada!</strong>
         <img src={icon} alt="" style={{ width: 64, height: 64, objectFit: "contain", margin: "0.5rem 0" }} />
         <div className="level-up-number">{title}</div>
-        <button onClick={onClose}>Genial</button>
+        <button onClick={onConfirm ?? onClose}>Genial</button>
       </div>
     </div>
   );

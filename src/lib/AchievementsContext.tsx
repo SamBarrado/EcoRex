@@ -6,6 +6,8 @@ import { usePlayer } from "./PlayerContext";
 // are full-screen moments shown one at a time. `announce` resolves once its
 // medals have been dismissed, so a screen can wait for them before moving on
 // (e.g. Percibir only goes to the EcoDex after the "new species" medal).
+// Banners wait while a full-screen moment (medal, level-up) is open and then run
+// their whole time, so none of them fades out unseen behind it.
 
 const BANNER_MS = 3700;
 const BANNER_EXIT_MS = 330;
@@ -13,10 +15,21 @@ const MAX_BANNERS = 3;
 
 interface AchievementsValue {
   announce: (list: Achievement[]) => Promise<void>;
+  /** Declares a full-screen moment open; the returned function closes it. */
+  coverScreen: () => () => void;
+  /** A full-screen moment (medal, level-up) is open. */
+  covered: boolean;
+  /** Covered, or achievement banners still on screen: other notices should wait. */
+  busy: boolean;
 }
 
 // Outside a provider (component tests) announcing is a no-op that resolves at once.
-const AchievementsContext = createContext<AchievementsValue>({ announce: () => Promise.resolve() });
+const AchievementsContext = createContext<AchievementsValue>({
+  announce: () => Promise.resolve(),
+  coverScreen: () => () => {},
+  covered: false,
+  busy: false,
+});
 
 interface LiveBanner {
   key: number;
@@ -38,6 +51,12 @@ export function AchievementsProvider({ children }: { children: ReactNode }) {
   // Mirror of `medals` readable synchronously, so dismissing never resolves
   // from inside a state updater (StrictMode runs those twice) nor twice on a double tap.
   const medalsRef = useRef<QueuedMedal[]>([]);
+  const [covers, setCovers] = useState(0);
+
+  const coverScreen = useCallback(() => {
+    setCovers((n) => n + 1);
+    return () => setCovers((n) => n - 1);
+  }, []);
 
   const leave = useCallback((key: number) => {
     setBanners((prev) => prev.map((b) => (b.key === key ? { ...b, leaving: true } : b)));
@@ -77,13 +96,15 @@ export function AchievementsProvider({ children }: { children: ReactNode }) {
     current.resolve();
   }, []);
 
-  const value = useMemo(() => ({ announce }), [announce]);
   const medal = medals[0];
+  const covered = covers > 0 || medals.length > 0;
+  const busy = covered || banners.length > 0;
+  const value = useMemo(() => ({ announce, coverScreen, covered, busy }), [announce, coverScreen, covered, busy]);
 
   return (
     <AchievementsContext.Provider value={value}>
       {children}
-      {banners.length > 0 && (
+      {!covered && banners.length > 0 && (
         <div className="ach-banners" role="status">
           {banners.map((b, i) => (
             <AchievementBanner key={b.key} banner={b} stack={i} onDone={leave} />
@@ -119,6 +140,13 @@ function AchievementBanner({ banner, stack, onDone }: { banner: LiveBanner; stac
 }
 
 function AchievementMedal({ achievement: a, onClose }: { achievement: Achievement; onClose: () => void }) {
+  const shown = useRef(false);
+  useEffect(() => {
+    if (shown.current) return; // StrictMode runs effects twice
+    shown.current = true;
+    a.onShow?.();
+  }, [a]);
+
   useLayoutEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -145,4 +173,10 @@ function AchievementMedal({ achievement: a, onClose }: { achievement: Achievemen
 
 export function useAchievements(): AchievementsValue {
   return useContext(AchievementsContext);
+}
+
+/** For full-screen moments outside this provider's own medals: holds banners while mounted. */
+export function useCoverScreen() {
+  const { coverScreen } = useAchievements();
+  useLayoutEffect(() => coverScreen(), [coverScreen]);
 }

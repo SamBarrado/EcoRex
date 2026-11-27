@@ -9,6 +9,7 @@ import { useNavVisibility } from "../lib/NavVisibilityContext";
 import { useNotifications } from "../lib/NotificationsContext";
 import { usePlayer } from "../lib/PlayerContext";
 import { useAchievements } from "../lib/AchievementsContext";
+import { useOnboarding } from "../lib/OnboardingContext";
 import { achievementsFromResult } from "../lib/achievements";
 import { formatEnergyCountdown } from "../lib/energy";
 import { RARITY_GLOW } from "../lib/rarityGlow";
@@ -83,6 +84,7 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
   const { refetch: refetchNotifications } = useNotifications();
   const { refresh: refreshPlayer, pulse: pulseAtmosphere } = usePlayer();
   const { announce } = useAchievements();
+  const { check: checkOnboarding } = useOnboarding();
   const [showRevealTitle, setShowRevealTitle] = useState(false);
   const [phase, setPhase] = useState<RitualPhase>("sealed");
   const [peeking, setPeeking] = useState(false);
@@ -308,6 +310,9 @@ export function PercibirRitual({ species, discoverFn, onUnauthorized, energyRese
       } else {
         pulseTab("/coleccion");
         handleReset();
+        // The card may have completed the last of the first steps. (Going to the
+        // EcoDex above, that screen asks once the new card has been seen.)
+        void checkOnboarding();
       }
     };
     // Achievements (medals for a new species / Eco / completed species, banners

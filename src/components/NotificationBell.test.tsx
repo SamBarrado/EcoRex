@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 import { NotificationsProvider } from "../lib/NotificationsContext";
 import { NavVisibilityProvider, useNavVisibility } from "../lib/NavVisibilityContext";
+import { AchievementsProvider, useAchievements } from "../lib/AchievementsContext";
 
 const getNotificationsMock = vi.fn();
 const markReadMock = vi.fn();
@@ -19,10 +20,16 @@ vi.mock("../lib/api", async () => {
 
 const energy = (id: number) => ({ id, type: "energy_available", payload: { remaining: 3, max: 3 }, readAt: null, createdAt: "" });
 const levelUp = (id: number) => ({ id, type: "level_up", payload: { newLevel: 5 }, readAt: null, createdAt: "" });
+const fusionReady = (id: number) => ({ id, type: "fusion_ready", payload: { speciesId: 2, commonName: "Hustor" }, readAt: null, createdAt: "" });
 
 function HideNav() {
-  const { hideNav } = useNavVisibility();
-  return <button onClick={hideNav}>hide-nav</button>;
+  const { hideNav, showNav } = useNavVisibility();
+  return (
+    <>
+      <button onClick={hideNav}>hide-nav</button>
+      <button onClick={showNav}>show-nav</button>
+    </>
+  );
 }
 
 function renderBell(path = "/inicio") {
@@ -131,5 +138,122 @@ describe("NotificationBell", () => {
     expect(screen.getByRole("button", { name: /Notificaciones/ })).toBeTruthy();
     fireEvent.click(screen.getByText("hide-nav"));
     expect(screen.queryByRole("button", { name: /Notificaciones/ })).toBeNull();
+  });
+
+  async function hiddenBellReceives(...batches: ReturnType<typeof energy | typeof fusionReady | typeof levelUp>[][]) {
+    getNotificationsMock.mockResolvedValue({ notifications: [] });
+    renderBell();
+    await flush();
+    fireEvent.click(screen.getByText("hide-nav"));
+    for (const notifications of batches) {
+      getNotificationsMock.mockResolvedValue({ notifications });
+      await comeBackToApp();
+    }
+  }
+
+  async function showBell() {
+    fireEvent.click(screen.getByText("show-nav"));
+    await flush();
+  }
+
+  it("keeps a notification that arrives while hidden and announces it when the bell returns", async () => {
+    await hiddenBellReceives([fusionReady(3)]);
+    expect(screen.queryByRole("status")).toBeNull();
+
+    await showBell();
+    expect(screen.getByRole("status").textContent).toContain("¡Ya puedes fusionar Hustor!");
+  });
+
+  it("does not let a ring-only notification of the same batch swallow the one with a banner", async () => {
+    getNotificationsMock.mockResolvedValue({ notifications: [] });
+    renderBell();
+    await flush();
+    getNotificationsMock.mockResolvedValue({ notifications: [levelUp(4), fusionReady(3)] });
+    await comeBackToApp();
+    expect(screen.getByRole("status").textContent).toContain("¡Ya puedes fusionar Hustor!");
+  });
+
+  it("does not let a later ring-only notification replace the pending banner", async () => {
+    await hiddenBellReceives([fusionReady(3)], [levelUp(4), fusionReady(3)]);
+    await showBell();
+    expect(screen.getByRole("status").textContent).toContain("¡Ya puedes fusionar Hustor!");
+  });
+
+  it("drops a pending notification that stopped being unread while hidden", async () => {
+    await hiddenBellReceives([fusionReady(3)], []);
+    await showBell();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  describe("behind full-screen moments and achievement banners", () => {
+    let announce: ReturnType<typeof useAchievements>["announce"];
+    function Grab() {
+      announce = useAchievements().announce;
+      return null;
+    }
+
+    const wait = (ms: number) =>
+      act(async () => {
+        await vi.advanceTimersByTimeAsync(ms);
+      });
+
+    async function renderWithAchievements() {
+      getNotificationsMock.mockResolvedValue({ notifications: [] });
+      render(
+        <MemoryRouter initialEntries={["/inicio"]}>
+          <NavVisibilityProvider>
+            <NotificationsProvider>
+              <AchievementsProvider>
+                <NotificationBell />
+                <Grab />
+              </AchievementsProvider>
+            </NotificationsProvider>
+          </NavVisibilityProvider>
+        </MemoryRouter>,
+      );
+      await flush();
+    }
+
+    const achievement = (kind: "medal" | "banner") => ({ id: kind, kind, icon: "✅", title: `Logro ${kind}`, subtitle: "sub", color: "#3fae5a" });
+    const bellBanner = () => screen.queryByText("¡Ya puedes fusionar Hustor!", { selector: ".notif-banner span" });
+    async function notificationArrives() {
+      getNotificationsMock.mockResolvedValue({ notifications: [fusionReady(3)] });
+      await comeBackToApp();
+    }
+
+    it("waits for the medal and for the achievement banners before sliding in", async () => {
+      await renderWithAchievements();
+      act(() => {
+        void announce([achievement("medal"), achievement("banner")]);
+      });
+      await notificationArrives();
+      await wait(10_000);
+      expect(bellBanner()).toBeNull();
+
+      fireEvent.click(screen.getByRole("dialog", { name: "Logro medal" }));
+      await wait(1000);
+      expect(screen.getByText("Logro banner")).toBeTruthy();
+      expect(bellBanner()).toBeNull();
+
+      await wait(3200); // the achievement banner is gone
+      expect(bellBanner()).not.toBeNull();
+    });
+
+    it("comes back for its whole time when something covered it halfway", async () => {
+      await renderWithAchievements();
+      await notificationArrives();
+      await wait(1000);
+      act(() => {
+        void announce([achievement("medal")]);
+      });
+      await wait(10_000);
+      expect(bellBanner()).toBeNull();
+
+      fireEvent.click(screen.getByRole("dialog", { name: "Logro medal" }));
+      await wait(2000);
+      expect(bellBanner()).not.toBeNull();
+      await wait(400);
+      expect(bellBanner()).toBeNull();
+    });
   });
 });

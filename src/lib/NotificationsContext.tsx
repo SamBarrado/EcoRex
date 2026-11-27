@@ -7,11 +7,14 @@ interface NotificationsValue {
   unreadCount: number;
   markRead: (id: number) => Promise<void>;
   refetch: () => void;
-  /** The newest notification that arrived while the app was open (not on first load): the bell folds it in. */
+  /** A notification that arrived while the app was open (not on first load) and the bell has not announced yet. */
   incoming: AppNotification | null;
   clearIncoming: () => void;
 }
 
+// These already have their own moment on screen (level-up screen, streak
+// banner): the bell only rings for them.
+export const QUIET_TYPES = new Set(["level_up", "streak_reward"]);
 
 const NotificationsContext = createContext<NotificationsValue | null>(null);
 
@@ -30,7 +33,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         const seen = seenIds.current;
         if (seen) {
           const fresh = data.notifications.filter((n) => !seen.has(n.id));
-          if (fresh.length > 0) setIncoming(fresh[0]);
+          // One with a banner wins over ring-only ones, now and while it waits
+          // for the bell; it is dropped if it stops being unread meanwhile.
+          const best = fresh.find((n) => !QUIET_TYPES.has(n.type)) ?? fresh[0] ?? null;
+          setIncoming((pending) => {
+            const waiting = pending && data.notifications.some((n) => n.id === pending.id) ? pending : null;
+            if (!best) return waiting;
+            return waiting && QUIET_TYPES.has(best.type) && !QUIET_TYPES.has(waiting.type) ? waiting : best;
+          });
         }
         seenIds.current = new Set([...(seen ?? []), ...data.notifications.map((n) => n.id)]);
       })

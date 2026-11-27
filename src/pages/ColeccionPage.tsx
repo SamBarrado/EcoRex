@@ -4,8 +4,11 @@ import { getDex, markEcodexVisited, DexSlot, DexSlotRevealed, ApiError } from ".
 import { PhaseFilter } from "../components/ecodex/PhaseFilter";
 import { EcodexTile } from "../components/ecodex/EcodexTile";
 import { CardPreviewModal } from "../components/ecodex/CardPreviewModal";
+import { useOnboarding } from "../lib/OnboardingContext";
 
 const REVEAL_DELAY_MS = 500;
+/** Time to enjoy a just unlocked card before anything else may cover it. */
+const UNLOCK_SEEN_MS = 1800;
 
 function slotKey(slot: DexSlot) {
   return `${slot.species_id}_${slot.phase}`;
@@ -15,6 +18,7 @@ export default function ColeccionPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const justUnlockedKey = (location.state as { justUnlockedKey?: string } | null)?.justUnlockedKey ?? null;
+  const { check: checkOnboarding } = useOnboarding();
   const [currentWave, setCurrentWave] = useState<number | null>(null);
   const [slots, setSlots] = useState<DexSlot[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +39,12 @@ export default function ColeccionPage() {
         // idempotent, so no client-side "already done" flag: a sessionStorage one
         // is shared between accounts and was set before the request succeeded,
         // which left the step pending forever.
-        markEcodexVisited().catch(() => {});
+        markEcodexVisited()
+          .then(() => {
+            if (justUnlockedKey) setTimeout(() => void checkOnboarding(), UNLOCK_SEEN_MS);
+            else void checkOnboarding();
+          })
+          .catch(() => {});
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {

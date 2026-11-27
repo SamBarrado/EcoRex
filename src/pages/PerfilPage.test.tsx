@@ -4,6 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import PerfilPage from "./PerfilPage";
 import { AvatarProvider } from "../lib/AvatarContext";
 import type { ProfileStats } from "../lib/api";
+import * as onboardingContext from "../lib/OnboardingContext";
+import * as push from "../lib/push";
 
 const getMyProfileMock = vi.fn();
 const setAvatarMock = vi.fn();
@@ -46,6 +48,7 @@ function renderPage() {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe("PerfilPage avatar", () => {
@@ -164,3 +167,20 @@ describe("PerfilPage logout", () => {
     expect(logoutButton.parentElement).toHaveClass("btn-row");
   });
 });
+
+describe("PerfilPage and Primeros pasos", () => {
+  it("checks the prize right after the energy alerts are switched on", async () => {
+    getMyProfileMock.mockResolvedValue(baseProfile);
+    const check = vi.fn().mockResolvedValue(null);
+    vi.spyOn(onboardingContext, "useOnboarding").mockReturnValue({ check, paid: 0 });
+    vi.spyOn(push, "isPushSupported").mockReturnValue(true);
+    vi.spyOn(push, "getNotificationPermission").mockReturnValue("default");
+    vi.spyOn(push, "hasActivePushSubscription").mockResolvedValueOnce(false).mockResolvedValue(true);
+    vi.spyOn(push, "subscribeToPush").mockResolvedValue(undefined);
+
+    renderPage();
+    fireEvent.click(await screen.findByRole("switch"));
+    await waitFor(() => expect(check).toHaveBeenCalledTimes(1));
+  });
+});
+
